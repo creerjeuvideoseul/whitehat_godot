@@ -1,0 +1,174 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/welcome.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2_shader")
+shader_parameter/bg_color = Color(0.016, 0.043, 0.031, 1)
+shader_parameter/line_color = Color(0.11, 0.32, 0.22, 0.35)
+shader_parameter/cell_size = 48.0
+shader_parameter/line_width = 1.2
+
+[node name="Welcome" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.016, 0.043, 0.031, 1)
+
+[node name="TopBar" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 56.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="StatusDot" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.22, 0.87, 0.45, 1)
+theme_override_font_sizes/font_size = 20
+text = "●"
+
+[node name="TitleLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.75, 0.85, 0.8, 1)
+theme_override_font_sizes/font_size = 22
+text = "WHITE HAT OS"
+
+[node name="KernelLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+text = "Kernel 6.8.4"
+
+[node name="VSeparator" type="VSeparator" parent="TopBar/Row"]
+layout_mode = 2
+
+[node name="NetworkLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+text = "réseau - chiffré"
+
+[node name="Spacer" type="Control" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UptimeLabel" type="Label" parent="TopBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.4, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 20
+text = "Up 0d 00:00"
+horizontal_alignment = 2
+
+[node name="BottomBar" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="VersionLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "v0.9.4-alpha"
+
+[node name="KernelLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "Kernel 6.8.4"
+
+[node name="NetworkLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "réseau - chiffré"
+
+[node name="Spacer" type="Control" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CreditLabel" type="RichTextLabel" parent="BottomBar/Row"]
+custom_minimum_size = Vector2(360, 28)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.6, 0.68, 0.63, 1)
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "Fait avec passion par [color=#39ff7a][b]SecretGame[/b][/color]"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 2
+
+[node name="MainContent" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 64.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MainContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MessageLabel" type="Label" parent="MainContent/CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 48
+text = "Bonjour. Merci."
+
+[node name="UptimeTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+autostart = true

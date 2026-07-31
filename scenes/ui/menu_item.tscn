@@ -1,0 +1,86 @@
+[gd_scene load_steps=6 format=3 uid="uid://c8k3m0qgqx7yf"]
+
+[ext_resource type="Script" path="res://scenes/ui/menu_item.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(1, 1, 1, 0)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.15, 0.35, 0.24, 0.25)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+border_width_left = 4
+border_color = Color(0.22, 0.87, 0.45, 0.6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
+bg_color = Color(0.086, 0.302, 0.176, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+border_width_left = 6
+border_color = Color(0.22, 0.87, 0.45, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.086, 0.302, 0.176, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+border_width_left = 6
+border_color = Color(0.22, 0.87, 0.45, 1)
+
+[node name="MenuItem" type="Button"]
+custom_minimum_size = Vector2(760, 108)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+mouse_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+
+[node name="HBox" type="HBoxContainer" parent="Margin"]
+mouse_filter = 2
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="NumberLabel" type="Label" parent="Margin/HBox"]
+unique_name_in_owner = true
+mouse_filter = 2
+layout_mode = 2
+size_flags_vertical = 1
+custom_minimum_size = Vector2(64, 0)
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.55, 0.63, 0.58, 1)
+text = "01"
+vertical_alignment = 1
+
+[node name="TitleLabel" type="Label" parent="Margin/HBox"]
+unique_name_in_owner = true
+mouse_filter = 2
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 38
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+text = "Item"
+vertical_alignment = 1
