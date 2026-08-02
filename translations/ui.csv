@@ -9,4 +9,5 @@ MENU_TAGLINE_2,Tu as juste trouvé,You just found
 MENU_TAGLINE_3,une porte que tout le monde avait oublié de fermer.,a door everyone forgot to close.
 OPTIONS_TITLE,// Options,// Options
 OPTIONS_LANGUAGE_LABEL,Langue,Language
+OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
 OPTIONS_CLOSE,Fermer,Close
