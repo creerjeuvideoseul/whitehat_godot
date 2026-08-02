@@ -20,3 +20,6 @@ DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
+CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
+CHAT_CONTACTS_LABEL,Contacts,Contacts
+CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...

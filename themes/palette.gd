@@ -34,6 +34,20 @@ const TEXT_LOCKED := Color(0.4, 0.45, 0.42, 1.0)
 ## only gauge color that didn't already exist somewhere in the project.
 const GAUGE_MEM := Color(1.0, 0.65, 0.15, 1.0)
 
+## App window background (dark green) — distinguishes an open window from
+## the near-black desktop behind it.
+const WINDOW_BG := Color(0.03, 0.1, 0.07, 0.98)
+
+## App window title bar / sidebar background — lighter than WINDOW_BG for
+## contrast, still readably distinct from the near-white BUBBLE colors.
+const WINDOW_HEADER_BG := Color(0.07, 0.18, 0.13, 1.0)
+
+## Chat bubble background for the other party (interlocutor).
+const BUBBLE_OTHER := Color(0.1, 0.16, 0.14, 1.0)
+
+## Chat bubble background for the player's own messages.
+const BUBBLE_PLAYER := Color(0.086, 0.302, 0.176, 0.9)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 

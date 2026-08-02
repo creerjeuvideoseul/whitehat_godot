@@ -39,14 +39,14 @@ func get_checkpoint_scene() -> String:
 ## Write a checkpoint: which scene to resume at, plus a snapshot of the
 ## player state that needs to survive a restart. Call this at narrative
 ## checkpoints (mission boundaries, key story beats) rather than on every
-## action.
+## action. Updates fields in place rather than replacing `_data` outright,
+## so anything staged via record_conversation() beforehand isn't lost.
 func save_checkpoint(checkpoint_scene: String) -> void:
-	_data = {
-		"version": SAVE_VERSION,
-		"checkpoint_scene": checkpoint_scene,
-		"pseudo": PlayerSession.pseudo,
-		"game_unix_time": GameClock.get_unix_time(),
-	}
+	_data["version"] = SAVE_VERSION
+	_data["checkpoint_scene"] = checkpoint_scene
+	_data["pseudo"] = PlayerSession.pseudo
+	_data["game_unix_time"] = GameClock.get_unix_time()
+	_data["story_vars"] = StoryVars.get_all()
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
 		return
@@ -65,6 +65,33 @@ func restore_player_session() -> void:
 ## resuming its countdown are separate decisions.
 func restore_game_clock() -> void:
 	GameClock.set_unix_time(_data.get("game_unix_time", 0))
+
+
+## Push saved narrative variables (player_emotion, etc.) back into StoryVars.
+func restore_story_vars() -> void:
+	StoryVars.load_all(_data.get("story_vars", {}))
+
+
+## Stage a finished conversation's rendered message log in memory, keyed by
+## contact id (e.g. "anonghost"). Not written to disk until the next
+## save_checkpoint() call — a conversation only "counts" once the checkpoint
+## after it actually happens, same as everything else this session.
+func record_conversation(contact_id: String, messages: Array) -> void:
+	var conversations: Dictionary = _data.get("conversations", {})
+	conversations[contact_id] = { "log": messages, "complete": true }
+	_data["conversations"] = conversations
+
+
+## The rendered message log for a contact, as it was last shown — empty if
+## that conversation hasn't been recorded yet.
+func get_conversation_log(contact_id: String) -> Array:
+	var conversations: Dictionary = _data.get("conversations", {})
+	return conversations.get(contact_id, {}).get("log", [])
+
+
+func is_conversation_complete(contact_id: String) -> bool:
+	var conversations: Dictionary = _data.get("conversations", {})
+	return conversations.get(contact_id, {}).get("complete", false)
 
 
 ## How long the player has been playing since their progress was last

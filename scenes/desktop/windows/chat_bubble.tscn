@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/desktop/windows/chat_bubble.gd" id="1_script"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/dialogue_label.gd" id="2_dialogue_label_script"]
+
+[node name="ChatBubble" type="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+script = ExtResource("1_script")
+
+[node name="DialogueLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+script = ExtResource("2_dialogue_label_script")

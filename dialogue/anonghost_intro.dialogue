@@ -1,0 +1,43 @@
+~ start
+
+AnonGhost: {{PlayerSession.pseudo}}, initialisation de la phase opérationnelle.
+AnonGhost: On y est.
+AnonGhost: Aujourd'hui, je vais te confier ta première affaire.
+AnonGhost: Nous avons suffisamment travaillé ensemble pour que je connaisse ta valeur.
+AnonGhost: Tu fais partie des [color=#ffa500]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_anon_perseverant]
+
+- Je suis génial !
+	set StoryVars.player_emotion += 1
+	Player: C'est parce que je suis surpuissant !
+	AnonGhost: Une conclusion audacieuse.
+	AnonGhost: Continue d'exploiter cette intelligence émotionnelle, elle sera précieuse.
+- J'ai eu un bon mentor
+	set StoryVars.player_respect += 1
+	Player: Probablement parce que j'ai eu un excellent mentor !
+	AnonGhost: Flatteur, mais stratégique. Une hypothèse flatteuse.
+	AnonGhost: Veille simplement à ne pas surestimer tes résultats.
+
+AnonGhost: {{PlayerSession.pseudo}}, je n'ai plus de doute sur tes capacités d'analyse.
+AnonGhost: Mais il reste une variable que je n'ai jamais pu mesurer.
+AnonGhost: Elle ne demande aucune compétence technique... et pourtant, elle fera toute la différence.
+AnonGhost: As-tu deviné de quoi je parle ?
+
+- Le charisme ?
+	Player: Le charisme !
+	AnonGhost: Une réponse inattendue. Intéressante, mais inexacte.
+- L'éthique ?
+	Player: L'éthique !
+	AnonGhost: Exact. Tu as identifié la bonne variable.
+- Je ne sais pas.
+	Player: Je ne sais pas.
+	AnonGhost: Admettre une absence de données est le premier pas vers une analyse rigoureuse. C'est le début de la sagesse.
+
+AnonGhost: Je parle de l'éthique, {{PlayerSession.pseudo}}.
+AnonGhost: Dans cette affaire, j'observerai tes décisions afin d'établir ton indice d'éthique.
+AnonGhost: Ce n'est ni un jugement ni une note.
+AnonGhost: Je cherche simplement à comprendre qui tu es lorsque personne ne te dit quoi faire.
+AnonGhost: Ton premier client s'appelle Jean Ranoud, sa fille a disparu.
+AnonGhost: Retrouve la, {{PlayerSession.pseudo}}, je te mets en contact.
+AnonGhost: N'obéis pas. Comprends. Juge. Agis.
+
+=> END

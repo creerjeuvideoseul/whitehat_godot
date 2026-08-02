@@ -24,10 +24,12 @@ buses/default_bus_layout="res://audio/bus_layout.tres"
 Settings="*res://autoloads/settings.gd"
 PlayerSession="*res://autoloads/player_session.gd"
 MusicPlayer="*res://autoloads/music_player.gd"
+SfxPlayer="*res://autoloads/sfx_player.gd"
 SaveManager="*res://autoloads/save_manager.gd"
 SceneTransition="*res://autoloads/scene_transition.gd"
 OptionsMenu="*res://autoloads/options_menu.gd"
 GameClock="*res://autoloads/game_clock.gd"
+StoryVars="*res://autoloads/story_vars.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [display]
@@ -49,7 +51,7 @@ theme/custom="res://themes/main_theme.tres"
 [internationalization]
 
 locale/translations=PackedStringArray("res://translations/ui.fr.translation", "res://translations/ui.en.translation")
-locale/translations_pot_files=PackedStringArray("res://dialogue/intro.dialogue")
+locale/translations_pot_files=PackedStringArray("res://dialogue/intro.dialogue", "res://dialogue/anonghost_intro.dialogue")
 locale/include_text_server_data=true
 
 [physics]
