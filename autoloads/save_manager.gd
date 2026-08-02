@@ -13,8 +13,16 @@ const SAVE_VERSION := 1
 
 var _data: Dictionary = {}
 
+## When the current session's unsaved progress started accumulating: either
+## the last save_checkpoint() call, or app boot if none happened yet this
+## session. Session-local on purpose (Time.get_ticks_msec(), not a persisted
+## timestamp) — a fresh app launch has nothing unsaved yet, regardless of
+## how long ago the save file itself was last written.
+var _last_checkpoint_ticks_msec: int = 0
+
 
 func _ready() -> void:
+	_last_checkpoint_ticks_msec = Time.get_ticks_msec()
 	_load()
 
 
@@ -37,17 +45,33 @@ func save_checkpoint(checkpoint_scene: String) -> void:
 		"version": SAVE_VERSION,
 		"checkpoint_scene": checkpoint_scene,
 		"pseudo": PlayerSession.pseudo,
+		"game_unix_time": GameClock.get_unix_time(),
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
 		return
 	file.store_string(JSON.stringify(_data))
+	_last_checkpoint_ticks_msec = Time.get_ticks_msec()
 
 
 ## Push the saved pseudo back into PlayerSession before resuming a scene
-## that reads it (e.g. the welcome screen).
+## that reads it (e.g. the desktop).
 func restore_player_session() -> void:
 	PlayerSession.pseudo = _data.get("pseudo", "")
+
+
+## Push the saved in-fiction time back into GameClock. Caller still needs to
+## call GameClock.start_ticking() afterwards — restoring a value and
+## resuming its countdown are separate decisions.
+func restore_game_clock() -> void:
+	GameClock.set_unix_time(_data.get("game_unix_time", 0))
+
+
+## How long the player has been playing since their progress was last
+## checkpointed — i.e. how much would be lost by quitting right now.
+func get_minutes_since_checkpoint() -> int:
+	var elapsed_msec := Time.get_ticks_msec() - _last_checkpoint_ticks_msec
+	return int(elapsed_msec / 60000.0)
 
 
 func delete_save() -> void:

@@ -1,7 +1,7 @@
 extends Control
 ## "Nouvelle partie" screen: collects a pseudo (alnum + underscore, 2-20
 ## chars) and a password (no charset restriction, 20 chars max), then hands
-## the login to PlayerSession and moves on to the welcome screen.
+## the login to PlayerSession and moves on to the desktop.
 
 const INVALID_PSEUDO_CHARS := "[^A-Za-z0-9_]"
 
@@ -49,8 +49,8 @@ func _on_connect_pressed() -> void:
 		_error_label.text = "Pseudo requis : 2 à 20 caractères (lettres, chiffres, _)."
 		return
 	PlayerSession.set_login(pseudo, _password_edit.text)
-	SaveManager.save_checkpoint("res://scenes/welcome.tscn")
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SaveManager.save_checkpoint("res://scenes/desktop/desktop.tscn")
+	get_tree().change_scene_to_file("res://scenes/desktop/desktop.tscn")
 
 func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://control.tscn")
+	get_tree().change_scene_to_file("res://main_menu.tscn")

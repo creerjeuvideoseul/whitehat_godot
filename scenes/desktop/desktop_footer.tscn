@@ -1,0 +1,106 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/desktop/desktop_footer.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.01, 0.03, 0.02, 0.92)
+border_width_top = 2
+border_color = Color(0.22, 0.87, 0.45, 0.5)
+
+[node name="DesktopFooter" type="Control"]
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+
+[node name="Row" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="MinimizedWindowsBar" type="HBoxContainer" parent="Margin/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="RightGroup" type="HBoxContainer" parent="Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 28
+
+[node name="VpnLabel" type="Label" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.22, 0.87, 0.45, 1)
+theme_override_font_sizes/font_size = 22
+text = "DESKTOP_VPN_STATUS"
+
+[node name="TorLabel" type="Label" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "DESKTOP_TOR_STATUS"
+
+[node name="SignalBars" type="HBoxContainer" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 3
+
+[node name="Bar1" type="ColorRect" parent="Margin/Row/RightGroup/SignalBars"]
+custom_minimum_size = Vector2(4, 6)
+layout_mode = 2
+size_flags_vertical = 8
+color = Color(0.22, 0.87, 0.45, 1)
+
+[node name="Bar2" type="ColorRect" parent="Margin/Row/RightGroup/SignalBars"]
+custom_minimum_size = Vector2(4, 10)
+layout_mode = 2
+size_flags_vertical = 8
+color = Color(0.22, 0.87, 0.45, 1)
+
+[node name="Bar3" type="ColorRect" parent="Margin/Row/RightGroup/SignalBars"]
+custom_minimum_size = Vector2(4, 14)
+layout_mode = 2
+size_flags_vertical = 8
+color = Color(0.22, 0.87, 0.45, 1)
+
+[node name="Bar4" type="ColorRect" parent="Margin/Row/RightGroup/SignalBars"]
+custom_minimum_size = Vector2(4, 18)
+layout_mode = 2
+size_flags_vertical = 8
+color = Color(0.22, 0.87, 0.45, 1)
+
+[node name="ClockLabel" type="Label" parent="Margin/Row/RightGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "00:00"

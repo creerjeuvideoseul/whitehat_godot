@@ -1,0 +1,172 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scenes/desktop/desktop_header.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://wf8k66gwt67q" path="res://assets/UI/whos.png" id="2_whos_logo"]
+[ext_resource type="Texture2D" uid="uid://dsys1j2mwekyf" path="res://assets/UI/button_green_0.png" id="3_tor_icon"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/usage_gauge.tscn" id="4_usage_gauge"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.01, 0.03, 0.02, 0.92)
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_search"]
+bg_color = Color(0.05, 0.08, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.87, 0.45, 0.4)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_search_focus"]
+bg_color = Color(0.05, 0.08, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.87, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[node name="DesktopHeader" type="Control"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 90.0
+grow_horizontal = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+
+[node name="Row" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="LeftGroup" type="HBoxContainer" parent="Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="WhosLogo" type="TextureRect" parent="Margin/Row/LeftGroup"]
+custom_minimum_size = Vector2(140, 43)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("2_whos_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SearchField" type="LineEdit" parent="Margin/Row/LeftGroup"]
+custom_minimum_size = Vector2(320, 44)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_colors/font_placeholder_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_search")
+theme_override_styles/focus = SubResource("StyleBoxFlat_search_focus")
+placeholder_text = "DESKTOP_SEARCH_PLACEHOLDER"
+
+[node name="Spacer" type="Control" parent="Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightGroup" type="HBoxContainer" parent="Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 32
+
+[node name="TorGroup" type="HBoxContainer" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="TorIcon" type="TextureRect" parent="Margin/Row/RightGroup/TorGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 25)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("3_tor_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TorLabel" type="Label" parent="Margin/Row/RightGroup/TorGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "TOR"
+
+[node name="CpuGroup" type="HBoxContainer" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="CpuLabel" type="Label" parent="Margin/Row/RightGroup/CpuGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "DESKTOP_CPU_LABEL"
+
+[node name="CpuGauge" parent="Margin/Row/RightGroup/CpuGroup" instance=ExtResource("4_usage_gauge")]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="MemGroup" type="HBoxContainer" parent="Margin/Row/RightGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="MemLabel" type="Label" parent="Margin/Row/RightGroup/MemGroup"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "DESKTOP_MEM_LABEL"
+
+[node name="MemGauge" parent="Margin/Row/RightGroup/MemGroup" instance=ExtResource("4_usage_gauge")]
+layout_mode = 2
+size_flags_vertical = 4
+fill_color = Color(1, 0.65, 0.15, 1)
+min_percent = 55.0
+max_percent = 75.0
+
+[node name="PseudoLabel" type="Label" parent="Margin/Row/RightGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "pseudo@whos:~"

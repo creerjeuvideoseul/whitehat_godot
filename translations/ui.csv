@@ -10,6 +10,13 @@ OPTIONS_TITLE,// Options,// Options
 OPTIONS_LANGUAGE_LABEL,Langue,Language
 OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
 OPTIONS_CLOSE,Fermer,Close
+OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
+OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées. Continuer ?","Warning, any unsaved progress from the last %d minutes will be lost. Continue?"
 NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie. Continuer ?","Warning, this will delete your current save. Continue?"
 COMMON_CONFIRM,Confirmer,Confirm
 COMMON_CANCEL,Annuler,Cancel
+DESKTOP_SEARCH_PLACEHOLDER,recherche OSINT,OSINT search
+DESKTOP_CPU_LABEL,CPU,CPU
+DESKTOP_MEM_LABEL,MEM,MEM
+DESKTOP_VPN_STATUS,VPN ON,VPN ON
+DESKTOP_TOR_STATUS,TOR ×3,TOR ×3

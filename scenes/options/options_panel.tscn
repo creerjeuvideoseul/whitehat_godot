@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scenes/options/options_panel.gd" id="1_script"]
 
@@ -77,6 +77,30 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.22, 0.87, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_normal"]
+bg_color = Color(0.35, 0.08, 0.08, 0.35)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.36, 0.36, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_quit_hover"]
+bg_color = Color(0.35, 0.08, 0.08, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.36, 0.36, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_left = 6
@@ -257,6 +281,18 @@ theme_override_constants/margin_bottom = 22
 [node name="FooterRow" type="HBoxContainer" parent="CenterContainer/Card/CardLayout/FooterMargin"]
 layout_mode = 2
 
+[node name="QuitGameButton" type="Button" parent="CenterContainer/Card/CardLayout/FooterMargin/FooterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.36, 0.36, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_quit_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_quit_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_quit_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_quit_hover")
+text = "OPTIONS_QUIT_GAME"
+
 [node name="Spacer" type="Control" parent="CenterContainer/Card/CardLayout/FooterMargin/FooterRow"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -272,3 +308,10 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_close_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_close_hover")
 text = "OPTIONS_CLOSE"
+
+[node name="QuitGameConfirmDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "OPTIONS_QUIT_GAME"
+initial_position = 1
+size = Vector2i(560, 180)
+ok_button_text = "COMMON_CONFIRM"

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://ggjddg2vmau1"]
 
-[ext_resource type="Script" path="res://scenes/introduction.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/images/wh_intro_fille_tele2.webp" id="2_first_frame"]
+[ext_resource type="Script" uid="uid://doqflwvltww5p" path="res://scenes/introduction.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dhcnf7fmt8mgw" path="res://assets/images_intro/wh_intro_fille_tele2.webp" id="2_first_frame"]
 
-[node name="Introduction" type="Control"]
+[node name="Introduction" type="Control" unique_id=2133798336]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=775978998]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

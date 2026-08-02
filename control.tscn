@@ -1,10 +1,10 @@
-[gd_scene format=3 uid="uid://dmvy0y7rk6hia"]
+[gd_scene format=3 uid="uid://cvq0c8vykow8h"]
 
-[ext_resource type="Script" uid="uid://b2prxovtwjx0l" path="res://control.gd" id="1_script"]
+[ext_resource type="Script" path="res://control.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://cao0vwmxi5662" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
 [ext_resource type="PackedScene" uid="uid://c8k3m0qgqx7yf" path="res://scenes/ui/menu_item.tscn" id="3_menuitem"]
-[ext_resource type="Texture2D" uid="uid://c33gf8kukndwt" path="res://assets/images/logo_big.png" id="4_logo_main"]
-[ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/images/logo_whitehat.svg" id="5_logo_corner"]
+[ext_resource type="Texture2D" uid="uid://6hiq8gxtqha8" path="res://assets/UI/logo_white_hat_vs_sentinelle_big2.png" id="4_fj5cn"]
+[ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/UI/logo_whitehat.svg" id="5_logo_corner"]
 [ext_resource type="Shader" uid="uid://bcjganmguqihc" path="res://assets/shaders/logo_fade.gdshader" id="6_fade_shader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
@@ -205,7 +205,7 @@ material = SubResource("ShaderMaterial_logo_fade")
 custom_minimum_size = Vector2(760, 427)
 layout_mode = 2
 size_flags_horizontal = 0
-texture = ExtResource("4_logo_main")
+texture = ExtResource("4_fj5cn")
 expand_mode = 1
 stretch_mode = 4
 
@@ -285,10 +285,10 @@ stretch_mode = 5
 unique_name_in_owner = true
 autostart = true
 
-[node name="NewGameConfirmDialog" type="ConfirmationDialog" parent="."]
+[node name="NewGameConfirmDialog" type="ConfirmationDialog" parent="." unique_id=200511612]
 unique_name_in_owner = true
 title = "MENU_NEW_GAME"
 initial_position = 1
 size = Vector2i(560, 180)
-dialog_text = "NEWGAME_OVERWRITE_WARNING"
 ok_button_text = "COMMON_CONFIRM"
+dialog_text = "NEWGAME_OVERWRITE_WARNING"

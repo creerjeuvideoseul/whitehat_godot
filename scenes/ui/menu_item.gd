@@ -39,13 +39,10 @@ func set_locked(is_locked: bool) -> void:
 	_update_title_color()
 
 func _update_title_color() -> void:
-	var locked_color := Color(0.4, 0.45, 0.42)
-	var destructive_color := Color(1.0, 0.36, 0.36)
-	var normal_color := Color(0.92, 0.96, 0.94)
-	var title_color := normal_color
+	var title_color := Palette.TEXT_NORMAL
 	if disabled:
-		title_color = locked_color
+		title_color = Palette.TEXT_LOCKED
 	elif destructive:
-		title_color = destructive_color
+		title_color = Palette.TEXT_DANGER
 	_title_label.add_theme_color_override("font_color", title_color)
-	_number_label.add_theme_color_override("font_color", locked_color if disabled else Color(0.55, 0.63, 0.58))
+	_number_label.add_theme_color_override("font_color", Palette.TEXT_LOCKED if disabled else Color(0.55, 0.63, 0.58))

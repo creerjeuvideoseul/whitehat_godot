@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="WhiteHat"
-run/main_scene="res://control.tscn"
+run/main_scene="res://main_menu.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
@@ -26,6 +26,8 @@ PlayerSession="*res://autoloads/player_session.gd"
 MusicPlayer="*res://autoloads/music_player.gd"
 SaveManager="*res://autoloads/save_manager.gd"
 SceneTransition="*res://autoloads/scene_transition.gd"
+OptionsMenu="*res://autoloads/options_menu.gd"
+GameClock="*res://autoloads/game_clock.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [display]

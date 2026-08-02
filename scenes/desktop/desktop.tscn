@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/desktop/desktop.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/desktop_header.tscn" id="3_header"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/desktop_footer.tscn" id="4_footer"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2_shader")
+shader_parameter/bg_color = Color(0.016, 0.043, 0.031, 1)
+shader_parameter/line_color = Color(0.11, 0.32, 0.22, 0.35)
+shader_parameter/cell_size = 48.0
+shader_parameter/line_width = 1.2
+
+[node name="Desktop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.016, 0.043, 0.031, 1)
+
+[node name="WindowLayer" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 90.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DesktopHeader" parent="." instance=ExtResource("3_header")]
+layout_mode = 1
+
+[node name="DesktopFooter" parent="." instance=ExtResource("4_footer")]
+layout_mode = 1
