@@ -2,6 +2,8 @@ extends Control
 ## Main menu screen: wires up the numbered menu list and the fake
 ## "system uptime" readout in the top bar.
 
+const OPTIONS_PANEL := preload("res://scenes/options/options_panel.tscn")
+
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
 
@@ -12,6 +14,7 @@ extends Control
 @onready var _quit_button: Button = %QuitButton
 
 var _start_ticks_msec: int = 0
+var _options_panel: Control = null
 
 func _ready() -> void:
 	_start_ticks_msec = Time.get_ticks_msec()
@@ -38,7 +41,10 @@ func _on_new_game_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/introduction.tscn")
 
 func _on_options_pressed() -> void:
-	print("Options - à implémenter")
+	if is_instance_valid(_options_panel):
+		return
+	_options_panel = OPTIONS_PANEL.instantiate()
+	add_child(_options_panel)
 
 func _on_save_pressed() -> void:
 	print("Sauvegarde - à implémenter")

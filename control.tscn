@@ -200,6 +200,7 @@ custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 
 [node name="LogoImage" type="TextureRect" parent="MainContent/Margin/HBox/LeftPanel" unique_id=289927305]
+texture_filter = 1
 material = SubResource("ShaderMaterial_logo_fade")
 custom_minimum_size = Vector2(760, 427)
 layout_mode = 2
@@ -221,19 +222,19 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.96, 0.93, 1)
 theme_override_fonts/font = SubResource("SystemFont_semibold")
 theme_override_font_sizes/font_size = 30
-text = "Tu n'as pas piraté le système."
+text = "MENU_TAGLINE_1"
 
 [node name="Line2" type="Label" parent="MainContent/Margin/HBox/LeftPanel/FlavorBox" unique_id=1389549067]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.45, 0.53, 0.49, 1)
 theme_override_font_sizes/font_size = 26
-text = "Tu as juste trouvé"
+text = "MENU_TAGLINE_2"
 
 [node name="Line3" type="Label" parent="MainContent/Margin/HBox/LeftPanel/FlavorBox" unique_id=1152224212]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.45, 0.53, 0.49, 1)
 theme_override_font_sizes/font_size = 26
-text = "une porte que tout le monde avait oublié de fermer."
+text = "MENU_TAGLINE_3"
 
 [node name="RightPanel" type="VBoxContainer" parent="MainContent/Margin/HBox" unique_id=1239209855]
 layout_mode = 2
@@ -247,27 +248,27 @@ theme_override_constants/separation = 28
 
 [node name="NewGameButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=267629009 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
-title_text = "Nouvelle partie"
+title_text = "MENU_NEW_GAME"
 
 [node name="OptionsButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=927412761 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
 index_number = "02"
-title_text = "Options"
+title_text = "MENU_OPTIONS"
 
 [node name="SaveButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=1466769354 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
 index_number = "03"
-title_text = "Sauvegarde"
+title_text = "MENU_SAVE"
 
 [node name="LoadButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=1442568504 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
 index_number = "04"
-title_text = "Charger"
+title_text = "MENU_LOAD"
 
 [node name="QuitButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=153041014 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
 index_number = "05"
-title_text = "Quitter"
+title_text = "MENU_QUIT"
 destructive = true
 
 [node name="LogoIcon" type="TextureRect" parent="." unique_id=1026570289]
