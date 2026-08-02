@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c8k3m0qgqx7yf" path="res://scenes/ui/menu_item.tscn" id="3_menuitem"]
 [ext_resource type="Texture2D" uid="uid://c33gf8kukndwt" path="res://assets/images/logo_big.png" id="4_logo_main"]
 [ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/images/logo_whitehat.svg" id="5_logo_corner"]
-[ext_resource type="Shader" path="res://assets/shaders/logo_fade.gdshader" id="6_fade_shader"]
+[ext_resource type="Shader" uid="uid://bcjganmguqihc" path="res://assets/shaders/logo_fade.gdshader" id="6_fade_shader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("2_shader")

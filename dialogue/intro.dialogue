@@ -1,0 +1,40 @@
+~ start
+
+do change_background("wh_intro_fille_tele2")
+Karine: 300% d'augmentation !
+do change_background("wh_show_television_triste3")
+Karine: Et non je ne parle pas de mon salaire, mais bien de la [color=#ffa500]cybercriminalité[/color]
+do change_background("wh_intro_femme_colere2")
+Karine: Nous ne sommes plus à l'abri nulle part, les systèmes financiers sont au bord de la rupture.
+do change_background("wh_intro_fille_tele2")
+Karine: Mais heureusement nos bien aimés gouvernements travaillent conjointement depuis des années sur une solution miracle : [color=#ffa500]Sentinelle[/color].
+Karine: Gilles, notre expert en technologie, pouvez-vous nous en dire plus ?
+do change_background("wh_show_television_homme1")
+Gilles: En effet, Karine, Sentinelle est LA solution à tous nos malheurs. C'est la première intelligence…
+do change_background("wh_avec_ordi_quantique")
+Gilles: ... établie sur des serveurs [color=#ffa500]quantiques ![/color]
+do change_background("wh_show_television_homme1")
+Gilles: C'est-à-dire qu'elle peut être partout à la fois... et en même temps, c'est comme si elle n'était pas là !
+do change_background("wh_intro_femme_tourne_oeil")
+Karine: Je n'y comprends rien Gilles !
+do change_background("wh_show_television_homme1")
+Gilles: C'est normal, Karine...
+do change_background("wh_show_television_homme3")
+Gilles: ... c'est quantique !
+do change_background("wh_show_television_enerve2")
+Karine: En clair, Sentinelle surveille tout le monde, partout, et tout le temps, Gilles ?
+do change_background("wh_show_television_homme2")
+Gilles: Oui ! Et si nous n'agissons pas bien, Sentinelle nous attrape et nous punit !
+do change_background("wh_intro_femme_tourne_oeil")
+Karine: Ça fait froid dans le dos, Gilles !
+do change_background("wh_show_television_homme_enerve")
+Gilles: Vous avez quelque chose à cacher, Karine ?
+do change_background("wh_intro_femme_colere2")
+Karine: Ce n'est pas la question ! Et notre [color=#ffa500]vie privée[/color] Gilles?
+do change_background("wh_show_television_homme1")
+Gilles: Ça n'existe pas pour Sentinelle !
+Gilles: On peut leur faire confiance pour une utilisation responsable, un comité de contrôle des demandes a été formé quand même !
+do change_background("wh_intro_fille_tele2")
+Karine: Ah, dans ce cas, je ne vois pas comment ça pourrait mal tourner.
+
+=> END

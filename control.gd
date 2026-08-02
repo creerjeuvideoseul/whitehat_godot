@@ -35,7 +35,7 @@ func _update_uptime_label() -> void:
 	_uptime_label.text = "Up %dd %02d:%02d" % [days, hours, minutes]
 
 func _on_new_game_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/login.tscn")
+	get_tree().change_scene_to_file("res://scenes/introduction.tscn")
 
 func _on_options_pressed() -> void:
 	print("Options - à implémenter")
