@@ -255,19 +255,14 @@ unique_name_in_owner = true
 index_number = "02"
 title_text = "MENU_OPTIONS"
 
-[node name="SaveButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=1466769354 instance=ExtResource("3_menuitem")]
+[node name="ContinueButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=1442568504 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
 index_number = "03"
-title_text = "MENU_SAVE"
-
-[node name="LoadButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=1442568504 instance=ExtResource("3_menuitem")]
-unique_name_in_owner = true
-index_number = "04"
-title_text = "MENU_LOAD"
+title_text = "MENU_CONTINUE"
 
 [node name="QuitButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=153041014 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true
-index_number = "05"
+index_number = "04"
 title_text = "MENU_QUIT"
 destructive = true
 
@@ -289,3 +284,11 @@ stretch_mode = 5
 [node name="UptimeTimer" type="Timer" parent="." unique_id=1879262614]
 unique_name_in_owner = true
 autostart = true
+
+[node name="NewGameConfirmDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "MENU_NEW_GAME"
+initial_position = 1
+size = Vector2i(560, 180)
+dialog_text = "NEWGAME_OVERWRITE_WARNING"
+ok_button_text = "COMMON_CONFIRM"

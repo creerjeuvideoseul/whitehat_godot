@@ -49,6 +49,7 @@ func _on_connect_pressed() -> void:
 		_error_label.text = "Pseudo requis : 2 à 20 caractères (lettres, chiffres, _)."
 		return
 	PlayerSession.set_login(pseudo, _password_edit.text)
+	SaveManager.save_checkpoint("res://scenes/welcome.tscn")
 	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
 
 func _on_back_pressed() -> void:

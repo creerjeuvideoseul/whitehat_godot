@@ -1,8 +1,7 @@
 keys,fr,en
 MENU_NEW_GAME,Nouvelle partie,New Game
 MENU_OPTIONS,Options,Options
-MENU_SAVE,Sauvegarde,Save
-MENU_LOAD,Charger,Load
+MENU_CONTINUE,Continuer,Continue
 MENU_QUIT,Quitter,Quit
 MENU_TAGLINE_1,Tu n'as pas piraté le système.,You didn't hack the system.
 MENU_TAGLINE_2,Tu as juste trouvé,You just found
@@ -11,3 +10,6 @@ OPTIONS_TITLE,// Options,// Options
 OPTIONS_LANGUAGE_LABEL,Langue,Language
 OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
 OPTIONS_CLOSE,Fermer,Close
+NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie. Continuer ?","Warning, this will delete your current save. Continue?"
+COMMON_CONFIRM,Confirmer,Confirm
+COMMON_CANCEL,Annuler,Cancel

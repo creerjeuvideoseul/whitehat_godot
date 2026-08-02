@@ -24,6 +24,8 @@ buses/default_bus_layout="res://audio/bus_layout.tres"
 Settings="*res://autoloads/settings.gd"
 PlayerSession="*res://autoloads/player_session.gd"
 MusicPlayer="*res://autoloads/music_player.gd"
+SaveManager="*res://autoloads/save_manager.gd"
+SceneTransition="*res://autoloads/scene_transition.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [display]
