@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Settings="*res://autoloads/settings.gd"
 PlayerSession="*res://autoloads/player_session.gd"
+MusicPlayer="*res://autoloads/music_player.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [display]
@@ -39,9 +40,9 @@ theme/custom="res://themes/main_theme.tres"
 
 [internationalization]
 
+locale/translations=PackedStringArray("res://translations/ui.fr.translation", "res://translations/ui.en.translation")
 locale/translations_pot_files=PackedStringArray("res://dialogue/intro.dialogue")
 locale/include_text_server_data=true
-locale/translations=PackedStringArray("res://translations/ui.fr.translation", "res://translations/ui.en.translation")
 
 [physics]
 

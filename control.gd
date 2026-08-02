@@ -3,6 +3,7 @@ extends Control
 ## "system uptime" readout in the top bar.
 
 const OPTIONS_PANEL := preload("res://scenes/options/options_panel.tscn")
+const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty Free Music.mp3")
 
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
@@ -30,6 +31,8 @@ func _ready() -> void:
 
 	_new_game_button.grab_focus()
 
+	MusicPlayer.play(MENU_MUSIC)
+
 func _update_uptime_label() -> void:
 	var elapsed_sec: int = int((Time.get_ticks_msec() - _start_ticks_msec) / 1000.0)
 	var days: int = elapsed_sec / 86400
@@ -38,6 +41,7 @@ func _update_uptime_label() -> void:
 	_uptime_label.text = "Up %dd %02d:%02d" % [days, hours, minutes]
 
 func _on_new_game_pressed() -> void:
+	MusicPlayer.stop()
 	get_tree().change_scene_to_file("res://scenes/introduction.tscn")
 
 func _on_options_pressed() -> void:
@@ -53,4 +57,6 @@ func _on_load_pressed() -> void:
 	print("Charger - à implémenter")
 
 func _on_quit_pressed() -> void:
+	MusicPlayer.stop()
+	await get_tree().create_timer(MusicPlayer.DEFAULT_FADE_SECONDS).timeout
 	get_tree().quit()
