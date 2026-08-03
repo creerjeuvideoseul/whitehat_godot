@@ -8,6 +8,11 @@ const DEFAULT_LOCALE := "fr"
 const MUSIC_BUS := "Music"
 const DEFAULT_MUSIC_VOLUME := 0.7
 
+## Build-time flag, not a player setting (not persisted, not exposed in the
+## options menu) — hand-flipped before a real release. Gates dev-only tools
+## like the desktop's "DEBUG INDICES" button, which must never ship.
+const IS_PRODUCTION := false
+
 var locale: String = DEFAULT_LOCALE
 var music_volume: float = DEFAULT_MUSIC_VOLUME
 

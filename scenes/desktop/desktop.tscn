@@ -45,6 +45,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="DesktopHeader" parent="." instance=ExtResource("3_header")]
+unique_name_in_owner = true
 layout_mode = 1
 
 [node name="DesktopFooter" parent="." instance=ExtResource("4_footer")]

@@ -47,6 +47,7 @@ func save_checkpoint(checkpoint_scene: String) -> void:
 	_data["pseudo"] = PlayerSession.pseudo
 	_data["game_unix_time"] = GameClock.get_unix_time()
 	_data["story_vars"] = StoryVars.get_all()
+	_data["unlocked_indices"] = ClueManager.get_unlocked_ids()
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
 		return
@@ -70,6 +71,11 @@ func restore_game_clock() -> void:
 ## Push saved narrative variables (player_emotion, etc.) back into StoryVars.
 func restore_story_vars() -> void:
 	StoryVars.load_all(_data.get("story_vars", {}))
+
+
+## Push the saved set of unlocked clue ids back into ClueManager.
+func restore_unlocked_indices() -> void:
+	ClueManager.load_unlocked_ids(_data.get("unlocked_indices", []))
 
 
 ## Stage a finished conversation's rendered message log in memory, keyed by

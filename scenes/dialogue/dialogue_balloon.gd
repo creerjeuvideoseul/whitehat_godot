@@ -73,6 +73,8 @@ func start(with_dialogue_resource: DialogueResource = null, title: String = "", 
 func apply_dialogue_line() -> void:
 	mutation_cooldown.stop()
 
+	ClueManager.unlock_from_tags(dialogue_line)
+
 	progress_label.hide()
 	is_waiting_for_input = false
 	balloon.focus_mode = Control.FOCUS_ALL

@@ -66,6 +66,8 @@ func _on_continue_pressed() -> void:
 	await SceneTransition.fade_out()
 	SaveManager.restore_player_session()
 	SaveManager.restore_game_clock()
+	SaveManager.restore_story_vars()
+	SaveManager.restore_unlocked_indices()
 	GameClock.start_ticking()
 	get_tree().change_scene_to_file(SaveManager.get_checkpoint_scene())
 	SceneTransition.fade_in()

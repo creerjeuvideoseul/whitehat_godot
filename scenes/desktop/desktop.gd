@@ -6,6 +6,11 @@ extends Control
 ## (desktop_header.gd, desktop_footer.gd).
 
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
+const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
+## The mission the "Indice" button currently opens. No mission-selection UI
+## exists yet, so this is hardcoded for now — same simplification the chat
+## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
+const CURRENT_MISSION_ID := 1
 const ANONGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
 const ANONGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
@@ -21,9 +26,19 @@ const JEAN_REVEAL_DELAY_SECONDS := 1.0
 
 @onready var _window_layer: Control = %WindowLayer
 @onready var _footer: Control = %DesktopFooter
+@onready var _header: DesktopHeader = %DesktopHeader
+
+## Kept so pressing "Indice" a second time re-shows the same window (and its
+## already-unlocked state) instead of stacking duplicates — it can't be
+## closed, only minimized, so a second instance would linger forever.
+var _clue_board_window: ClueBoardWindow = null
+## Last title it minimized under, so re-showing it via the header button (as
+## opposed to its own taskbar icon) can clear that now-stale icon.
+var _clue_board_window_title: String = ""
 
 
 func _ready() -> void:
+	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_open_window(_build_chat_window())
 
 
@@ -60,10 +75,31 @@ func _build_jean_contact() -> ChatContact:
 	return contact
 
 
-func _open_window(window: ChatWindow) -> void:
+## Untyped on purpose: ChatWindow and ClueBoardWindow both expose the same
+## minimize_requested(window, window_title) signal by convention, but don't
+## share a base class — a Control-typed parameter would make the static
+## checker reject a signal it can't see on Control itself.
+func _open_window(window) -> void:
 	window.minimize_requested.connect(_on_window_minimize_requested)
 	_window_layer.add_child(window)
 
 
 func _on_window_minimize_requested(window: Control, window_title: String) -> void:
+	if window == _clue_board_window:
+		_clue_board_window_title = window_title
 	_footer.add_minimized_window(window_title, func() -> void: window.show())
+
+
+## "Indice" always reopens the same board so its layout/unlocked state isn't
+## rebuilt from scratch every click — only the first press instantiates it.
+## It has no close button (only minimize), so a second instance would linger
+## on screen forever if we let one get created.
+func _on_clue_button_pressed() -> void:
+	if is_instance_valid(_clue_board_window):
+		_footer.remove_minimized_window(_clue_board_window_title)
+		_clue_board_window.show()
+		return
+
+	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
+	_clue_board_window.mission_id = CURRENT_MISSION_ID
+	_open_window(_clue_board_window)

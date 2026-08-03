@@ -96,6 +96,7 @@ func _advance(next_id: String) -> void:
 
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
+	ClueManager.unlock_from_tags(line)
 
 	if line.character == SYSTEM_CHARACTER:
 		await _type_out(_add_console_line(line))
