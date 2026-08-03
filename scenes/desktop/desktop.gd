@@ -45,6 +45,12 @@ func _ready() -> void:
 func _build_chat_window() -> ChatWindow:
 	var window: ChatWindow = CHAT_WINDOW.instantiate()
 	window.contacts = [_build_anonghost_contact()]
+	# Si la conversation avec AnonGhost est déjà terminée (reprise d'une
+	# sauvegarde), le signal contact_conversation_finished ne se redéclenchera
+	# jamais — _replay_saved_log() ne le réémet pas. Jean doit donc déjà être
+	# dans la liste initiale plutôt que d'attendre ce signal.
+	if SaveManager.is_conversation_complete("anonghost"):
+		window.contacts.append(_build_jean_contact())
 	window.contact_conversation_finished.connect(func(contact_id: String) -> void:
 		if contact_id == "anonghost":
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
