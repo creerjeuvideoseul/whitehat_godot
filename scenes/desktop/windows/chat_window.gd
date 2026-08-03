@@ -1,65 +1,106 @@
 extends Control
 class_name ChatWindow
-## A reusable "encrypted chat" window: a contacts sidebar + scrolling message
-## thread, driven by a dialogue_manager DialogueResource. Built for AnonGhost
-## first, meant to be reused as-is for Jean Ranoud and later contacts —
-## only the @export fields change per instance, not this script.
+## A reusable "encrypted chat" window: a contacts sidebar shared by several
+## conversations (one ConversationView per contact, only one visible at a
+## time). Built for AnonGhost + Jean Ranoud first, meant to be reused as-is
+## for future contacts by just adding to `contacts`.
 ##
 ## No close button by design: minimizing is the only way to dismiss it (see
 ## minimize_requested), matching "on ne peut pas fermer la fenêtre, juste la
 ## réduire."
+##
+## A conversation only starts (and its dialogue only advances) once the
+## player actually selects that contact — two contacts never play out
+## simultaneously in the background just because the window is open.
 
 signal minimize_requested(window: Control, window_title: String)
+## Bubbled up from whichever ConversationView just finished, so the owner
+## (desktop.gd) can react — e.g. reveal a contact that was waiting on it —
+## without this window knowing anything about that narrative sequencing.
+signal contact_conversation_finished(contact_id: String)
 
-const CHAT_BUBBLE := preload("res://scenes/desktop/windows/chat_bubble.tscn")
+const CONVERSATION_VIEW := preload("res://scenes/desktop/windows/conversation_view.tscn")
 const CHOICE_SOUND := preload("res://assets/audio/sound/mixkit-correct-answer-notification-947.mp3")
-const PLAYER_CHARACTER := "Player"
-const TYPING_INDICATOR_SECONDS := 0.9
+const NOTIFICATION_SOUND := preload("res://assets/audio/sound/starcraft_incoming.mp3")
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
 
-@export var contact_id: String = ""
-@export var contact_name: String = ""
-@export var contact_avatar: Texture2D
-@export var dialogue_resource: DialogueResource
-@export var dialogue_start_title: String = "start"
+@export var contacts: Array[ChatContact] = []
 
-@onready var _title_bar: Control = %TitleBar
+## Window chrome color scheme — as opposed to per-message bubble colors
+## (ChatContact.bubble_color), which distinguish contacts from each other
+## inside the same window.
+@export var window_bg_color: Color = Palette.WINDOW_BG
+@export var window_header_bg_color: Color = Palette.WINDOW_HEADER_BG
+@export var accent_color: Color = Palette.BORDER_ACCENT
+
+@onready var _background: Panel = %Background
+@onready var _title_bar: PanelContainer = %TitleBar
 @onready var _title_label: Label = %TitleLabel
 @onready var _minimize_button: Button = %MinimizeButton
+@onready var _sidebar: PanelContainer = %Sidebar
 @onready var _contacts_list: VBoxContainer = %ContactsList
-@onready var _messages_list: VBoxContainer = %MessagesList
-@onready var _scroll_container: ScrollContainer = %ScrollContainer
-@onready var _responses_menu: DialogueResponsesMenu = %ResponsesMenu
-@onready var _response_template: Button = %ResponseTemplate
+@onready var _conversation_host: Control = %ConversationHost
+@onready var _border_overlay: Panel = %BorderOverlay
 
-var _log: Array = []
-var _current_label: DialogueLabel = null
 var _dragging: bool = false
-var _connecting_line: Label = null
+var _contacts_by_id: Dictionary = {}
+var _conversation_views: Dictionary = {}
+var _contact_rows: Dictionary = {}
+var _started_contact_ids: Dictionary = {}
+var _active_contact_id: String = ""
 
 
 func _ready() -> void:
-	_add_contact_entry(contact_name, contact_avatar)
-
-	_responses_menu.response_template = _response_template
-	_responses_menu.response_selected.connect(_on_response_selected)
+	_apply_color_scheme()
 	_minimize_button.pressed.connect(_on_minimize_pressed)
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
-	gui_input.connect(_on_gui_input)
 
-	if SaveManager.is_conversation_complete(contact_id):
-		_replay_saved_log()
-	else:
-		_show_connecting_line()
-		_advance(dialogue_start_title)
+	var initial_contacts := contacts.duplicate()
+	for contact in initial_contacts:
+		add_contact(contact)
+
+	if initial_contacts.size() > 0:
+		_select_contact(initial_contacts[0].contact_id)
 
 
-## Anywhere in the window: a click completes the line currently typing out,
-## instead of waiting for it. Buttons (responses, minimize) consume their
-## own clicks first, so this only fires on empty space / bubble clicks.
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if is_instance_valid(_current_label) and _current_label.is_typing:
-			_current_label.skip_typing()
+## Add a contact to the sidebar — for the window's initial roster, or one
+## that only "unlocks" later (e.g. once another conversation finishes).
+## Either way it plays like an incoming message just arrived.
+func add_contact(contact: ChatContact) -> void:
+	_contacts_by_id[contact.contact_id] = contact
+	_add_contact_row(contact)
+	_build_conversation_view(contact)
+	_notify_new_message()
+
+
+## Nudge the window from its default centered position (e.g. so several
+## windows opened at once "cascade" instead of fully overlapping), clamped
+## to stay on the desktop just like dragging does.
+func nudge_position(offset: Vector2) -> void:
+	var max_position: Vector2 = get_parent_area_size() - size
+	position = (position + offset).clamp(Vector2.ZERO, max_position)
+
+
+func _apply_color_scheme() -> void:
+	var bg_style: StyleBoxFlat = _background.get_theme_stylebox("panel").duplicate()
+	bg_style.bg_color = window_bg_color
+	bg_style.border_color = accent_color
+	_background.add_theme_stylebox_override("panel", bg_style)
+
+	var titlebar_style: StyleBoxFlat = _title_bar.get_theme_stylebox("panel").duplicate()
+	titlebar_style.bg_color = window_header_bg_color
+	titlebar_style.border_color = accent_color
+	_title_bar.add_theme_stylebox_override("panel", titlebar_style)
+
+	var sidebar_style: StyleBoxFlat = _sidebar.get_theme_stylebox("panel").duplicate()
+	sidebar_style.bg_color = window_header_bg_color
+	_sidebar.add_theme_stylebox_override("panel", sidebar_style)
+
+	var border_style: StyleBoxFlat = _border_overlay.get_theme_stylebox("panel").duplicate()
+	border_style.border_color = accent_color
+	_border_overlay.add_theme_stylebox_override("panel", border_style)
 
 
 ## Drag by the title bar only (like a real OS window), clamped so the
@@ -73,108 +114,36 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 		position = (position + event.relative).clamp(Vector2.ZERO, max_position)
 
 
-## A plain command-line style status line (no bubble), shown only while
-## waiting for the very first live message — never on a replayed/completed
-## conversation, since there's nothing to "wait" for there.
-func _show_connecting_line() -> void:
-	_connecting_line = Label.new()
-	_connecting_line.text = "CHAT_CONNECTING_LINE"
-	_connecting_line.add_theme_color_override("font_color", Palette.TEXT_LOCKED)
-	_connecting_line.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
-	_messages_list.add_child(_connecting_line)
-	_messages_list.move_child(_connecting_line, _responses_menu.get_index())
-	_scroll_to_bottom()
+func _add_contact_row(contact: ChatContact) -> void:
+	var row := PanelContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_STOP
+	row.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	row.gui_input.connect(_on_contact_row_gui_input.bind(contact.contact_id))
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 8)
+	margin.add_theme_constant_override("margin_top", 6)
+	margin.add_theme_constant_override("margin_right", 8)
+	margin.add_theme_constant_override("margin_bottom", 6)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 12)
+	hbox.add_child(_build_avatar_frame(contact.avatar))
+
+	var name_label := Label.new()
+	name_label.text = contact.contact_name
+	name_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
+	name_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
+	hbox.add_child(name_label)
+
+	margin.add_child(hbox)
+	row.add_child(margin)
+
+	_contacts_list.add_child(row)
+	_contact_rows[contact.contact_id] = row
 
 
-func _clear_connecting_line() -> void:
-	if is_instance_valid(_connecting_line):
-		_connecting_line.queue_free()
-		_connecting_line = null
-
-
-func _replay_saved_log() -> void:
-	for entry in SaveManager.get_conversation_log(contact_id):
-		var line := DialogueLine.new()
-		line.character = entry.character
-		line.text = entry.text
-		_add_bubble(line, entry.character == PLAYER_CHARACTER)
-	_scroll_to_bottom()
-
-
-func _advance(next_id: String) -> void:
-	var line: DialogueLine = await dialogue_resource.get_next_dialogue_line(next_id, [self])
-	if line == null:
-		_on_conversation_finished()
-		return
-	await _display_line(line)
-
-
-func _display_line(line: DialogueLine) -> void:
-	_clear_connecting_line()
-
-	var is_player: bool = line.character == PLAYER_CHARACTER
-
-	if not is_player:
-		await _show_typing_indicator()
-
-	var label := _add_bubble(line, is_player)
-	_current_label = label
-	label.type_out()
-	await label.finished_typing
-	_current_label = null
-
-	_log.append({ "character": line.character, "text": line.text })
-
-	if line.responses.size() > 0:
-		_responses_menu.responses = line.responses
-		_messages_list.move_child(_responses_menu, _messages_list.get_child_count() - 1)
-		_responses_menu.show()
-		SfxPlayer.play(CHOICE_SOUND)
-		_scroll_to_bottom()
-	else:
-		await _advance(line.next_id)
-
-
-func _on_response_selected(response: DialogueResponse) -> void:
-	_responses_menu.hide()
-	await _advance(response.next_id)
-
-
-func _on_conversation_finished() -> void:
-	SaveManager.record_conversation(contact_id, _log)
-	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
-
-
-func _show_typing_indicator() -> void:
-	var placeholder := DialogueLine.new()
-	placeholder.text = "..."
-
-	var bubble: ChatBubble = CHAT_BUBBLE.instantiate()
-	_messages_list.add_child(bubble)
-	_messages_list.move_child(bubble, _responses_menu.get_index())
-	bubble.configure(placeholder, false)
-	_scroll_to_bottom()
-
-	await get_tree().create_timer(TYPING_INDICATOR_SECONDS).timeout
-	bubble.queue_free()
-
-
-func _add_bubble(line: DialogueLine, is_player: bool) -> DialogueLabel:
-	var bubble: ChatBubble = CHAT_BUBBLE.instantiate()
-	bubble.size_flags_horizontal = Control.SIZE_SHRINK_END if is_player else Control.SIZE_SHRINK_BEGIN
-
-	_messages_list.add_child(bubble)
-	_messages_list.move_child(bubble, _responses_menu.get_index())
-
-	var label := bubble.configure(line, is_player)
-	_scroll_to_bottom()
-	return label
-
-
-func _add_contact_entry(display_name: String, avatar: Texture2D) -> void:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-
+func _build_avatar_frame(avatar: Texture2D) -> Control:
 	var avatar_frame := PanelContainer.new()
 	var frame_style := StyleBoxFlat.new()
 	frame_style.bg_color = Color(0, 0, 0, 0)
@@ -182,7 +151,7 @@ func _add_contact_entry(display_name: String, avatar: Texture2D) -> void:
 	frame_style.border_width_top = 3
 	frame_style.border_width_right = 3
 	frame_style.border_width_bottom = 3
-	frame_style.border_color = Palette.BORDER_ACCENT
+	frame_style.border_color = accent_color
 	frame_style.set_corner_radius_all(25)
 	frame_style.set_content_margin_all(0)
 	avatar_frame.add_theme_stylebox_override("panel", frame_style)
@@ -194,20 +163,70 @@ func _add_contact_entry(display_name: String, avatar: Texture2D) -> void:
 	avatar_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	avatar_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	avatar_frame.add_child(avatar_rect)
-	row.add_child(avatar_frame)
-
-	var name_label := Label.new()
-	name_label.text = display_name
-	name_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
-	name_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
-	row.add_child(name_label)
-
-	_contacts_list.add_child(row)
+	return avatar_frame
 
 
-func _scroll_to_bottom() -> void:
-	await get_tree().process_frame
-	_scroll_container.scroll_vertical = int(_scroll_container.get_v_scroll_bar().max_value)
+func _build_conversation_view(contact: ChatContact) -> void:
+	var view: ConversationView = CONVERSATION_VIEW.instantiate()
+	view.visible = false
+	view.choice_shown.connect(func() -> void: SfxPlayer.play(CHOICE_SOUND))
+	view.conversation_finished.connect(func() -> void: contact_conversation_finished.emit(contact.contact_id))
+	_conversation_host.add_child(view)
+	_conversation_views[contact.contact_id] = view
+
+
+## Sound + a light shake, like an incoming-message alert — used both when a
+## contact first appears in the sidebar and (via add_contact) later on.
+func _notify_new_message() -> void:
+	SfxPlayer.play(NOTIFICATION_SOUND)
+	_shake()
+
+
+func _shake() -> void:
+	var origin := position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(self, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
+
+
+func _on_contact_row_gui_input(event: InputEvent, contact_id: String) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_select_contact(contact_id)
+
+
+## Switch the visible conversation. The newly selected contact's dialogue
+## only starts playing the first time it's selected — never before.
+func _select_contact(contact_id: String) -> void:
+	if _active_contact_id == contact_id:
+		return
+
+	if _conversation_views.has(_active_contact_id):
+		_conversation_views[_active_contact_id].hide()
+	_set_row_selected(_active_contact_id, false)
+
+	_active_contact_id = contact_id
+	var view: ConversationView = _conversation_views[contact_id]
+	view.show()
+	_set_row_selected(contact_id, true)
+
+	if not _started_contact_ids.has(contact_id):
+		_started_contact_ids[contact_id] = true
+		view.setup(_contacts_by_id[contact_id])
+
+
+func _set_row_selected(contact_id: String, is_selected: bool) -> void:
+	if not _contact_rows.has(contact_id):
+		return
+	var row: PanelContainer = _contact_rows[contact_id]
+	if is_selected:
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(accent_color.r, accent_color.g, accent_color.b, 0.15)
+		style.set_corner_radius_all(6)
+		row.add_theme_stylebox_override("panel", style)
+	else:
+		row.remove_theme_stylebox_override("panel")
 
 
 func _on_minimize_pressed() -> void:

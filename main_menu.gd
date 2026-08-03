@@ -25,6 +25,7 @@ func _ready() -> void:
 
 	_new_game_confirm_dialog.confirmed.connect(_start_new_game)
 	_new_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
+	_new_game_confirm_dialog.get_label().add_theme_color_override("font_color", Palette.TEXT_DANGER)
 
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()

@@ -48,6 +48,15 @@ const BUBBLE_OTHER := Color(0.1, 0.16, 0.14, 1.0)
 ## Chat bubble background for the player's own messages.
 const BUBBLE_PLAYER := Color(0.086, 0.302, 0.176, 0.9)
 
+## Alternate bubble tint (blue) — lets one contact's messages read as
+## distinct from another's inside the same chat window (e.g. Jean Ranoud
+## vs. AnonGhost's default BUBBLE_OTHER green-neutral).
+const BUBBLE_BLUE := Color(0.1, 0.15, 0.28, 1.0)
+
+## Plain "system/console" text — connection status, terminal-style asides —
+## as opposed to an actual chat bubble from a contact.
+const CONSOLE_TEXT := Color(0.55, 0.63, 0.58, 1.0)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 

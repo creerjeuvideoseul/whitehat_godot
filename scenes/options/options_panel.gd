@@ -33,6 +33,7 @@ func _ready() -> void:
 	_quit_game_button.pressed.connect(_on_quit_game_pressed)
 	_quit_game_confirm_dialog.confirmed.connect(_on_quit_game_confirmed)
 	_quit_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
+	_quit_game_confirm_dialog.get_label().add_theme_color_override("font_color", Palette.TEXT_DANGER)
 
 	_close_button.pressed.connect(_on_close_pressed)
 

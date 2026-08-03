@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dw5av1iy2cjfu" path="res://scenes/login.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://cao0vwmxi5662" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
-[ext_resource type="Texture2D" uid="uid://6hiq8gxtqha8" path="res://assets/UI/logo_white_hat_vs_sentinelle_big2.png" id="4_47b6t"]
+[ext_resource type="Texture2D" uid="uid://4wfpon7dqt7y" path="res://assets/UI/logo_horizontal.png" id="4_47b6t"]
 [ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/UI/logo_whitehat.svg" id="4_logo_corner"]
 [ext_resource type="Shader" uid="uid://bcjganmguqihc" path="res://assets/shaders/logo_fade.gdshader" id="5_fade_shader"]
 

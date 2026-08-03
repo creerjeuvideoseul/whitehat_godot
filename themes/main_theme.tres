@@ -1,4 +1,20 @@
-[gd_resource type="Theme" format=3 uid="uid://d3kueqyqijdnm"]
+[gd_resource type="Theme" format=3 uid="uid://ca822fl48eawi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dialog"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.02, 0.05, 0.04, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="SystemFont" id="SystemFont_body"]
 font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "Fira Code", "Courier New")
@@ -6,3 +22,6 @@ font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "F
 [resource]
 default_font = SubResource("SystemFont_body")
 default_font_size = 20
+AcceptDialog/styles/panel = SubResource("StyleBoxFlat_dialog")
+Window/colors/title_color = Color(0.92, 0.96, 0.94, 1)
+Window/styles/embedded_border = SubResource("StyleBoxFlat_dialog")
