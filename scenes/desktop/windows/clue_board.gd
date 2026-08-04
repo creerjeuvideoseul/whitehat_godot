@@ -9,7 +9,7 @@ class_name ClueBoard
 ## tel quel pour les missions suivantes en changeant juste mission_id.
 
 const AVATAR_SIZE := 150.0
-const PANEL_WIDTH := 400.0
+const PANEL_WIDTH := 320.0
 ## How far out a clue panel can sit from its avatar, before/after
 ## _resolve_radius() grows it to guarantee no two panels in the same star
 ## overlap (see PANEL_GAP_PADDING).

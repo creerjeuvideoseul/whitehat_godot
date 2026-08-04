@@ -1,8 +1,11 @@
 extends CanvasLayer
+class_name DialogueBalloon
 ## Bottom-of-screen dialogue box (Ren'Py style) for Dialogue Manager.
 ## Reproduces the example balloon's contract (start/next/dialogue_line)
 ## but skinned for the WHITE HAT look, with voice/localization support
 ## stripped since this project doesn't use them.
+
+signal dialogue_line_shown(character: String, text: String)
 
 @export var dialogue_resource: DialogueResource
 @export var start_from_title: String = ""
@@ -11,9 +14,18 @@ extends CanvasLayer
 @export var next_action: StringName = &"ui_accept"
 @export var skip_action: StringName = &"ui_cancel"
 
+## Nom de personnage -> couleur du pseudo dans l'encart de discussion. Vide
+## par défaut (le vert de CharacterLabel dans la scène s'applique alors tel
+## quel) — à définir par l'appelant avant start() pour distinguer un
+## personnage (ex: Gilles en bleu dans l'intro, voir introduction.gd).
+var character_name_colors: Dictionary = {}
+
 var temporary_game_states: Array = []
 var is_waiting_for_input: bool = false
 var will_hide_balloon: bool = false
+## État de is_waiting_for_input avant un show_history_line(), pour le
+## restaurer tel quel dans resume_live_line().
+var _live_was_waiting_for_input: bool = false
 
 var dialogue_line: DialogueLine:
 	set(value):
@@ -81,7 +93,7 @@ func apply_dialogue_line() -> void:
 	balloon.grab_focus()
 
 	character_label.visible = not dialogue_line.character.is_empty()
-	character_label.text = dialogue_line.character
+	character_label.text = _colored_character_name(dialogue_line.character)
 
 	dialogue_label.hide()
 	dialogue_label.dialogue_line = dialogue_line
@@ -93,6 +105,7 @@ func apply_dialogue_line() -> void:
 	will_hide_balloon = false
 
 	dialogue_label.show()
+	dialogue_line_shown.emit(dialogue_line.character, dialogue_line.text)
 	if not dialogue_line.text.is_empty():
 		dialogue_label.type_out()
 		await dialogue_label.finished_typing
@@ -114,6 +127,50 @@ func apply_dialogue_line() -> void:
 ## Go to the next line
 func next(next_id: String) -> void:
 	dialogue_line = await dialogue_resource.get_next_dialogue_line(next_id, temporary_game_states)
+
+
+## Affiche une ligne déjà vue, en lecture seule, sans toucher à l'état réel
+## du dialogue en cours (pour un retour en arrière à la molette, voir
+## Introduction._rewind()). Le texte apparaît intégralement, sans effet de
+## frappe. Utiliser resume_live_line() pour revenir à la ligne réellement en
+## cours.
+func show_history_line(character: String, text: String) -> void:
+	if is_waiting_for_input:
+		_live_was_waiting_for_input = true
+		is_waiting_for_input = false
+	progress_label.hide()
+
+	character_label.visible = not character.is_empty()
+	character_label.text = _colored_character_name(character)
+
+	var history_line := DialogueLine.new()
+	history_line.text = text
+	dialogue_label.dialogue_line = history_line
+	dialogue_label.visible_ratio = 1.0
+
+
+## Restaure l'affichage de la ligne réellement en cours après un ou
+## plusieurs show_history_line().
+func resume_live_line() -> void:
+	if not is_instance_valid(dialogue_line):
+		return
+
+	character_label.visible = not dialogue_line.character.is_empty()
+	character_label.text = _colored_character_name(dialogue_line.character)
+
+	dialogue_label.dialogue_line = dialogue_line
+	dialogue_label.visible_ratio = 1.0
+
+	if _live_was_waiting_for_input:
+		_live_was_waiting_for_input = false
+		is_waiting_for_input = true
+		progress_label.show()
+
+
+func _colored_character_name(character: String) -> String:
+	if character_name_colors.has(character):
+		return "[color=#%s]%s[/color]" % [character_name_colors[character].to_html(false), character]
+	return character
 
 
 func _on_mutation_cooldown_timeout() -> void:

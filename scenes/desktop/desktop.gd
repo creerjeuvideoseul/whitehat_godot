@@ -7,6 +7,7 @@ extends Control
 
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
 const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
+const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 ## The mission the "Indice" button currently opens. No mission-selection UI
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
@@ -55,6 +56,8 @@ func _build_chat_window() -> ChatWindow:
 		if contact_id == "anonghost":
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
+		elif contact_id == "jean_ranoud":
+			_play_jean_dump_terminal()
 	)
 	return window
 
@@ -79,6 +82,56 @@ func _build_jean_contact() -> ChatContact:
 	contact.dialogue_resource = JEAN_DIALOGUE
 	contact.bubble_color = Palette.BUBBLE_BLUE
 	return contact
+
+
+## Once Jean's call ends, simulate the phone-dump-and-analysis sequence as a
+## full-screen terminal transition (see TerminalConsole) before handing off
+## to the investigation itself.
+func _play_jean_dump_terminal() -> void:
+	# Point de sauvegarde explicite juste avant le terminal : si le joueur
+	# quitte pendant/juste après l'animation, "Continuer" le ramène ici sans
+	# rejouer la discussion avec Jean (déjà marquée complète par ailleurs).
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+
+	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.lines = _build_jean_dump_lines()
+	console.closed.connect(_on_jean_dump_terminal_closed)
+	add_child(console)
+
+
+## TODO: une fois la scène d'enquête fournie, l'enchaîner ici (fade +
+## change_scene_to_file) — c'est l'unique point d'extension pour la suite.
+func _on_jean_dump_terminal_closed() -> void:
+	pass
+
+
+## Script de la séquence "hack" simulant le rapatriement + l'analyse OSINT
+## des données du téléphone d'Alizée. Les commandes/sorties système restent
+## dans leur jargon technique quelle que soit la langue (un vrai terminal ne
+## se traduit pas) — seules les deux phrases en langage naturel passent par
+## ui.csv, comme le reste du chrome de l'interface.
+func _build_jean_dump_lines() -> Array[TerminalLine]:
+	var prompt := "#%s" % Palette.BORDER_ACCENT.to_html(false)
+	var normal := "#%s" % Palette.TEXT_NORMAL.to_html(false)
+	var muted := "#%s" % Palette.CONSOLE_TEXT.to_html(false)
+	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
+
+	var lines: Array[TerminalLine] = []
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][+][/color] Authenticating against remote host 203.0.113.45:22... Connection established.[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]scp ./backups/mobile_dump_2026.tar.gz user@192.168.1.12:~/workspace/[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.progress_line("mobile_dump_2026.tar.gz", 3420, "48.2MB/s", "01:11"))
+	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]exit[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]tar -xzvf ~/workspace/mobile_dump_2026.tar.gz -C ~/workspace/raw_data/[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]unpacking raw_dump.bin... [color=%s]DONE[/color] (42,891 blocks processed)[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]./bin/parser --input ~/workspace/raw_data/ --filter-level deep[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Initializing OSINT heuristic analyzer v4.2...[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Parsing SQLite databases, app cache, and system logs...[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Stripping telemetry data & telemetry noise... (89%% discarded)[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Rebuilding timeline matrix... [color=%s]DONE[/color][/color]" % [muted, accent, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][SUCCESS] %s[/color]" % [accent, tr("TERMINAL_JEAN_DUMP_SUCCESS")]))
+	lines.append(TerminalLine.text_line("[color=%s]%s[/color]" % [muted, tr("TERMINAL_JEAN_DUMP_LOADING")]))
+	return lines
 
 
 ## Untyped on purpose: ChatWindow and ClueBoardWindow both expose the same

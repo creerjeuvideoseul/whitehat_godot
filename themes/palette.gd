@@ -57,6 +57,12 @@ const BUBBLE_BLUE := Color(0.1, 0.15, 0.28, 1.0)
 ## as opposed to an actual chat bubble from a contact.
 const CONSOLE_TEXT := Color(0.55, 0.63, 0.58, 1.0)
 
+## Bright info-blue text — same role as TEXT_ACCENT (emphasis on a dark
+## background) but blue, for distinguishing one speaker's name from the
+## default green (e.g. Gilles in the intro cutscene, vs. BUBBLE_BLUE which
+## is a background tint rather than a readable foreground color).
+const TEXT_BLUE_ACCENT := Color(0.4, 0.7, 1.0, 1.0)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 

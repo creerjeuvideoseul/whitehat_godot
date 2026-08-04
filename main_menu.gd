@@ -53,7 +53,9 @@ func _start_new_game() -> void:
 	GameClock.reset_to_story_start()
 	GameClock.start_ticking()
 	MusicPlayer.stop()
+	await SceneTransition.fade_out()
 	get_tree().change_scene_to_file("res://scenes/introduction.tscn")
+	SceneTransition.fade_in()
 
 func _on_options_pressed() -> void:
 	OptionsMenu.open()
