@@ -1,6 +1,6 @@
 extends Control
 class_name TerminalConsole
-## Boîte de transition façon terminal Linux (900×600, fond/bords noirs) qui
+## Boîte de transition façon terminal Linux (1100×680, fond/bords noirs) qui
 ## déroule une liste de TerminalLine les unes après les autres avec un effet
 ## de frappe, avant de laisser apparaître un bouton "Fermer". Générique et
 ## réutilisable : aucun texte n'est en dur ici, tout vient du script passé à
@@ -14,9 +14,9 @@ signal closed
 
 const LINE_GAP_SECONDS := 0.15
 const PROGRESS_STEP_SECONDS := 0.03
-## Vitesse de frappe des lignes texte — 2x plus rapide que le défaut de
+## Vitesse de frappe des lignes texte — 4x plus rapide que le défaut de
 ## DialogueLabel (0.02s/caractère), pour un terminal qui ne traîne pas.
-const TYPING_SECONDS_PER_STEP := 0.01
+const TYPING_SECONDS_PER_STEP := 0.005
 ## Largeur de la colonne "nom de fichier" des lignes PROGRESS, pour aligner
 ## le pourcentage comme le ferait un vrai scp/rsync.
 const FILENAME_COLUMN_WIDTH := 46

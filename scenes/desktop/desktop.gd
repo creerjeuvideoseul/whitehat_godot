@@ -8,6 +8,21 @@ extends Control
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
 const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
+const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
+## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
+## non génériques : chaque section aura son propre gameplay à terme (SMS, mail,
+## galerie, coffre-fort n'ont rien en commun), donc pas de scène "placeholder"
+## partagée à factoriser pour l'instant.
+const PHONE_SECTIONS := {
+	AlizeePhone.SECTION_SMS: preload("res://scenes/desktop/phone/sections/sms_section.tscn"),
+	AlizeePhone.SECTION_MAIL: preload("res://scenes/desktop/phone/sections/mail_section.tscn"),
+	AlizeePhone.SECTION_GALLERY: preload("res://scenes/desktop/phone/sections/gallery_section.tscn"),
+	AlizeePhone.SECTION_VAULT: preload("res://scenes/desktop/phone/sections/vault_section.tscn"),
+}
+## Durée du glissement + fondu d'apparition du téléphone d'Alizée.
+const PHONE_REVEAL_SECONDS := 0.6
+## Décalage de départ (hors écran vers la gauche) pour l'effet de glissement.
+const PHONE_REVEAL_SLIDE_OFFSET := 120.0
 ## The mission the "Indice" button currently opens. No mission-selection UI
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
@@ -33,6 +48,7 @@ const JEAN_REVEAL_DELAY_SECONDS := 1.0
 @onready var _window_layer: Control = %WindowLayer
 @onready var _footer: Control = %DesktopFooter
 @onready var _header: DesktopHeader = %DesktopHeader
+@onready var _phone_section_host: Control = %PhoneSectionHost
 
 ## Kept so pressing "Indice" a second time re-shows the same window (and its
 ## already-unlocked state) instead of stacking duplicates — it can't be
@@ -42,11 +58,31 @@ var _clue_board_window: ClueBoardWindow = null
 ## opposed to its own taskbar icon) can clear that now-stale icon.
 var _clue_board_window_title: String = ""
 
+## Le téléphone d'Alizée reste affiché en permanence une fois révélé — pas de
+## fermeture/minimisation prévue, donc une seule instance possible (utile
+## surtout pour éviter d'en recréer une seconde au retour d'une sauvegarde).
+var _alizee_phone: AlizeePhone = null
+
 
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
-	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
-	_open_window(_build_chat_window())
+	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
+	# doit déjà être là, sans rejouer son animation d'apparition.
+	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
+	if jean_done:
+		_reveal_alizee_phone(false)
+
+	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
+	# reste quelque chose à découvrir dans le chat (première arrivée après
+	# l'intro/login, ou reprise entre la fin d'AnonGhost et celle de Jean) —
+	# pas une reprise après coup, où tout a déjà été lu et où seul le
+	# téléphone d'Alizée reste à l'écran. Pas de is_conversation_complete("anonghost")
+	# ici : ça stranderait le joueur qui reprend juste après AnonGhost, sans
+	# autre moyen de rouvrir le chat pour parler à Jean (pas d'icône/taskbar
+	# pour ça pour l'instant).
+	if not jean_done:
+		await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
+		_open_window(_build_chat_window())
 
 
 func _build_chat_window() -> ChatWindow:
@@ -105,10 +141,10 @@ func _play_jean_dump_terminal() -> void:
 	add_child(console)
 
 
-## TODO: une fois la scène d'enquête fournie, l'enchaîner ici (fade +
-## change_scene_to_file) — c'est l'unique point d'extension pour la suite.
+## Une fois le terminal fermé, le téléphone d'Alizée apparaît sur le bureau —
+## c'est le point d'entrée de l'enquête proprement dite.
 func _on_jean_dump_terminal_closed() -> void:
-	pass
+	_reveal_alizee_phone(true)
 
 
 ## Script de la séquence "hack" simulant le rapatriement + l'analyse OSINT
@@ -168,3 +204,49 @@ func _on_clue_button_pressed() -> void:
 	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
 	_clue_board_window.mission_id = CURRENT_MISSION_ID
 	_open_window(_clue_board_window)
+
+
+## Instancie le téléphone d'Alizée à gauche du bureau (une seule fois — il
+## n'a pas de fermeture/minimisation) et branche ses icônes sur le
+## changement de section. `animate` est à false lors d'une reprise de
+## sauvegarde : le téléphone doit être déjà là, pas en train d'apparaître.
+func _reveal_alizee_phone(animate: bool) -> void:
+	if is_instance_valid(_alizee_phone):
+		return
+
+	_alizee_phone = ALIZEE_PHONE.instantiate()
+	_alizee_phone.icon_pressed.connect(_on_phone_icon_pressed)
+	_window_layer.add_child(_alizee_phone)
+
+	if animate:
+		_animate_phone_reveal(_alizee_phone)
+
+
+## Glissement + fondu depuis la gauche, dans le même esprit que le shake de
+## ChatWindow (tween direct sur position/modulate, sans toucher aux ancres).
+func _animate_phone_reveal(phone: Control) -> void:
+	await get_tree().process_frame
+	var target_x := phone.position.x
+	phone.position.x = target_x - PHONE_REVEAL_SLIDE_OFFSET
+	phone.modulate.a = 0.0
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(phone, "position:x", target_x, PHONE_REVEAL_SECONDS)
+	tween.tween_property(phone, "modulate:a", 1.0, PHONE_REVEAL_SECONDS)
+
+
+## Affiche la section choisie dans les 2/3 restants — une seule à la fois,
+## jamais superposées : tout enfant précédent est libéré avant d'ajouter le
+## nouveau.
+func _on_phone_icon_pressed(section_id: String) -> void:
+	if not PHONE_SECTIONS.has(section_id):
+		return
+
+	for child in _phone_section_host.get_children():
+		child.queue_free()
+
+	_phone_section_host.add_child(PHONE_SECTIONS[section_id].instantiate())
+	_phone_section_host.visible = true

@@ -69,6 +69,11 @@ const TEXT_BLUE_ACCENT := Color(0.4, 0.7, 1.0, 1.0)
 ## solid fill of its own.
 const ALERT_RED_BG := Color(0.78, 0.09, 0.09, 1.0)
 
+## Vert foncé discret — pour un texte "code/syntaxe" en petit, qui ne doit
+## pas concurrencer TEXT_ACCENT/BORDER_ACCENT (ex. la légende technique en
+## bas du téléphone d'Alizée).
+const TEXT_GREEN_DIM := Color(0.14, 0.42, 0.24, 1.0)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 

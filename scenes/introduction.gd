@@ -177,14 +177,15 @@ func _play_boot_terminal() -> void:
 func _build_boot_lines() -> Array[TerminalLine]:
 	var prompt := "#%s" % Palette.BORDER_ACCENT.to_html(false)
 	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
-	var danger := "#%s" % Palette.TEXT_DANGER.to_html(false)
 	var muted := "#%s" % Palette.CONSOLE_TEXT.to_html(false)
 
 	var lines: Array[TerminalLine] = []
-	lines.append(_boot_line(prompt, accent, muted, "SYSTEM:", "Initializing White Hat OS v0.9.4..."))
-	lines.append(_boot_line(prompt, accent, muted, "SYSTEM:", "Decrypting local database with master private key..."))
-	lines.append(_boot_line(prompt, accent, muted, "SYSTEM:", "Establishing handshakes with cellular towers..."))
-	lines.append(_boot_line(prompt, danger, muted, "LOGS:", "Security warning detected. HAL_SYS monitor has bypass access."))
+	lines.append(_wh_line(prompt, accent, muted, "W_HAT_OS Kernel 6.8.4 initialized successfully."))
+	lines.append(_wh_line(prompt, accent, muted, "Connecting to proxy standard secure gateways on port 3000..."))
+	lines.append(_wh_line(prompt, accent, muted, "Loading virtual environment: RESOLUTION=2560x1440, MULTI_VIEW_SPA=ON."))
+	lines.append(_wh_line(prompt, accent, muted, "Bypassing Sentinelle Quantique active detection nodes..."))
+	lines.append(_wh_line(prompt, accent, muted, "ESTABLISHING METADATA DISPATCHER [OK]"))
+	lines.append(_wh_line(prompt, accent, muted, "Boot sequence completed. Launching White Hat OS command center..."))
 	lines.append(_boot_line(prompt, accent, muted, "SYSTEM:", "Translation..."))
 	lines.append(TerminalLine.text_line("[color=%s]>>[/color] [color=%s]%s[/color]" % [prompt, muted, tr("TERMINAL_BOOT_STARTING_SESSION")]))
 	return lines
@@ -192,3 +193,9 @@ func _build_boot_lines() -> Array[TerminalLine]:
 
 func _boot_line(prompt: String, tag_color: String, text_color: String, tag: String, message: String) -> TerminalLine:
 	return TerminalLine.text_line("[color=%s]>>[/color] [color=%s]%s[/color][color=%s] %s[/color]" % [prompt, tag_color, tag, text_color, message])
+
+
+## Même form que _boot_line mais avec le préfixe "W_HAT >" utilisé par le
+## nouveau log de boot, sans tag ":" intermédiaire.
+func _wh_line(prompt: String, tag_color: String, text_color: String, message: String) -> TerminalLine:
+	return TerminalLine.text_line("[color=%s]W_HAT[/color] [color=%s]>[/color] [color=%s]%s[/color]" % [tag_color, prompt, text_color, message])
