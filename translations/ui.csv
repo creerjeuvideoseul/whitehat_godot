@@ -11,10 +11,11 @@ OPTIONS_LANGUAGE_LABEL,Langue,Language
 OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
 OPTIONS_CLOSE,Fermer,Close
 OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
-OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées. Continuer ?","Warning, any unsaved progress from the last %d minutes will be lost. Continue?"
-NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie. Continuer ?","Warning, this will delete your current save. Continue?"
+OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées.","Warning, any unsaved progress from the last %d minutes will be lost."
+NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie.","Warning, this will delete your current save."
 COMMON_CONFIRM,Confirmer,Confirm
 COMMON_CANCEL,Annuler,Cancel
+COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
 DESKTOP_SEARCH_PLACEHOLDER,recherche OSINT,OSINT search
 DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
@@ -32,3 +33,5 @@ TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simpl
 TERMINAL_JEAN_DUMP_LOADING,Chargement des données...,Loading data...
 TERMINAL_BOOT_TITLE,Initialisation du système,System initialization
 TERMINAL_BOOT_STARTING_SESSION,Démarrage de la session...,Starting session...
+INTRO_LIVE_BADGE,EN DIRECT,LIVE
+INTRO_FLASH_INFO,"Flash info : Sentinelle, risque ou bénédiction ?","Breaking news: Sentinel, risk or blessing?"

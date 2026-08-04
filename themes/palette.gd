@@ -59,9 +59,15 @@ const CONSOLE_TEXT := Color(0.55, 0.63, 0.58, 1.0)
 
 ## Bright info-blue text — same role as TEXT_ACCENT (emphasis on a dark
 ## background) but blue, for distinguishing one speaker's name from the
-## default green (e.g. Gilles in the intro cutscene, vs. BUBBLE_BLUE which
+## default green (e.g. Gilles de la Touret in the intro cutscene, vs. BUBBLE_BLUE which
 ## is a background tint rather than a readable foreground color).
 const TEXT_BLUE_ACCENT := Color(0.4, 0.7, 1.0, 1.0)
+
+## Solid "breaking news" red fill — the intro's TV-broadcast overlay badges
+## (EN DIRECT / Flash info, see introduction.tscn). Distinct from TEXT_DANGER,
+## which is a pale red meant as *text* on a dark background, not a bold
+## solid fill of its own.
+const ALERT_RED_BG := Color(0.78, 0.09, 0.09, 1.0)
 
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
@@ -69,6 +75,11 @@ const TEXT_BLUE_ACCENT := Color(0.4, 0.7, 1.0, 1.0)
 const SIZE_SMALL := 20
 const SIZE_BODY := 22
 const SIZE_SUBTITLE := 26
+## Référence du projet pour le corps de texte "mis en avant" (2026-08-04) —
+## la taille du DialogueLabel de l'intro (dialogue_balloon.tscn) est celle à
+## laquelle tout le reste doit s'aligner par défaut : bandeaux/incrustations,
+## messages d'avertissement, etc. Ne s'en écarter que si un élément a une
+## contrainte de place physique qui l'exige (ex. un petit badge).
 const SIZE_LARGE := 30
 const SIZE_TITLE := 32
 const SIZE_MENU_ITEM := 38

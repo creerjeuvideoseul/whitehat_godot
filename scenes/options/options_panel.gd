@@ -33,7 +33,7 @@ func _ready() -> void:
 	_quit_game_button.pressed.connect(_on_quit_game_pressed)
 	_quit_game_confirm_dialog.confirmed.connect(_on_quit_game_confirmed)
 	_quit_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
-	_quit_game_confirm_dialog.get_label().add_theme_color_override("font_color", Palette.TEXT_DANGER)
+	DialogStyle.style_warning_dialog(_quit_game_confirm_dialog)
 
 	_close_button.pressed.connect(_on_close_pressed)
 
@@ -65,8 +65,10 @@ func _on_quit_game_pressed() -> void:
 	# Explicit tr() (rather than the auto-translation the rest of the project
 	# relies on) because this text needs a value substituted in before
 	# display; auto-translation only works on the raw key assigned to .text.
+	# "Continuer ?" sur sa propre ligne : voir main_menu.gd pour la même
+	# construction sur l'avertissement d'écrasement de partie.
 	var minutes := SaveManager.get_minutes_since_checkpoint()
-	_quit_game_confirm_dialog.dialog_text = tr("OPTIONS_QUIT_WARNING") % minutes
+	_quit_game_confirm_dialog.dialog_text = (tr("OPTIONS_QUIT_WARNING") % minutes) + "\n" + tr("COMMON_CONTINUE_QUESTION")
 	_quit_game_confirm_dialog.popup_centered()
 
 

@@ -308,6 +308,5 @@ autostart = true
 unique_name_in_owner = true
 title = "MENU_NEW_GAME"
 initial_position = 1
-size = Vector2i(560, 180)
+size = Vector2i(720, 320)
 ok_button_text = "COMMON_CONFIRM"
-dialog_text = "NEWGAME_OVERWRITE_WARNING"

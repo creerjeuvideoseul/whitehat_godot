@@ -33,6 +33,12 @@ const BACKGROUNDS := {
 
 @onready var _background: TextureRect = %Background
 @onready var _background_incoming: TextureRect = %BackgroundIncoming
+## Habillage "JT en direct" superposé à toutes les images de cette cutscene
+## uniquement (voir introduction.tscn) — jamais réutilisé par les dialogues
+## suivants du jeu, qui passent par chat_window/conversation_view et non par
+## cette scène.
+@onready var _live_badge: Control = %LiveBadge
+@onready var _flash_info_banner: Control = %FlashInfoBanner
 
 var _balloon: DialogueBalloon
 var _dissolve_tween: Tween
@@ -51,7 +57,7 @@ func _ready() -> void:
 	DialogueManager.dialogue_ended.connect(_on_dialogue_ended)
 
 	_balloon = DialogueManager.show_dialogue_balloon_scene(DIALOGUE_BALLOON, INTRO_DIALOGUE)
-	_balloon.character_name_colors = { "Gilles": Palette.TEXT_BLUE_ACCENT }
+	_balloon.character_name_colors = { "Gilles de la Touret": Palette.TEXT_BLUE_ACCENT }
 	_balloon.dialogue_line_shown.connect(_on_dialogue_line_shown)
 
 	MusicPlayer.play(INTRO_MUSIC, MUSIC_FADE_SECONDS)
@@ -96,7 +102,13 @@ func _on_dialogue_line_shown(character: String, text: String) -> void:
 
 ## Molette haut = une image en arrière, molette bas = une image en avant —
 ## bloqué à l'historique déjà vu, en lecture seule (voir _history plus haut).
-func _unhandled_input(event: InputEvent) -> void:
+##
+## _input() plutôt que _unhandled_input() : la balloon de dialogue couvre tout
+## l'écran avec mouse_filter = STOP (nécessaire pour capturer les clics qui
+## avancent le dialogue), ce qui arrête tout événement souris avant qu'il
+## n'atteigne _unhandled_input — la molette n'arrivait donc jamais ici.
+## _input() est appelé avant le passage GUI, donc insensible à ce filtre.
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_rewind(-1)
@@ -107,6 +119,16 @@ func _unhandled_input(event: InputEvent) -> void:
 func _rewind(step: int) -> void:
 	var target_index: int = _history_index + step
 	if target_index < 0 or target_index >= _history.size():
+		return
+
+	# Ne pas quitter la ligne live tant qu'elle est en train de se taper :
+	# show_history_line() écrase le texte du DialogueLabel pendant que sa
+	# coroutine de frappe (type_out()/await finished_typing) est encore en
+	# cours dessus, ce qui la fait se terminer prématurément sur un texte qui
+	# n'est plus le bon — et laisse ensuite le dialogue coincé (is_waiting_for_input
+	# jamais restauré), le clic gauche ne faisant plus rien.
+	var is_live: bool = _history_index == _history.size() - 1
+	if is_live and step < 0 and _balloon.dialogue_label.is_typing:
 		return
 
 	_history_index = target_index
@@ -128,6 +150,8 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 	await SceneTransition.fade_out()
 	_background.hide()
 	_background_incoming.hide()
+	_live_badge.hide()
+	_flash_info_banner.hide()
 	SceneTransition.fade_in()
 
 	await _play_boot_terminal()

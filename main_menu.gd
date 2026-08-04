@@ -25,7 +25,12 @@ func _ready() -> void:
 
 	_new_game_confirm_dialog.confirmed.connect(_start_new_game)
 	_new_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
-	_new_game_confirm_dialog.get_label().add_theme_color_override("font_color", Palette.TEXT_DANGER)
+	# "Continuer ?" sur sa propre ligne : construit en code plutôt qu'en dur
+	# dans le .csv, un saut de ligne réel dans une cellule CSV n'étant pas
+	# fiable à l'import (le parseur de Godot lit une ligne physique à la
+	# fois) — voir aussi options_panel.gd pour l'avertissement de sortie.
+	_new_game_confirm_dialog.dialog_text = tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("COMMON_CONTINUE_QUESTION")
+	DialogStyle.style_warning_dialog(_new_game_confirm_dialog)
 
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()

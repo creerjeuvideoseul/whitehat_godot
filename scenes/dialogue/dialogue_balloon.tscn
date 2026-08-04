@@ -73,7 +73,7 @@ theme_override_font_sizes/normal_font_size = 30
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
-text = "Karine"
+text = "Karine Delonay"
 
 [node name="DialogueLabel" type="RichTextLabel" parent="Balloon/TextBoxAnchor/TextBox/Margin/VBox"]
 unique_name_in_owner = true

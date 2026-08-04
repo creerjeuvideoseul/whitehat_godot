@@ -17,7 +17,7 @@ signal dialogue_line_shown(character: String, text: String)
 ## Nom de personnage -> couleur du pseudo dans l'encart de discussion. Vide
 ## par défaut (le vert de CharacterLabel dans la scène s'applique alors tel
 ## quel) — à définir par l'appelant avant start() pour distinguer un
-## personnage (ex: Gilles en bleu dans l'intro, voir introduction.gd).
+## personnage (ex: Gilles de la Touret en bleu dans l'intro, voir introduction.gd).
 var character_name_colors: Dictionary = {}
 
 var temporary_game_states: Array = []
@@ -65,8 +65,11 @@ func _ready() -> void:
 		start()
 
 
-func _unhandled_input(_event: InputEvent) -> void:
-	if will_block_other_input:
+func _unhandled_input(event: InputEvent) -> void:
+	# "ui_cancel" reste toujours libre : c'est le raccourci global du menu
+	# Options (voir OptionsMenu autoload) — sans cette exception, ÉCHAP ne
+	# marchait plus du tout tant qu'une balloon était affichée (ex: l'intro).
+	if will_block_other_input and not event.is_action(&"ui_cancel"):
 		get_viewport().set_input_as_handled()
 
 
@@ -198,11 +201,14 @@ func _on_balloon_gui_input(event: InputEvent) -> void:
 	if not is_waiting_for_input: return
 	if dialogue_line.responses.size() > 0: return
 
-	get_viewport().set_input_as_handled()
-
+	# Ne marque géré que ce qu'on avance réellement — sinon ÉCHAP (ou toute
+	# autre touche) était avalé ici sans raison à chaque ligne en attente de
+	# clic, empêchant le raccourci global du menu Options de le recevoir.
 	if event is InputEventMouseButton and event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
+		get_viewport().set_input_as_handled()
 		next(dialogue_line.next_id)
 	elif event.is_action_pressed(next_action) and get_viewport().gui_get_focus_owner() == balloon:
+		get_viewport().set_input_as_handled()
 		next(dialogue_line.next_id)
 
 

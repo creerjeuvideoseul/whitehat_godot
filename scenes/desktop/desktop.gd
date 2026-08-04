@@ -21,6 +21,11 @@ const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialo
 ## you open a window" system yet (icons, notifications, ...), so this is
 ## provisional wiring to keep everything testable end to end.
 
+## Laisse le joueur "seul" sur le bureau un court instant avant que la
+## fenêtre de discussion n'apparaisse, plutôt que de la voir surgir
+## immédiatement à l'arrivée sur le bureau.
+const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
+
 ## Jean only shows up in the sidebar once AnonGhost's briefing is over, with
 ## a short pause first so the two don't blur together.
 const JEAN_REVEAL_DELAY_SECONDS := 1.0
@@ -40,6 +45,7 @@ var _clue_board_window_title: String = ""
 
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
+	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
 	_open_window(_build_chat_window())
 
 
