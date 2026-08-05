@@ -45,3 +45,11 @@ PHONE_ICON_VAULT,Coffre-fort,Vault
 DESKTOP_SEARCH_BUTTON,Rechercher,Search
 OSINT_WINDOW_TITLE,Recherche OSINT,OSINT search
 OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.
+MAIL_SECTION_TITLE,Mail du téléphone d'Alizée,Alizée's phone mail
+MAIL_TAB_SENT,ENVOYÉS,SENT
+MAIL_TAB_RECEIVED,REÇUS,RECEIVED
+MAIL_NO_SELECTION,Sélectionnez un mail pour l'afficher.,Select a mail to view it.
+MAIL_ENCRYPTED_TITLE,********* Crypté *********,********* Encrypted *********
+MAIL_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'application coffre fort du téléphone.","******** Encrypted ********** Please unlock the phone's vault app."
+MAIL_FROM_LABEL,De :,From:
+MAIL_TO_LABEL,À :,To:

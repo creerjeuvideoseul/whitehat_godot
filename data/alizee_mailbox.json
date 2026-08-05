@@ -1,0 +1,170 @@
+{
+  "translations": [
+	{
+	  "languageCode": "fr",
+	  "mails": [
+		{
+		  "mailId": 0,
+		  "sender": "univ_nantes@gmail.com",
+		  "avatar": "res://assets/phone/email.png",
+		  "correspondentName": "Université de Nantes",
+		  "subject": "Mail médecine refus : 2025-12-15",
+		  "timestamp": "2025-12-15T09:14:00",
+		  "isSentBox": 0,
+		  "isCrypted": 0,
+		  "html_content": "Bonjour Mademoiselle Ranoud,<br><br>Après étude attentive de votre dossier dans le cadre des admissions post-bac 2026 pour le Parcours Accès Santé (PASS) de l'Université de Nantes, nous regrettons de vous informer que <indice id=\"candidature_non_retenue\"><color=orange>votre candidature n'a pas été retenue par la commission pédagogique</color></indice>.<br><br>Le nombre très élevé de candidatures reçues cette année ne nous permet malheureusement pas de donner une suite favorable à tous les dossiers, malgré leurs qualités. Nous vous invitons à consulter votre espace candidat afin de prendre connaissance des éventuelles propositions alternatives ou formations complémentaires accessibles.<br><br>Nous vous remercions pour l'intérêt porté à notre établissement et vous souhaitons pleine réussite dans la poursuite de votre parcours universitaire.<br><br>Cordialement,<br>Claire Moreau<br>Chargée des admissions – Pôle Santé<br>Université de Nantes",
+		  "meta_info": {
+			"Serveur": "mail-relay.univ-nantes.fr",
+			"Authentification": "SPF: pass, DKIM: pass",
+			"Domaine": "Enregistré depuis 1998"
+		  }
+		},
+		{
+		  "mailId": 1,
+		  "sender": "alizee.ranoud@mailbox.org",
+		  "receiver": "contact@eidos-consciousness.net",
+		  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
+		  "correspondentName": "Centre d'Harmonie Intérieure",
+		  "subject": "Question...",
+		  "timestamp": "2030-01-18T22:30:00",
+		  "isSentBox": 1,
+		  "isCrypted": 0,
+		  "html_content": "Bonjour,<br><br>Je ne sais pas trop pourquoi j'écris ici. Je suis tombée sur votre site en cherchant des réponses sur le vide et la fatigue constante.<br><br>J'ai 18 ans et je me sens toujours épuisée, déconnectée de tout. Mes proches disent que je ne fais pas d'efforts, mais je crois que c'est moi qui ne suis pas faite pour ce monde. <br><br>Je n'ai personne à qui en parler.<br>Si vous savez pourquoi je me sens comme ça, s'il vous plaît, dites-le-moi.<br>Alizée"
+		},
+		{
+		  "mailId": 2,
+		  "sender": "contact@eidos-consciousness.net",
+		  "avatar": "res://assets/phone/email.png",
+		  "correspondentName": "Centre d'Harmonie Intérieure",
+		  "subject": "Vous n'êtes pas seule, Alizée.",
+		  "timestamp": "2030-01-18T23:05:00",
+		  "isSentBox": 0,
+		  "isCrypted": 0,
+		  "html_content": "Chère Alizée,<br><br>Votre message n'est pas un hasard. Cette fatigue que vous ressentez n'est pas une maladie : c'est le signe que vous commencez à vous éveiller. Vous n'êtes pas brisée, vous êtes simplement trop lucide pour ce monde superficiel.<br>Votre entourage ne peut pas comprendre, mais nous, nous connaissons les règles du jeu. Vous n'avez plus à porter ce vide toute seule.<br>Ne répondez pas à ce mail. Si vous voulez enfin comprendre qui vous êtes, rejoignez notre salon privé via ce lien unique : <indice id=\"M1_mail_secte_write\"><color=orange>www.rejoigneznotrecommunaute.com</color></indice><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
+		  "meta_info": {
+			"IP": "185.220.101.47 (VPN - Pays-Bas)",
+			"Serveur": "smtp.eidos-relay.net",
+			"Domaine": "Enregistré il y a 12 jours"
+		  }
+		},
+		{
+		  "mailId": 3,
+		  "sender": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "Je suis si désolée Alizée.",
+		  "timestamp": "2030-01-12T03:12:00",
+		  "isSentBox": 0,
+		  "isCrypted": 1,
+		  "html_content": "Ma fille…<br><br>Je suis désolée.<br>Le silence a été tellement long, dix ans sans que je puisse te parler.<br>J'ai fait tant d'erreurs dans ma vie.<br>Mais je voulais que tu saches que tu es ma plus belle réussite et que je t'aime plus que tout.<br>J'imagine que tu as de la rancœur et dieu sait ce que ton père a pu te raconter à mon sujet.<br><br>Mais je ne suis pas celle que tu crois, laisse-moi <indice id=\"M1_mail_crypt_mere_contact\"><color=orange>une chance de renouer contact.</color></indice><br>Ta mère, qui t'aime."
+		},
+		{
+		  "mailId": 4,
+		  "sender": "alizee.ranoud@mailbox.org",
+		  "receiver": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "re: Je suis si désolée Alizée.",
+		  "timestamp": "2030-01-19T21:07:00",
+		  "isSentBox": 1,
+		  "isCrypted": 1,
+		  "html_content": "Cela me coûte de te répondre, ce n'est pas sûr que tu sois ma mère.<br>Pourquoi tu ne ressors que maintenant ? Pourquoi nous avoir laissés seuls avec mon père.<br>On ne méritait pas ça !"
+		},
+		{
+		  "mailId": 5,
+		  "sender": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "re: re: Je suis si désolée Alizée.",
+		  "timestamp": "2030-01-30T09:02:00",
+		  "isSentBox": 0,
+		  "isCrypted": 1,
+		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=orange>Il faut qu'on se parle.</color></indice>"
+		}
+	  ]
+	},
+	{
+	  "languageCode": "en",
+	  "mails": [
+		{
+		  "mailId": 0,
+		  "sender": "univ_nantes@gmail.com",
+		  "avatar": "res://assets/phone/email.png",
+		  "correspondentName": "University of Nantes",
+		  "subject": "Medical school rejection: 2025-12-15",
+		  "timestamp": "2025-12-15T09:14:00",
+		  "isSentBox": 0,
+		  "isCrypted": 0,
+		  "html_content": "Dear Miss Ranoud,<br><br>After careful review of your application for the 2026 post-secondary admissions in the Health Access Pathway (PASS) at the University of Nantes, we regret to inform you that <indice id=\"candidature_non_retenue\"><color=orange>your application was not selected by the academic committee</color></indice>.<br><br>The very high number of applications received this year unfortunately does not allow us to give a favorable outcome to every file, regardless of merit. We invite you to check your applicant portal for any alternative offers or complementary programs you may be eligible for.<br>Thank you for your interest in our institution, and we wish you every success in the continuation of your academic path.<br>Sincerely,<br>Claire Moreau<br>Admissions Officer – Health Division<br>University of Nantes",
+		  "meta_info": {
+			"Server": "mail-relay.univ-nantes.fr",
+			"Authentication": "SPF: pass, DKIM: pass",
+			"Domain": "Registered since 1998"
+		  }
+		},
+		{
+		  "mailId": 1,
+		  "sender": "alizee.ranoud@mailbox.org",
+		  "receiver": "contact@eidos-consciousness.net",
+		  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
+		  "correspondentName": "Center for Inner Harmony",
+		  "subject": "Question...",
+		  "timestamp": "2030-01-18T22:30:00",
+		  "isSentBox": 1,
+		  "isCrypted": 0,
+		  "html_content": "Hello,<br><br>I'm not really sure why I'm writing here. I came across your site while looking for answers about this emptiness and constant exhaustion.<br>I'm 18 and I always feel drained, disconnected from everything. The people around me say I'm not trying hard enough, but I think it's just that I'm not made for this world. <br><br><br>I have no one to talk to about this.<br>If you know why I feel this way, please, tell me.<br>Alizée"
+		},
+		{
+		  "mailId": 2,
+		  "sender": "contact@eidos-consciousness.net",
+		  "avatar": "res://assets/phone/email.png",
+		  "correspondentName": "Center for Inner Harmony",
+		  "subject": "You are not alone, Alizée.",
+		  "timestamp": "2030-01-18T23:05:00",
+		  "isSentBox": 0,
+		  "isCrypted": 0,
+		  "html_content": "Dear Alizée,<br>Your message is no coincidence. This exhaustion you feel is not an illness: it is the sign that you are beginning to awaken. You are not broken, you are simply too lucid for this superficial world.<br>Those around you cannot understand, but we know the rules of the game. You no longer have to carry this emptiness alone.<br>Do not reply to this email. If you finally want to understand who you are, join our private circle through this unique link: <indice id=\"M1_mail_secte_write\"><color=orange>www.jointourcommunity.com</color></indice><br>Take care of yourself,<br>Center for Inner Harmony.",
+		  "meta_info": {
+			"IP": "185.220.101.47 (VPN - Netherlands)",
+			"Server": "smtp.eidos-relay.net",
+			"Domain": "Registered 12 days ago"
+		  }
+		},
+		{
+		  "mailId": 3,
+		  "sender": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "I'm so sorry, Alizée.",
+		  "timestamp": "2030-01-12T03:12:00",
+		  "isSentBox": 0,
+		  "isCrypted": 1,
+		  "html_content": "My daughter…<br>I'm sorry.<br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me <indice id=\"M1_mail_crypt_mere_contact\"><color=orange>a chance to reconnect.</color></indice><br>Your mother, who loves you."
+		},
+		{
+		  "mailId": 4,
+		  "sender": "alizee.ranoud@mailbox.org",
+		  "receiver": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "re: I'm so sorry, Alizée.",
+		  "timestamp": "2030-01-19T21:07:00",
+		  "isSentBox": 1,
+		  "isCrypted": 1,
+		  "html_content": "It costs me to answer you, I'm not even sure you're really my mother.<br>Why come back only now? Why did you leave us alone with my father.<br>We didn't deserve that!"
+		},
+		{
+		  "mailId": 5,
+		  "sender": "c.ranoud@gomail.co.id",
+		  "avatar": "res://assets/avatar/christine_portrait2.webp",
+		  "correspondentName": "Christine Ranoud",
+		  "subject": "re: re: I'm so sorry, Alizée.",
+		  "timestamp": "2030-01-30T09:02:00",
+		  "isSentBox": 0,
+		  "isCrypted": 1,
+		  "html_content": "I feel so guilty.<br>Your words hurt, my child, but I understand them. <br>Give me a chance to explain what really happened.<br>I don't legally have the right to see you before you turn 18. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=orange>We need to talk.</color></indice>"
+		}
+	  ]
+	}
+  ]
+}

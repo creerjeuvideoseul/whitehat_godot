@@ -272,5 +272,20 @@ func _on_phone_icon_pressed(section_id: String) -> void:
 	for child in _phone_section_host.get_children():
 		child.queue_free()
 
-	_phone_section_host.add_child(PHONE_SECTIONS[section_id].instantiate())
+	# has_signal() plutôt qu'un type précis : les sections (sms/mail/galerie/
+	# coffre) n'ont pas de classe de base commune (voir PHONE_SECTIONS), et
+	# seule MailSection propose un bouton X pour l'instant.
+	var section: Node = PHONE_SECTIONS[section_id].instantiate()
+	if section.has_signal("close_requested"):
+		section.close_requested.connect(_on_phone_section_close_requested)
+	_phone_section_host.add_child(section)
 	_phone_section_host.visible = true
+
+
+## Le X d'une section (voir MailSection) ramène le téléphone à son écran
+## d'accueil — les icônes seules, sans contenu ouvert — comme avant qu'aucune
+## icône n'ait encore été pressée.
+func _on_phone_section_close_requested() -> void:
+	for child in _phone_section_host.get_children():
+		child.queue_free()
+	_phone_section_host.visible = false

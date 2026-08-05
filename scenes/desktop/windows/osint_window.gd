@@ -160,7 +160,7 @@ func _build_identity_block(character: Dictionary, keys: Dictionary) -> Control:
 ## ligne — pour que toutes les valeurs d'une fiche démarrent alignées sur la
 ## même colonne, quelle que soit la longueur du libellé.
 func _build_field_row(label: String, raw_value: String) -> Control:
-	var value := _resolve_indice_tags(raw_value)
+	var value := RichTextMarkup.resolve_indice_tags(raw_value)
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
@@ -204,7 +204,7 @@ func _build_note_section(raw_note: String) -> Control:
 
 
 func _build_note(raw_note: String) -> RichTextLabel:
-	var note := _resolve_indice_tags(raw_note)
+	var note := RichTextMarkup.resolve_indice_tags(raw_note)
 
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true
@@ -215,17 +215,3 @@ func _build_note(raw_note: String) -> RichTextLabel:
 	rich.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	rich.text = "[i]%s[/i]" % note
 	return rich
-
-
-## Le JSON marque un indice à débloquer avec une balise perso <indice
-## id="..."> (pas du BBCode natif — évite d'écrire un RichTextEffect
-## personnalisé juste pour ça) : dès qu'une fiche l'affichant est montrée,
-## l'indice se débloque — comme une ligne de dialogue avec [#indice=xxx] —
-## puis la balise est retirée pour ne laisser que le texte, entouré du
-## BBCode natif ([color=...]) déjà présent dans le JSON autour d'elle.
-func _resolve_indice_tags(text: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("<indice id=\"([^\"]+)\">(.*?)</indice>")
-	for result in regex.search_all(text):
-		ClueManager.unlock(result.get_string(1))
-	return regex.sub(text, "$2", true)
