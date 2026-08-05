@@ -1,33 +1,31 @@
 extends Control
 class_name ClueBoard
 ## Le "tableau d'enquête" d'une mission : un avatar par catégorie/personnage
-## (150x150), et pour chacun les indices qui lui sont associés, reliés par un
-## trait. Un indice verrouillé affiche un texte de substitution ; une fois
-## débloqué (ClueManager.unlock, déclenché par le tag [#indice=xxx] d'une
-## ligne de dialogue), son vrai texte apparaît — sans qu'il faille rouvrir la
-## fenêtre. Générique : entièrement piloté par ClueManager, donc réutilisable
-## tel quel pour les missions suivantes en changeant juste mission_id.
+## (150x150) en haut d'une colonne, avec sous lui un trait vertical ("tronc")
+## qui descend jusqu'au dernier indice de cette catégorie ; chaque indice est
+## relié à ce tronc par un trait horizontal perpendiculaire, façon
+## organigramme (un indice = une ligne). Un indice verrouillé affiche un
+## texte de substitution ; une fois débloqué (ClueManager.unlock, déclenché
+## par le tag [#indice=xxx] d'une ligne de dialogue), son vrai texte apparaît
+## — sans qu'il faille rouvrir la fenêtre. Générique : entièrement piloté par
+## ClueManager, donc réutilisable tel quel pour les missions suivantes en
+## changeant juste mission_id.
 
 const AVATAR_SIZE := 150.0
 const PANEL_WIDTH := 320.0
-## How far out a clue panel can sit from its avatar, before/after
-## _resolve_radius() grows it to guarantee no two panels in the same star
-## overlap (see PANEL_GAP_PADDING).
-const MIN_RADIUS := 90.0
-const MAX_RADIUS_STEP := 900.0
-## The star leaves a gap pointing "up" (270°) clear for the category label,
-## instead of surrounding the avatar the full 360°.
-const ARC_START_DEG := -60.0
-const ARC_SWEEP_DEG := 300.0
-## Forced clearance kept between two clue panels of the same star, on top of
-## whatever the radius already gives them — this is the "espace entre" fix.
-const PANEL_GAP_PADDING := 28.0
+## Longueur du trait horizontal entre le tronc et le panneau d'un indice.
+const BRANCH_LENGTH := 40.0
+## Espace vertical entre le bas de l'avatar et le centre du premier indice —
+## laisse un bout de tronc visible avant la première branche.
+const FIRST_BRANCH_GAP := 30.0
+## Espace vertical entre deux panneaux d'indices empilés dans la même colonne.
+const CLUE_VERTICAL_GAP := 20.0
 const CLUSTER_GUTTER := 70.0
 const LABEL_HEIGHT := 26.0
 const LABEL_GAP := 6.0
 const TOP_PADDING := 16.0
 const ROW_GUTTER := 60.0
-## No more than this many category stars share a row before wrapping.
+## No more than this many category columns share a row before wrapping.
 const COLS_PER_ROW := 3
 const LINE_COLOR := Color(0.22, 0.87, 0.45, 0.55)
 
@@ -79,7 +77,7 @@ func _build_board() -> void:
 	var row_start := 0
 	while row_start < categories.size():
 		var row_categories: Array = categories.slice(row_start, min(row_start + COLS_PER_ROW, categories.size()))
-		var cluster_top_y := cursor_y + LABEL_HEIGHT + LABEL_GAP + AVATAR_SIZE * 0.5
+		var avatar_top_y := cursor_y + LABEL_HEIGHT + LABEL_GAP
 
 		var x_cursor := 0.0
 		var row_bottom := cursor_y
@@ -87,19 +85,10 @@ func _build_board() -> void:
 
 		for categ in row_categories:
 			var clues := ClueManager.get_clues_for_category(mission_id, categ.id)
-
-			var panels: Array = []
-			for clue in clues:
-				panels.append(_build_clue_panel(clue.id))
-			var angles := _angles_for_count(clues.size())
-			var radius := _resolve_radius(panels, angles)
-
-			var cluster_width := radius * 2.0 + PANEL_WIDTH
-			var cluster_center_x := x_cursor + cluster_width * 0.5
-			var avatar_center := Vector2(cluster_center_x, cluster_top_y + radius)
+			var cluster_width: float = AVATAR_SIZE * 0.5 + BRANCH_LENGTH + PANEL_WIDTH
 
 			var avatar := _build_avatar(categ)
-			avatar.position = avatar_center - Vector2(AVATAR_SIZE, AVATAR_SIZE) * 0.5
+			avatar.position = Vector2(x_cursor, avatar_top_y)
 			add_child(avatar)
 			_avatars_by_category[categ.id] = avatar
 			row_nodes.append(avatar)
@@ -110,18 +99,28 @@ func _build_board() -> void:
 			label.add_theme_color_override("font_color", Palette.TEXT_ACCENT)
 			label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 			label.position = Vector2(x_cursor, cursor_y)
-			label.size = Vector2(cluster_width, LABEL_HEIGHT)
+			label.size = Vector2(AVATAR_SIZE, LABEL_HEIGHT)
 			add_child(label)
 			row_nodes.append(label)
 
-			for i in panels.size():
-				var panel: PanelContainer = panels[i]
-				panel.position = avatar_center + Vector2(cos(angles[i]), sin(angles[i])) * radius - panel.size * 0.5
+			# Le tronc part du centre de l'avatar ; chaque indice est empilé
+			# sous le précédent, dans la même colonne, décalé à droite du
+			# tronc d'une "branche" horizontale fixe.
+			var panel_x: float = x_cursor + AVATAR_SIZE * 0.5 + BRANCH_LENGTH
+			var next_top: float = avatar_top_y + AVATAR_SIZE + FIRST_BRANCH_GAP
+
+			var panels: Array = []
+			for clue in clues:
+				var panel := _build_clue_panel(clue.id)
+				panel.position = Vector2(panel_x, next_top)
 				add_child(panel)
+				panels.append(panel)
 				row_nodes.append(panel)
 				row_bottom = max(row_bottom, panel.position.y + panel.size.y)
+				next_top += panel.size.y + CLUE_VERTICAL_GAP
 
 			_panels_by_category[categ.id] = panels
+			row_bottom = max(row_bottom, avatar_top_y + AVATAR_SIZE)
 			x_cursor += cluster_width + CLUSTER_GUTTER
 
 		var row_width: float = x_cursor - CLUSTER_GUTTER
@@ -153,50 +152,6 @@ func _get_available_width() -> float:
 	if parent is Control and parent.size.x > 0.0:
 		return parent.size.x
 	return 2000.0
-
-
-func _angles_for_count(clue_count: int) -> Array:
-	var angles: Array = []
-	if clue_count <= 1:
-		angles.append(deg_to_rad(90.0))
-		return angles
-	for i in clue_count:
-		angles.append(deg_to_rad(ARC_START_DEG + i * (ARC_SWEEP_DEG / float(clue_count - 1))))
-	return angles
-
-
-## Grows the radius (starting from MIN_RADIUS) until none of this star's
-## panels overlap each other, given their real sizes — a geometric estimate
-## can't account for how tall a wrapped, unlocked clue panel ends up, so this
-## checks the actual rectangles instead of trusting a formula.
-func _resolve_radius(panels: Array, angles: Array) -> float:
-	var radius := MIN_RADIUS
-	while radius <= MAX_RADIUS_STEP:
-		if not _panels_overlap_at(panels, angles, radius):
-			return radius
-		radius += 20.0
-	return radius
-
-
-func _panels_overlap_at(panels: Array, angles: Array, radius: float) -> bool:
-	var rects: Array = []
-	for i in panels.size():
-		var panel: PanelContainer = panels[i]
-		var center: Vector2 = Vector2(cos(angles[i]), sin(angles[i])) * radius
-		rects.append([center - panel.size * 0.5, panel.size])
-
-	for i in rects.size():
-		for j in range(i + 1, rects.size()):
-			if _rects_overlap(rects[i][0], rects[i][1], rects[j][0], rects[j][1]):
-				return true
-	return false
-
-
-func _rects_overlap(a_pos: Vector2, a_size: Vector2, b_pos: Vector2, b_size: Vector2) -> bool:
-	var pad := Vector2(PANEL_GAP_PADDING, PANEL_GAP_PADDING) * 0.5
-	var a_min: Vector2 = a_pos - pad
-	var a_max: Vector2 = a_pos + a_size + pad
-	return a_min.x < b_pos.x + b_size.x and a_max.x > b_pos.x and a_min.y < b_pos.y + b_size.y and a_max.y > b_pos.y
 
 
 func _build_avatar(categ: ClueCategory) -> Control:
@@ -278,23 +233,53 @@ func _on_all_unlocked_changed() -> void:
 		_refresh_panel(panel, _clue_id_by_panel[panel])
 
 
-## The locked placeholder and the real clue text are rarely the same length,
-## so the panel needs to resize to fit whichever one it's showing now — and
-## the connecting line, which was drawn to the old size, needs a redraw too.
+## Le texte verrouillé et le texte réel d'un indice n'ont presque jamais la
+## même longueur : le panneau doit se redimensionner pour celui qu'il affiche
+## désormais. Comme les indices d'une même colonne sont maintenant empilés
+## les uns sous les autres (au lieu d'être en étoile), un changement de
+## hauteur doit aussi pousser vers le bas tous les panneaux suivants de la
+## colonne pour ne jamais les chevaucher.
 func _refresh_panel(panel: PanelContainer, clue_id: String) -> void:
 	var label: Label = panel.get_child(0)
+	var old_height := panel.size.y
 	_apply_panel_state(panel, label, clue_id)
 	panel.size = panel.get_combined_minimum_size()
+	var delta := panel.size.y - old_height
+	if delta != 0.0:
+		_shift_panels_below(panel, delta)
 	queue_redraw()
 
 
-## Center-to-center, like pins-and-string on a corkboard — the star shape
-## means a panel can be above, beside, or below its avatar, so there's no
-## single fixed edge (bottom, left, ...) to anchor from like a plain column.
+## Décale vers le bas tous les panneaux empilés sous `changed_panel` dans sa
+## colonne, pour absorber la variation de hauteur `delta`.
+func _shift_panels_below(changed_panel: PanelContainer, delta: float) -> void:
+	for category_id in _panels_by_category:
+		var panels: Array = _panels_by_category[category_id]
+		var index: int = panels.find(changed_panel)
+		if index == -1:
+			continue
+		for i in range(index + 1, panels.size()):
+			panels[i].position.y += delta
+		return
+
+
+## Un tronc vertical par catégorie, du bas de l'avatar jusqu'au dernier
+## indice, avec une branche horizontale perpendiculaire vers chaque panneau
+## — façon organigramme, un indice = une ligne.
 func _draw() -> void:
 	for category_id in _avatars_by_category:
 		var avatar: Control = _avatars_by_category[category_id]
-		var from: Vector2 = avatar.position + avatar.size * 0.5
-		for panel in _panels_by_category.get(category_id, []):
-			var to: Vector2 = panel.position + panel.size * 0.5
-			draw_line(from, to, LINE_COLOR, 2.0, true)
+		var panels: Array = _panels_by_category.get(category_id, [])
+		if panels.is_empty():
+			continue
+
+		var trunk_x: float = avatar.position.x + avatar.size.x * 0.5
+		var trunk_top: float = avatar.position.y + avatar.size.y
+		var trunk_bottom: float = trunk_top
+
+		for panel in panels:
+			var center_y: float = panel.position.y + panel.size.y * 0.5
+			trunk_bottom = max(trunk_bottom, center_y)
+			draw_line(Vector2(trunk_x, center_y), Vector2(panel.position.x, center_y), LINE_COLOR, 2.0, true)
+
+		draw_line(Vector2(trunk_x, trunk_top), Vector2(trunk_x, trunk_bottom), LINE_COLOR, 2.0, true)

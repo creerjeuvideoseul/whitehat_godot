@@ -42,3 +42,6 @@ PHONE_ICON_SMS,SMS,SMS
 PHONE_ICON_MAIL,Mail,Mail
 PHONE_ICON_GALLERY,Galerie,Gallery
 PHONE_ICON_VAULT,Coffre-fort,Vault
+DESKTOP_SEARCH_BUTTON,Rechercher,Search
+OSINT_WINDOW_TITLE,Recherche OSINT,OSINT search
+OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.

@@ -1,0 +1,17 @@
+IDMission;IDunique;IdCategUnique
+1;intro_anon_perseverant;AG
+1;M1_sms_o_18_ans;ALIZ
+1;M1_sms_cryp_m_bomb;ALIZ
+1;M1_sms_cryp_m_disparue;ALIZ
+1;M1_sms_concours_chant;ALIZ
+1;M1_mail_secte_write;ALIZ
+1;M1_mail_cryp_mere_rdv;ALIZ
+1;M1_sms_marek_application;MAREK
+1;M1_sms_cryp_m_baiser;MAREK
+1;M1_sms_Marek_parking;MAREK
+1;M1_sms_pere_sacrifice;JEAN
+1;M1_osint_alizee_pwa;COFFRE
+1;M1_osint_alizee_pwpere;COFFRE
+1;M1_img_bugsy;COFFRE
+1;M1_SOLUTION_OU;FIN
+1;M1_SOLUTION_MERE;FINSECONDAIRE

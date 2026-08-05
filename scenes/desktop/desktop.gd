@@ -7,6 +7,7 @@ extends Control
 
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
 const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
+const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
@@ -58,6 +59,12 @@ var _clue_board_window: ClueBoardWindow = null
 ## opposed to its own taskbar icon) can clear that now-stale icon.
 var _clue_board_window_title: String = ""
 
+## Même principe que _clue_board_window : une seule fenêtre OSINT réutilisée
+## d'une recherche à l'autre (jamais de doublon dans la taskbar), son contenu
+## étant entièrement remplacé à chaque recherche par OsintWindow.search().
+var _osint_window: OsintWindow = null
+var _osint_window_title: String = ""
+
 ## Le téléphone d'Alizée reste affiché en permanence une fois révélé — pas de
 ## fermeture/minimisation prévue, donc une seule instance possible (utile
 ## surtout pour éviter d'en recréer une seconde au retour d'une sauvegarde).
@@ -66,6 +73,7 @@ var _alizee_phone: AlizeePhone = null
 
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
+	_header.osint_search_requested.connect(_on_osint_search_requested)
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
 	# doit déjà être là, sans rejouer son animation d'apparition.
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
@@ -188,6 +196,8 @@ func _open_window(window) -> void:
 func _on_window_minimize_requested(window: Control, window_title: String) -> void:
 	if window == _clue_board_window:
 		_clue_board_window_title = window_title
+	elif window == _osint_window:
+		_osint_window_title = window_title
 	_footer.add_minimized_window(window_title, func() -> void: window.show())
 
 
@@ -204,6 +214,20 @@ func _on_clue_button_pressed() -> void:
 	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
 	_clue_board_window.mission_id = CURRENT_MISSION_ID
 	_open_window(_clue_board_window)
+
+
+## Une recherche OSINT réutilise toujours la même fenêtre (jamais de doublon
+## dans la taskbar) : elle se rouvre si elle était réduite, et son contenu
+## précédent est systématiquement remplacé par le nouveau résultat.
+func _on_osint_search_requested(query: String) -> void:
+	if is_instance_valid(_osint_window):
+		_footer.remove_minimized_window(_osint_window_title)
+		_osint_window.show()
+	else:
+		_osint_window = OSINT_WINDOW.instantiate()
+		_open_window(_osint_window)
+
+	_osint_window.search(query)
 
 
 ## Instancie le téléphone d'Alizée à gauche du bureau (une seule fois — il

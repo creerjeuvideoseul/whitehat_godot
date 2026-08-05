@@ -1,0 +1,9 @@
+IdCategUnique;CategorieLabel;Image;IsDisplay
+AG;CATEG_ANONGHOST;res://assets/avatar/anonghost_avatar.png;1
+ALIZ;CATEG_ALIZEE;res://assets/avatar/portrait_alizee_rond.webp;1
+MAREK;CATEG_MAREK;res://assets/avatar/portrait_marek.webp;1
+JEAN;CATEG_JEAN;res://assets/avatar/portrait_jean.webp;1
+COFFRE;CATEG_COFFRE;res://assets/avatar/icone_coffre.png;1
+MERE;CATEG_CHRISTINE;res://assets/avatar/christine_portrait2.webp;1
+FIN;CATEG_RESULTAT;res://assets/avatar/sentinelle_avatar.png;0
+FINSECONDAIRE;CATEG_RESULTAT;res://assets/avatar/sentinelle_avatar.png;0

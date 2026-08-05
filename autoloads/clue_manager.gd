@@ -1,10 +1,11 @@
 extends Node
 ## Autoload singleton : le domaine "collecte d'indices". Regroupe les
 ## définitions fixes par mission (catégories + indices, chargées une fois
-## depuis data/*.csv) et la progression du joueur (quels indices sont
-## débloqués), pour ne pas éclater ce domaine entre plusieurs autoloads.
+## depuis data/*.txt, format CSV/point-virgule) et la progression du joueur
+## (quels indices sont débloqués), pour ne pas éclater ce domaine entre
+## plusieurs autoloads.
 ##
-## Les tables CSV ne stockent que des identifiants ; le texte affiché passe
+## Ces tables ne stockent que des identifiants ; le texte affiché passe
 ## toujours par tr() sur label_key / l'IDunique lui-même (voir
 ## translations/indices.csv), exactement comme ui.csv pour le reste de l'UI.
 ##
@@ -12,8 +13,17 @@ extends Node
 ## (dialogue_manager), quel que soit l'écran qui l'affiche (balloon
 ## narratif, chat, futur mail/sms) — voir unlock_from_tags().
 
-const CATEGORIES_CSV_PATH := "res://data/clue_categories.csv"
-const CLUES_CSV_PATH := "res://data/clues.csv"
+## Extension .txt (pas .csv) volontairement : un .csv est automatiquement pris
+## en charge par l'importeur "CSV Translation" natif de Godot, qui ne conserve
+## que la ressource de traduction convertie à l'export — le fichier source
+## brut n'est alors plus lisible via FileAccess.open() dans un build exporté
+## (ça marchait dans l'éditeur car res:// pointe directement sur les fichiers
+## du projet). En .txt, Godot ne reconnaît aucun importeur : le fichier reste
+## un fichier brut normal, correctement inclus par le filtre d'export
+## "data/*.txt" (voir export_presets.cfg). Le format interne (point-virgule)
+## ne change pas.
+const CATEGORIES_CSV_PATH := "res://data/clue_categories.txt"
+const CLUES_CSV_PATH := "res://data/clues.txt"
 const CSV_DELIMITER := ";"
 
 ## Emis quand un nouvel indice est débloqué (pas rejoué si déjà connu) —

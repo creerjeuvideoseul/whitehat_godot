@@ -11,16 +11,30 @@ const BLINK_SECONDS := 1.4
 ## Bubbled up so the owning scene (desktop.gd) decides what opening "Indice"
 ## actually means (which mission, which window) — this header doesn't know.
 signal clue_button_pressed
+## Bubbled up with the raw (untrimmed) query text — desktop.gd owns what
+## "searching" actually opens/updates, this header only knows about the field.
+signal osint_search_requested(query: String)
 
 @onready var _tor_icon: TextureRect = %TorIcon
 @onready var _pseudo_label: Label = %PseudoLabel
 @onready var _clue_button: Button = %ClueButton
+@onready var _search_field: LineEdit = %SearchField
+@onready var _search_button: Button = %SearchButton
 
 
 func _ready() -> void:
 	_pseudo_label.text = "%s@whos:~" % PlayerSession.pseudo
 	_clue_button.pressed.connect(func() -> void: clue_button_pressed.emit())
+	_search_button.pressed.connect(_on_search_requested)
+	_search_field.text_submitted.connect(func(_text: String) -> void: _on_search_requested())
 	_start_tor_blink()
+
+
+func _on_search_requested() -> void:
+	var query := _search_field.text.strip_edges()
+	if query.is_empty():
+		return
+	osint_search_requested.emit(query)
 
 
 func _start_tor_blink() -> void:
