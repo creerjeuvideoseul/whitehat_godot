@@ -48,13 +48,6 @@ func _ready() -> void:
 	_select_tab(false)
 
 
-## Débloquer le coffre-fort du téléphone (fonctionnalité pas encore
-## développée) devra mettre ce flag à true pour que les mails cryptés
-## affichent enfin leur contenu réel — voir _is_vault_unlocked().
-func _is_vault_unlocked() -> bool:
-	return bool(StoryVars.mail_vault_unlocked)
-
-
 func _select_tab(is_sent: bool) -> void:
 	_showing_sent = is_sent
 	_sent_button.modulate = Color.WHITE if is_sent else DIMMED_TAB_MODULATE
@@ -102,7 +95,7 @@ func _build_mail_row(mail: MailEntry) -> Control:
 	info_box.add_child(name_label)
 
 	var date_label := Label.new()
-	date_label.text = MailEntry.format_timestamp(mail.timestamp)
+	date_label.text = PhoneTime.format_timestamp(mail.timestamp)
 	date_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
 	date_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 	info_box.add_child(date_label)
@@ -149,14 +142,14 @@ func _build_row_avatar(mail: MailEntry) -> Control:
 ## dans la liste comme dans le détail, on ne doit même pas savoir de quoi ça
 ## parle avant d'avoir ouvert le coffre.
 func _display_subject(mail: MailEntry) -> String:
-	if mail.is_crypted and not _is_vault_unlocked():
+	if mail.is_crypted and not PhoneVault.is_unlocked():
 		return tr("MAIL_ENCRYPTED_TITLE")
 	return mail.subject
 
 
 func _resolve_row_texture(mail: MailEntry) -> Texture2D:
 	if mail.is_crypted:
-		return PADLOCK_OPEN if _is_vault_unlocked() else PADLOCK_CLOSED
+		return PADLOCK_OPEN if PhoneVault.is_unlocked() else PADLOCK_CLOSED
 	if not mail.avatar_path.is_empty() and ResourceLoader.exists(mail.avatar_path):
 		return load(mail.avatar_path)
 	return null
@@ -223,7 +216,7 @@ func _build_detail_header(mail: MailEntry) -> Control:
 	row.add_child(title_label)
 
 	var date_label := Label.new()
-	date_label.text = MailEntry.format_timestamp(mail.timestamp)
+	date_label.text = PhoneTime.format_timestamp(mail.timestamp)
 	date_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
 	date_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
 	row.add_child(date_label)
@@ -271,9 +264,9 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	content.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	content.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 
-	if mail.is_crypted and not _is_vault_unlocked():
+	if mail.is_crypted and not PhoneVault.is_unlocked():
 		content.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
-		content.text = tr("MAIL_ENCRYPTED_PLACEHOLDER")
+		content.text = tr("VAULT_ENCRYPTED_PLACEHOLDER")
 	else:
 		var resolved := RichTextMarkup.resolve_indice_tags(mail.html_content)
 		content.text = RichTextMarkup.html_to_bbcode(resolved)

@@ -50,6 +50,9 @@ MAIL_TAB_SENT,ENVOYÉS,SENT
 MAIL_TAB_RECEIVED,REÇUS,RECEIVED
 MAIL_NO_SELECTION,Sélectionnez un mail pour l'afficher.,Select a mail to view it.
 MAIL_ENCRYPTED_TITLE,********* Crypté *********,********* Encrypted *********
-MAIL_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'application coffre fort du téléphone.","******** Encrypted ********** Please unlock the phone's vault app."
+VAULT_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'application coffre fort du téléphone.","******** Encrypted ********** Please unlock the phone's vault app."
 MAIL_FROM_LABEL,De :,From:
 MAIL_TO_LABEL,À :,To:
+SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
+SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
+SMS_MESSAGE_COUNT,%d messages,%d messages
