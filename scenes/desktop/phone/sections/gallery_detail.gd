@@ -103,7 +103,9 @@ func _build_description(post: GalleryPost) -> Control:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	var resolved := RichTextMarkup.resolve_indice_tags(post.description)
+	for clue_id in RichTextMarkup.extract_indice_ids(post.description):
+		ClueManager.unlock(clue_id)
+	var resolved := RichTextMarkup.strip_indice_tags(post.description)
 	label.text = RichTextMarkup.html_to_bbcode(resolved)
 	return label
 

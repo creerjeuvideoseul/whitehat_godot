@@ -38,6 +38,7 @@ var _database: MailDatabase
 var _showing_sent: bool = false
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
+var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
@@ -194,10 +195,16 @@ func _show_no_selection() -> void:
 func _show_mail(mail: MailEntry) -> void:
 	for child in _detail_root.get_children():
 		child.queue_free()
+	_reveal_tracker = null
 
 	_detail_root.add_child(_build_detail_header(mail))
 	_detail_root.add_child(_build_detail_sender_row(mail))
 	_detail_root.add_child(_build_content_frame(mail))
+	## Une fois le cadre attaché à l'arbre (pas avant : ses Control n'ont pas
+	## de position globale valide tant qu'ils sont détachés) — rattrape ce
+	## qui est déjà visible avant même de scroller.
+	if _reveal_tracker != null:
+		_reveal_tracker.check_visible()
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))
@@ -255,24 +262,41 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	frame.add_child(scroll)
 
-	var content := RichTextLabel.new()
-	content.bbcode_enabled = true
-	content.fit_content = true
-	content.scroll_active = false
-	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	content.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
-	content.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-
 	if mail.is_crypted and not PhoneVault.is_unlocked():
-		content.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
-		content.text = tr("VAULT_ENCRYPTED_PLACEHOLDER")
+		var locked_label := _build_body_label(tr("VAULT_ENCRYPTED_PLACEHOLDER"))
+		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
+		scroll.add_child(locked_label)
 	else:
-		var resolved := RichTextMarkup.resolve_indice_tags(mail.html_content)
-		content.text = RichTextMarkup.html_to_bbcode(resolved)
+		## Un corps de mail est un seul long texte, mais peut contenir un
+		## indice en plein milieu — on le découpe en segments (voir
+		## RichTextMarkup.split_by_indice) pour qu'IndiceRevealTracker sache
+		## quelle portion du texte doit vraiment être visible, pas juste
+		## "le RichTextLabel a un pixel dans le cadre".
+		_reveal_tracker = IndiceRevealTracker.new(scroll)
+		var box := VBoxContainer.new()
+		box.add_theme_constant_override("separation", 0)
+		for segment in RichTextMarkup.split_by_indice(mail.html_content):
+			var seg_label := _build_body_label(str(segment["text"]))
+			box.add_child(seg_label)
+			var clue_id: String = segment["clue_id"]
+			if not clue_id.is_empty():
+				_reveal_tracker.watch(seg_label, clue_id)
+		scroll.add_child(box)
 
-	scroll.add_child(content)
 	return frame
+
+
+func _build_body_label(raw_text: String) -> RichTextLabel:
+	var label := RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.fit_content = true
+	label.scroll_active = false
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
+	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
+	label.text = RichTextMarkup.html_to_bbcode(raw_text)
+	return label
 
 
 ## Repliée par défaut, dépliée au clic sur le bouton "VIEW METADATA" — garde

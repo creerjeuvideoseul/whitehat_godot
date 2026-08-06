@@ -40,6 +40,10 @@ const MESSAGE_TOP_MARGIN := 20
 var _database: SmsDatabase
 var _selected_conversation_id: int = -1
 var _conversation_rows: Dictionary = {}
+## Recréé à chaque conversation affichée — voir IndiceRevealTracker : un
+## indice au milieu de l'historique ne se débloque que quand son message
+## est scrollé jusqu'à devenir visible, pas dès que la conversation s'ouvre.
+var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
@@ -175,6 +179,7 @@ func _show_no_selection() -> void:
 func _show_conversation(conv: SmsConversation) -> void:
 	for child in _messages_list.get_children():
 		child.queue_free()
+	_reveal_tracker = IndiceRevealTracker.new(_messages_scroll)
 
 	if conv.is_crypted and not PhoneVault.is_unlocked():
 		var label := Label.new()
@@ -187,6 +192,9 @@ func _show_conversation(conv: SmsConversation) -> void:
 		for entry: SmsEntry in conv.messages:
 			_messages_list.add_child(_build_message_row(entry, conv))
 
+	## Rattrape ce qui est déjà visible avant même de scroller (ex. une
+	## conversation courte qui tient entièrement dans le cadre).
+	_reveal_tracker.check_visible()
 	_scroll_to_bottom()
 
 
@@ -266,10 +274,16 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message.add_theme_color_override("default_color", font_color)
 	message.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	var resolved := RichTextMarkup.resolve_indice_tags(entry.message)
+	var resolved := RichTextMarkup.strip_indice_tags(entry.message)
 	var bbcode := RichTextMarkup.html_to_bbcode(resolved)
 	message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
 	bubble.add_child(message)
+
+	## La bulle elle-même est l'unité "visible" surveillée — un message ne
+	## porte jamais qu'un seul indice dans les données actuelles, pas besoin
+	## d'une granularité plus fine qu'une bulle entière.
+	for clue_id in RichTextMarkup.extract_indice_ids(entry.message):
+		_reveal_tracker.watch(bubble, clue_id)
 
 	return bubble
 

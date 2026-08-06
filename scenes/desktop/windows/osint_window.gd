@@ -21,9 +21,13 @@ const LABEL_COLUMN_WIDTH := 280.0
 @onready var _title_label: Label = %TitleLabel
 @onready var _minimize_button: Button = %MinimizeButton
 @onready var _content_root: VBoxContainer = %ContentRoot
+@onready var _scroll: ScrollContainer = %Body
 
 var _dragging: bool = false
 var _database: OsintDatabase = OsintDatabase.new()
+## Recréé à chaque recherche — voir IndiceRevealTracker : une fiche plus
+## haute que la fenêtre peut porter un indice qui déborde du cadre visible.
+var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
@@ -36,12 +40,17 @@ func _ready() -> void:
 func search(query: String) -> void:
 	for child in _content_root.get_children():
 		child.queue_free()
+	_reveal_tracker = IndiceRevealTracker.new(_scroll)
 
 	var character := _database.search(query)
 	if character.is_empty():
 		_build_no_result()
 	else:
 		_build_profile(character)
+
+	## Rattrape ce qui est déjà visible avant même de scroller (le cas
+	## habituel : une fiche qui tient dans la fenêtre).
+	_reveal_tracker.check_visible()
 
 
 ## Comme ChatWindow.nudge_position : décale la fenêtre sans jamais la sortir
@@ -160,7 +169,7 @@ func _build_identity_block(character: Dictionary, keys: Dictionary) -> Control:
 ## ligne — pour que toutes les valeurs d'une fiche démarrent alignées sur la
 ## même colonne, quelle que soit la longueur du libellé.
 func _build_field_row(label: String, raw_value: String) -> Control:
-	var value := RichTextMarkup.resolve_indice_tags(raw_value)
+	var value := RichTextMarkup.strip_indice_tags(raw_value)
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
@@ -185,6 +194,12 @@ func _build_field_row(label: String, raw_value: String) -> Control:
 	value_rich.text = value
 	row.add_child(value_rich)
 
+	## La ligne entière (clé + valeur) est l'unité surveillée — un champ peut
+	## porter plusieurs indices à la fois (ex. les mots de passe), tous
+	## débloqués ensemble puisqu'ils sont physiquement côte à côte.
+	for clue_id in RichTextMarkup.extract_indice_ids(raw_value):
+		_reveal_tracker.watch(row, clue_id)
+
 	return row
 
 
@@ -204,7 +219,7 @@ func _build_note_section(raw_note: String) -> Control:
 
 
 func _build_note(raw_note: String) -> RichTextLabel:
-	var note := RichTextMarkup.resolve_indice_tags(raw_note)
+	var note := RichTextMarkup.strip_indice_tags(raw_note)
 
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true
@@ -214,4 +229,6 @@ func _build_note(raw_note: String) -> RichTextLabel:
 	rich.add_theme_color_override("default_color", Palette.CONSOLE_TEXT)
 	rich.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	rich.text = "[i]%s[/i]" % note
+	for clue_id in RichTextMarkup.extract_indice_ids(raw_note):
+		_reveal_tracker.watch(rich, clue_id)
 	return rich

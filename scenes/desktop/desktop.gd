@@ -289,3 +289,4 @@ func _on_phone_section_close_requested() -> void:
 	for child in _phone_section_host.get_children():
 		child.queue_free()
 	_phone_section_host.visible = false
+	_alizee_phone.clear_active_icon()

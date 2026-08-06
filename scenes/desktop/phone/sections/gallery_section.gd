@@ -57,16 +57,27 @@ func _build_thumbnail(post: GalleryPost) -> Control:
 	cell.custom_minimum_size = Vector2(THUMB_WIDTH, THUMB_IMAGE_HEIGHT)
 	cell.mouse_filter = Control.MOUSE_FILTER_STOP
 	cell.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	_style_cell(cell, false)
-	cell.mouse_entered.connect(func() -> void: _style_cell(cell, true))
-	cell.mouse_exited.connect(func() -> void: _style_cell(cell, false))
 	cell.gui_input.connect(_on_thumbnail_gui_input.bind(post))
 
 	var column := VBoxContainer.new()
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_theme_constant_override("separation", 0)
 	column.add_child(_build_thumbnail_image(post, locked))
 	column.add_child(_build_thumbnail_info(post, locked))
 	cell.add_child(column)
+
+	# Bordure de survol en calque séparé, ajouté APRÈS column pour se dessiner
+	# par-dessus : la vignette (fond blanc de l'image, fond sombre du bandeau
+	# d'info) est opaque et couvre toute la cellule sans marge, donc une
+	# bordure posée sur le panel de `cell` lui-même serait peinte EN DESSOUS et
+	# quasi entièrement recouverte (c'est ce qu'on voyait : un mince filet).
+	var border := Panel.new()
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_hover_border(border, false)
+	cell.add_child(border)
+
+	cell.mouse_entered.connect(func() -> void: _style_hover_border(border, true))
+	cell.mouse_exited.connect(func() -> void: _style_hover_border(border, false))
 
 	return cell
 
@@ -75,14 +86,14 @@ func _build_thumbnail(post: GalleryPost) -> Control:
 ## surbrillance et déjà le mécanisme utilisé partout ailleurs dans le projet
 ## (avatars, ligne sélectionnée de Mail/SMS) — pas besoin d'introduire un
 ## nouvel outil pour ça.
-func _style_cell(cell: PanelContainer, is_hovered: bool) -> void:
+func _style_hover_border(border: Panel, is_hovered: bool) -> void:
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0)
 	style.set_border_width_all(5 if is_hovered else 0)
 	style.border_color = Palette.TEXT_ACCENT
 	style.set_corner_radius_all(10)
 	style.set_content_margin_all(0)
-	cell.add_theme_stylebox_override("panel", style)
+	border.add_theme_stylebox_override("panel", style)
 
 
 ## L'image "colle les bords" de son cadre blanc (fond blanc demandé,

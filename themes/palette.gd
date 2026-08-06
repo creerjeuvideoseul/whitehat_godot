@@ -29,11 +29,6 @@ const TEXT_ACCENT := Color(0.24, 1.0, 0.5, 1.0)
 ## Locked/disabled UI (e.g. "Continuer" before any save exists).
 const TEXT_LOCKED := Color(0.4, 0.45, 0.42, 1.0)
 
-## Secondary system-monitor gauge fill (e.g. desktop MEM meter). CPU-style
-## gauges reuse BORDER_ACCENT directly rather than an alias — this is the
-## only gauge color that didn't already exist somewhere in the project.
-const GAUGE_MEM := Color(1.0, 0.65, 0.15, 1.0)
-
 ## App window background (dark green) — distinguishes an open window from
 ## the near-black desktop behind it.
 const WINDOW_BG := Color(0.03, 0.1, 0.07, 0.98)
@@ -68,6 +63,10 @@ const TEXT_BLUE_ACCENT := Color(0.4, 0.7, 1.0, 1.0)
 ## which is a pale red meant as *text* on a dark background, not a bold
 ## solid fill of its own.
 const ALERT_RED_BG := Color(0.78, 0.09, 0.09, 1.0)
+
+## Jaune vif, même rôle qu'ALERT_RED_BG (remplissage plein, pas du texte) —
+## palier intermédiaire du dégradé blanc → jaune → rouge des jauges CPU/MEM.
+const ALERT_YELLOW := Color(1.0, 0.84, 0.0, 1.0)
 
 ## Vert foncé discret — pour un texte "code/syntaxe" en petit, qui ne doit
 ## pas concurrencer TEXT_ACCENT/BORDER_ACCENT (ex. la légende technique en

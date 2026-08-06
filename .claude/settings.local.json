@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --editor --quit)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --quit)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path .)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(echo \"grep exit: $?\")",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 60608 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --quit scenes/login.tscn)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --quit scenes/welcome.tscn)",
+      "Bash(where godot *)",
+      "Bash(python3 -c ' *)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --editor --quit-after 60)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --script res://scenes/ui/_smoke_test_terminal.gd)",
+      "Read(//tmp/**)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --script res://scenes/ui/_smoke_test_boot_terminal.gd)",
+      "Bash(echo \"grep_exit:$?\")",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --script res://scenes/ui/_smoke_test_introduction.gd)",
+      "Bash(echo \"rescan_grep_exit:$?\")",
+      "Bash(timeout 20 \"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless res://scenes/introduction.tscn --quit-after 120)",
+      "Bash(echo \"run_grep_exit:$?\")",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --script res://scenes/ui/_smoke_test_click.gd)",
+      "Bash(echo \"exit:$?\")",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --editor --quit-after 60 > /tmp/godot_dialogstyle_rescan.log 2>&1 *)",
+      "Bash(python -c \"import json; json.load\\(open\\('c:/Users/pisto/Documents/white-hat/data/osint_characters.json', encoding='utf-8'\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import json; json.load\\(open\\('data/alizee_mailbox.json', encoding='utf-8'\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c ' *)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}
