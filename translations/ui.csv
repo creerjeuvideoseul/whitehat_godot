@@ -56,3 +56,6 @@ MAIL_TO_LABEL,À :,To:
 SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
 SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
 SMS_MESSAGE_COUNT,%d messages,%d messages
+GALLERY_SECTION_TITLE,Galerie du téléphone d'Alizée,Alizée's phone gallery
+GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
+GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
