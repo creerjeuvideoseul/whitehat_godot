@@ -8,6 +8,21 @@ class_name DesktopHeader
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
 
+## Retour visuel de découverte d'indice (en plus du son, voir SfxPlayer qui
+## écoute le même ClueManager.clue_unlocked) : (A) le bouton "pulse", (B) un
+## badge compteur s'y accroche tant qu'on n'a pas rouvert la fenêtre, (D) un
+## bandeau annonce le texte de l'indice puis disparaît.
+## Même délai que SfxPlayer avant de déclencher pulse/badge/bandeau — les deux
+## doivent rester synchronisés puisqu'ils réagissent au même instant perçu
+## par le joueur (voir sfx_player.gd::CLUE_REVEAL_DELAY_SECONDS).
+const CLUE_REVEAL_DELAY_SECONDS := 1.0
+const CLUE_PULSE_SECONDS := 0.2
+const CLUE_PULSE_SCALE := Vector2(1.15, 1.15)
+const TOAST_WIDTH := 470.0
+const TOAST_TOP_OFFSET := 100.0
+const TOAST_FADE_SECONDS := 0.3
+const TOAST_HOLD_SECONDS := 3.0
+
 ## Bubbled up so the owning scene (desktop.gd) decides what opening "Indice"
 ## actually means (which mission, which window) — this header doesn't know.
 signal clue_button_pressed
@@ -21,13 +36,154 @@ signal osint_search_requested(query: String)
 @onready var _search_field: LineEdit = %SearchField
 @onready var _search_button: Button = %SearchButton
 
+## (B) Badge compteur — construit en code plutôt que dans la .tscn, un simple
+## indicateur ne mérite pas un noeud dédié dans la scène.
+var _clue_badge: PanelContainer
+var _clue_badge_label: Label
+var _unseen_clue_count: int = 0
+
+var _pulse_tween: Tween
+
+## (D) Bandeau réutilisé pour chaque notification, avec une file d'attente :
+## plusieurs indices peuvent se débloquer dans la même frame (ex. les deux
+## mots de passe OSINT), ils s'affichent l'un après l'autre plutôt que de se
+## chevaucher.
+var _toast: PanelContainer
+var _toast_label: Label
+var _toast_queue: Array[String] = []
+var _toast_showing: bool = false
+
 
 func _ready() -> void:
 	_pseudo_label.text = "%s@whos:~" % PlayerSession.pseudo
-	_clue_button.pressed.connect(func() -> void: clue_button_pressed.emit())
+	_clue_button.pressed.connect(_on_clue_button_pressed)
 	_search_button.pressed.connect(_on_search_requested)
 	_search_field.text_submitted.connect(func(_text: String) -> void: _on_search_requested())
 	_start_tor_blink()
+	_build_clue_badge()
+	_build_toast()
+	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
+
+
+func _on_clue_button_pressed() -> void:
+	clue_button_pressed.emit()
+	_unseen_clue_count = 0
+	_update_clue_badge()
+
+
+## Un seul point d'écoute pour les 3 effets — le son suit déjà indépendamment
+## via SfxPlayer sur ce même signal, avec le même délai.
+func _on_clue_unlocked(clue_id: String) -> void:
+	await get_tree().create_timer(CLUE_REVEAL_DELAY_SECONDS).timeout
+	_pulse_clue_button()
+	_unseen_clue_count += 1
+	_update_clue_badge()
+	_queue_toast(clue_id)
+
+
+func _pulse_clue_button() -> void:
+	if is_instance_valid(_pulse_tween):
+		_pulse_tween.kill()
+	_clue_button.pivot_offset = _clue_button.size / 2.0
+	_pulse_tween = create_tween()
+	_pulse_tween.set_trans(Tween.TRANS_BACK)
+	_pulse_tween.tween_property(_clue_button, "scale", CLUE_PULSE_SCALE, CLUE_PULSE_SECONDS)
+	_pulse_tween.tween_property(_clue_button, "scale", Vector2.ONE, CLUE_PULSE_SECONDS)
+
+
+func _build_clue_badge() -> void:
+	_clue_badge = PanelContainer.new()
+	_clue_badge.custom_minimum_size = Vector2(26, 26)
+	_clue_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	## Ancré au coin haut-droit du bouton lui-même — un Button ne "layout" pas
+	## ses enfants comme un Container, on peut donc en poser un par-dessus
+	## librement (même principe d'overlay que la bordure de survol des
+	## vignettes de la galerie, voir gallery_section.gd).
+	_clue_badge.anchor_left = 1.0
+	_clue_badge.anchor_right = 1.0
+	_clue_badge.offset_left = -16.0
+	_clue_badge.offset_right = 10.0
+	_clue_badge.offset_top = -10.0
+	_clue_badge.offset_bottom = 16.0
+	_clue_badge.hide()
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Palette.TEXT_ACCENT
+	style.set_corner_radius_all(13)
+	style.content_margin_left = 4
+	style.content_margin_right = 4
+	_clue_badge.add_theme_stylebox_override("panel", style)
+
+	_clue_badge_label = Label.new()
+	_clue_badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_clue_badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_clue_badge_label.add_theme_color_override("font_color", Palette.WINDOW_BG)
+	_clue_badge_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	_clue_badge.add_child(_clue_badge_label)
+
+	_clue_button.add_child(_clue_badge)
+
+
+func _update_clue_badge() -> void:
+	_clue_badge_label.text = str(_unseen_clue_count)
+	_clue_badge.visible = _unseen_clue_count > 0
+
+
+func _build_toast() -> void:
+	_toast = PanelContainer.new()
+	_toast.custom_minimum_size = Vector2(TOAST_WIDTH, 0)
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.modulate.a = 0.0
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Palette.WINDOW_HEADER_BG
+	style.set_border_width_all(2)
+	style.border_color = Palette.BORDER_ACCENT
+	style.set_corner_radius_all(10)
+	style.content_margin_left = 20
+	style.content_margin_right = 20
+	style.content_margin_top = 14
+	style.content_margin_bottom = 14
+	_toast.add_theme_stylebox_override("panel", style)
+
+	_toast_label = Label.new()
+	_toast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_toast_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
+	_toast_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
+	_toast.add_child(_toast_label)
+
+	add_child(_toast)
+
+
+func _queue_toast(clue_id: String) -> void:
+	_toast_queue.append(clue_id)
+	if not _toast_showing:
+		_advance_toast_queue()
+
+
+func _advance_toast_queue() -> void:
+	if _toast_queue.is_empty():
+		_toast_showing = false
+		return
+	_toast_showing = true
+
+	## L'id de l'indice sert lui-même de clé de traduction (voir
+	## translations/indices.csv), comme sur le tableau d'enquête (ClueBoard).
+	var clue_id: String = _toast_queue.pop_front()
+	_toast_label.text = tr(clue_id)
+	## Aligné à gauche sous le bouton "COLLECTE D'INDICE" — _clue_button est
+	## niché dans Margin/Row/LeftGroup, pas un enfant direct du header, donc
+	## converti en position locale à la main (Control n'a pas de to_local(),
+	## contrairement à Node2D) — sous le header lui-même via TOAST_TOP_OFFSET.
+	var clue_button_left: float = _clue_button.get_global_rect().position.x - get_global_rect().position.x
+	_toast.position = Vector2(clue_button_left, TOAST_TOP_OFFSET)
+	_toast.modulate.a = 0.0
+
+	var tween := create_tween()
+	tween.tween_property(_toast, "modulate:a", 1.0, TOAST_FADE_SECONDS)
+	tween.tween_interval(TOAST_HOLD_SECONDS)
+	tween.tween_property(_toast, "modulate:a", 0.0, TOAST_FADE_SECONDS)
+	tween.tween_callback(_advance_toast_queue)
 
 
 func _on_search_requested() -> void:

@@ -1,5 +1,5 @@
 extends Control
-## Reusable options overlay: a 700x500 card shown on top of whatever scene
+## Reusable options overlay: a 700x580 card shown on top of whatever scene
 ## instances it. Opened/closed globally via OptionsMenu (ÉCHAP anywhere), and
 ## also reachable by clicking "Options" on the main menu. Add future settings
 ## as extra rows inside the "Body" VBox in options_panel.tscn.
@@ -13,6 +13,8 @@ const MAIN_MENU_SCENE := "res://main_menu.tscn"
 @onready var _en_button: Button = %EnButton
 @onready var _music_volume_slider: HSlider = %MusicVolumeSlider
 @onready var _music_volume_percent_label: Label = %MusicVolumePercentLabel
+@onready var _sfx_volume_slider: HSlider = %SfxVolumeSlider
+@onready var _sfx_volume_percent_label: Label = %SfxVolumePercentLabel
 @onready var _quit_game_button: Button = %QuitGameButton
 @onready var _quit_game_confirm_dialog: ConfirmationDialog = %QuitGameConfirmDialog
 @onready var _close_button: Button = %CloseButton
@@ -28,6 +30,10 @@ func _ready() -> void:
 	_music_volume_slider.value = Settings.music_volume
 	_update_music_volume_label(Settings.music_volume)
 	_music_volume_slider.value_changed.connect(_on_music_volume_changed)
+
+	_sfx_volume_slider.value = Settings.sfx_volume
+	_update_sfx_volume_label(Settings.sfx_volume)
+	_sfx_volume_slider.value_changed.connect(_on_sfx_volume_changed)
 
 	_quit_game_button.visible = get_tree().current_scene.scene_file_path != MAIN_MENU_SCENE
 	_quit_game_button.pressed.connect(_on_quit_game_pressed)
@@ -55,6 +61,15 @@ func _on_music_volume_changed(value: float) -> void:
 
 func _update_music_volume_label(value: float) -> void:
 	_music_volume_percent_label.text = "%d%%" % roundi(value * 100)
+
+
+func _on_sfx_volume_changed(value: float) -> void:
+	Settings.set_sfx_volume(value)
+	_update_sfx_volume_label(value)
+
+
+func _update_sfx_volume_label(value: float) -> void:
+	_sfx_volume_percent_label.text = "%d%%" % roundi(value * 100)
 
 
 func _on_close_pressed() -> void:

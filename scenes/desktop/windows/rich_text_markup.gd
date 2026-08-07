@@ -58,15 +58,34 @@ static func split_by_indice(text: String) -> Array[Dictionary]:
 	return segments
 
 
+## Les fichiers .dialogue (intro, chat) écrivent déjà du BBCode natif
+## directement (pas le pseudo-HTML de html_to_bbcode ci-dessous, qui ne
+## concerne que les données mail/SMS/OSINT) — [color=important] y est un
+## mot-clé sémantique ("mot à souligner"), pas un nom de couleur BBCode
+## valide, à résoudre vers Palette.TEXT_IMPORTANT avant affichage pour ne
+## changer la teinte qu'à un seul endroit (voir palette.gd).
+static func resolve_important_color(text: String) -> String:
+	return text.replace("[color=important]", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
+
+
 ## Convertit le pseudo-HTML très simple utilisé dans les données "brutes"
 ## (dump de mails, etc.) vers le BBCode natif d'un RichTextLabel : <br>,
 ## <color=...>/</color>, <b></b>, <i></i>. Volontairement limité à ces 4 tags
 ## — ce n'est pas un parseur HTML général, juste ce que les fiches du jeu
 ## utilisent réellement.
-static func html_to_bbcode(text: String) -> String:
+##
+## "indice" dans les données est un mot-clé sémantique ("passage indice mis
+## en évidence"), pas un nom de couleur à garder tel quel — il pointe sur
+## `highlight_color` pour ne changer la teinte qu'à un seul endroit (voir
+## palette.gd) plutôt que dans chaque fichier de données. Par défaut
+## Palette.TEXT_HIGHLIGHT (fond sombre, le cas courant — mail, galerie) ;
+## un appelant sur fond clair (bulles SMS pastel) passe
+## Palette.TEXT_HIGHLIGHT_ON_LIGHT à la place (voir Palette.is_light()).
+static func html_to_bbcode(text: String, highlight_color: Color = Palette.TEXT_HIGHLIGHT) -> String:
 	var result := text.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
 	result = result.replace("<b>", "[b]").replace("</b>", "[/b]")
 	result = result.replace("<i>", "[i]").replace("</i>", "[/i]")
+	result = result.replace("<color=indice>", "[color=#%s]" % highlight_color.to_html(false))
 	var color_regex := RegEx.new()
 	color_regex.compile("<color=([^>]+)>")
 	result = color_regex.sub(result, "[color=$1]", true)

@@ -9,6 +9,7 @@ const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
 const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
 const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
+const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
 ## non génériques : chaque section aura son propre gameplay à terme (SMS, mail,
@@ -79,6 +80,21 @@ func _ready() -> void:
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
 	if jean_done:
 		_reveal_alizee_phone(false)
+		# Sans ça, la conversation AnonGhost/Jean n'était accessible que
+		# pendant la session où elle s'est terminée : desktop.gd repart de
+		# zéro à chaque chargement de sauvegarde et ne la recréait jamais
+		# après coup, la rendant introuvable (aucune icône dans la taskbar).
+		# On la rouvre donc ici aussi, déjà entièrement déroulée (voir
+		# ConversationView._replay_saved_log()) plutôt que rejouée en direct,
+		# et sans le délai d'entrée qui n'a de sens qu'à la toute première
+		# arrivée sur le bureau. Réduite par défaut : à la reprise, le
+		# téléphone d'Alizée est le vrai point d'entrée, la conversation
+		# reste à un clic dans la taskbar sans s'imposer par-dessus.
+		var chat_window := _build_chat_window()
+		_open_window(chat_window)
+		chat_window.hide()
+		_on_window_minimize_requested(chat_window, tr("CHAT_WINDOW_TITLE"))
+		return
 
 	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
 	# reste quelque chose à découvrir dans le chat (première arrivée après
@@ -88,9 +104,23 @@ func _ready() -> void:
 	# ici : ça stranderait le joueur qui reprend juste après AnonGhost, sans
 	# autre moyen de rouvrir le chat pour parler à Jean (pas d'icône/taskbar
 	# pour ça pour l'instant).
-	if not jean_done:
-		await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
-		_open_window(_build_chat_window())
+	# Immédiat, sans attendre le délai d'ouverture du chat ci-dessous —
+	# seulement le tout premier contact, pas la reprise "entre AnonGhost et
+	# Jean" couverte par cette même branche (voir commentaire ci-dessus), où
+	# AnonGhost a déjà été rencontré lors d'une session précédente.
+	if not SaveManager.is_conversation_complete("anonghost"):
+		_show_player_thought(tr("THOUGHT_ANONGHOST_CONTACT"))
+
+	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
+	_open_window(_build_chat_window())
+
+
+## Petit encart "pensée du joueur" en bas de l'écran (voir player_thought.gd)
+## — se montre et se referme tout seul, rien à garder côté appelant.
+func _show_player_thought(text: String) -> void:
+	var thought: PlayerThought = PLAYER_THOUGHT.instantiate()
+	thought.text = text
+	_window_layer.add_child(thought)
 
 
 func _build_chat_window() -> ChatWindow:

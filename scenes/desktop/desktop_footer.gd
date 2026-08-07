@@ -33,6 +33,7 @@ func _update_clock_label() -> void:
 func add_minimized_window(window_title: String, on_restore: Callable) -> void:
 	var button := Button.new()
 	button.text = window_title
+	button.theme_type_variation = &"PrimaryButton"
 	button.pressed.connect(func() -> void:
 		on_restore.call()
 		button.queue_free()

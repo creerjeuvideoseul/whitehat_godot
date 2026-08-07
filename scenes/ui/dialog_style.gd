@@ -13,19 +13,24 @@ const BUTTON_PADDING := Vector2(28.0, 14.0)
 
 
 ## À appeler une fois la dialog par ailleurs configurée (titre, texte,
-## connexions de signal...) — ne touche que l'apparence.
+## connexions de signal...) — ne touche que l'apparence. Les boutons OK/Annuler
+## reprennent les Theme Type Variations du reste du jeu (voir main_theme.tres)
+## plutôt qu'un style dupliqué à la main — PrimaryButton pour "Confirmer",
+## et SecondaryButton (même police/taille/padding, fond+bordure gris, texte
+## noir) pour "Retour", pour bien le distinguer visuellement comme l'option
+## non destructive.
 static func style_warning_dialog(dialog: ConfirmationDialog) -> void:
 	dialog.get_label().add_theme_color_override("font_color", Palette.TEXT_DANGER)
 	dialog.get_label().add_theme_font_size_override("font_size", Palette.SIZE_LARGE)
-	_pad_button(dialog.get_ok_button())
-	_pad_button(dialog.get_cancel_button())
+	_pad_button(dialog.get_ok_button(), &"PrimaryButton")
+	_pad_button(dialog.get_cancel_button(), &"SecondaryButton")
 
 
-## Grossit le padding interne du bouton en dupliquant son style actuel
-## (garde son apparence — bordure, couleurs — telle quelle) plutôt qu'en
-## forçant une taille minimale, qui laissait un texte minuscule flotter au
-## milieu d'une grosse boîte au lieu d'un vrai padding autour du texte.
-static func _pad_button(button: Button) -> void:
+## Applique la variation de thème demandée puis grossit le padding interne
+## par-dessus (les variations du thème n'ont qu'un padding standard, pas
+## celui, plus généreux, voulu spécifiquement pour ces dialogs).
+static func _pad_button(button: Button, variation: StringName) -> void:
+	button.theme_type_variation = variation
 	button.add_theme_font_size_override("font_size", BUTTON_FONT_SIZE)
 	for state in [&"normal", &"hover", &"pressed", &"focus", &"disabled"]:
 		var style: StyleBox = button.get_theme_stylebox(state).duplicate()

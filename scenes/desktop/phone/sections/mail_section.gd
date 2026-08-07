@@ -195,7 +195,9 @@ func _show_no_selection() -> void:
 func _show_mail(mail: MailEntry) -> void:
 	for child in _detail_root.get_children():
 		child.queue_free()
-	_reveal_tracker = null
+	if _reveal_tracker != null:
+		_reveal_tracker.dispose()
+		_reveal_tracker = null
 
 	_detail_root.add_child(_build_detail_header(mail))
 	_detail_root.add_child(_build_detail_sender_row(mail))
@@ -274,6 +276,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		## "le RichTextLabel a un pixel dans le cadre".
 		_reveal_tracker = IndiceRevealTracker.new(scroll)
 		var box := VBoxContainer.new()
+		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		box.add_theme_constant_override("separation", 0)
 		for segment in RichTextMarkup.split_by_indice(mail.html_content):
 			var seg_label := _build_body_label(str(segment["text"]))

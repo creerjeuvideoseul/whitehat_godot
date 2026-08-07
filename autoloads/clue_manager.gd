@@ -98,19 +98,50 @@ func get_category(category_id: String) -> ClueCategory:
 
 
 ## Catégories réellement pertinentes pour cette mission : marquées affichables
-## ET ayant au moins un indice associé (une catégorie sans indice pour cette
-## mission n'apparaît pas sur le tableau).
+## ET ayant au moins un indice déjà débloqué (pas juste "associé" — un
+## personnage qu'on n'a pas encore rencontré n'a aucune raison d'apparaître
+## sur le tableau, avatar compris). Volontairement basé sur l'unlock plutôt
+## que sur un nouveau champ "à afficher à partir de..." : chaque indice se
+## débloque déjà exactement au moment où son contenu apparaît au joueur, donc
+## cette règle s'auto-gère pour toutes les missions futures sans rien à
+## renseigner en plus dans les données.
 func get_categories_for_mission(mission_id: int) -> Array[ClueCategory]:
 	var seen: Dictionary = {}
 	var result: Array[ClueCategory] = []
 	for clue in _clues:
-		if clue.mission_id != mission_id or seen.has(clue.category_id):
+		if clue.mission_id != mission_id or seen.has(clue.category_id) or not is_unlocked(clue.id):
 			continue
 		var categ: ClueCategory = _categories.get(clue.category_id)
 		if categ != null and categ.is_display:
 			seen[clue.category_id] = true
 			result.append(categ)
 	return result
+
+
+## Vrai si l'enquête de cette mission a réellement commencé : au moins un
+## indice débloqué dont l'id suit la convention "M<mission_id>_..." (voir
+## clues.txt). Volontairement plus strict que "la mission a au moins un
+## indice débloqué" : l'indice de fin d'intro d'AnonGhost (intro_anon_perseverant)
+## ne suit pas cette convention et ne doit pas suffire à faire apparaître le
+## titre de la fenêtre Collecte d'indice avant que le joueur n'ait vraiment
+## commencé à fouiller le téléphone d'Alizée (voir ClueBoardWindow).
+func has_mission_started(mission_id: int) -> bool:
+	var prefix := "M%d_" % mission_id
+	for clue in _clues:
+		if clue.mission_id == mission_id and clue.id.begins_with(prefix) and is_unlocked(clue.id):
+			return true
+	return false
+
+
+## L'id de catégorie d'un indice donné, ou une chaîne vide si l'id n'existe
+## pas — pour ClueBoard, qui a besoin de savoir si un indice fraîchement
+## débloqué appartient à une catégorie déjà affichée ou doit en révéler une
+## nouvelle (voir ClueBoard._on_clue_unlocked).
+func get_category_id_for_clue(clue_id: String) -> String:
+	for clue in _clues:
+		if clue.id == clue_id:
+			return clue.category_id
+	return ""
 
 
 func get_clues_for_category(mission_id: int, category_id: String) -> Array[ClueDefinition]:

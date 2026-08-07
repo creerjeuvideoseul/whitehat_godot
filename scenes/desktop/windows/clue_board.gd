@@ -1,7 +1,7 @@
 extends Control
 class_name ClueBoard
 ## Le "tableau d'enquête" d'une mission : un avatar par catégorie/personnage
-## (150x150) en haut d'une colonne, avec sous lui un trait vertical ("tronc")
+## (voir AVATAR_SIZE) en haut d'une colonne, avec sous lui un trait vertical ("tronc")
 ## qui descend jusqu'au dernier indice de cette catégorie ; chaque indice est
 ## relié à ce tronc par un trait horizontal perpendiculaire, façon
 ## organigramme (un indice = une ligne). Un indice verrouillé affiche un
@@ -11,8 +11,18 @@ class_name ClueBoard
 ## ClueManager, donc réutilisable tel quel pour les missions suivantes en
 ## changeant juste mission_id.
 
-const AVATAR_SIZE := 150.0
-const PANEL_WIDTH := 320.0
+const AVATAR_SIZE := 190.0
+## Partagée avec le shader (border_width_px) pour que le clip circulaire de
+## l'image s'arrête juste avant la bordure au lieu de la recouvrir — sinon
+## une image zoomée (voir IMAGE_ZOOM) atteint le même rayon que l'anneau et
+## le fait disparaître dessous.
+const AVATAR_BORDER_WIDTH := 3.0
+## Cadrage de la photo à l'intérieur du cercle (voir circular_mask.gdshader)
+## — rapproche le portrait sans agrandir l'anneau lui-même.
+const IMAGE_ZOOM := 1.15
+const CATEGORY_LABEL_FONT_SIZE := Palette.SIZE_BODY + 5
+const CIRCULAR_MASK_SHADER := preload("res://assets/shaders/circular_mask.gdshader")
+const PANEL_WIDTH := 370.0
 ## Longueur du trait horizontal entre le tronc et le panneau d'un indice.
 const BRANCH_LENGTH := 40.0
 ## Espace vertical entre le bas de l'avatar et le centre du premier indice —
@@ -21,8 +31,9 @@ const FIRST_BRANCH_GAP := 30.0
 ## Espace vertical entre deux panneaux d'indices empilés dans la même colonne.
 const CLUE_VERTICAL_GAP := 20.0
 const CLUSTER_GUTTER := 70.0
-const LABEL_HEIGHT := 26.0
-const LABEL_GAP := 6.0
+## Un peu plus que CATEGORY_LABEL_FONT_SIZE pour laisser de la place au texte.
+const LABEL_HEIGHT := 32.0
+const LABEL_GAP := 15.0
 const TOP_PADDING := 16.0
 const ROW_GUTTER := 60.0
 ## No more than this many category columns share a row before wrapping.
@@ -50,15 +61,30 @@ func setup(new_mission_id: int) -> void:
 	if new_mission_id == mission_id and not _avatars_by_category.is_empty():
 		return
 	mission_id = new_mission_id
+	_clear_board()
+	# Wait for the enclosing ScrollContainer to finish laying out so
+	# _get_available_width() reads its real visible size, not a stale/zero
+	# one from before this window was fully added to the tree.
+	await get_tree().process_frame
+	_build_board()
+
+
+func _clear_board() -> void:
 	for child in get_children():
 		child.queue_free()
 	_avatars_by_category.clear()
 	_panels_by_category.clear()
 	_clue_id_by_panel.clear()
-	# Wait for the enclosing ScrollContainer to finish laying out so
-	# _get_available_width() reads its real visible size, not a stale/zero
-	# one from before this window was fully added to the tree.
-	await get_tree().process_frame
+
+
+## Reconstruction immédiate (sans attendre de frame, contrairement à setup())
+## : le ScrollContainer est déjà dimensionné puisque le tableau était déjà à
+## l'écran — utilisé quand un indice fraîchement débloqué révèle une
+## catégorie pas encore affichée (voir _on_clue_unlocked) ou que le debug
+## unlock_all/lock_all change potentiellement tout le jeu de catégories
+## visibles d'un coup.
+func _rebuild_board_now() -> void:
+	_clear_board()
 	_build_board()
 
 
@@ -97,7 +123,7 @@ func _build_board() -> void:
 			label.text = tr(categ.label_key)
 			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			label.add_theme_color_override("font_color", Palette.TEXT_ACCENT)
-			label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+			label.add_theme_font_size_override("font_size", CATEGORY_LABEL_FONT_SIZE)
 			label.position = Vector2(x_cursor, cursor_y)
 			label.size = Vector2(AVATAR_SIZE, LABEL_HEIGHT)
 			add_child(label)
@@ -158,7 +184,7 @@ func _build_avatar(categ: ClueCategory) -> Control:
 	var frame := PanelContainer.new()
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0)
-	style.set_border_width_all(3)
+	style.set_border_width_all(int(AVATAR_BORDER_WIDTH))
 	style.border_color = Palette.BORDER_ACCENT
 	style.set_corner_radius_all(int(AVATAR_SIZE / 2))
 	style.set_content_margin_all(0)
@@ -172,6 +198,18 @@ func _build_avatar(categ: ClueCategory) -> Control:
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	## L'anneau vert ne découpe rien tout seul (voir StyleBoxFlat plus haut,
+	## purement décoratif) — sans ce shader, une image source pas
+	## parfaitement pré-détourée en cercle (bord anti-aliasé, coin oublié...)
+	## dépasse visuellement de l'anneau. Le shader garantit un cercle net
+	## quelle que soit la propreté de l'image, plutôt que de dépendre de
+	## chaque asset préparé à la main pour chaque future mission.
+	var mask := ShaderMaterial.new()
+	mask.shader = CIRCULAR_MASK_SHADER
+	mask.set_shader_parameter("zoom", IMAGE_ZOOM)
+	mask.set_shader_parameter("avatar_size", AVATAR_SIZE)
+	mask.set_shader_parameter("border_width_px", AVATAR_BORDER_WIDTH)
+	rect.material = mask
 	frame.add_child(rect)
 	return frame
 
@@ -183,6 +221,7 @@ func _build_clue_panel(clue_id: String) -> PanelContainer:
 	var label := Label.new()
 	label.custom_minimum_size = Vector2(PANEL_WIDTH - 28, 0)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_FILL
 	label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 	panel.add_child(label)
 
@@ -219,18 +258,27 @@ func _apply_panel_state(panel: PanelContainer, label: Label, clue_id: String) ->
 	panel.add_theme_stylebox_override("panel", style)
 
 
+## Un indice qui débloque la toute première entrée d'une catégorie révèle
+## cette catégorie (voir ClueManager.get_categories_for_mission) : le tableau
+## entier doit être reconstruit pour lui faire une place (nouvel avatar,
+## nouvelle colonne), pas juste rafraîchir un panneau existant.
 func _on_clue_unlocked(clue_id: String) -> void:
+	var category_id := ClueManager.get_category_id_for_clue(clue_id)
+	if not category_id.is_empty() and not _avatars_by_category.has(category_id):
+		_rebuild_board_now()
+		return
 	for panel: PanelContainer in _clue_id_by_panel:
 		if _clue_id_by_panel[panel] != clue_id:
 			continue
 		_refresh_panel(panel, clue_id)
 
 
-## Debug-only bulk toggle (ClueManager.unlock_all()/lock_all()) : pas d'id
-## précis, donc on rafraîchit tous les panneaux déjà construits d'un coup.
+## Debug-only bulk toggle (ClueManager.unlock_all()/lock_all()) : peut faire
+## apparaître ou disparaître des catégories entières d'un coup, donc
+## reconstruction complète plutôt qu'un simple rafraîchissement des panneaux
+## déjà là.
 func _on_all_unlocked_changed() -> void:
-	for panel: PanelContainer in _clue_id_by_panel:
-		_refresh_panel(panel, _clue_id_by_panel[panel])
+	_rebuild_board_now()
 
 
 ## Le texte verrouillé et le texte réel d'un indice n'ont presque jamais la

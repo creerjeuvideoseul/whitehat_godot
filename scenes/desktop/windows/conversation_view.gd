@@ -97,6 +97,7 @@ func _advance(next_id: String) -> void:
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
 	ClueManager.unlock_from_tags(line)
+	line.text = RichTextMarkup.resolve_important_color(line.text)
 
 	if line.character == SYSTEM_CHARACTER:
 		await _type_out(_add_console_line(line))
@@ -183,6 +184,12 @@ func _type_out(label: DialogueLabel) -> void:
 	_current_label = null
 
 
+## Deux frames, pas une : quand un choix apparaît, ResponsesMenu (un Container
+## de l'addon Dialogue Manager) recrée ses boutons et ne finit son propre
+## redimensionnement qu'au tri différé du frame suivant — avec une seule
+## frame d'attente, max_value était encore lu avant que ce tri n'ait eu lieu,
+## et le scroll s'arrêtait juste avant les boutons de réponse.
 func _scroll_to_bottom() -> void:
+	await get_tree().process_frame
 	await get_tree().process_frame
 	_scroll_container.scroll_vertical = int(_scroll_container.get_v_scroll_bar().max_value)

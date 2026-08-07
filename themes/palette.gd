@@ -73,6 +73,26 @@ const ALERT_YELLOW := Color(1.0, 0.84, 0.0, 1.0)
 ## bas du téléphone d'Alizée).
 const TEXT_GREEN_DIM := Color(0.14, 0.42, 0.24, 1.0)
 
+## Mise en évidence des passages "indice" dans un texte brut (mail/SMS) — la
+## balise <color=indice> des données (voir RichTextMarkup.html_to_bbcode)
+## pointe ici plutôt que sur un hex écrit en dur dans chaque fichier JSON, pour
+## ne changer la teinte qu'à un seul endroit.
+const TEXT_HIGHLIGHT := Color(1.0, 0.596, 0.0, 1.0)
+
+## Variante de TEXT_HIGHLIGHT pour un fond clair (bulles SMS pastel de
+## certains contacts, voir SmsConversation.color_background) — même teinte,
+## assombrie sans désaturer pour rester "orange foncé", pas "marron" (voir
+## is_light() pour savoir laquelle des deux utiliser selon le fond).
+const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.8, 0.478, 0.0, 1.0)
+
+## Mise en évidence des mots "importants" dans les dialogues (intro, chat) —
+## la balise [color=important] des fichiers .dialogue (voir
+## RichTextMarkup.resolve_important_color) pointe ici plutôt que sur un hex
+## écrit en dur dans chaque fichier, pour ne changer la teinte qu'à un seul
+## endroit. Sans rapport avec TEXT_HIGHLIGHT (indices) ni TEXT_DANGER (rouge
+## pâle réservé au texte d'avertissement) : un rouge vif, dédié.
+const TEXT_IMPORTANT := Color(1.0, 0.1, 0.1, 1.0)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 
@@ -88,3 +108,14 @@ const SIZE_LARGE := 30
 const SIZE_TITLE := 32
 const SIZE_MENU_ITEM := 38
 const SIZE_HERO := 48
+
+# --- Helpers -------------------------------------------------------------
+
+## Vrai si `color` est visuellement claire (luminance perçue, pondération
+## ITU-R BT.601) — pour choisir entre une variante de couleur pensée pour un
+## fond sombre et une pensée pour un fond clair (ex. TEXT_HIGHLIGHT vs
+## TEXT_HIGHLIGHT_ON_LIGHT selon le fond d'une bulle SMS). Seuil 0.6 choisi
+## empiriquement : au-dessus, un texte/accent sombre reste lisible dessus.
+static func is_light(color: Color) -> bool:
+	var luminance := 0.299 * color.r + 0.587 * color.g + 0.114 * color.b
+	return luminance > 0.6

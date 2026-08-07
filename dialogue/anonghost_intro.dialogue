@@ -4,7 +4,7 @@ AnonGhost: {{PlayerSession.pseudo}}, initialisation de la phase opérationnelle.
 AnonGhost: On y est.
 AnonGhost: Aujourd'hui, je vais te confier ta première affaire.
 AnonGhost: Nous avons suffisamment travaillé ensemble pour que je connaisse ta valeur.
-AnonGhost: Tu fais partie des [color=#ffa500]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_anon_perseverant]
+AnonGhost: Tu fais partie des [color=important]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_anon_perseverant]
 
 - Je suis génial !
 	set StoryVars.player_emotion += 1
@@ -32,11 +32,11 @@ AnonGhost: As-tu deviné de quoi je parle ?
 	Player: Je ne sais pas.
 	AnonGhost: Admettre une absence de données est le premier pas vers une analyse rigoureuse. C'est le début de la sagesse.
 
-AnonGhost: Je parle de l'éthique, {{PlayerSession.pseudo}}.
+AnonGhost: Je parle de [color=important]l'éthique[/color], {{PlayerSession.pseudo}}.
 AnonGhost: Dans cette affaire, j'observerai tes décisions afin d'établir ton indice d'éthique.
 AnonGhost: Ce n'est ni un jugement ni une note.
 AnonGhost: Je cherche simplement à comprendre qui tu es lorsque personne ne te dit quoi faire.
-AnonGhost: Ton premier client s'appelle Jean Ranoud, sa fille a disparu.
+AnonGhost: Ton premier client s'appelle [color=important]Jean Ranoud[/color], sa fille a disparu.
 AnonGhost: Retrouve la, {{PlayerSession.pseudo}}, je te mets en contact.
 AnonGhost: N'obéis pas. Comprends. Juge. Agis.
 

@@ -126,11 +126,17 @@ func _build_comment_row(comment: GalleryComment) -> Control:
 	header.add_child(username_label)
 	box.add_child(header)
 
-	var message_label := Label.new()
-	message_label.text = comment.message
+	## RichTextLabel, pas Label : les commentaires peuvent contenir des balises
+	## <color=...> (voir alizee_galerie.json) qui, sur un Label simple,
+	## s'affichaient telles quelles au lieu d'être interprétées.
+	var message_label := RichTextLabel.new()
+	message_label.bbcode_enabled = true
+	message_label.fit_content = true
+	message_label.scroll_active = false
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	message_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
-	message_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	message_label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
+	message_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
+	message_label.text = RichTextMarkup.html_to_bbcode(comment.message)
 	box.add_child(message_label)
 
 	return box

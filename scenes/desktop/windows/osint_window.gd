@@ -40,6 +40,8 @@ func _ready() -> void:
 func search(query: String) -> void:
 	for child in _content_root.get_children():
 		child.queue_free()
+	if _reveal_tracker != null:
+		_reveal_tracker.dispose()
 	_reveal_tracker = IndiceRevealTracker.new(_scroll)
 
 	var character := _database.search(query)

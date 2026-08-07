@@ -179,6 +179,8 @@ func _show_no_selection() -> void:
 func _show_conversation(conv: SmsConversation) -> void:
 	for child in _messages_list.get_children():
 		child.queue_free()
+	if _reveal_tracker != null:
+		_reveal_tracker.dispose()
 	_reveal_tracker = IndiceRevealTracker.new(_messages_scroll)
 
 	if conv.is_crypted and not PhoneVault.is_unlocked():
@@ -275,7 +277,8 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	message.add_theme_color_override("default_color", font_color)
 	message.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	var resolved := RichTextMarkup.strip_indice_tags(entry.message)
-	var bbcode := RichTextMarkup.html_to_bbcode(resolved)
+	var highlight_color := Palette.TEXT_HIGHLIGHT_ON_LIGHT if Palette.is_light(bg_color) else Palette.TEXT_HIGHLIGHT
+	var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color)
 	message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
 	bubble.add_child(message)
 

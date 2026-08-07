@@ -9,6 +9,7 @@ MENU_TAGLINE_3,une porte que tout le monde avait oublié de fermer.,a door every
 OPTIONS_TITLE,// Options,// Options
 OPTIONS_LANGUAGE_LABEL,Langue,Language
 OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
+OPTIONS_SFX_VOLUME_LABEL,Volume du son,Sound volume
 OPTIONS_CLOSE,Fermer,Close
 OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
 OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées.","Warning, any unsaved progress from the last %d minutes will be lost."
@@ -22,6 +23,7 @@ DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
+THOUGHT_ANONGHOST_CONTACT,AnonGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,AnonGhost should contact me. AnonGhost is my only real-world contact. Someone I trust, whom I've known for years.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
 DESKTOP_CLUES_BUTTON,Collecte d'indice,Clue collection

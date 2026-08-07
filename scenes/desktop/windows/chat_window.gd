@@ -25,6 +25,10 @@ const NOTIFICATION_SOUND := preload("res://assets/audio/sound/starcraft_incoming
 const SHAKE_AMPLITUDE := 6.0
 const SHAKE_STEP_SECONDS := 0.05
 const SHAKE_STEPS := 6
+## Même valeurs que le clignotement TOR du header (voir desktop_header.gd),
+## pour rester cohérent visuellement.
+const BLINK_MIN_ALPHA := 0.35
+const BLINK_SECONDS := 1.4
 
 @export var contacts: Array[ChatContact] = []
 
@@ -50,6 +54,8 @@ var _conversation_views: Dictionary = {}
 var _contact_rows: Dictionary = {}
 var _started_contact_ids: Dictionary = {}
 var _active_contact_id: String = ""
+## contact_id -> Tween, tant que sa ligne clignote (voir _start_row_blink).
+var _blink_tweens: Dictionary = {}
 
 
 func _ready() -> void:
@@ -72,7 +78,14 @@ func add_contact(contact: ChatContact) -> void:
 	_contacts_by_id[contact.contact_id] = contact
 	_add_contact_row(contact)
 	_build_conversation_view(contact)
-	_notify_new_message()
+	# Une conversation déjà terminée (reprise de sauvegarde, voir desktop.gd)
+	# n'est pas un nouveau message qui vient d'arriver — seul un contact qui
+	# apparaît vraiment pour la première fois pendant la session (AnonGhost au
+	# tout début, Jean une fois AnonGhost fini) mérite le son + la secousse
+	# + le clignotement de sa ligne tant qu'on n'a pas cliqué dessus.
+	if not SaveManager.is_conversation_complete(contact.contact_id):
+		_notify_new_message()
+		_start_row_blink(contact.contact_id)
 
 
 ## Nudge the window from its default centered position (e.g. so several
@@ -191,6 +204,32 @@ func _shake() -> void:
 	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
 
 
+## Fait clignoter la ligne d'un contact (alpha, comme le TOR du header) tant
+## qu'on n'a pas cliqué dessus — voir _stop_row_blink dans _select_contact.
+func _start_row_blink(contact_id: String) -> void:
+	var row: PanelContainer = _contact_rows.get(contact_id)
+	if row == null:
+		return
+	var tween := create_tween()
+	tween.set_loops()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.tween_property(row, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
+	tween.tween_property(row, "modulate:a", 1.0, BLINK_SECONDS)
+	_blink_tweens[contact_id] = tween
+
+
+func _stop_row_blink(contact_id: String) -> void:
+	if not _blink_tweens.has(contact_id):
+		return
+	var tween: Tween = _blink_tweens[contact_id]
+	if is_instance_valid(tween):
+		tween.kill()
+	_blink_tweens.erase(contact_id)
+	var row: PanelContainer = _contact_rows.get(contact_id)
+	if row != null:
+		row.modulate.a = 1.0
+
+
 func _on_contact_row_gui_input(event: InputEvent, contact_id: String) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_select_contact(contact_id)
@@ -201,6 +240,7 @@ func _on_contact_row_gui_input(event: InputEvent, contact_id: String) -> void:
 func _select_contact(contact_id: String) -> void:
 	if _active_contact_id == contact_id:
 		return
+	_stop_row_blink(contact_id)
 
 	if _conversation_views.has(_active_contact_id):
 		_conversation_views[_active_contact_id].hide()
