@@ -308,6 +308,10 @@ func _on_phone_icon_pressed(section_id: String) -> void:
 	var section: Node = PHONE_SECTIONS[section_id].instantiate()
 	if section.has_signal("close_requested"):
 		section.close_requested.connect(_on_phone_section_close_requested)
+	# Seul VaultSection émet ceci pour l'instant (pensée d'aide sur mauvais
+	# mot de passe) — même raison de passer par has_signal() que ci-dessus.
+	if section.has_signal("thought_requested"):
+		section.thought_requested.connect(_show_player_thought)
 	_phone_section_host.add_child(section)
 	_phone_section_host.visible = true
 

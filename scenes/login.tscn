@@ -312,24 +312,28 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(700, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.08, 0.1, 0.09, 1)
+theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
 placeholder_text = "Pseudo"
 max_length = 20
+caret_blink = true
 
 [node name="PasswordEdit" type="LineEdit" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/BodyMargin/BodyBox" unique_id=1081481400]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(700, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.08, 0.1, 0.09, 1)
+theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
 placeholder_text = "Mot de passe"
 max_length = 20
+caret_blink = true
 
 [node name="ErrorLabel" type="Label" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/BodyMargin/BodyBox" unique_id=1233637377]
 unique_name_in_owner = true
