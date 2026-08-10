@@ -45,4 +45,4 @@ func _update_title_color() -> void:
 	elif destructive:
 		title_color = Palette.TEXT_DANGER
 	_title_label.add_theme_color_override("font_color", title_color)
-	_number_label.add_theme_color_override("font_color", Palette.TEXT_LOCKED if disabled else Color(0.55, 0.63, 0.58))
+	_number_label.add_theme_color_override("font_color", Palette.TEXT_LOCKED if disabled else Palette.CONSOLE_TEXT)

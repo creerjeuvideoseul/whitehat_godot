@@ -157,7 +157,7 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
 theme_override_font_sizes/font_size = 22
-text = "réseau - chiffré"
+text = "BOOT_NETWORK_STATUS"
 
 [node name="Spacer" type="Control" parent="TopBar/Row" unique_id=1432716990]
 layout_mode = 2
@@ -209,19 +209,19 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
 theme_override_font_sizes/font_size = 20
-text = "réseau - chiffré"
+text = "BOOT_NETWORK_STATUS"
 
 [node name="Spacer" type="Control" parent="BottomBar/Row" unique_id=1314713181]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CreditLabel" type="RichTextLabel" parent="BottomBar/Row" unique_id=1914684875]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 28)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.6, 0.68, 0.63, 1)
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "Fait avec passion par [color=#39ff7a][b]SecretGame[/b][/color]"
 fit_content = true
 scroll_active = false
 horizontal_alignment = 2
@@ -288,7 +288,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
 theme_override_fonts/font = SubResource("SystemFont_semibold")
 theme_override_font_sizes/font_size = 32
-text = "// Connexion"
+text = "LOGIN_TITLE"
 
 [node name="HeaderSeparator" type="HSeparator" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout" unique_id=433639750]
 layout_mode = 2
@@ -317,7 +317,7 @@ theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
-placeholder_text = "Pseudo"
+placeholder_text = "LOGIN_PSEUDO_PLACEHOLDER"
 max_length = 20
 caret_blink = true
 
@@ -331,7 +331,7 @@ theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
-placeholder_text = "Mot de passe"
+placeholder_text = "LOGIN_PASSWORD_PLACEHOLDER"
 max_length = 20
 caret_blink = true
 
@@ -366,7 +366,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_back_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_back_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_back_hover")
-text = "Retour menu"
+text = "LOGIN_BACK_BUTTON"
 flat = true
 
 [node name="FooterSpacer" type="Control" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/FooterMargin/FooterRow" unique_id=34594747]
@@ -383,7 +383,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_connect_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_connect_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_connect_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_connect_hover")
-text = "SE CONNECTER"
+text = "LOGIN_CONNECT_BUTTON"
 
 [node name="LogoIcon" type="TextureRect" parent="." unique_id=79976065]
 layout_mode = 1

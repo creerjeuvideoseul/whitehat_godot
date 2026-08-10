@@ -6,6 +6,7 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
+@onready var _credit_label: RichTextLabel = %CreditLabel
 
 @onready var _new_game_button: Button = %NewGameButton
 @onready var _options_button: Button = %OptionsButton
@@ -34,6 +35,9 @@ func _ready() -> void:
 
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
+	## BBCode : voir login.gd pour la même raison (auto-traduction non fiable
+	## sur un RichTextLabel, résolu explicitement ici).
+	_credit_label.text = tr("BOOT_CREDIT")
 
 	_continue_button.set_locked(not SaveManager.has_save())
 	_new_game_button.grab_focus()

@@ -49,12 +49,12 @@
 		  "Enfant connu": "Alizée Ranoud",
 		  "Profession": "Agent de sécurité.",
 		  "Adresse connue": "37 Rue de la Barre, Rennes, depuis 2015",
-		  "Loisir": "Tir en club. [color=orange]Possède une arme catégorie 1 B4.[/color]",
+		  "Loisir": "Tir en club. <color=indice>Possède une arme catégorie 1 B4.</color>",
 		  "IP": "Française.",
 		  "Mail": "jean.ranoud@protonmail.com",
 		  "Téléphone": "+33 6 15 45 xx xx",
 		  "Fuites connues": "Sécurité sociale, jaune SAS, KFC, club sportif, Airsoft.",
-		  "Mots de passe": "[color=orange]EliteShot$83$[/color]"
+		  "Mots de passe": "<color=indice>EliteShot$83$</color>"
 		},
 		{
 		  "characterId": 3,
@@ -91,7 +91,7 @@
 		  "Mail": "alizee.ranoud@gomail.com",
 		  "Téléphone": "+33 7 33 01 xx xx",
 		  "Fuites connues": "Crous, Éducation nationale, Crunchyroll.",
-		  "Mots de passe": "ILoveDance[color=orange]<indice id=\"M1_osint_alizee_pwa\">11</indice>[/color], ILoveSing11, [color=orange]<indice id=\"M1_osint_alizee_pwpere\">EliteShot$83$</indice>[/color]"
+		  "Mots de passe": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing11, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,
@@ -107,7 +107,7 @@
 		  "Profession": "Gérante d'une petite maison d'hôtes pour expatriés.",
 		  "Adresse connue": "Ubud, Bali, Indonésie",
 		  "Loisir": "Yoga et méditation",
-		  "IP": "[color=orange]Indonésienne.[/color]",
+		  "IP": "<color=indice>Indonésienne.</color>",
 		  "Mail": "c.ranoud@gomail.co.id",
 		  "Téléphone": "NC",
 		  "Fuites connues": "Tokopedia, AirBnb",
@@ -220,12 +220,12 @@
 		  "Known child": "Alizée Ranoud",
 		  "Occupation": "Security guard.",
 		  "Known address": "37 Rue de la Barre, Rennes, since 2015",
-		  "Hobbies": "Shooting club. [color=orange]Owns a category 1 B4 firearm.[/color]",
+		  "Hobbies": "Shooting club. <color=indice>Owns a category 1 B4 firearm.</color>",
 		  "IP": "French.",
 		  "Email": "jean.ranoud@protonmail.com",
 		  "Phone": "+33 6 15 45 xx xx",
 		  "Known leaks": "Social security, Jaune SAS, KFC, sports club, Airsoft.",
-		  "Passwords": "[color=orange]EliteShot$83$[/color]"
+		  "Passwords": "<color=indice>EliteShot$83$</color>"
 		},
 		{
 		  "characterId": 3,
@@ -262,7 +262,7 @@
 		  "Email": "alizee.ranoud@gomail.com",
 		  "Phone": "+33 7 33 01 xx xx",
 		  "Known leaks": "Crous, national education, Crunchyroll.",
-		  "Passwords": "ILoveDance[color=orange]<indice id=\"M1_osint_alizee_pwa\">11</indice>[/color], ILoveSing11, [color=orange]<indice id=\"M1_osint_alizee_pwpere\">EliteShot$83$</indice>[/color]"
+		  "Passwords": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing11, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,
@@ -278,7 +278,7 @@
 		  "Occupation": "Manager of a small guesthouse for expats.",
 		  "Known address": "Ubud, Bali, Indonesia",
 		  "Hobbies": "Yoga and meditation",
-		  "IP": "[color=orange]Indonesian.[/color]",
+		  "IP": "<color=indice>Indonesian.</color>",
 		  "Email": "c.ranoud@gomail.co.id",
 		  "Phone": "N/A",
 		  "Known leaks": "Tokopedia, AirBnb",

@@ -38,7 +38,7 @@ const TOP_PADDING := 16.0
 const ROW_GUTTER := 60.0
 ## No more than this many category columns share a row before wrapping.
 const COLS_PER_ROW := 3
-const LINE_COLOR := Color(0.22, 0.87, 0.45, 0.55)
+const LINE_COLOR := Color(Palette.BORDER_ACCENT, 0.55)
 
 @export var mission_id: int = 1
 

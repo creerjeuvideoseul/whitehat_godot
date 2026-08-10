@@ -126,11 +126,11 @@
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'est fait <3" },
 			{ "messageId": 4, "isAnswer": 0, "timestamp": "2030-01-09T15:24:00", "message": "Tu m'as fait un peu peur hier, on ne disparaît pas comme ça !" },
 			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "J'avais reçu un mail de ma mère. J'ai déconné, <indice id=\"sms_cryp_m_disparue\"><color=indice>je suis partie sans but</color></indice> pendant plusieurs heures sans téléphone." },
-			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Comme je te l'ai dit il y a quelques jours, tu as 18 ans bientôt, <indice id=\"sms_cryp_m_proposition\"><color=indice>tu peux me suivre</color></indice>, découvrir une autre vie. Tu dois t'éloigner de ton père. Tu ne vois pas qu'il t'isole ? Qu'il exerce une pression psychologique sur toi ? Ce n'est pas ça la vie." },
+			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Comme je te l'ai dit il y a quelques jours, tu as 18 ans bientôt, <color=important>tu peux me suivre</color>, découvrir une autre vie. Tu dois t'éloigner de ton père. Tu ne vois pas qu'il t'isole ? Qu'il exerce une pression psychologique sur toi ? Ce n'est pas ça la vie." },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "Ce que tu me proposes me semble tellement impossible… Mais je te promets d'y réfléchir. Les choses vont trop vite." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "Je ne te promets pas le luxe, ma vie d'artiste est difficile, mais je prendrai soin de toi." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"sms_cryp_m_mere\"><color=indice>J'ai revu ma mère</color></indice>. J'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
+			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>J'ai revu ma mère</color>, J'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
 		  ]
 		}
 	  ]
@@ -261,11 +261,11 @@
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Done <3" },
 			{ "messageId": 4, "isAnswer": 0, "timestamp": "2030-01-09T15:24:00", "message": "You scared me a bit yesterday, you don't just disappear like that!" },
 			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "I'd gotten an email from my mother. I lost it, <indice id=\"sms_cryp_m_disparue\"><color=indice>I walked off aimlessly</color></indice> for hours without my phone." },
-			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Like I told you a few days ago, you're almost 18, <indice id=\"sms_cryp_m_proposition\"><color=indice>you could come with me</color></indice>, discover another life. You need to get away from your father. Can't you see he's isolating you? That he's putting psychological pressure on you? That's not a life." },
+			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Like I told you a few days ago, you're almost 18, <color=important>you could come with me</color>, discover another life. You need to get away from your father. Can't you see he's isolating you? That he's putting psychological pressure on you? That's not a life." },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "What you're offering seems so impossible… But I promise I'll think about it. Things are moving too fast." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"sms_cryp_m_bomb\"><color=indice>Buy a rape alarm</color></indice>, we don't know how your father might react if he finds out about us." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"sms_cryp_m_mere\"><color=indice>I saw my mother again</color></indice>. I finally understood why she abandoned us. My father is a real piece of garbage, I don't want to see him anymore." }
+			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>I saw my mother again</color>. I finally understood why she abandoned us. My father is a real piece of garbage, I don't want to see him anymore." }
 		  ]
 		}
 	  ]

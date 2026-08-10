@@ -88,7 +88,7 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
 theme_override_font_sizes/font_size = 22
-text = "réseau - chiffré"
+text = "BOOT_NETWORK_STATUS"
 
 [node name="Spacer" type="Control" parent="TopBar/Row" unique_id=1857682197]
 layout_mode = 2
@@ -140,19 +140,19 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
 theme_override_font_sizes/font_size = 20
-text = "réseau - chiffré"
+text = "BOOT_NETWORK_STATUS"
 
 [node name="Spacer" type="Control" parent="BottomBar/Row" unique_id=1823075816]
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CreditLabel" type="RichTextLabel" parent="BottomBar/Row" unique_id=336732118]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 28)
 layout_mode = 2
 theme_override_colors/default_color = Color(0.6, 0.68, 0.63, 1)
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "Fait avec passion par [color=#39ff7a][b]SecretGame[/b][/color]"
 fit_content = true
 scroll_active = false
 horizontal_alignment = 2

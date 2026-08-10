@@ -171,7 +171,7 @@ func _build_identity_block(character: Dictionary, keys: Dictionary) -> Control:
 ## ligne — pour que toutes les valeurs d'une fiche démarrent alignées sur la
 ## même colonne, quelle que soit la longueur du libellé.
 func _build_field_row(label: String, raw_value: String) -> Control:
-	var value := RichTextMarkup.strip_indice_tags(raw_value)
+	var value := RichTextMarkup.html_to_bbcode(RichTextMarkup.strip_indice_tags(raw_value))
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
@@ -221,7 +221,7 @@ func _build_note_section(raw_note: String) -> Control:
 
 
 func _build_note(raw_note: String) -> RichTextLabel:
-	var note := RichTextMarkup.strip_indice_tags(raw_note)
+	var note := RichTextMarkup.html_to_bbcode(RichTextMarkup.strip_indice_tags(raw_note))
 
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true

@@ -12,6 +12,7 @@ const INVALID_PSEUDO_CHARS := "[^A-Za-z0-9_]"
 @onready var _back_button: Button = %BackButton
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
+@onready var _credit_label: RichTextLabel = %CreditLabel
 
 var _invalid_chars_regex := RegEx.new()
 var _start_ticks_msec: int = 0
@@ -25,6 +26,11 @@ func _ready() -> void:
 	_back_button.pressed.connect(_on_back_pressed)
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
+	## BBCode : ne peut pas compter sur l'auto-traduction d'un RichTextLabel
+	## comme pour un Label simple ailleurs dans le projet, donc résolu ici
+	## explicitement — même raison que _quit_game_confirm_dialog.dialog_text
+	## dans options_panel.gd.
+	_credit_label.text = tr("BOOT_CREDIT")
 
 	_pseudo_edit.grab_focus()
 
@@ -46,7 +52,7 @@ func _on_pseudo_text_changed(new_text: String) -> void:
 func _on_connect_pressed() -> void:
 	var pseudo := _pseudo_edit.text.strip_edges()
 	if pseudo.length() < 2:
-		_error_label.text = "Pseudo requis : 2 à 20 caractères (lettres, chiffres, _)."
+		_error_label.text = tr("LOGIN_PSEUDO_ERROR")
 		return
 	PlayerSession.set_login(pseudo, _password_edit.text)
 	SaveManager.save_checkpoint("res://scenes/desktop/desktop.tscn")
