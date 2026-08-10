@@ -18,6 +18,10 @@ signal close_requested
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
 const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
 const AVATAR_SIZE := Vector2(56, 56)
+## Zoom appliqué à l'image de l'avatar (recadrage plus serré sur le visage) —
+## le cadre lui-même (56x56 + bordure) ne change pas de taille, seul le
+## contenu déborde puis est rogné par _build_row_avatar via clip_contents.
+const AVATAR_ZOOM := 1.2
 ## Une bulle occupe toujours 2/3 de la largeur du fil (hauteur élastique,
 ## largeur fixe — voir _build_message_row) : ratio 2 pour la bulle contre 1
 ## pour l'espace vide qui la pousse à gauche ou à droite.
@@ -36,6 +40,7 @@ const MESSAGE_TOP_MARGIN := 20
 @onready var _conversation_list: VBoxContainer = %ConversationList
 @onready var _messages_scroll: ScrollContainer = %MessagesScroll
 @onready var _messages_list: VBoxContainer = %MessagesList
+@onready var _conversation_name_label: Label = %ConversationNameLabel
 
 var _database: SmsDatabase
 var _selected_conversation_id: int = -1
@@ -117,6 +122,9 @@ func _build_row_avatar(conv: SmsConversation) -> Control:
 	style.set_content_margin_all(0)
 	frame.add_theme_stylebox_override("panel", style)
 	frame.custom_minimum_size = AVATAR_SIZE
+	# Le cadre rogne ce qui dépasse : le zoom appliqué à rect ci-dessous ne doit
+	# jamais faire déborder l'image visible hors du cadre 56x56.
+	frame.clip_contents = true
 
 	var rect := TextureRect.new()
 	rect.custom_minimum_size = AVATAR_SIZE
@@ -124,6 +132,12 @@ func _build_row_avatar(conv: SmsConversation) -> Control:
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Zoom centré : pivot au milieu du rect avant de l'agrandir, sinon la mise
+	# à l'échelle se ferait depuis le coin haut-gauche (Control.scale par
+	# défaut). Le pivot suppose que le conteneur donne bien 56x56 à rect
+	# (toujours vrai ici : frame a une taille fixe, un seul enfant).
+	rect.pivot_offset = AVATAR_SIZE / 2.0
+	rect.scale = Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
 	frame.add_child(rect)
 	return frame
 
@@ -162,6 +176,7 @@ func _set_row_selected(conversation_id: int, is_selected: bool) -> void:
 
 
 func _show_no_selection() -> void:
+	_conversation_name_label.visible = false
 	for child in _messages_list.get_children():
 		child.queue_free()
 
@@ -177,6 +192,8 @@ func _show_no_selection() -> void:
 ## PhoneVault). Sinon, une bulle par message, puis on cale le scroll tout en
 ## bas : "on voit toujours le dernier message d'une conversation SMS."
 func _show_conversation(conv: SmsConversation) -> void:
+	_conversation_name_label.visible = true
+	_conversation_name_label.text = conv.contact_name
 	for child in _messages_list.get_children():
 		child.queue_free()
 	if _reveal_tracker != null:

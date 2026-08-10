@@ -14,5 +14,10 @@ IDMission;IDunique;IdCategUnique
 1;M1_osint_alizee_pwa;COFFRE
 1;M1_osint_alizee_pwpere;COFFRE
 1;M1_img_bugsy;COFFRE
+1;M1_Alizee_candidature_non;ALIZ
 1;M1_SOLUTION_OU;FIN
 1;M1_SOLUTION_MERE;FINSECONDAIRE
+1;M1_mail_crypt_mere_contact;MERE
+1;M1_sms_ton_agressif;JEAN
+1;M1_sms_vieille_sorciere;MERE
+1;M1_sms_o_mere_abandon;MERE

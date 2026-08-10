@@ -56,6 +56,7 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 0.6
 anchor_bottom = 1.0
+offset_right = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
@@ -108,7 +109,7 @@ custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_close")
 theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_close_hover")
@@ -121,6 +122,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 0
 
 [node name="ListPanel" type="PanelContainer" parent="Layout/Body"]
+custom_minimum_size = Vector2(398.8, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.0
@@ -161,19 +163,30 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 20
 
-[node name="MessagesScroll" type="ScrollContainer" parent="Layout/Body/DetailPanel/Margin"]
+[node name="DetailVBox" type="VBoxContainer" parent="Layout/Body/DetailPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ConversationNameLabel" type="Label" parent="Layout/Body/DetailPanel/Margin/DetailVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 1.0, 0.5, 1)
+theme_override_font_sizes/font_size = 26
+
+[node name="MessagesScroll" type="ScrollContainer" parent="Layout/Body/DetailPanel/Margin/DetailVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ListMargin" type="MarginContainer" parent="Layout/Body/DetailPanel/Margin/MessagesScroll"]
+[node name="ListMargin" type="MarginContainer" parent="Layout/Body/DetailPanel/Margin/DetailVBox/MessagesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_right = 16
 
-[node name="MessagesList" type="VBoxContainer" parent="Layout/Body/DetailPanel/Margin/MessagesScroll/ListMargin"]
+[node name="MessagesList" type="VBoxContainer" parent="Layout/Body/DetailPanel/Margin/DetailVBox/MessagesScroll/ListMargin"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

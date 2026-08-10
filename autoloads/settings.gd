@@ -15,6 +15,18 @@ const SFX_BUS := "SFX"
 ## 0.7 est un choix de mix déjà en place avant que ce réglage existe.
 const DEFAULT_SFX_VOLUME := 1.0
 
+## Presets d'affichage proposés dans les Options — volontairement une liste
+## fermée (pas de résolution libre) plutôt qu'un choix de résolution générique :
+## le viewport tourne en mode d'échelle "canvas_items" (voir project.godot),
+## donc n'importe laquelle de ces 4 options reste toujours safe à appliquer
+## sans jamais casser l'affichage (pas de risque d'écran noir à mitiger ici,
+## sauf le plein écran exclusif — voir _apply_display_mode).
+enum DisplayMode { FULLSCREEN, FULLSCREEN_BORDERLESS, WINDOWED_2560X1440, WINDOWED_1920X1080 }
+## Correspond à window_width_override/height_override de project.godot — le
+## jeu démarre déjà dans cet état avant même que Settings existe, donc c'est
+## la valeur par défaut cohérente tant que le joueur n'a rien choisi.
+const DEFAULT_DISPLAY_MODE := DisplayMode.WINDOWED_1920X1080
+
 ## Build-time flag, not a player setting (not persisted, not exposed in the
 ## options menu) — hand-flipped before a real release. Gates dev-only tools
 ## like the desktop's "DEBUG INDICES" button, which must never ship.
@@ -23,6 +35,7 @@ const IS_PRODUCTION := false
 var locale: String = DEFAULT_LOCALE
 var music_volume: float = DEFAULT_MUSIC_VOLUME
 var sfx_volume: float = DEFAULT_SFX_VOLUME
+var display_mode: DisplayMode = DEFAULT_DISPLAY_MODE
 
 
 func _ready() -> void:
@@ -30,6 +43,7 @@ func _ready() -> void:
 	TranslationServer.set_locale(locale)
 	_apply_music_volume()
 	_apply_sfx_volume()
+	_apply_display_mode()
 
 
 ## Change the active language and persist the choice immediately.
@@ -71,12 +85,49 @@ func _apply_sfx_volume() -> void:
 	AudioServer.set_bus_volume_db(bus_index, linear_to_db(sfx_volume))
 
 
+## Change le mode d'affichage (plein écran / plein écran sans bordure / une
+## des 2 tailles fenêtrées) et le persiste immédiatement.
+func set_display_mode(new_mode: DisplayMode) -> void:
+	if new_mode == display_mode:
+		return
+	display_mode = new_mode
+	_apply_display_mode()
+	_save()
+
+
+func _apply_display_mode() -> void:
+	match display_mode:
+		DisplayMode.FULLSCREEN:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+		DisplayMode.FULLSCREEN_BORDERLESS:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		DisplayMode.WINDOWED_2560X1440:
+			_apply_windowed_size(Vector2i(2560, 1440))
+		DisplayMode.WINDOWED_1920X1080:
+			_apply_windowed_size(Vector2i(1920, 1080))
+
+
+## Repasse en fenêtré (si on venait d'un des 2 modes plein écran) puis
+## applique la taille demandée, recentrée sur l'écran — sinon la fenêtre
+## réapparaît là où le dernier plein écran l'avait laissée, potentiellement
+## hors-écran ou dans un coin sur un setup multi-écrans.
+func _apply_windowed_size(size: Vector2i) -> void:
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	DisplayServer.window_set_size(size)
+	var screen_size := DisplayServer.screen_get_size()
+	DisplayServer.window_set_position((screen_size - size) / 2)
+
+
 func _load() -> void:
 	var config := ConfigFile.new()
 	if config.load(SETTINGS_PATH) == OK:
 		locale = config.get_value("general", "locale", DEFAULT_LOCALE)
 		music_volume = config.get_value("audio", "music_volume", DEFAULT_MUSIC_VOLUME)
 		sfx_volume = config.get_value("audio", "sfx_volume", DEFAULT_SFX_VOLUME)
+		# int(...) : ConfigFile renvoie l'entier stocké tel quel, mais le typer
+		# explicitement en DisplayMode évite une valeur hors-enum si le fichier
+		# a été modifié à la main ou vient d'une version antérieure du jeu.
+		display_mode = int(config.get_value("display", "display_mode", DEFAULT_DISPLAY_MODE)) as DisplayMode
 
 
 func _save() -> void:
@@ -84,4 +135,5 @@ func _save() -> void:
 	config.set_value("general", "locale", locale)
 	config.set_value("audio", "music_volume", music_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
+	config.set_value("display", "display_mode", display_mode)
 	config.save(SETTINGS_PATH)

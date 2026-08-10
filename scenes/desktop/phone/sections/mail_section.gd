@@ -269,22 +269,18 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		scroll.add_child(locked_label)
 	else:
-		## Un corps de mail est un seul long texte, mais peut contenir un
-		## indice en plein milieu — on le découpe en segments (voir
-		## RichTextMarkup.split_by_indice) pour qu'IndiceRevealTracker sache
-		## quelle portion du texte doit vraiment être visible, pas juste
-		## "le RichTextLabel a un pixel dans le cadre".
+		## Un seul RichTextLabel pour tout le corps : le découper en segments
+		## autour de <indice> (un Control par segment, pour que
+		## IndiceRevealTracker sache lequel est visible) forçait un saut de
+		## ligne à chaque frontière de balise, même en plein milieu d'une
+		## phrase. L'indice se débloque donc dès que le corps entier est
+		## visible, pas seulement le passage surligné — même grain que pour
+		## une bulle SMS (voir sms_section.gd), pas une régression.
 		_reveal_tracker = IndiceRevealTracker.new(scroll)
-		var box := VBoxContainer.new()
-		box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		box.add_theme_constant_override("separation", 0)
-		for segment in RichTextMarkup.split_by_indice(mail.html_content):
-			var seg_label := _build_body_label(str(segment["text"]))
-			box.add_child(seg_label)
-			var clue_id: String = segment["clue_id"]
-			if not clue_id.is_empty():
-				_reveal_tracker.watch(seg_label, clue_id)
-		scroll.add_child(box)
+		var body_label := _build_body_label(RichTextMarkup.strip_indice_tags(mail.html_content))
+		scroll.add_child(body_label)
+		for clue_id in RichTextMarkup.extract_indice_ids(mail.html_content):
+			_reveal_tracker.watch(body_label, clue_id)
 
 	return frame
 

@@ -10,6 +10,11 @@ OPTIONS_TITLE,// Options,// Options
 OPTIONS_LANGUAGE_LABEL,Langue,Language
 OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
 OPTIONS_SFX_VOLUME_LABEL,Volume du son,Sound volume
+OPTIONS_RESOLUTION_LABEL,Résolution,Resolution
+OPTIONS_RESOLUTION_FULLSCREEN,Plein écran,Fullscreen
+OPTIONS_RESOLUTION_FULLSCREEN_BORDERLESS,Plein écran sans bordure,Borderless fullscreen
+OPTIONS_RESOLUTION_2560,2560×1440 (redimensionnable),2560×1440 (resizable)
+OPTIONS_RESOLUTION_1920,1920×1080 (redimensionnable),1920×1080 (resizable)
 OPTIONS_CLOSE,Fermer,Close
 OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
 OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées.","Warning, any unsaved progress from the last %d minutes will be lost."

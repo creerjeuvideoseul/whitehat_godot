@@ -129,7 +129,37 @@ corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_language"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_option_button"]
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.5, 0.45, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_option_button_hover"]
+bg_color = Color(1, 1, 1, 0.05)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.55, 0.65, 0.6, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
 
 [node name="OptionsPanel" type="Control"]
 layout_mode = 3
@@ -162,7 +192,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Card" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(700, 580)
+custom_minimum_size = Vector2(760, 580)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -211,37 +241,16 @@ theme_override_colors/font_color = Color(0.85, 0.9, 0.87, 1)
 theme_override_font_sizes/font_size = 26
 text = "OPTIONS_LANGUAGE_LABEL"
 
-[node name="LanguageButtons" type="HBoxContainer" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/LanguageRow"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="FrButton" type="Button" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/LanguageRow/LanguageButtons"]
+[node name="LanguageOption" type="OptionButton" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/LanguageRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 52)
+custom_minimum_size = Vector2(220, 52)
 layout_mode = 2
-toggle_mode = true
-button_group = SubResource("ButtonGroup_language")
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
 theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxFlat_lang_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_lang_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_lang_selected")
+theme_override_styles/normal = SubResource("StyleBoxFlat_option_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_option_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_option_button_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_lang_selected")
-text = "Français"
-
-[node name="EnButton" type="Button" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/LanguageRow/LanguageButtons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 52)
-layout_mode = 2
-toggle_mode = true
-button_group = SubResource("ButtonGroup_language")
-theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
-theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxFlat_lang_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_lang_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_lang_selected")
-theme_override_styles/focus = SubResource("StyleBoxFlat_lang_selected")
-text = "English"
 
 [node name="MusicVolumeRow" type="HBoxContainer" parent="CenterContainer/Card/CardLayout/BodyMargin/Body"]
 layout_mode = 2
@@ -308,6 +317,28 @@ theme_override_colors/font_color = Color(0.55, 0.63, 0.58, 1)
 theme_override_font_sizes/font_size = 22
 text = "100%"
 horizontal_alignment = 2
+
+[node name="ResolutionRow" type="HBoxContainer" parent="CenterContainer/Card/CardLayout/BodyMargin/Body"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ResolutionLabel" type="Label" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/ResolutionRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.85, 0.9, 0.87, 1)
+theme_override_font_sizes/font_size = 26
+text = "OPTIONS_RESOLUTION_LABEL"
+
+[node name="ResolutionOption" type="OptionButton" parent="CenterContainer/Card/CardLayout/BodyMargin/Body/ResolutionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_option_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_option_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_option_button_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_lang_selected")
 
 [node name="FooterSeparator" type="HSeparator" parent="CenterContainer/Card/CardLayout"]
 layout_mode = 2

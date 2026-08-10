@@ -35,29 +35,6 @@ static func extract_indice_ids(text: String) -> Array[String]:
 	return ids
 
 
-## Découpe un texte en segments consécutifs autour des balises <indice> (id
-## vide = segment hors balise) — pour un bloc de texte unique qui peut
-## contenir un indice au milieu (ex. corps d'un mail) : chaque segment peut
-## alors devenir son propre Control, individuellement surveillable par
-## IndiceRevealTracker, plutôt qu'un seul RichTextLabel dont on ne saurait
-## dire quelle portion est vraiment visible.
-static func split_by_indice(text: String) -> Array[Dictionary]:
-	var regex := RegEx.new()
-	regex.compile("<indice id=\"([^\"]+)\">(.*?)</indice>")
-	var segments: Array[Dictionary] = []
-	var cursor := 0
-	for result in regex.search_all(text):
-		var full_start: int = result.get_start()
-		var full_end: int = result.get_end()
-		if full_start > cursor:
-			segments.append({"text": text.substr(cursor, full_start - cursor), "clue_id": ""})
-		segments.append({"text": result.get_string(2), "clue_id": result.get_string(1)})
-		cursor = full_end
-	if cursor < text.length():
-		segments.append({"text": text.substr(cursor), "clue_id": ""})
-	return segments
-
-
 ## Les fichiers .dialogue (intro, chat) écrivent déjà du BBCode natif
 ## directement (pas le pseudo-HTML de html_to_bbcode ci-dessous, qui ne
 ## concerne que les données mail/SMS/OSINT) — [color=important] y est un
