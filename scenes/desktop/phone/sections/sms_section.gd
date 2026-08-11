@@ -143,9 +143,11 @@ func _build_row_avatar(conv: SmsConversation) -> Control:
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	# Zoom centré : pivot au milieu du rect avant de l'agrandir, sinon la mise
 	# à l'échelle se ferait depuis le coin haut-gauche (Control.scale par
-	# défaut).
+	# défaut). Uniquement pour une vraie photo : un cadenas est une icône déjà
+	# pensée pour tenir dans le cadre, le zoomer pareil le ferait déborder.
 	rect.pivot_offset = AVATAR_SIZE / 2.0
-	rect.scale = Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
+	if not conv.is_crypted:
+		rect.scale = Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
 	frame.add_child(rect)
 	return frame
 
