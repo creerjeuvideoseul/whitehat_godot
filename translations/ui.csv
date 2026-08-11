@@ -1,0 +1,89 @@
+keys,fr,en
+MENU_NEW_GAME,Nouvelle partie,New Game
+MENU_OPTIONS,Options,Options
+MENU_CONTINUE,Continuer,Continue
+MENU_QUIT,Quitter,Quit
+MENU_TAGLINE_1,Tu n'as pas piraté le système.,You didn't hack the system.
+MENU_TAGLINE_2,Tu as juste trouvé,You just found
+MENU_TAGLINE_3,une porte que tout le monde avait oublié de fermer.,a door everyone forgot to close.
+LOGIN_PSEUDO_ERROR,"Pseudo requis : 2 à 20 caractères (lettres, chiffres, _).","Username required: 2 to 20 characters (letters, digits, _)."
+LOGIN_TITLE,// Connexion,// Login
+LOGIN_PSEUDO_PLACEHOLDER,Pseudo,Username
+LOGIN_PASSWORD_PLACEHOLDER,Mot de passe,Password
+LOGIN_BACK_BUTTON,Retour menu,Back to menu
+LOGIN_CONNECT_BUTTON,SE CONNECTER,LOG IN
+BOOT_NETWORK_STATUS,réseau - chiffré,network - encrypted
+BOOT_CREDIT,"Fait avec passion par [color=#39ff7a][b]SecretGame[/b][/color]","Made with passion by [color=#39ff7a][b]SecretGame[/b][/color]"
+OPTIONS_TITLE,// Options,// Options
+OPTIONS_LANGUAGE_LABEL,Langue,Language
+OPTIONS_MUSIC_VOLUME_LABEL,Volume musique,Music volume
+OPTIONS_SFX_VOLUME_LABEL,Volume du son,Sound volume
+OPTIONS_RESOLUTION_LABEL,Résolution,Resolution
+OPTIONS_RESOLUTION_FULLSCREEN,Plein écran,Fullscreen
+OPTIONS_RESOLUTION_FULLSCREEN_BORDERLESS,Plein écran sans bordure,Borderless fullscreen
+OPTIONS_RESOLUTION_2560,2560×1440 (redimensionnable),2560×1440 (resizable)
+OPTIONS_RESOLUTION_1920,1920×1080 (redimensionnable),1920×1080 (resizable)
+OPTIONS_CLOSE,Fermer,Close
+OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
+OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées.","Warning, any unsaved progress from the last %d minutes will be lost."
+NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie.","Warning, this will delete your current save."
+COMMON_CONFIRM,Confirmer,Confirm
+COMMON_CANCEL,Annuler,Cancel
+COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
+DESKTOP_SEARCH_PLACEHOLDER,recherche OSINT,OSINT search
+DESKTOP_CPU_LABEL,CPU,CPU
+DESKTOP_MEM_LABEL,MEM,MEM
+DESKTOP_VPN_STATUS,VPN ON,VPN ON
+DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
+CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
+THOUGHT_ANONGHOST_CONTACT,AnonGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,AnonGhost should contact me. AnonGhost is my only real-world contact. Someone I trust, whom I've known for years.
+CHAT_CONTACTS_LABEL,Contacts,Contacts
+CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
+DESKTOP_CLUES_BUTTON,Collecte d'indice,Clue collection
+CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clue collection
+CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
+CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
+CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
+TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
+TERMINAL_JEAN_DUMP_LOADING,Chargement des données...,Loading data...
+TERMINAL_BOOT_TITLE,Initialisation du système,System initialization
+TERMINAL_BOOT_STARTING_SESSION,Démarrage de la session...,Starting session...
+INTRO_LIVE_BADGE,EN DIRECT,LIVE
+INTRO_FLASH_INFO,"Flash info : Sentinelle, risque ou bénédiction ?","Breaking news: Sentinel, risk or blessing?"
+PHONE_ALIZEE_TITLE,"Dump du téléphone de ""Alizée""
+HackPhoneOS 2.3","Alizée's phone dump
+HackPhoneOS 2.3"
+PHONE_ICON_SMS,SMS,SMS
+PHONE_ICON_MAIL,Mail,Mail
+PHONE_ICON_GALLERY,Galerie,Gallery
+PHONE_ICON_VAULT,Coffre-fort,Vault
+DESKTOP_SEARCH_BUTTON,Rechercher,Search
+OSINT_WINDOW_TITLE,Recherche OSINT,OSINT search
+OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.
+MAIL_SECTION_TITLE,Mail du téléphone d'Alizée,Alizée's phone mail
+MAIL_TAB_SENT,ENVOYÉS,SENT
+MAIL_TAB_RECEIVED,REÇUS,RECEIVED
+MAIL_NO_SELECTION,Sélectionnez un mail pour l'afficher.,Select a mail to view it.
+MAIL_ENCRYPTED_TITLE,********* Crypté *********,********* Encrypted *********
+VAULT_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'application coffre fort du téléphone.","******** Encrypted ********** Please unlock the phone's vault app."
+MAIL_FROM_LABEL,De :,From:
+MAIL_TO_LABEL,À :,To:
+SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
+SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
+SMS_MESSAGE_COUNT,%d messages,%d messages
+GALLERY_SECTION_TITLE,Galerie du téléphone d'Alizée,Alizée's phone gallery
+GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
+GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
+VAULT_SECTION_TITLE,Section coffre-fort,Vault section
+VAULT_EXPLANATION,"Des données sont cryptées sur ce téléphone (SMS, images, mails...). Merci d'indiquer le mot de passe pour les décrypter.","Some data on this phone is encrypted (SMS, images, emails...). Please enter the password to decrypt it."
+VAULT_PASSWORD_PLACEHOLDER,Mot de passe,Password
+VAULT_VALIDATE_BUTTON,VALIDER,SUBMIT
+VAULT_SUCCESS_MESSAGE,"Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégées (SMS, mails, etc.).","Encrypted content unlocked — you can now access the protected information (SMS, emails, etc.)."
+VAULT_WRONG_PASSWORD,Ce n'est pas le bon mot de passe.,This is not the right password.
+VAULT_HINT_DATE,"Cela ne peut pas être une date, ce serait trop simple à trouver pour son père Jean.",It can't be a date — that would be too easy for her father Jean to guess.
+VAULT_HINT_SOCIAL,"Non, Alizée n'est normalement pas au courant des mots de passe de Marek.","No, Alizée normally doesn't know Marek's passwords."
+VAULT_HINT_ELITESHOT,"C'est le même mot de passe que celui du père, il l'aurait déjà débloqué. Ça ne peut pas être ce mot de passe.","That's the same password as her father's — he would have unlocked it already. It can't be this one."
+VAULT_HINT_BUGSY,"Le père l'aurait trouvé facilement, ça ne peut pas être ce mot de passe.","Her father would have found this one easily, it can't be the right password."
+VAULT_HINT_ELEVEN,Le chiffre me semble une bonne idée. Il revient souvent dans le schéma de mots de passe d'Alizée.,That number seems like a good lead. It comes up often in Alizée's password pattern.
+VAULT_HINT_LASTHORIZON,"LastHorizon me semble pertinent, reste à deviner la fin. Un chiffre, peut-être ?","LastHorizon seems relevant, I just need to guess the ending. A number, maybe?"
+VAULT_HINT_GENERIC,"Non, le mot de passe doit forcément être quelque chose de plus devinable. Je dois trouver d'autres indices.","No, the password has to be something easier to guess. I need to find more clues."

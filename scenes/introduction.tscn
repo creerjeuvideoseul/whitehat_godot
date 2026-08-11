@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://ggjddg2vmau1"]
+
+[ext_resource type="Script" uid="uid://doqflwvltww5p" path="res://scenes/introduction.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dhcnf7fmt8mgw" path="res://assets/images_intro/wh_intro_fille_tele2.webp" id="2_first_frame"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_live_badge"]
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+bg_color = Color(0.78, 0.09, 0.09, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_flash_info"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+bg_color = Color(0.78, 0.09, 0.09, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Introduction" type="Control" unique_id=2133798336]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=775978998]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_first_frame")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BackgroundIncoming" type="TextureRect" parent="." unique_id=74536873]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LiveBadge" type="PanelContainer" parent="." unique_id=1515689951]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 32.0
+offset_top = 24.0
+offset_right = 232.0
+offset_bottom = 76.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_live_badge")
+
+[node name="Label" type="Label" parent="LiveBadge" unique_id=2096391541]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "INTRO_LIVE_BADGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="FlashInfoBanner" type="PanelContainer" parent="." unique_id=635368930]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 140.0
+offset_top = -490.0
+offset_right = 620.0
+offset_bottom = -390.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_flash_info")
+
+[node name="Label" type="Label" parent="FlashInfoBanner" unique_id=452707180]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "INTRO_FLASH_INFO"
+vertical_alignment = 1
+autowrap_mode = 3

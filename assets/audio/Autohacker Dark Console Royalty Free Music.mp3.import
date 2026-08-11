@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cqo05pdhks0pc"
+path="res://.godot/imported/Autohacker Dark Console Royalty Free Music.mp3-fd093b233b132eed509bfaec982e550f.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/Autohacker Dark Console Royalty Free Music.mp3"
+dest_files=["res://.godot/imported/Autohacker Dark Console Royalty Free Music.mp3-fd093b233b132eed509bfaec982e550f.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://cuyt7eoqausu4"
+path="res://.godot/imported/anonghost_intro.dialogue-bdd534abe0d14d4559d2dcbe90a79e3e.tres"
+
+[deps]
+
+source_file="res://dialogue/anonghost_intro.dialogue"
+dest_files=["res://.godot/imported/anonghost_intro.dialogue-bdd534abe0d14d4559d2dcbe90a79e3e.tres"]
+
+[params]
+
+defaults=true

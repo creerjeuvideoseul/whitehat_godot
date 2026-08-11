@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dmxulgfe2nbfb"
+
+[deps]
+
+files=["res://translations/indices.fr.translation", "res://translations/indices.en.translation"]
+
+source_file="res://translations/indices.csv"
+dest_files=["res://translations/indices.fr.translation", "res://translations/indices.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

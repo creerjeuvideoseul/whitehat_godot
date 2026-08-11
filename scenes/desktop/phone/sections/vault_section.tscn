@@ -1,0 +1,237 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scenes/desktop/phone/sections/vault_section.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.03, 0.1, 0.07, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_titlebar"]
+bg_color = Color(0.07, 0.18, 0.13, 1)
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
+bg_color = Color(1, 1, 1, 0)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_hover"]
+bg_color = Color(1, 1, 1, 0.08)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cell"]
+bg_color = Color(0.07, 0.18, 0.13, 0.6)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.5)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 48.0
+content_margin_top = 44.0
+content_margin_right = 48.0
+content_margin_bottom = 44.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_input"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.93, 0.95, 0.94, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_input_focus"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.96, 0.98, 0.97, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border_overlay"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.22, 0.87, 0.45, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="VaultSection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TitleBar" type="PanelContainer" parent="Layout"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_titlebar")
+
+[node name="Margin" type="MarginContainer" parent="Layout/TitleBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 20
+
+[node name="Row" type="HBoxContainer" parent="Layout/TitleBar/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Layout/TitleBar/Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 26
+text = "VAULT_SECTION_TITLE"
+
+[node name="Spacer" type="Control" parent="Layout/TitleBar/Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="Layout/TitleBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_close")
+theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_close_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_close_hover")
+text = "×"
+
+[node name="Body" type="MarginContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="Center" type="CenterContainer" parent="Layout/Body"]
+layout_mode = 2
+
+[node name="Cell" type="PanelContainer" parent="Layout/Body/Center"]
+custom_minimum_size = Vector2(820, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cell")
+
+[node name="CellBox" type="VBoxContainer" parent="Layout/Body/Center/Cell"]
+layout_mode = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="PadlockIcon" type="TextureRect" parent="Layout/Body/Center/Cell/CellBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ExplanationLabel" type="Label" parent="Layout/Body/Center/Cell/CellBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+autowrap_mode = 3
+text = "VAULT_EXPLANATION"
+
+[node name="InputRow" type="HBoxContainer" parent="Layout/Body/Center/Cell/CellBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="PasswordEdit" type="LineEdit" parent="Layout/Body/Center/Cell/CellBox/InputRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.1, 0.09, 1)
+theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
+theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_input")
+theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
+placeholder_text = "VAULT_PASSWORD_PLACEHOLDER"
+max_length = 20
+caret_blink = true
+
+[node name="ValidateButton" type="Button" parent="Layout/Body/Center/Cell/CellBox/InputRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "VAULT_VALIDATE_BUTTON"
+
+[node name="StatusLabel" type="Label" parent="Layout/Body/Center/Cell/CellBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+autowrap_mode = 3
+text = ""
+
+[node name="BorderOverlay" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border_overlay")
