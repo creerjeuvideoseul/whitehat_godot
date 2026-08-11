@@ -11,6 +11,7 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 @onready var _new_game_button: Button = %NewGameButton
 @onready var _options_button: Button = %OptionsButton
 @onready var _continue_button: MenuItem = %ContinueButton
+@onready var _credits_button: Button = %CreditsButton
 @onready var _quit_button: Button = %QuitButton
 @onready var _new_game_confirm_dialog: ConfirmationDialog = %NewGameConfirmDialog
 
@@ -22,6 +23,7 @@ func _ready() -> void:
 	_new_game_button.pressed.connect(_on_new_game_pressed)
 	_options_button.pressed.connect(_on_options_pressed)
 	_continue_button.pressed.connect(_on_continue_pressed)
+	_credits_button.pressed.connect(_on_credits_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 
 	_new_game_confirm_dialog.confirmed.connect(_start_new_game)
@@ -68,6 +70,12 @@ func _start_new_game() -> void:
 
 func _on_options_pressed() -> void:
 	OptionsMenu.open()
+
+## Pas de fondu/coupure de musique : même comportement que le bouton
+## "Continuer ?" annulé ou l'écran de connexion (login.gd), un simple aller
+## vers un autre écran du menu, pas une transition vers le gameplay.
+func _on_credits_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/credits.tscn")
 
 func _on_continue_pressed() -> void:
 	if not SaveManager.has_save():
