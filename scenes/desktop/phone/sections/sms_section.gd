@@ -211,10 +211,13 @@ func _show_conversation(conv: SmsConversation) -> void:
 		for entry: SmsEntry in conv.messages:
 			_messages_list.add_child(_build_message_row(entry, conv))
 
-	## Rattrape ce qui est déjà visible avant même de scroller (ex. une
-	## conversation courte qui tient entièrement dans le cadre).
+	## Attend que _scroll_to_bottom() ait fini (mise en page des nouvelles
+	## bulles + scroll casé tout en bas) avant de vérifier ce qui est visible —
+	## juste après add_child(), les bulles n'ont pas encore de position/taille
+	## valides (VBoxContainer ne les trie qu'à la frame suivante), donc TOUTES
+	## semblaient "visibles" au même point et débloquaient tout d'un coup.
+	await _scroll_to_bottom()
 	_reveal_tracker.check_visible()
-	_scroll_to_bottom()
 
 
 ## Une ligne pleine largeur, avec 20px de marge au-dessus (MESSAGE_TOP_MARGIN) ;

@@ -50,8 +50,12 @@ func search(query: String) -> void:
 	else:
 		_build_profile(character)
 
-	## Rattrape ce qui est déjà visible avant même de scroller (le cas
-	## habituel : une fiche qui tient dans la fenêtre).
+	## Attend une frame : juste après add_child(), les lignes fraîchement
+	## construites n'ont pas encore de position/taille valides (le
+	## VBoxContainer ne les trie qu'à la frame suivante), donc TOUTES
+	## semblaient "visibles" au même point et débloquaient tout d'un coup —
+	## même bug que sms_section.gd avant sa correction.
+	await get_tree().process_frame
 	_reveal_tracker.check_visible()
 
 
