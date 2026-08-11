@@ -9,9 +9,9 @@ class_name UsageGauge
 ## gauges share the same gradient colors on purpose — the color now reflects
 ## the load itself, not which gauge it is.
 ##
-## Forced spikes/drops (load spikes, 0%) are a later request; keeping the
-## wander loop self-contained here means adding that later is a single new
-## public method, not a rewrite.
+## Forced spikes (set_spike_range/restore_normal_range, see desktop_header.gd's
+## CPU gauge during a system window) reuse the same self-contained wander
+## chain rather than a separate code path.
 
 ## Couleur à 0% de charge.
 @export var low_color: Color = Palette.TEXT_NORMAL
@@ -26,6 +26,10 @@ class_name UsageGauge
 
 const WANDER_MIN_SECONDS := 1.5
 const WANDER_MAX_SECONDS := 3.5
+## Durée du saut quand set_spike_range()/restore_normal_range() force une
+## nouvelle fourchette — plus court qu'un palier de wander normal pour que le
+## changement se voie tout de suite plutôt que de se fondre dans le bruit.
+const SPIKE_JUMP_SECONDS := 0.4
 
 @onready var _fill: ColorRect = %Fill
 
@@ -35,6 +39,13 @@ var _percent: float = 0.0:
 		var ratio := clampf(value / 100.0, 0.0, 1.0)
 		_fill.anchor_right = ratio
 		_fill.color = _gradient_color(ratio)
+
+## Fourchette d'origine (celle configurée sur l'instance dans la scène) —
+## capturée à _ready() pour que restore_normal_range() puisse y revenir sans
+## que l'appelant ait besoin de la reconnaître lui-même.
+var _normal_min_percent: float
+var _normal_max_percent: float
+var _wander_tween: Tween
 
 
 ## Dégradé en deux segments (blanc→jaune puis jaune→rouge) plutôt qu'un lerp
@@ -47,15 +58,49 @@ func _gradient_color(ratio: float) -> Color:
 
 
 func _ready() -> void:
+	_normal_min_percent = min_percent
+	_normal_max_percent = max_percent
 	_percent = (min_percent + max_percent) / 2.0
-	_wander_loop()
+	_wander_step()
 
 
-func _wander_loop() -> void:
-	while true:
-		var target := randf_range(min_percent, max_percent)
-		var duration := randf_range(WANDER_MIN_SECONDS, WANDER_MAX_SECONDS)
-		var tween := create_tween()
-		tween.set_trans(Tween.TRANS_SINE)
-		tween.tween_property(self, "_percent", target, duration)
-		await tween.finished
+## Une étape du "wander" qui s'enchaîne elle-même (plutôt qu'une boucle
+## while) : un forçage externe (set_spike_range/restore_normal_range) peut
+## ainsi tuer le palier en cours et relancer proprement la chaîne dessus,
+## sans laisser deux boucles concurrentes tourner en même temps.
+func _wander_step() -> void:
+	var target := randf_range(min_percent, max_percent)
+	var duration := randf_range(WANDER_MIN_SECONDS, WANDER_MAX_SECONDS)
+	_wander_tween = create_tween()
+	_wander_tween.set_trans(Tween.TRANS_SINE)
+	_wander_tween.tween_property(self, "_percent", target, duration)
+	await _wander_tween.finished
+	_wander_step()
+
+
+## Force un saut immédiat vers une fourchette donnée (ex: pic de charge
+## pendant qu'une fenêtre système tourne, voir desktop_header.gd) — remplace
+## min_percent/max_percent tant que restore_normal_range() n'est pas appelé.
+func set_spike_range(spike_min: float, spike_max: float) -> void:
+	min_percent = spike_min
+	max_percent = spike_max
+	_jump_and_resume_wander()
+
+
+## Revient à la fourchette d'origine (celle configurée sur l'instance dans la
+## scène) après un set_spike_range().
+func restore_normal_range() -> void:
+	min_percent = _normal_min_percent
+	max_percent = _normal_max_percent
+	_jump_and_resume_wander()
+
+
+func _jump_and_resume_wander() -> void:
+	if _wander_tween and _wander_tween.is_valid():
+		_wander_tween.kill()
+	var target := randf_range(min_percent, max_percent)
+	_wander_tween = create_tween()
+	_wander_tween.set_trans(Tween.TRANS_SINE)
+	_wander_tween.tween_property(self, "_percent", target, SPIKE_JUMP_SECONDS)
+	await _wander_tween.finished
+	_wander_step()

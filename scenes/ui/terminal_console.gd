@@ -23,6 +23,12 @@ const FILENAME_COLUMN_WIDTH := 46
 ## Pause après la dernière ligne avant l'auto-fermeture (show_close_button =
 ## false), pour laisser le temps de la lire.
 const AUTO_CLOSE_DELAY_SECONDS := 0.6
+## Fondu (entrée et sortie) du bruitage de frappe autour de chaque ligne qui
+## le déclenche (voir TerminalLine.plays_typing_sound) — pas une seule fois
+## pour tout le terminal, mais à chaque phrase.
+const TYPING_SOUND_FADE_SECONDS := 0.5
+## Durée du fondu de fermeture, si fade_out_on_close est activé.
+const CLOSE_FADE_SECONDS := 0.3
 
 ## Le script à dérouler — à définir avant que la scène entre dans l'arbre
 ## (comme ClueBoardWindow.mission_id) : _ready() s'en sert directement, pas
@@ -37,6 +43,23 @@ var title: String = ""
 ## fait que regarder (ex: boot système, voir Introduction). À définir avant
 ## add_child(), comme `lines`.
 var show_close_button: bool = true
+## Bruitage de frappe au clavier (fondu, voir SfxPlayer et TYPING_SOUND_FADE_SECONDS),
+## joué uniquement pendant les lignes marquées TerminalLine.plays_typing_sound
+## (les prompts user@/jean@, pas les sorties système) — laissé à null par
+## défaut : ne le renseigner que quand la séquence simule une vraie saisie du
+## joueur (voir desktop.gd, terminal après Jean Ranoud). Le boot système
+## après l'intro le laisse à null car le joueur n'y tape rien. À définir
+## avant add_child(), comme `lines`.
+var typing_sound: AudioStream = null
+## Si vrai, la fermeture (bouton ou auto-fermeture) fait un fondu de tout le
+## terminal vers la transparence avant de se libérer, au lieu de disparaître
+## d'un coup — laissé à false par défaut (comportement inchangé, ex: le boot
+## système de l'intro). Activé pour le terminal après Jean Ranoud (voir
+## desktop.gd), qui enchaîne sur la transition "analyse en cours"
+## (AnalysisTransition) : la boîte, déjà noire, se fond ainsi dans l'écran
+## d'analyse plutôt que de disparaître brutalement juste avant qu'il
+## n'apparaisse. À définir avant add_child(), comme `lines`.
+var fade_out_on_close: bool = false
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _scroll_container: ScrollContainer = %ScrollContainer
@@ -87,10 +110,17 @@ func _play_text_line(line: TerminalLine) -> void:
 	dialogue_line.text = line.text
 	label.dialogue_line = dialogue_line
 
+	var plays_sound := line.plays_typing_sound and typing_sound != null
+	if plays_sound:
+		SfxPlayer.play_ambient(typing_sound, TYPING_SOUND_FADE_SECONDS)
+
 	_current_label = label
 	label.type_out()
 	await label.finished_typing
 	_current_label = null
+
+	if plays_sound:
+		SfxPlayer.stop_ambient(TYPING_SOUND_FADE_SECONDS)
 
 
 ## Réécrit la même ligne à intervalles réguliers en interpolant pourcentage,
@@ -150,5 +180,9 @@ func _scroll_to_bottom() -> void:
 
 
 func _on_close_pressed() -> void:
+	if fade_out_on_close:
+		var tween := create_tween()
+		tween.tween_property(self, "modulate:a", 0.0, CLOSE_FADE_SECONDS)
+		await tween.finished
 	closed.emit()
 	queue_free()

@@ -10,8 +10,21 @@ extends Node
 
 const SAVE_PATH := "user://savegame.json"
 const SAVE_VERSION := 1
+## Instantané séparé du vrai fichier de sauvegarde, pour le bouton DEBUG du
+## bureau (voir desktop_footer.gd) — jamais lu/écrit en dehors d'un contexte
+## debug (voir capture_debug_checkpoint/load_debug_checkpoint).
+const DEBUG_SAVE_PATH := "user://debug_checkpoint.json"
+
+## Emis quand un point de sauvegarde debug vient d'être capturé — pour que
+## desktop_footer.gd puisse activer son bouton "y revenir" sans attendre un
+## rechargement de scène.
+signal debug_checkpoint_captured
 
 var _data: Dictionary = {}
+## Un-shot : posé par load_debug_checkpoint(), consommé par desktop.gd à
+## l'arrivée sur le bureau pour rejouer directement le terminal de Jean sans
+## repasser par tout le fil de discussion (voir consume_debug_replay_jean_terminal).
+var _debug_should_replay_jean_terminal: bool = false
 
 ## When the current session's unsaved progress started accumulating: either
 ## the last save_checkpoint() call, or app boot if none happened yet this
@@ -105,6 +118,68 @@ func is_conversation_complete(contact_id: String) -> bool:
 func get_minutes_since_checkpoint() -> int:
 	var elapsed_msec := Time.get_ticks_msec() - _last_checkpoint_ticks_msec
 	return int(elapsed_msec / 60000.0)
+
+
+## A appeler sur chaque ligne de dialogue affichée (même usage que
+## ClueManager.unlock_from_tags) : capture un point de sauvegarde debug si la
+## ligne porte le tag [#debug_checkpoint], ne fait rien sinon. Sûr d'appeler
+## systématiquement, la plupart des lignes n'ont pas ce tag.
+func maybe_capture_debug_checkpoint(line: DialogueLine) -> void:
+	if line.has_tag("debug_checkpoint"):
+		capture_debug_checkpoint()
+
+
+## Debug only (voir Settings.IS_PRODUCTION, qui garde le bouton s'en servant —
+## voir desktop_footer.gd) : capture un instantané séparé du vrai fichier de
+## sauvegarde, à un point choisi dans un fichier .dialogue via le tag
+## [#debug_checkpoint]. Ne touche jamais SAVE_PATH — la vraie progression du
+## joueur n'est pas affectée par cette capture.
+func capture_debug_checkpoint() -> void:
+	var snapshot := {
+		"version": SAVE_VERSION,
+		"checkpoint_scene": get_checkpoint_scene(),
+		"pseudo": PlayerSession.pseudo,
+		"game_unix_time": GameClock.get_unix_time(),
+		"story_vars": StoryVars.get_all(),
+		"unlocked_indices": ClueManager.get_unlocked_ids(),
+		"conversations": _data.get("conversations", {}).duplicate(true),
+	}
+	var file := FileAccess.open(DEBUG_SAVE_PATH, FileAccess.WRITE)
+	if file == null:
+		return
+	file.store_string(JSON.stringify(snapshot))
+	debug_checkpoint_captured.emit()
+
+
+func has_debug_checkpoint() -> bool:
+	return FileAccess.file_exists(DEBUG_SAVE_PATH)
+
+
+## Recharge l'instantané debug par-dessus l'état courant en mémoire (comme
+## _load() au démarrage) — n'écrit rien sur le vrai fichier de sauvegarde à
+## ce stade. Pose _debug_should_replay_jean_terminal : la conversation avec
+## Jean n'est volontairement pas marquée complète dans l'instantané (voir
+## capture_debug_checkpoint, pris avant la fin réelle), donc desktop.gd doit
+## rejouer le terminal directement plutôt que de suivre son chemin normal.
+func load_debug_checkpoint() -> void:
+	if not FileAccess.file_exists(DEBUG_SAVE_PATH):
+		return
+	var file := FileAccess.open(DEBUG_SAVE_PATH, FileAccess.READ)
+	if file == null:
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		_data = parsed
+		_debug_should_replay_jean_terminal = true
+
+
+## Un-shot : vrai une seule fois après un load_debug_checkpoint(), puis se
+## remet à faux — pour qu'un "Continuer" normal, plus tard dans la session,
+## ne redéclenche pas le terminal de Jean par erreur.
+func consume_debug_replay_jean_terminal() -> bool:
+	var value := _debug_should_replay_jean_terminal
+	_debug_should_replay_jean_terminal = false
+	return value
 
 
 func delete_save() -> void:

@@ -97,6 +97,7 @@ func _advance(next_id: String) -> void:
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
 	ClueManager.unlock_from_tags(line)
+	SaveManager.maybe_capture_debug_checkpoint(line)
 	line.text = RichTextMarkup.resolve_important_color(line.text)
 
 	if line.character == SYSTEM_CHARACTER:

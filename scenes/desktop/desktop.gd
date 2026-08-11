@@ -10,6 +10,7 @@ const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_wind
 const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
+const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
 ## non génériques : chaque section aura son propre gameplay à terme (SMS, mail,
@@ -25,6 +26,14 @@ const PHONE_SECTIONS := {
 const PHONE_REVEAL_SECONDS := 0.6
 ## Décalage de départ (hors écran vers la gauche) pour l'effet de glissement.
 const PHONE_REVEAL_SLIDE_OFFSET := 120.0
+## De combien le téléphone doit commencer à apparaître avant la fin réelle de
+## la transition "analyse en cours" (voir _play_analysis_transition_and_reveal_phone).
+const PHONE_EARLY_REVEAL_SECONDS := 0.7
+## Durée/amplitude du glissement de rangement de la fenêtre de chat vers la
+## barre des tâches (voir _minimize_window_with_slide), même esprit que
+## PHONE_REVEAL_SECONDS/OFFSET mais en sens inverse (vers le bas).
+const CHAT_MINIMIZE_SLIDE_SECONDS := 0.5
+const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
 ## The mission the "Indice" button currently opens. No mission-selection UI
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
@@ -33,6 +42,11 @@ const ANONGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
 const ANONGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
+## Bruitage de frappe joué pendant le terminal simulant le rapatriement des
+## données du téléphone d'Alizée (voir _play_jean_dump_terminal) — le joueur
+## y "tape" des commandes, contrairement au boot système après l'intro qui ne
+## reçoit volontairement pas ce son (voir Introduction).
+const JEAN_DUMP_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 
 ## The chat window auto-opens on desktop load for now — there's no "how do
 ## you open a window" system yet (icons, notifications, ...), so this is
@@ -71,10 +85,30 @@ var _osint_window_title: String = ""
 ## surtout pour éviter d'en recréer une seconde au retour d'une sauvegarde).
 var _alizee_phone: AlizeePhone = null
 
+## Référence à la fenêtre de discussion AnonGhost/Jean ouverte au tout début
+## du bureau — gardée pour pouvoir la ranger (voir _minimize_window_with_slide)
+## une fois le téléphone d'Alizée sur le point d'apparaître.
+var _chat_window: ChatWindow = null
+
 
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
+
+	# Debug only (voir Settings.IS_PRODUCTION) : le bouton "revenir avant la
+	# fin de Jean" du footer a chargé un instantané séparé juste avant cet
+	# appel puis rechargé cette scène — la conversation avec Jean n'y est
+	# volontairement pas marquée complète (capturée avant sa vraie fin), donc
+	# on rejoue directement le terminal plutôt que de suivre le chemin normal
+	# ci-dessous (qui rejouerait tout le dialogue de Jean depuis le début).
+	if SaveManager.consume_debug_replay_jean_terminal():
+		_chat_window = _build_chat_window()
+		_open_window(_chat_window)
+		_chat_window.hide()
+		_on_window_minimize_requested(_chat_window, tr("CHAT_WINDOW_TITLE"))
+		_play_jean_dump_terminal()
+		return
+
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
 	# doit déjà être là, sans rejouer son animation d'apparition.
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
@@ -90,10 +124,10 @@ func _ready() -> void:
 		# arrivée sur le bureau. Réduite par défaut : à la reprise, le
 		# téléphone d'Alizée est le vrai point d'entrée, la conversation
 		# reste à un clic dans la taskbar sans s'imposer par-dessus.
-		var chat_window := _build_chat_window()
-		_open_window(chat_window)
-		chat_window.hide()
-		_on_window_minimize_requested(chat_window, tr("CHAT_WINDOW_TITLE"))
+		_chat_window = _build_chat_window()
+		_open_window(_chat_window)
+		_chat_window.hide()
+		_on_window_minimize_requested(_chat_window, tr("CHAT_WINDOW_TITLE"))
 		return
 
 	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
@@ -112,7 +146,8 @@ func _ready() -> void:
 		_show_player_thought(tr("THOUGHT_ANONGHOST_CONTACT"))
 
 	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
-	_open_window(_build_chat_window())
+	_chat_window = _build_chat_window()
+	_open_window(_chat_window)
 
 
 ## Petit encart "pensée du joueur" en bas de l'écran (voir player_thought.gd)
@@ -173,16 +208,85 @@ func _play_jean_dump_terminal() -> void:
 	# rejouer la discussion avec Jean (déjà marquée complète par ailleurs).
 	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
+	# Redescend juste avant l'apparition du téléphone (voir
+	# _play_analysis_transition_and_reveal_phone) — couvre tout le temps où le
+	# terminal ET l'écran "chargement des données" sont à l'écran.
+	_header.set_system_load_spike(true)
+
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_jean_dump_lines()
+	console.typing_sound = JEAN_DUMP_TYPING_SOUND
+	console.fade_out_on_close = true
 	console.closed.connect(_on_jean_dump_terminal_closed)
 	add_child(console)
 
 
-## Une fois le terminal fermé, le téléphone d'Alizée apparaît sur le bureau —
-## c'est le point d'entrée de l'enquête proprement dite.
+## Une fois le terminal fermé : la fenêtre de chat (devenue accessoire, la
+## conversation avec Jean est terminée) se range dans la barre des tâches,
+## puis une transition "analyse en cours" (voir AnalysisTransition — barre de
+## progression façon scp/rsync, dans la continuité visuelle du terminal qui
+## vient de tourner) couvre le bureau central le temps de la bascule — évite
+## le "cut" brutal terminal → téléphone. Remplace l'ancien fondu au noir
+## (SceneTransition, toujours utilisé ailleurs pour les changements de
+## scène) : si cet effet ne convenait pas, il suffit de remettre les deux
+## lignes SceneTransition.fade_out/fade_in ici à la place de
+## _play_analysis_transition_and_reveal_phone(). Le téléphone d'Alizée,
+## point d'entrée de l'enquête, apparaît ensuite avec sa propre animation.
 func _on_jean_dump_terminal_closed() -> void:
+	# .visible : si le joueur avait déjà réduit la fenêtre de lui-même avant
+	# la fin de la discussion, un second rangement créerait un doublon dans
+	# la barre des tâches (voir DesktopFooter.add_minimized_window, qui ne
+	# déduplique pas par titre comme le font Indice/OSINT).
+	if is_instance_valid(_chat_window) and _chat_window.visible:
+		await _minimize_window_with_slide(_chat_window, tr("CHAT_WINDOW_TITLE"))
+
+	await _play_analysis_transition_and_reveal_phone()
+
+
+## N'affecte que WindowLayer (le bureau central) — le header/footer restent
+## visibles, contrairement à SceneTransition qui couvre tout l'écran.
+##
+## Le téléphone commence à apparaître PHONE_EARLY_REVEAL_SECONDS avant la fin
+## réelle de la transition (pas d'await sur transition.finished) : il émerge
+## de l'écran d'analyse plutôt que d'attendre qu'il ait entièrement disparu.
+## Repositionné juste avant la transition dans WindowLayer (move_child) pour
+## rester masqué tant qu'elle est encore opaque — elle continue de tourner/
+## s'effacer en arrière-plan et se libère toute seule (voir
+## AnalysisTransition._ready(), fondu de sortie final).
+func _play_analysis_transition_and_reveal_phone() -> void:
+	var transition: AnalysisTransition = ANALYSIS_TRANSITION.instantiate()
+	_window_layer.add_child(transition)
+
+	var wait_seconds := maxf(0.0, AnalysisTransition.TOTAL_SECONDS - PHONE_EARLY_REVEAL_SECONDS)
+	await get_tree().create_timer(wait_seconds).timeout
+
+	_header.set_system_load_spike(false)
 	_reveal_alizee_phone(true)
+	if is_instance_valid(_alizee_phone) and is_instance_valid(transition):
+		_window_layer.move_child(_alizee_phone, transition.get_index())
+
+
+## Glissement + fondu vers le bas (même esprit que _animate_phone_reveal,
+## sens inverse) avant de ranger réellement la fenêtre — pour un rangement
+## visible plutôt que la disparition instantanée du bouton "réduire".
+func _minimize_window_with_slide(window: Control, window_title: String) -> void:
+	var origin_y := window.position.y
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_ease(Tween.EASE_IN)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(window, "position:y", origin_y + CHAT_MINIMIZE_SLIDE_OFFSET, CHAT_MINIMIZE_SLIDE_SECONDS)
+	tween.tween_property(window, "modulate:a", 0.0, CHAT_MINIMIZE_SLIDE_SECONDS)
+	await tween.finished
+
+	# Remis à l'état normal avant de cacher : la fenêtre doit réapparaître
+	# pile comme avant, pas fondue/décalée, quand on la rouvre depuis la
+	# barre des tâches.
+	window.position.y = origin_y
+	window.modulate.a = 1.0
+	window.hide()
+	_on_window_minimize_requested(window, window_title)
 
 
 ## Script de la séquence "hack" simulant le rapatriement + l'analyse OSINT
@@ -197,14 +301,14 @@ func _build_jean_dump_lines() -> Array[TerminalLine]:
 	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
 
 	var lines: Array[TerminalLine] = []
-	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][+][/color] Authenticating against remote host 203.0.113.45:22... Connection established.[/color]" % [muted, accent]))
-	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]scp ./backups/mobile_dump_2026.tar.gz user@192.168.1.12:~/workspace/[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]scp ./backups/mobile_dump_2026.tar.gz user@192.168.1.12:~/workspace/[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.progress_line("mobile_dump_2026.tar.gz", 3420, "48.2MB/s", "01:11"))
-	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]exit[/color]" % [prompt, normal]))
-	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]tar -xzvf ~/workspace/mobile_dump_2026.tar.gz -C ~/workspace/raw_data/[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]exit[/color]" % [prompt, normal], true))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]tar -xzvf ~/workspace/mobile_dump_2026.tar.gz -C ~/workspace/raw_data/[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s]unpacking raw_dump.bin... [color=%s]DONE[/color] (42,891 blocks processed)[/color]" % [muted, accent]))
-	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]./bin/parser --input ~/workspace/raw_data/ --filter-level deep[/color]" % [prompt, normal]))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]./bin/parser --input ~/workspace/raw_data/ --filter-level deep[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Initializing OSINT heuristic analyzer v4.2...[/color]" % [muted, accent]))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Parsing SQLite databases, app cache, and system logs...[/color]" % [muted, accent]))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Stripping telemetry data & telemetry noise... (89%% discarded)[/color]" % [muted, accent]))

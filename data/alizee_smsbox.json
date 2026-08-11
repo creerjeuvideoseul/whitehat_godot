@@ -22,7 +22,7 @@
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2029-11-15T10:30:00", "message": "Quand on veut on peut. Tu pars plus tôt la prochaine fois. On en reparle ce soir." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2029-11-15T10:31:00", "message": "Ça ne se reproduit pas." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-30T12:04:00", "message": "T'appelles dès que tu sors." },
-			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Papa, je peux sortir samedi ? mes amis font <indice id=\"M1_sms_fete_ratee\"><color=indice>une fête</color></indice>." },
+			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Papa, je peux sortir samedi ? mes amis font <color=important>une fête</color>." },
 			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-12-14T16:31:00", "message": "Non. T'as un <color=important>15 en biologie</color> à rattraper, c'est pas le moment." },
 			{ "messageId": 13, "isAnswer": 1, "timestamp": "2029-12-14T16:32:00", "message": "Mais papa, j'ai besoin de voir mes amis de temps en temps !" },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2029-12-14T16:32:00", "message": "Une fois en médecine t'auras tout le temps pour ça. Là c'est pas la priorité." },
@@ -61,7 +61,7 @@
 			{ "messageId": 3, "isAnswer": 0, "timestamp": "2029-10-13T09:50:00", "message": "C'est pas de la dureté." },
 			{ "messageId": 4, "isAnswer": 1, "timestamp": "2029-12-31T19:46:00", "message": "Ce soir, je viens à la soirée, j'ai l'autorisation !" },
 			{ "messageId": 5, "isAnswer": 0, "timestamp": "2029-12-31T19:46:00", "message": "Ok ! Bonne nouvelle ! À ce soir." },
-			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Merci pour hier. C'était dingue ce que <indice id=\"M1_sms_marek_decouverte\"><color=indice>tu m'as fait découvrir</color></indice>." },
+			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Merci pour hier. C'était dingue ce que <color=important>tu m'as fait découvrir</color>." },
 			{ "messageId": 7, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "Tu ne devrais pas m'écrire, tu sais pourquoi." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "Je vais t'installer <indice id=\"M1_sms_marek_application\"><color=indice>une application</color></indice> qui va t'aider." },
 			{ "messageId": 9, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "..." },
@@ -121,15 +121,15 @@
 		  "isCrypted": 1,
 		  "messages": [
 			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-12-28T18:45:00", "message": "Tu dois installer une application coffre-fort, je vais t'apprendre à le faire et à glisser les SMS ou photos sur lequel ton père ne devrait pas tomber." },
-			{ "messageId": 1, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'était génial <indice id=\"sms_cryp_m_baiser\"><color=indice>le baiser</color></indice>, merci !" },
+			{ "messageId": 1, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'était génial <indice id=\"M1_sms_cryp_m_baiser\"><color=indice>le baiser</color></indice>, merci !" },
 			{ "messageId": 2, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "On ne dit pas merci pour un baiser Alizée !\nC'était réciproque. Prends soin de toi, et pense à mettre ces SMS dans ton nouveau coffre-fort." },
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'est fait <3" },
 			{ "messageId": 4, "isAnswer": 0, "timestamp": "2030-01-09T15:24:00", "message": "Tu m'as fait un peu peur hier, on ne disparaît pas comme ça !" },
-			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "J'avais reçu un mail de ma mère. J'ai déconné, <indice id=\"sms_cryp_m_disparue\"><color=indice>je suis partie sans but</color></indice> pendant plusieurs heures sans téléphone." },
+			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "J'avais reçu un mail de ma mère. J'ai déconné, <indice id=\"M1_sms_cryp_m_disparue\"><color=indice>je suis partie sans but</color></indice> pendant plusieurs heures sans téléphone." },
 			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Comme je te l'ai dit il y a quelques jours, tu as 18 ans bientôt, <color=important>tu peux me suivre</color>, découvrir une autre vie. Tu dois t'éloigner de ton père. Tu ne vois pas qu'il t'isole ? Qu'il exerce une pression psychologique sur toi ? Ce n'est pas ça la vie." },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "Ce que tu me proposes me semble tellement impossible… Mais je te promets d'y réfléchir. Les choses vont trop vite." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "Je ne te promets pas le luxe, ma vie d'artiste est difficile, mais je prendrai soin de toi." },
-			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
+			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>J'ai revu ma mère</color>, J'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
 		  ]
 		}
@@ -157,7 +157,7 @@
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2029-11-15T10:30:00", "message": "Where there's a will there's a way. Leave earlier next time. We'll talk tonight." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2029-11-15T10:31:00", "message": "This won't happen again." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-30T12:04:00", "message": "Call me as soon as you're out." },
-			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Dad, can I go out Saturday? My friends are having <indice id=\"M1_sms_fete_ratee\"><color=indice>a party</color></indice>." },
+			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Dad, can I go out Saturday? My friends are having <color=indice>a party</color>." },
 			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-12-14T16:31:00", "message": "No. You have a <color=important>15 in biology</color> to make up for, it's not the time." },
 			{ "messageId": 13, "isAnswer": 1, "timestamp": "2029-12-14T16:32:00", "message": "But dad, I need to see my friends sometimes!" },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2029-12-14T16:32:00", "message": "Once you're in med school you'll have all the time for that. Right now it's not the priority." },
@@ -196,7 +196,7 @@
 			{ "messageId": 3, "isAnswer": 0, "timestamp": "2029-10-13T09:50:00", "message": "It's not about being hard on you." },
 			{ "messageId": 4, "isAnswer": 1, "timestamp": "2029-12-31T19:46:00", "message": "Tonight, I'm coming to the party, I got permission!" },
 			{ "messageId": 5, "isAnswer": 0, "timestamp": "2029-12-31T19:46:00", "message": "Ok! Good news! See you tonight." },
-			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Thanks for yesterday. It was crazy, <indice id=\"M1_sms_marek_decouverte\"><color=indice>what you showed me</color></indice>." },
+			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Thanks for yesterday. It was crazy, <color=indice>what you showed me</color>." },
 			{ "messageId": 7, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "You shouldn't text me, you know why." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "I'm going to install <indice id=\"M1_sms_marek_application\"><color=indice>an app</color></indice> on your phone that will help you." },
 			{ "messageId": 9, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "..." },
@@ -256,15 +256,15 @@
 		  "isCrypted": 1,
 		  "messages": [
 			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-12-28T18:45:00", "message": "You need to install a vault app, I'll teach you how, and how to hide the texts or photos your dad shouldn't stumble on." },
-			{ "messageId": 1, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "<indice id=\"sms_cryp_m_baiser\"><color=indice>That kiss</color></indice> was amazing, thank you!" },
+			{ "messageId": 1, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "<indice id=\"M1_sms_cryp_m_baiser\"><color=indice>That kiss</color></indice> was amazing, thank you!" },
 			{ "messageId": 2, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "You don't say thank you for a kiss, Alizée!\nIt was mutual. Take care of yourself, and remember to put these texts in your new vault." },
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Done <3" },
 			{ "messageId": 4, "isAnswer": 0, "timestamp": "2030-01-09T15:24:00", "message": "You scared me a bit yesterday, you don't just disappear like that!" },
-			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "I'd gotten an email from my mother. I lost it, <indice id=\"sms_cryp_m_disparue\"><color=indice>I walked off aimlessly</color></indice> for hours without my phone." },
+			{ "messageId": 5, "isAnswer": 1, "timestamp": "2030-01-09T16:30:00", "message": "I'd gotten an email from my mother. I lost it, <indice id=\"M1_sms_cryp_m_disparue\"><color=indice>I walked off aimlessly</color></indice> for hours without my phone." },
 			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Like I told you a few days ago, you're almost 18, <color=important>you could come with me</color>, discover another life. You need to get away from your father. Can't you see he's isolating you? That he's putting psychological pressure on you? That's not a life." },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "What you're offering seems so impossible… But I promise I'll think about it. Things are moving too fast." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
-			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"sms_cryp_m_bomb\"><color=indice>Buy a rape alarm</color></indice>, we don't know how your father might react if he finds out about us." },
+			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a rape alarm</color></indice>, we don't know how your father might react if he finds out about us." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>I saw my mother again</color>. I finally understood why she abandoned us. My father is a real piece of garbage, I don't want to see him anymore." }
 		  ]
 		}
