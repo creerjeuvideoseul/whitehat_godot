@@ -208,6 +208,11 @@ func _play_jean_dump_terminal() -> void:
 	# rejouer la discussion avec Jean (déjà marquée complète par ailleurs).
 	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
+	# Redescend juste avant l'apparition du téléphone (voir
+	# _play_analysis_transition_and_reveal_phone) — couvre tout le temps où le
+	# terminal ET l'écran "chargement des données" sont à l'écran.
+	_header.set_system_load_spike(true)
+
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_jean_dump_lines()
 	console.typing_sound = JEAN_DUMP_TYPING_SOUND
@@ -255,6 +260,7 @@ func _play_analysis_transition_and_reveal_phone() -> void:
 	var wait_seconds := maxf(0.0, AnalysisTransition.TOTAL_SECONDS - PHONE_EARLY_REVEAL_SECONDS)
 	await get_tree().create_timer(wait_seconds).timeout
 
+	_header.set_system_load_spike(false)
 	_reveal_alizee_phone(true)
 	if is_instance_valid(_alizee_phone) and is_instance_valid(transition):
 		_window_layer.move_child(_alizee_phone, transition.get_index())

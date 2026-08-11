@@ -23,6 +23,11 @@ const TOAST_TOP_OFFSET := 100.0
 const TOAST_FADE_SECONDS := 0.3
 const TOAST_HOLD_SECONDS := 3.0
 
+## Fourchette simulée pendant qu'une fenêtre système tourne (terminal, écran
+## "chargement des données") — voir set_system_load_spike().
+const CPU_SPIKE_MIN_PERCENT := 80.0
+const CPU_SPIKE_MAX_PERCENT := 100.0
+
 ## Bubbled up so the owning scene (desktop.gd) decides what opening "Indice"
 ## actually means (which mission, which window) — this header doesn't know.
 signal clue_button_pressed
@@ -35,6 +40,7 @@ signal osint_search_requested(query: String)
 @onready var _clue_button: Button = %ClueButton
 @onready var _search_field: LineEdit = %SearchField
 @onready var _search_button: Button = %SearchButton
+@onready var _cpu_gauge: UsageGauge = %CpuGauge
 
 ## (B) Badge compteur — construit en code plutôt que dans la .tscn, un simple
 ## indicateur ne mérite pas un noeud dédié dans la scène.
@@ -184,6 +190,18 @@ func _advance_toast_queue() -> void:
 	tween.tween_interval(TOAST_HOLD_SECONDS)
 	tween.tween_property(_toast, "modulate:a", 0.0, TOAST_FADE_SECONDS)
 	tween.tween_callback(_advance_toast_queue)
+
+
+## Pic de charge simulé pendant qu'une fenêtre système tourne (terminal après
+## Jean Ranoud, écran "chargement des données") — voir desktop.gd, qui
+## bascule ceci à l'ouverture/fermeture de ces écrans. true : jauge CPU sur
+## CPU_SPIKE_MIN_PERCENT..MAX_PERCENT ; false : revient à sa fourchette
+## normale (celle configurée sur CpuGauge dans la scène).
+func set_system_load_spike(active: bool) -> void:
+	if active:
+		_cpu_gauge.set_spike_range(CPU_SPIKE_MIN_PERCENT, CPU_SPIKE_MAX_PERCENT)
+	else:
+		_cpu_gauge.restore_normal_range()
 
 
 func _on_search_requested() -> void:
