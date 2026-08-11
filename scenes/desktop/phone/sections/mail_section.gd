@@ -227,7 +227,7 @@ func _build_detail_header(mail: MailEntry) -> Control:
 	row.add_child(title_label)
 
 	var date_label := Label.new()
-	date_label.text = PhoneTime.format_timestamp(mail.timestamp)
+	date_label.text = PhoneTime.format_full_datetime(mail.timestamp)
 	date_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
 	date_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
 	row.add_child(date_label)

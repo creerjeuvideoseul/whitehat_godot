@@ -37,6 +37,19 @@ static func format_full_date(raw_timestamp: String) -> String:
 	return "%s %s %s" % [date_parts[2], month_name, date_parts[0]]
 
 
+## "2030-01-18T22:30:00" -> "18 janvier 2030 22:30" : comme format_full_date(),
+## avec l'heure en plus (HH:MM, sans les secondes) — pour l'en-tête d'un mail
+## ouvert (voir MailSection._build_detail_header).
+static func format_full_datetime(raw_timestamp: String) -> String:
+	var parts := raw_timestamp.split("T")
+	if parts.size() < 2:
+		return format_full_date(raw_timestamp)
+	var time_parts := parts[1].split(":")
+	if time_parts.size() < 2:
+		return format_full_date(raw_timestamp)
+	return "%s %s:%s" % [format_full_date(raw_timestamp), time_parts[0], time_parts[1]]
+
+
 ## Vrai si les deux timestamps bruts ne tombent pas le même jour calendaire —
 ## pour savoir où insérer la barre de séparation de date entre deux messages
 ## consécutifs (voir SmsSection._build_message_row).
