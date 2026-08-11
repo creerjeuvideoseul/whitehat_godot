@@ -190,7 +190,9 @@ func _show_no_selection() -> void:
 ## Conversation cryptée et coffre pas encore débloqué : un seul texte de
 ## substitution remplace tout le fil (pas de flou, comme pour Mail — voir
 ## PhoneVault). Sinon, une bulle par message, puis on cale le scroll tout en
-## bas : "on voit toujours le dernier message d'une conversation SMS."
+## haut : le joueur n'a jamais lu cette conversation, elle se découvre comme
+## un dossier qu'on lit depuis le début, pas comme une appli SMS qu'on
+## rouvrirait sur le dernier message échangé.
 func _show_conversation(conv: SmsConversation) -> void:
 	_conversation_name_label.visible = true
 	_conversation_name_label.text = conv.contact_name
@@ -211,12 +213,12 @@ func _show_conversation(conv: SmsConversation) -> void:
 		for entry: SmsEntry in conv.messages:
 			_messages_list.add_child(_build_message_row(entry, conv))
 
-	## Attend que _scroll_to_bottom() ait fini (mise en page des nouvelles
-	## bulles + scroll casé tout en bas) avant de vérifier ce qui est visible —
-	## juste après add_child(), les bulles n'ont pas encore de position/taille
+	## Attend que _scroll_to_top() ait fini (mise en page des nouvelles bulles
+	## + scroll casé tout en haut) avant de vérifier ce qui est visible — juste
+	## après add_child(), les bulles n'ont pas encore de position/taille
 	## valides (VBoxContainer ne les trie qu'à la frame suivante), donc TOUTES
 	## semblaient "visibles" au même point et débloquaient tout d'un coup.
-	await _scroll_to_bottom()
+	await _scroll_to_top()
 	_reveal_tracker.check_visible()
 
 
@@ -314,10 +316,13 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 ## Deux frames, pas une : même cause que ConversationView._scroll_to_bottom
 ## (voir ce fichier) — les bulles fraîchement construites (RichTextLabel en
 ## fit_content) ne finissent leur propre redimensionnement qu'au tri différé
-## du frame suivant. Avec une seule frame d'attente, max_value (et donc les
-## positions lues juste après par IndiceRevealTracker.check_visible) étaient
-## encore basées sur une mise en page provisoire.
-func _scroll_to_bottom() -> void:
+## du frame suivant. Avec une seule frame d'attente, les positions lues juste
+## après par IndiceRevealTracker.check_visible étaient encore basées sur une
+## mise en page provisoire. scroll_vertical = 0 n'a lui-même besoin d'aucune
+## mise en page (toujours valide), mais on attend quand même ces deux frames
+## ici pour que check_visible(), appelé juste après par l'appelant, lise des
+## positions fiables.
+func _scroll_to_top() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	_messages_scroll.scroll_vertical = int(_messages_scroll.get_v_scroll_bar().max_value)
+	_messages_scroll.scroll_vertical = 0
