@@ -13,19 +13,21 @@ class_name MatrixRain
 
 signal finished
 
-## Durée totale ~1s ("très rapide"), scindée en phase active + fondu de
-## sortie pour ne pas couper net sur l'élément qui apparaît ensuite.
-const RAIN_SECONDS := 0.8
+## Durée totale ~2s, scindée en phase active + fondu de sortie pour ne pas
+## couper net sur l'élément qui apparaît ensuite.
+const RAIN_SECONDS := 1.8
 const FADE_OUT_SECONDS := 0.2
 
 const FONT_SIZE := 20
 ## Taille d'une cellule — plus grand que la police elle-même pour aérer la
 ## grille ; ajuster ces deux constantes suffit à changer la densité si
-## besoin (perf ou rendu visuel).
-const CELL_WIDTH := 32.0
+## besoin (perf ou rendu visuel). CELL_WIDTH réduit (colonnes ~2x plus
+## nombreuses) pour un rideau plus dense.
+const CELL_WIDTH := 16.0
 const CELL_HEIGHT := 36.0
-## Intervalle entre deux avancées de la tête de chaque colonne.
-const STEP_SECONDS := 0.035
+## Intervalle entre deux avancées de la tête de chaque colonne — 2x plus
+## court que la version initiale pour un défilement 2x plus rapide.
+const STEP_SECONDS := 0.0175
 ## Nombre de cellules derrière la tête qui restent visibles (dégradé), avant
 ## de redevenir invisibles.
 const TRAIL_LENGTH := 5
