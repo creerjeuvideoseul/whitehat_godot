@@ -181,9 +181,22 @@ func _set_row_selected(mail_id: int, is_selected: bool) -> void:
 		row.remove_theme_stylebox_override("panel")
 
 
-func _show_no_selection() -> void:
+## Partagé par _show_no_selection/_show_mail : le tracker doit toujours être
+## disposé AVANT de libérer les Control de _detail_root (dont le ScrollContainer
+## qu'il surveille), sinon dispose() plante sur une instance déjà libérée au
+## prochain affichage — bug constaté en changeant d'onglet (Reçus/Envoyés)
+## juste avant de sélectionner un mail : _select_tab() appelait
+## _show_no_selection() sans jamais disposer le tracker du mail précédent.
+func _clear_detail_root() -> void:
+	if _reveal_tracker != null:
+		_reveal_tracker.dispose()
+		_reveal_tracker = null
 	for child in _detail_root.get_children():
 		child.queue_free()
+
+
+func _show_no_selection() -> void:
+	_clear_detail_root()
 
 	var label := Label.new()
 	label.text = tr("MAIL_NO_SELECTION")
@@ -193,11 +206,7 @@ func _show_no_selection() -> void:
 
 
 func _show_mail(mail: MailEntry) -> void:
-	for child in _detail_root.get_children():
-		child.queue_free()
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-		_reveal_tracker = null
+	_clear_detail_root()
 
 	_detail_root.add_child(_build_detail_header(mail))
 	_detail_root.add_child(_build_detail_sender_row(mail))
