@@ -21,7 +21,8 @@ const AVATAR_SIZE := Vector2(56, 56)
 ## Zoom appliqué à l'image de l'avatar (recadrage plus serré sur le visage) —
 ## le cadre lui-même (56x56 + bordure) ne change pas de taille, seul le
 ## contenu déborde puis est rogné par _build_row_avatar via clip_contents.
-const AVATAR_ZOOM := 1.2
+## 1.2 -> 1.5 (x1.25) : la tête ne remplissait pas assez le cadre carré.
+const AVATAR_ZOOM := 1.5
 ## Une bulle occupe toujours 2/3 de la largeur du fil (hauteur élastique,
 ## largeur fixe — voir _build_message_row) : ratio 2 pour la bulle contre 1
 ## pour l'espace vide qui la pousse à gauche ou à droite.
