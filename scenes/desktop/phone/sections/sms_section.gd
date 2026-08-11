@@ -44,6 +44,10 @@ const MESSAGE_TOP_MARGIN := 20
 @onready var _conversation_list: VBoxContainer = %ConversationList
 @onready var _messages_scroll: ScrollContainer = %MessagesScroll
 @onready var _messages_list: VBoxContainer = %MessagesList
+## La rangée entière (nom du contact + rappel "Alizée" aligné à droite) —
+## voir _show_conversation/_show_no_selection : les deux se montrent/cachent
+## toujours ensemble, jamais l'un sans l'autre.
+@onready var _conversation_header_row: HBoxContainer = %ConversationHeaderRow
 @onready var _conversation_name_label: Label = %ConversationNameLabel
 
 var _database: SmsDatabase
@@ -188,7 +192,7 @@ func _set_row_selected(conversation_id: int, is_selected: bool) -> void:
 
 
 func _show_no_selection() -> void:
-	_conversation_name_label.visible = false
+	_conversation_header_row.visible = false
 	for child in _messages_list.get_children():
 		child.queue_free()
 
@@ -206,7 +210,7 @@ func _show_no_selection() -> void:
 ## un dossier qu'on lit depuis le début, pas comme une appli SMS qu'on
 ## rouvrirait sur le dernier message échangé.
 func _show_conversation(conv: SmsConversation) -> void:
-	_conversation_name_label.visible = true
+	_conversation_header_row.visible = true
 	_conversation_name_label.text = conv.contact_name
 	for child in _messages_list.get_children():
 		child.queue_free()
