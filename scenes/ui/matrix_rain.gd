@@ -17,6 +17,9 @@ signal finished
 ## couper net sur l'élément qui apparaît ensuite.
 const RAIN_SECONDS := 1.8
 const FADE_OUT_SECONDS := 0.2
+## Exposée pour que l'appelant (desktop.gd) puisse calculer un délai sans
+## dupliquer ces deux chiffres.
+const TOTAL_SECONDS := RAIN_SECONDS + FADE_OUT_SECONDS
 
 const FONT_SIZE := 20
 ## Taille d'une cellule — plus grand que la police elle-même pour aérer la

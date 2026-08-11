@@ -26,6 +26,9 @@ const PHONE_SECTIONS := {
 const PHONE_REVEAL_SECONDS := 0.6
 ## Décalage de départ (hors écran vers la gauche) pour l'effet de glissement.
 const PHONE_REVEAL_SLIDE_OFFSET := 120.0
+## De combien le téléphone doit commencer à apparaître avant la fin réelle du
+## rideau Matrix (voir _play_matrix_rain_transition_and_reveal_phone).
+const PHONE_EARLY_REVEAL_SECONDS := 0.7
 ## Durée/amplitude du glissement de rangement de la fenêtre de chat vers la
 ## barre des tâches (voir _minimize_window_with_slide), même esprit que
 ## PHONE_REVEAL_SECONDS/OFFSET mais en sens inverse (vers le bas).
@@ -208,6 +211,7 @@ func _play_jean_dump_terminal() -> void:
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_jean_dump_lines()
 	console.typing_sound = JEAN_DUMP_TYPING_SOUND
+	console.fade_out_on_close = true
 	console.closed.connect(_on_jean_dump_terminal_closed)
 	add_child(console)
 
@@ -219,9 +223,9 @@ func _play_jean_dump_terminal() -> void:
 ## téléphone. Remplace l'ancien fondu au noir (SceneTransition, toujours
 ## utilisé ailleurs pour les changements de scène) : si cet effet ne
 ## convenait pas, il suffit de remettre les deux lignes
-## SceneTransition.fade_out/fade_in ici à la place de _play_matrix_rain_transition().
-## Le téléphone d'Alizée, point d'entrée de l'enquête, apparaît ensuite avec
-## sa propre animation.
+## SceneTransition.fade_out/fade_in ici à la place de
+## _play_matrix_rain_transition_and_reveal_phone(). Le téléphone d'Alizée,
+## point d'entrée de l'enquête, apparaît ensuite avec sa propre animation.
 func _on_jean_dump_terminal_closed() -> void:
 	# .visible : si le joueur avait déjà réduit la fenêtre de lui-même avant
 	# la fin de la discussion, un second rangement créerait un doublon dans
@@ -230,16 +234,28 @@ func _on_jean_dump_terminal_closed() -> void:
 	if is_instance_valid(_chat_window) and _chat_window.visible:
 		await _minimize_window_with_slide(_chat_window, tr("CHAT_WINDOW_TITLE"))
 
-	await _play_matrix_rain_transition()
-	_reveal_alizee_phone(true)
+	await _play_matrix_rain_transition_and_reveal_phone()
 
 
 ## N'affecte que WindowLayer (le bureau central) — le header/footer restent
 ## visibles, contrairement à SceneTransition qui couvre tout l'écran.
-func _play_matrix_rain_transition() -> void:
+##
+## Le téléphone commence à apparaître PHONE_EARLY_REVEAL_SECONDS avant la fin
+## réelle du rideau (pas d'await sur rain.finished) : il émerge du rideau
+## plutôt que d'attendre qu'il ait entièrement disparu. Repositionné juste
+## avant la pluie dans WindowLayer (move_child) pour rester masqué tant
+## qu'elle est encore opaque — la pluie continue de tourner/s'effacer en
+## arrière-plan et se libère toute seule (voir MatrixRain._fade_out_and_finish).
+func _play_matrix_rain_transition_and_reveal_phone() -> void:
 	var rain: MatrixRain = MATRIX_RAIN.instantiate()
 	_window_layer.add_child(rain)
-	await rain.finished
+
+	var wait_seconds := maxf(0.0, MatrixRain.TOTAL_SECONDS - PHONE_EARLY_REVEAL_SECONDS)
+	await get_tree().create_timer(wait_seconds).timeout
+
+	_reveal_alizee_phone(true)
+	if is_instance_valid(_alizee_phone) and is_instance_valid(rain):
+		_window_layer.move_child(_alizee_phone, rain.get_index())
 
 
 ## Glissement + fondu vers le bas (même esprit que _animate_phone_reveal,
