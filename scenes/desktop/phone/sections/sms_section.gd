@@ -214,12 +214,11 @@ func _show_conversation(conv: SmsConversation) -> void:
 			_messages_list.add_child(_build_message_row(entry, conv))
 
 	## Attend que _scroll_to_top() ait fini (mise en page des nouvelles bulles
-	## + scroll casé tout en haut) avant de vérifier ce qui est visible — juste
-	## après add_child(), les bulles n'ont pas encore de position/taille
-	## valides (VBoxContainer ne les trie qu'à la frame suivante), donc TOUTES
-	## semblaient "visibles" au même point et débloquaient tout d'un coup.
+	## + scroll casé tout en haut), puis démarre la surveillance (voir
+	## IndiceRevealTracker.start() : ne pas connecter ses signaux avant que le
+	## contenu soit stable, sinon ils se déclenchent pendant la construction).
 	await _scroll_to_top()
-	_reveal_tracker.check_visible()
+	_reveal_tracker.start()
 
 
 ## Une ligne pleine largeur, avec 20px de marge au-dessus (MESSAGE_TOP_MARGIN) ;

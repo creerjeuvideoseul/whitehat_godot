@@ -203,10 +203,12 @@ func _show_mail(mail: MailEntry) -> void:
 	_detail_root.add_child(_build_detail_sender_row(mail))
 	_detail_root.add_child(_build_content_frame(mail))
 	## Une fois le cadre attaché à l'arbre (pas avant : ses Control n'ont pas
-	## de position globale valide tant qu'ils sont détachés) — rattrape ce
-	## qui est déjà visible avant même de scroller.
+	## de position globale valide tant qu'ils sont détachés) — démarre la
+	## surveillance (voir IndiceRevealTracker.start() : ne pas connecter ses
+	## signaux avant que le contenu soit stable, sinon ils se déclenchent
+	## pendant la construction elle-même).
 	if _reveal_tracker != null:
-		_reveal_tracker.check_visible()
+		_reveal_tracker.start()
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))

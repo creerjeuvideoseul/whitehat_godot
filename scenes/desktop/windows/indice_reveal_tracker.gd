@@ -27,8 +27,6 @@ func _init(scroll: ScrollContainer) -> void:
 	_scroll = scroll
 	_value_changed_callable = func(_v: float) -> void: check_visible()
 	_resized_callable = check_visible
-	_scroll.get_v_scroll_bar().value_changed.connect(_value_changed_callable)
-	_scroll.resized.connect(_resized_callable)
 
 
 ## A appeler pour chaque Control porteur d'un indice, juste après sa
@@ -37,6 +35,23 @@ func watch(control: Control, clue_id: String) -> void:
 	if clue_id.is_empty() or ClueManager.is_unlocked(clue_id):
 		return
 	_watched.append({"control": control, "clue_id": clue_id})
+
+
+## A appeler une fois tout le contenu construit (tous les watch() faits) et
+## sa mise en page stabilisée — fait le premier contrôle puis connecte les
+## signaux de scroll/redimensionnement pour la suite.
+##
+## Volontairement séparé de _init() : connecter ces signaux dès la
+## construction les faisait se déclencher PENDANT que l'appelant construisait
+## encore son contenu (chaque add_child() sur une liste à l'intérieur du
+## ScrollContainer redimensionne ce dernier), avec des Control pas encore
+## triés par leur conteneur (position/taille encore à zéro, donc tous
+## "visibles" au même point) — tous les indices se débloquaient d'un coup
+## avant même le premier check_visible() explicite de l'appelant.
+func start() -> void:
+	check_visible()
+	_scroll.get_v_scroll_bar().value_changed.connect(_value_changed_callable)
+	_scroll.resized.connect(_resized_callable)
 
 
 ## A appeler quand cette instance est remplacée par une nouvelle (nouvelle

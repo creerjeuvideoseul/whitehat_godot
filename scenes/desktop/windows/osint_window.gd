@@ -50,15 +50,14 @@ func search(query: String) -> void:
 	else:
 		_build_profile(character)
 
-	## Deux frames, pas une : juste après add_child(), les lignes fraîchement
-	## construites n'ont pas encore de position/taille valides, et une seule
-	## frame d'attente ne suffit pas non plus — même cause que
-	## ConversationView._scroll_to_bottom (RichTextLabel en fit_content qui ne
-	## finit son propre redimensionnement qu'au tri différé du frame suivant).
-	## Voir aussi sms_section.gd, même correction.
+	## Attend que la mise en page des lignes fraîchement construites soit
+	## stable, puis démarre la surveillance (voir IndiceRevealTracker.start() :
+	## ne pas connecter ses signaux avant que le contenu soit stable, sinon ils
+	## se déclenchent pendant la construction elle-même — cause réelle d'un
+	## déblocage prématuré, voir sms_section.gd pour le détail).
 	await get_tree().process_frame
 	await get_tree().process_frame
-	_reveal_tracker.check_visible()
+	_reveal_tracker.start()
 
 
 ## Comme ChatWindow.nudge_position : décale la fenêtre sans jamais la sortir
