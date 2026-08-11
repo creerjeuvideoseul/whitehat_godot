@@ -50,11 +50,13 @@ func search(query: String) -> void:
 	else:
 		_build_profile(character)
 
-	## Attend une frame : juste après add_child(), les lignes fraîchement
-	## construites n'ont pas encore de position/taille valides (le
-	## VBoxContainer ne les trie qu'à la frame suivante), donc TOUTES
-	## semblaient "visibles" au même point et débloquaient tout d'un coup —
-	## même bug que sms_section.gd avant sa correction.
+	## Deux frames, pas une : juste après add_child(), les lignes fraîchement
+	## construites n'ont pas encore de position/taille valides, et une seule
+	## frame d'attente ne suffit pas non plus — même cause que
+	## ConversationView._scroll_to_bottom (RichTextLabel en fit_content qui ne
+	## finit son propre redimensionnement qu'au tri différé du frame suivant).
+	## Voir aussi sms_section.gd, même correction.
+	await get_tree().process_frame
 	await get_tree().process_frame
 	_reveal_tracker.check_visible()
 

@@ -311,6 +311,13 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	return bubble
 
 
+## Deux frames, pas une : même cause que ConversationView._scroll_to_bottom
+## (voir ce fichier) — les bulles fraîchement construites (RichTextLabel en
+## fit_content) ne finissent leur propre redimensionnement qu'au tri différé
+## du frame suivant. Avec une seule frame d'attente, max_value (et donc les
+## positions lues juste après par IndiceRevealTracker.check_visible) étaient
+## encore basées sur une mise en page provisoire.
 func _scroll_to_bottom() -> void:
+	await get_tree().process_frame
 	await get_tree().process_frame
 	_messages_scroll.scroll_vertical = int(_messages_scroll.get_v_scroll_bar().max_value)
