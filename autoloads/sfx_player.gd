@@ -26,6 +26,12 @@ const CLUE_REVEAL_DELAY_SECONDS := 1.0
 ## dans les trois cas.
 const ACCESS_DENIED_SFX := preload("res://assets/audio/sound/soundreality-ui-no-access-243463.mp3")
 
+## "Grande révélation" — joué à chaque jalon narratif majeur : l'apparition
+## du téléphone d'Alizée (desktop.gd) et le déverrouillage réussi du
+## coffre-fort (vault_section.gd). Centralisé ici plutôt que dupliqué en
+## preload dans chacun des deux, même raison qu'ACCESS_DENIED_SFX ci-dessus.
+const MAJOR_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-callisto-170178.mp3")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).

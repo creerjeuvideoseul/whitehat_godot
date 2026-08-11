@@ -95,6 +95,7 @@ func _show_success(announce: bool) -> void:
 	_status_label.text = tr("VAULT_SUCCESS_MESSAGE")
 
 	if announce:
+		SfxPlayer.play(SfxPlayer.MAJOR_REVEAL_SFX)
 		# Même précédent que la fin du dump de Jean (voir desktop.gd) : un
 		# déverrouillage de coffre est un vrai jalon narratif, à ne pas perdre
 		# si le joueur quitte juste après.
