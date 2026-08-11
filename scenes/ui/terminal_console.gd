@@ -55,9 +55,10 @@ var typing_sound: AudioStream = null
 ## terminal vers la transparence avant de se libérer, au lieu de disparaître
 ## d'un coup — laissé à false par défaut (comportement inchangé, ex: le boot
 ## système de l'intro). Activé pour le terminal après Jean Ranoud (voir
-## desktop.gd), qui enchaîne sur la transition Matrix : la boîte, déjà noire,
-## se fond ainsi dans le rideau plutôt que de disparaître brutalement juste
-## avant qu'il n'apparaisse. À définir avant add_child(), comme `lines`.
+## desktop.gd), qui enchaîne sur la transition "analyse en cours"
+## (AnalysisTransition) : la boîte, déjà noire, se fond ainsi dans l'écran
+## d'analyse plutôt que de disparaître brutalement juste avant qu'il
+## n'apparaisse. À définir avant add_child(), comme `lines`.
 var fade_out_on_close: bool = false
 
 @onready var _title_label: Label = %TitleLabel
