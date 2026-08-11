@@ -114,7 +114,12 @@ func _build_conversation_row(conv: SmsConversation) -> Control:
 ## (fermé tant que le coffre n'est pas débloqué, ouvert ensuite) — même règle
 ## que MailSection._build_row_avatar.
 func _build_row_avatar(conv: SmsConversation) -> Control:
-	var frame := PanelContainer.new()
+	# Panel, pas PanelContainer : un Container remet le scale de son enfant à
+	# (1,1) à chaque passe de mise en page (fit_child_in_rect), ce qui
+	# annulait silencieusement le zoom ci-dessous — le rendu (bordure,
+	# stylebox) est identique, mais Panel ne gère pas la position/taille de
+	# son enfant à sa place, donc rect.scale reste bien appliqué.
+	var frame := Panel.new()
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0)
 	style.set_border_width_all(2)
@@ -128,15 +133,17 @@ func _build_row_avatar(conv: SmsConversation) -> Control:
 	frame.clip_contents = true
 
 	var rect := TextureRect.new()
-	rect.custom_minimum_size = AVATAR_SIZE
+	# Panel ne positionne/dimensionne pas son enfant (contrairement à
+	# PanelContainer) : à renseigner nous-même.
+	rect.position = Vector2.ZERO
+	rect.size = AVATAR_SIZE
 	rect.texture = _resolve_row_texture(conv)
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	# Zoom centré : pivot au milieu du rect avant de l'agrandir, sinon la mise
 	# à l'échelle se ferait depuis le coin haut-gauche (Control.scale par
-	# défaut). Le pivot suppose que le conteneur donne bien 56x56 à rect
-	# (toujours vrai ici : frame a une taille fixe, un seul enfant).
+	# défaut).
 	rect.pivot_offset = AVATAR_SIZE / 2.0
 	rect.scale = Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
 	frame.add_child(rect)
