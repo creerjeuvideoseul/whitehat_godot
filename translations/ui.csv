@@ -88,3 +88,15 @@ VAULT_HINT_ELEVEN,Le chiffre me semble une bonne idée. Il revient souvent dans 
 VAULT_HINT_LASTHORIZON,"LastHorizon me semble pertinent, reste à deviner la fin. Un chiffre, peut-être ?","LastHorizon seems relevant, I just need to guess the ending. A number, maybe?"
 VAULT_HINT_GENERIC,"Non, le mot de passe doit forcément être quelque chose de plus devinable. Je dois trouver d'autres indices.","No, the password has to be something easier to guess. I need to find more clues."
 ANALYSIS_TRANSITION_TITLE,Chargement des données en cours...,Loading data...
+MONTH_1,janvier,January
+MONTH_2,février,February
+MONTH_3,mars,March
+MONTH_4,avril,April
+MONTH_5,mai,May
+MONTH_6,juin,June
+MONTH_7,juillet,July
+MONTH_8,août,August
+MONTH_9,septembre,September
+MONTH_10,octobre,October
+MONTH_11,novembre,November
+MONTH_12,décembre,December

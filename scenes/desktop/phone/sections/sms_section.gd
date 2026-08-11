@@ -210,8 +210,12 @@ func _show_conversation(conv: SmsConversation) -> void:
 		label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
 		_messages_list.add_child(label)
 	else:
+		var previous_entry: SmsEntry = null
 		for entry: SmsEntry in conv.messages:
+			if previous_entry != null and PhoneTime.is_different_day(previous_entry.timestamp, entry.timestamp):
+				_messages_list.add_child(_build_date_divider(entry.timestamp))
 			_messages_list.add_child(_build_message_row(entry, conv))
+			previous_entry = entry
 
 	## Attend que _scroll_to_top() ait fini (mise en page des nouvelles bulles
 	## + scroll casé tout en haut), puis démarre la surveillance (voir
@@ -219,6 +223,36 @@ func _show_conversation(conv: SmsConversation) -> void:
 	## contenu soit stable, sinon ils se déclenchent pendant la construction).
 	await _scroll_to_top()
 	_reveal_tracker.start()
+
+
+## Fine barre horizontale + la date du message SUIVANT en dessous (pas celui
+## d'avant : elle "annonce" le jour qui commence, comme un séparateur de date
+## dans une vraie appli de messagerie) — insérée entre deux messages
+## consécutifs dont le jour calendaire diffère (voir PhoneTime.is_different_day).
+## Même police/couleur que le timestamp sous chaque bulle (Palette.CONSOLE_TEXT,
+## SIZE_SMALL) ; la barre elle-même en BORDER_ACCENT très atténué pour rester
+## discrète.
+func _build_date_divider(next_message_timestamp: String) -> Control:
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_top", MESSAGE_TOP_MARGIN)
+
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 6)
+
+	var line := ColorRect.new()
+	line.color = Color(Palette.BORDER_ACCENT.r, Palette.BORDER_ACCENT.g, Palette.BORDER_ACCENT.b, 0.3)
+	line.custom_minimum_size = Vector2(0, 1)
+	column.add_child(line)
+
+	var date_label := Label.new()
+	date_label.text = PhoneTime.format_full_date(next_message_timestamp)
+	date_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	date_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
+	date_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	column.add_child(date_label)
+
+	margin.add_child(column)
+	return margin
 
 
 ## Une ligne pleine largeur, avec 20px de marge au-dessus (MESSAGE_TOP_MARGIN) ;
