@@ -23,6 +23,9 @@ const AVATAR_SIZE := Vector2(56, 56)
 ## contenu déborde puis est rogné par _build_row_avatar via clip_contents.
 ## 1.2 -> 1.5 (x1.25) : la tête ne remplissait pas assez le cadre carré.
 const AVATAR_ZOOM := 1.5
+## Le cadenas (icône, pas une photo à recadrer) est réduit pour ne pas
+## toucher les bords du cadre — voir _build_row_avatar.
+const PADLOCK_SCALE := 0.7
 ## Une bulle occupe toujours 2/3 de la largeur du fil (hauteur élastique,
 ## largeur fixe — voir _build_message_row) : ratio 2 pour la bulle contre 1
 ## pour l'espace vide qui la pousse à gauche ou à droite.
@@ -141,13 +144,12 @@ func _build_row_avatar(conv: SmsConversation) -> Control:
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	# Zoom centré : pivot au milieu du rect avant de l'agrandir, sinon la mise
-	# à l'échelle se ferait depuis le coin haut-gauche (Control.scale par
-	# défaut). Uniquement pour une vraie photo : un cadenas est une icône déjà
-	# pensée pour tenir dans le cadre, le zoomer pareil le ferait déborder.
+	# Mise à l'échelle centrée : pivot au milieu du rect avant, sinon elle se
+	# ferait depuis le coin haut-gauche (Control.scale par défaut). Une vraie
+	# photo est zoomée (tête qui remplit le cadre) ; le cadenas est au
+	# contraire réduit, pour ne pas toucher les bords du cadre.
 	rect.pivot_offset = AVATAR_SIZE / 2.0
-	if not conv.is_crypted:
-		rect.scale = Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
+	rect.scale = Vector2(PADLOCK_SCALE, PADLOCK_SCALE) if conv.is_crypted else Vector2(AVATAR_ZOOM, AVATAR_ZOOM)
 	frame.add_child(rect)
 	return frame
 
