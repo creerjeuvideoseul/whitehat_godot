@@ -10,7 +10,7 @@ const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_wind
 const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
-const BORDER_FLASH := preload("res://scenes/ui/border_flash.tscn")
+const MATRIX_RAIN := preload("res://scenes/ui/matrix_rain.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
 ## non génériques : chaque section aura son propre gameplay à terme (SMS, mail,
@@ -26,10 +26,6 @@ const PHONE_SECTIONS := {
 const PHONE_REVEAL_SECONDS := 0.6
 ## Décalage de départ (hors écran vers la gauche) pour l'effet de glissement.
 const PHONE_REVEAL_SLIDE_OFFSET := 120.0
-## Fondu au noir couvrant la bascule terminal → bureau (voir
-## _on_jean_dump_terminal_closed) — plus court que SceneTransition.DEFAULT_FADE_SECONDS
-## (0.6s) car ce n'est pas un changement de scène, juste un battement d'UI.
-const JEAN_DUMP_FADE_SECONDS := 0.35
 ## Durée/amplitude du glissement de rangement de la fenêtre de chat vers la
 ## barre des tâches (voir _minimize_window_with_slide), même esprit que
 ## PHONE_REVEAL_SECONDS/OFFSET mais en sens inverse (vers le bas).
@@ -203,9 +199,14 @@ func _play_jean_dump_terminal() -> void:
 
 ## Une fois le terminal fermé : la fenêtre de chat (devenue accessoire, la
 ## conversation avec Jean est terminée) se range dans la barre des tâches,
-## puis un bref fondu au noir couvre la bascule avant de révéler le bureau —
-## évite le "cut" brutal terminal → téléphone. Le téléphone d'Alizée, point
-## d'entrée de l'enquête, apparaît ensuite avec sa propre animation.
+## puis une pluie de caractères façon Matrix (voir MatrixRain) couvre le
+## bureau central le temps de la bascule — évite le "cut" brutal terminal →
+## téléphone. Remplace l'ancien fondu au noir (SceneTransition, toujours
+## utilisé ailleurs pour les changements de scène) : si cet effet ne
+## convenait pas, il suffit de remettre les deux lignes
+## SceneTransition.fade_out/fade_in ici à la place de _play_matrix_rain_transition().
+## Le téléphone d'Alizée, point d'entrée de l'enquête, apparaît ensuite avec
+## sa propre animation.
 func _on_jean_dump_terminal_closed() -> void:
 	# .visible : si le joueur avait déjà réduit la fenêtre de lui-même avant
 	# la fin de la discussion, un second rangement créerait un doublon dans
@@ -214,9 +215,16 @@ func _on_jean_dump_terminal_closed() -> void:
 	if is_instance_valid(_chat_window) and _chat_window.visible:
 		await _minimize_window_with_slide(_chat_window, tr("CHAT_WINDOW_TITLE"))
 
-	await SceneTransition.fade_out(JEAN_DUMP_FADE_SECONDS)
-	await SceneTransition.fade_in(JEAN_DUMP_FADE_SECONDS)
+	await _play_matrix_rain_transition()
 	_reveal_alizee_phone(true)
+
+
+## N'affecte que WindowLayer (le bureau central) — le header/footer restent
+## visibles, contrairement à SceneTransition qui couvre tout l'écran.
+func _play_matrix_rain_transition() -> void:
+	var rain: MatrixRain = MATRIX_RAIN.instantiate()
+	_window_layer.add_child(rain)
+	await rain.finished
 
 
 ## Glissement + fondu vers le bas (même esprit que _animate_phone_reveal,
@@ -335,8 +343,6 @@ func _reveal_alizee_phone(animate: bool) -> void:
 
 ## Glissement + fondu depuis la gauche, dans le même esprit que le shake de
 ## ChatWindow (tween direct sur position/modulate, sans toucher aux ancres).
-## Une fois l'animation terminée, une bordure blanche clignote brièvement
-## (voir BorderFlash) pour attirer l'œil sur ce nouvel élément.
 func _animate_phone_reveal(phone: Control) -> void:
 	await get_tree().process_frame
 	var target_x := phone.position.x
@@ -349,8 +355,6 @@ func _animate_phone_reveal(phone: Control) -> void:
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(phone, "position:x", target_x, PHONE_REVEAL_SECONDS)
 	tween.tween_property(phone, "modulate:a", 1.0, PHONE_REVEAL_SECONDS)
-	await tween.finished
-	phone.add_child(BORDER_FLASH.instantiate())
 
 
 ## Affiche la section choisie dans les 2/3 restants — une seule à la fois,
