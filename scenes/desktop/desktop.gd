@@ -47,6 +47,10 @@ const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialo
 ## y "tape" des commandes, contrairement au boot système après l'intro qui ne
 ## reçoit volontairement pas ce son (voir Introduction).
 const JEAN_DUMP_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
+## Joué à l'apparition du téléphone d'Alizée — seulement quand elle est
+## réellement animée (voir _reveal_alizee_phone), jamais à la reprise d'une
+## sauvegarde où le téléphone est déjà là sans ré-émerger.
+const ALIZEE_PHONE_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-callisto-170178.mp3")
 
 ## The chat window auto-opens on desktop load for now — there's no "how do
 ## you open a window" system yet (icons, notifications, ...), so this is
@@ -377,6 +381,7 @@ func _reveal_alizee_phone(animate: bool) -> void:
 	_window_layer.add_child(_alizee_phone)
 
 	if animate:
+		SfxPlayer.play(ALIZEE_PHONE_REVEAL_SFX)
 		_animate_phone_reveal(_alizee_phone)
 
 

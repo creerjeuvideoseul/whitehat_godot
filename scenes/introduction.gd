@@ -8,6 +8,10 @@ const INTRO_DIALOGUE: DialogueResource = preload("res://dialogue/intro.dialogue"
 const DIALOGUE_BALLOON := "res://scenes/dialogue/dialogue_balloon.tscn"
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const INTRO_MUSIC := preload("res://assets/audio/shadowsandechoes-breaking-news-trailer-intro-orchester-news-318936.mp3")
+## Joué à l'ouverture de la toute première fenêtre système du jeu (le boot
+## OS juste après cette cutscene, voir _play_boot_terminal) — un seul coup,
+## pas une ambiance, pour marquer la bascule "cinématique -> interface système".
+const BOOT_SYSTEM_SFX := preload("res://assets/audio/sound/juniorsoundays-motion-amp-tansitions-02-527730.mp3")
 
 const MUSIC_FADE_SECONDS := 1.0
 ## Durée du fondu enchaîné (crossfade) entre deux images, façon Ren'Py.
@@ -166,6 +170,7 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 ## desktop.gd) — ici sans bouton "Fermer" : un écran de boot se regarde, il
 ## ne se ferme pas manuellement.
 func _play_boot_terminal() -> void:
+	SfxPlayer.play(BOOT_SYSTEM_SFX)
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.title = "TERMINAL_BOOT_TITLE"
 	console.show_close_button = false

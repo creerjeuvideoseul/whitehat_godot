@@ -19,6 +19,13 @@ const CLUE_REVEAL_SFX := preload("res://assets/audio/sound/tithuh-level-up-02-52
 ## avant même que l'œil n'ait eu le temps de se poser dessus.
 const CLUE_REVEAL_DELAY_SECONDS := 1.0
 
+## "Accès interdit" — joué à chaque tentative d'accès à du contenu crypté
+## (SMS/mail encore verrouillés) ou à une mauvaise saisie dans le coffre-fort
+## du téléphone. Centralisé ici (plutôt qu'un preload dupliqué dans chacun des
+## trois appelants) puisque c'est exactement la même faute pour l'utilisateur
+## dans les trois cas.
+const ACCESS_DENIED_SFX := preload("res://assets/audio/sound/soundreality-ui-no-access-243463.mp3")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).

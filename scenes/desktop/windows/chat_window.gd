@@ -21,7 +21,7 @@ signal contact_conversation_finished(contact_id: String)
 
 const CONVERSATION_VIEW := preload("res://scenes/desktop/windows/conversation_view.tscn")
 const CHOICE_SOUND := preload("res://assets/audio/sound/mixkit-correct-answer-notification-947.mp3")
-const NOTIFICATION_SOUND := preload("res://assets/audio/sound/starcraft_incoming.mp3")
+const NOTIFICATION_SOUND := preload("res://assets/audio/sound/soundreality-notification-30-313553.mp3")
 const SHAKE_AMPLITUDE := 6.0
 const SHAKE_STEP_SECONDS := 0.05
 const SHAKE_STEPS := 6

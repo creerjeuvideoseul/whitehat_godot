@@ -267,6 +267,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	frame.add_child(scroll)
 
 	if mail.is_crypted and not PhoneVault.is_unlocked():
+		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 		var locked_label := _build_body_label(tr("VAULT_ENCRYPTED_PLACEHOLDER"))
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		scroll.add_child(locked_label)

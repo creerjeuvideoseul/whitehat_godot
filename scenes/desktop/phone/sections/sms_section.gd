@@ -215,6 +215,7 @@ func _show_conversation(conv: SmsConversation) -> void:
 	_reveal_tracker = IndiceRevealTracker.new(_messages_scroll)
 
 	if conv.is_crypted and not PhoneVault.is_unlocked():
+		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 		var label := Label.new()
 		label.text = tr("VAULT_ENCRYPTED_PLACEHOLDER")
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -77,6 +77,7 @@ func _on_validate_pressed() -> void:
 		_show_success(true)
 		return
 
+	SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 	_status_label.add_theme_color_override("font_color", Palette.TEXT_DANGER)
 	_status_label.text = tr("VAULT_WRONG_PASSWORD")
 	thought_requested.emit(_resolve_hint(normalized))
