@@ -69,8 +69,8 @@ Jean: J'ai une bonne retraite. J'ai travaillé pour ça !
 	Jean: C'est cher payé pour ouvrir un fichier, mais j'ai pas le choix. Dépêchez-vous.
 
 Jean: Voilà l'archive.
-Player: Merci, je vous ferais un rapport complet dès que possible.
-Jean: J'attend votre rapport !
+Player: Merci, je vous ferai un rapport complet dès que possible.
+Jean: J'attend votre rapport ! [#debug_checkpoint]
 
 System: Déconnexion...
 System: J'ai désormais accès aux archives du téléphone d'Alizée.

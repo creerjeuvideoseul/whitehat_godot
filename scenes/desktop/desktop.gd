@@ -91,6 +91,21 @@ var _chat_window: ChatWindow = null
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
+
+	# Debug only (voir Settings.IS_PRODUCTION) : le bouton "revenir avant la
+	# fin de Jean" du footer a chargé un instantané séparé juste avant cet
+	# appel puis rechargé cette scène — la conversation avec Jean n'y est
+	# volontairement pas marquée complète (capturée avant sa vraie fin), donc
+	# on rejoue directement le terminal plutôt que de suivre le chemin normal
+	# ci-dessous (qui rejouerait tout le dialogue de Jean depuis le début).
+	if SaveManager.consume_debug_replay_jean_terminal():
+		_chat_window = _build_chat_window()
+		_open_window(_chat_window)
+		_chat_window.hide()
+		_on_window_minimize_requested(_chat_window, tr("CHAT_WINDOW_TITLE"))
+		_play_jean_dump_terminal()
+		return
+
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
 	# doit déjà être là, sans rejouer son animation d'apparition.
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
