@@ -15,11 +15,9 @@ const INVALID_PSEUDO_CHARS := "[^A-Za-z0-9_]"
 @onready var _credit_label: RichTextLabel = %CreditLabel
 
 var _invalid_chars_regex := RegEx.new()
-var _start_ticks_msec: int = 0
 
 func _ready() -> void:
 	_invalid_chars_regex.compile(INVALID_PSEUDO_CHARS)
-	_start_ticks_msec = Time.get_ticks_msec()
 
 	_pseudo_edit.text_changed.connect(_on_pseudo_text_changed)
 	_connect_button.pressed.connect(_on_connect_pressed)
@@ -35,7 +33,7 @@ func _ready() -> void:
 	_pseudo_edit.grab_focus()
 
 func _update_uptime_label() -> void:
-	_uptime_label.text = BootUptime.format(_start_ticks_msec)
+	_uptime_label.text = BootUptime.format()
 
 func _on_pseudo_text_changed(new_text: String) -> void:
 	var filtered := _invalid_chars_regex.sub(new_text, "", true)

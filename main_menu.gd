@@ -15,11 +15,7 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 @onready var _quit_button: Button = %QuitButton
 @onready var _new_game_confirm_dialog: ConfirmationDialog = %NewGameConfirmDialog
 
-var _start_ticks_msec: int = 0
-
 func _ready() -> void:
-	_start_ticks_msec = Time.get_ticks_msec()
-
 	_new_game_button.pressed.connect(_on_new_game_pressed)
 	_options_button.pressed.connect(_on_options_pressed)
 	_continue_button.pressed.connect(_on_continue_pressed)
@@ -47,7 +43,7 @@ func _ready() -> void:
 	MusicPlayer.play(MENU_MUSIC)
 
 func _update_uptime_label() -> void:
-	_uptime_label.text = BootUptime.format(_start_ticks_msec)
+	_uptime_label.text = BootUptime.format()
 
 func _on_new_game_pressed() -> void:
 	if SaveManager.has_save():

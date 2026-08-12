@@ -36,10 +36,26 @@ var locale: String = DEFAULT_LOCALE
 var music_volume: float = DEFAULT_MUSIC_VOLUME
 var sfx_volume: float = DEFAULT_SFX_VOLUME
 var display_mode: DisplayMode = DEFAULT_DISPLAY_MODE
+## Horodatage Unix réel du tout premier lancement du jeu par ce joueur — 0
+## tant qu'il n'a jamais été enregistré. Survit à une nouvelle partie
+## (SaveManager.delete_save() ne touche jamais ce fichier) : c'est une
+## propriété de la machine/du profil joueur, pas d'une partie en cours — voir
+## BootUptime, qui s'en sert pour l'indice narratif d'uptime des écrans de
+## menu.
+var first_launch_unix_time: int = 0
+## Vrai seulement pendant la session où first_launch_unix_time vient d'être
+## généré (aucune valeur trouvée au chargement) — voir BootUptime, qui a
+## besoin de distinguer "on est en train de vivre ce tout premier lancement"
+## de "on relit une référence posée lors d'une session précédente".
+var is_first_launch_session: bool = false
 
 
 func _ready() -> void:
 	_load()
+	is_first_launch_session = first_launch_unix_time == 0
+	if is_first_launch_session:
+		first_launch_unix_time = int(Time.get_unix_time_from_system())
+		_save()
 	TranslationServer.set_locale(locale)
 	_apply_music_volume()
 	_apply_sfx_volume()
@@ -128,6 +144,7 @@ func _load() -> void:
 		# explicitement en DisplayMode évite une valeur hors-enum si le fichier
 		# a été modifié à la main ou vient d'une version antérieure du jeu.
 		display_mode = int(config.get_value("display", "display_mode", DEFAULT_DISPLAY_MODE)) as DisplayMode
+		first_launch_unix_time = int(config.get_value("general", "first_launch_unix_time", 0))
 
 
 func _save() -> void:
@@ -136,4 +153,5 @@ func _save() -> void:
 	config.set_value("audio", "music_volume", music_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
 	config.set_value("display", "display_mode", display_mode)
+	config.set_value("general", "first_launch_unix_time", first_launch_unix_time)
 	config.save(SETTINGS_PATH)

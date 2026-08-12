@@ -18,12 +18,10 @@ const URL_PATTERN := "https?://[^\\s]+"
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
 
-var _start_ticks_msec: int = 0
 var _url_regex := RegEx.new()
 
 
 func _ready() -> void:
-	_start_ticks_msec = Time.get_ticks_msec()
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
 
@@ -39,7 +37,7 @@ func _ready() -> void:
 
 
 func _update_uptime_label() -> void:
-	_uptime_label.text = BootUptime.format(_start_ticks_msec)
+	_uptime_label.text = BootUptime.format()
 
 
 func _load_credits_text() -> String:
