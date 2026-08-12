@@ -38,6 +38,7 @@ func _ready() -> void:
 
 
 func _activate(section_id: String) -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	clear_active_icon()
 	_buttons_by_section[section_id].self_modulate = Palette.BORDER_ACCENT
 	icon_pressed.emit(section_id)

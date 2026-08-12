@@ -232,6 +232,7 @@ func _stop_row_blink(contact_id: String) -> void:
 
 func _on_contact_row_gui_input(event: InputEvent, contact_id: String) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		_select_contact(contact_id)
 
 
@@ -270,5 +271,6 @@ func _set_row_selected(contact_id: String, is_selected: bool) -> void:
 
 
 func _on_minimize_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
 	minimize_requested.emit(self, _title_label.text)

@@ -43,7 +43,10 @@ var _reveal_tracker: IndiceRevealTracker
 
 func _ready() -> void:
 	_database = MailDatabase.new(data_path)
-	_close_button.pressed.connect(func() -> void: close_requested.emit())
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		close_requested.emit()
+	)
 	_sent_button.pressed.connect(func() -> void: _select_tab(true))
 	_received_button.pressed.connect(func() -> void: _select_tab(false))
 	_select_tab(false)

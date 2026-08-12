@@ -45,5 +45,6 @@ func _on_clue_unlocked(_clue_id: String) -> void:
 
 
 func _on_minimize_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
 	minimize_requested.emit(self, _title_label.text)

@@ -45,7 +45,10 @@ var _invalid_chars_regex := RegEx.new()
 
 func _ready() -> void:
 	_invalid_chars_regex.compile(INVALID_CHARS_PATTERN)
-	_close_button.pressed.connect(func() -> void: close_requested.emit())
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		close_requested.emit()
+	)
 	_password_edit.text_changed.connect(_on_password_text_changed)
 	_password_edit.text_submitted.connect(func(_text: String) -> void: _on_validate_pressed())
 	_validate_button.pressed.connect(_on_validate_pressed)

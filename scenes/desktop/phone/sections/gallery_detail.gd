@@ -35,8 +35,14 @@ const GAP_SIZE := 16
 func _ready() -> void:
 	# RETOUR (à gauche) fait exactement la même chose que la croix (à droite) —
 	# deux façons d'accéder à la même action, pas deux comportements différents.
-	_back_button.pressed.connect(func() -> void: closed.emit())
-	_close_button.pressed.connect(func() -> void: closed.emit())
+	_back_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		closed.emit()
+	)
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		closed.emit()
+	)
 
 
 ## L'indice éventuel de la publication se débloque à l'ouverture du détail —

@@ -77,6 +77,7 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 
 
 func _on_minimize_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
 	minimize_requested.emit(self, _title_label.text)
 

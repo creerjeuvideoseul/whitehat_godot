@@ -61,7 +61,10 @@ var _reveal_tracker: IndiceRevealTracker
 
 func _ready() -> void:
 	_database = SmsDatabase.new(data_path)
-	_close_button.pressed.connect(func() -> void: close_requested.emit())
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		close_requested.emit()
+	)
 	_rebuild_conversation_list()
 	_show_no_selection()
 
