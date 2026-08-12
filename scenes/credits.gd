@@ -39,11 +39,7 @@ func _ready() -> void:
 
 
 func _update_uptime_label() -> void:
-	var elapsed_sec: int = int((Time.get_ticks_msec() - _start_ticks_msec) / 1000.0)
-	var days: int = elapsed_sec / 86400
-	var hours: int = (elapsed_sec % 86400) / 3600
-	var minutes: int = (elapsed_sec % 3600) / 60
-	_uptime_label.text = "Up %dd %02d:%02d" % [days, hours, minutes]
+	_uptime_label.text = BootUptime.format(_start_ticks_msec)
 
 
 func _load_credits_text() -> String:

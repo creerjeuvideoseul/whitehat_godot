@@ -10,10 +10,9 @@ extends Node
 
 signal tick
 
-const STORY_START := {
-	"year": 2030, "month": 2, "day": 2,
-	"hour": 0, "minute": 0, "second": 0,
-}
+## Seule la date est figée par la fiction — l'heure de départ vient de
+## l'horloge réelle du joueur (voir reset_to_story_start), pas de minuit.
+const STORY_START_DATE := {"year": 2030, "month": 2, "day": 2}
 const REAL_SECONDS_PER_TICK := 10.0
 
 @onready var _timer: Timer = Timer.new()
@@ -35,9 +34,15 @@ func set_unix_time(value: int) -> void:
 	_unix_time = value
 
 
-## Call when starting a brand new playthrough.
+## Call when starting a brand new playthrough — date fixée par la fiction,
+## heure alignée sur l'horloge réelle du joueur au moment où il commence.
 func reset_to_story_start() -> void:
-	_unix_time = int(Time.get_unix_time_from_datetime_dict(STORY_START))
+	var datetime := STORY_START_DATE.duplicate()
+	var now := Time.get_time_dict_from_system()
+	datetime["hour"] = now["hour"]
+	datetime["minute"] = now["minute"]
+	datetime["second"] = now["second"]
+	_unix_time = int(Time.get_unix_time_from_datetime_dict(datetime))
 
 
 func start_ticking() -> void:
