@@ -126,7 +126,7 @@ text = "CLUEBOARD_TITLE_M1"
 [node name="BoardScroll" type="ScrollContainer" parent="Layout/Body/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-horizontal_scroll_mode = 2
+horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
 [node name="ClueBoard" type="Control" parent="Layout/Body/VBox/BoardScroll"]
