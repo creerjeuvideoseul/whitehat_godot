@@ -49,6 +49,11 @@ func search(query: String) -> void:
 		_build_no_result()
 	else:
 		_build_profile(character)
+		## Point de sauvegarde à l'ouverture d'une fiche OSINT trouvée — pas
+		## de distinction "avec/sans indice" comme pour la galerie, plus
+		## simple ainsi et une fiche vaut la peine d'être retenue même sans
+		## indice caché dedans (recherche du bon pseudo, par exemple).
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	## Attend que la mise en page des lignes fraîchement construites soit
 	## stable, puis démarre la surveillance (voir IndiceRevealTracker.start() :
