@@ -265,6 +265,7 @@ title_text = "MENU_CONTINUE"
 unique_name_in_owner = true
 index_number = "04"
 title_text = "MENU_CREDITS"
+muted = true
 
 [node name="QuitButton" parent="MainContent/Margin/HBox/RightPanel/MenuList" unique_id=153041014 instance=ExtResource("3_menuitem")]
 unique_name_in_owner = true

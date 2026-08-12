@@ -22,6 +22,15 @@ class_name MenuItem
 		if is_node_ready():
 			_update_title_color()
 
+## Item secondaire, volontairement moins visible que les autres (ex. "Crédits")
+## — descend le titre vers le gris au lieu du blanc quasi-pur par défaut, sans
+## le rendre grisé/non-cliquable comme set_locked() le ferait.
+@export var muted: bool = false:
+	set(value):
+		muted = value
+		if is_node_ready():
+			_update_title_color()
+
 @onready var _number_label: Label = %NumberLabel
 @onready var _title_label: Label = %TitleLabel
 
@@ -44,5 +53,7 @@ func _update_title_color() -> void:
 		title_color = Palette.TEXT_LOCKED
 	elif destructive:
 		title_color = Palette.TEXT_DANGER
+	elif muted:
+		title_color = Palette.CONSOLE_TEXT
 	_title_label.add_theme_color_override("font_color", title_color)
 	_number_label.add_theme_color_override("font_color", Palette.TEXT_LOCKED if disabled else Palette.CONSOLE_TEXT)
