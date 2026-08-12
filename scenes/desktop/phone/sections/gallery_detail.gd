@@ -105,6 +105,7 @@ func _build_image(post: GalleryPost) -> Control:
 func _build_description(post: GalleryPost) -> Control:
 	var label := RichTextLabel.new()
 	label.bbcode_enabled = true
+	label.selection_enabled = true
 	label.fit_content = true
 	label.scroll_active = false
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -138,6 +139,7 @@ func _build_comment_row(comment: GalleryComment) -> Control:
 	## s'affichaient telles quelles au lieu d'être interprétées.
 	var message_label := RichTextLabel.new()
 	message_label.bbcode_enabled = true
+	message_label.selection_enabled = true
 	message_label.fit_content = true
 	message_label.scroll_active = false
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

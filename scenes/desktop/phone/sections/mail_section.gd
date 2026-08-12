@@ -309,6 +309,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 func _build_body_label(raw_text: String) -> RichTextLabel:
 	var label := RichTextLabel.new()
 	label.bbcode_enabled = true
+	label.selection_enabled = true
 	label.fit_content = true
 	label.scroll_active = false
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -198,6 +198,7 @@ func _build_field_row(label: String, raw_value: String) -> Control:
 
 	var value_rich := RichTextLabel.new()
 	value_rich.bbcode_enabled = true
+	value_rich.selection_enabled = true
 	value_rich.fit_content = true
 	value_rich.scroll_active = false
 	value_rich.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -236,6 +237,7 @@ func _build_note(raw_note: String) -> RichTextLabel:
 
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true
+	rich.selection_enabled = true
 	rich.fit_content = true
 	rich.scroll_active = false
 	rich.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

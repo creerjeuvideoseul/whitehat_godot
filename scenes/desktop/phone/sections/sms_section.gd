@@ -369,6 +369,7 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 
 	var message := RichTextLabel.new()
 	message.bbcode_enabled = true
+	message.selection_enabled = true
 	message.fit_content = true
 	message.scroll_active = false
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
