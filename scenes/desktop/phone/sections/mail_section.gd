@@ -128,7 +128,8 @@ func _build_row_avatar(mail: MailEntry) -> Control:
 	style.set_border_width_all(2)
 	style.border_color = Palette.BORDER_ACCENT
 	style.set_corner_radius_all(10)
-	style.set_content_margin_all(0)
+	style.content_margin_left = 7
+	style.content_margin_right = 7
 	frame.add_theme_stylebox_override("panel", style)
 	frame.custom_minimum_size = AVATAR_SIZE
 
