@@ -51,10 +51,11 @@ static func resolve_important_color(text: String) -> String:
 ## — ce n'est pas un parseur HTML général, juste ce que les fiches du jeu
 ## utilisent réellement.
 ##
-## "indice" dans les données est un mot-clé sémantique ("passage indice mis
-## en évidence"), pas un nom de couleur à garder tel quel — il pointe sur
-## `highlight_color` pour ne changer la teinte qu'à un seul endroit (voir
-## palette.gd) plutôt que dans chaque fichier de données. Par défaut
+## "indice" et "important" dans les données sont des mots-clés sémantiques
+## ("passage indice mis en évidence" / "mot à souligner"), pas des noms de
+## couleur à garder tels quels — ils pointent sur `highlight_color`/
+## Palette.TEXT_IMPORTANT pour ne changer la teinte qu'à un seul endroit
+## (voir palette.gd) plutôt que dans chaque fichier de données. Par défaut
 ## Palette.TEXT_HIGHLIGHT (fond sombre, le cas courant — mail, galerie) ;
 ## un appelant sur fond clair (bulles SMS pastel) passe
 ## Palette.TEXT_HIGHLIGHT_ON_LIGHT à la place (voir Palette.is_light()).
@@ -63,6 +64,7 @@ static func html_to_bbcode(text: String, highlight_color: Color = Palette.TEXT_H
 	result = result.replace("<b>", "[b]").replace("</b>", "[/b]")
 	result = result.replace("<i>", "[i]").replace("</i>", "[/i]")
 	result = result.replace("<color=indice>", "[color=#%s]" % highlight_color.to_html(false))
+	result = result.replace("<color=important>", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
 	var color_regex := RegEx.new()
 	color_regex.compile("<color=([^>]+)>")
 	result = color_regex.sub(result, "[color=$1]", true)
