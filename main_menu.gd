@@ -46,6 +46,7 @@ func _update_uptime_label() -> void:
 	_uptime_label.text = BootUptime.format()
 
 func _on_new_game_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	if SaveManager.has_save():
 		_new_game_confirm_dialog.popup_centered()
 		return
@@ -61,17 +62,20 @@ func _start_new_game() -> void:
 	SceneTransition.fade_in()
 
 func _on_options_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	OptionsMenu.open()
 
 ## Pas de fondu/coupure de musique : même comportement que le bouton
 ## "Continuer ?" annulé ou l'écran de connexion (login.gd), un simple aller
 ## vers un autre écran du menu, pas une transition vers le gameplay.
 func _on_credits_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	get_tree().change_scene_to_file("res://scenes/credits.tscn")
 
 func _on_continue_pressed() -> void:
 	if not SaveManager.has_save():
 		return
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_continue_button.disabled = true
 	MusicPlayer.stop()
 	await SceneTransition.fade_out()
@@ -84,6 +88,7 @@ func _on_continue_pressed() -> void:
 	SceneTransition.fade_in()
 
 func _on_quit_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	MusicPlayer.stop()
 	await get_tree().create_timer(MusicPlayer.DEFAULT_FADE_SECONDS).timeout
 	get_tree().quit()
