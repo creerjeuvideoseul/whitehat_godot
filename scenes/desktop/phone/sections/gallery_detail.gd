@@ -56,6 +56,7 @@ func show_post(post: GalleryPost) -> void:
 
 	if not locked and not post.indice.is_empty():
 		ClueManager.unlock(post.indice)
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	for child in _detail_root.get_children():
 		child.queue_free()

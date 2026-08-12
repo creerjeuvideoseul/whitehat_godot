@@ -58,6 +58,15 @@ var _conversation_rows: Dictionary = {}
 ## est scrollé jusqu'à devenir visible, pas dès que la conversation s'ouvre.
 var _reveal_tracker: IndiceRevealTracker
 
+## Conversation actuellement affichée — voir _maybe_save_read_checkpoint(),
+## qui a besoin de savoir si elle est cryptée pour ne jamais sauvegarder sur
+## un simple texte de substitution.
+var _current_conversation: SmsConversation = null
+## Un seul point de sauvegarde par conversation ouverte — remis à faux à
+## chaque nouvelle sélection (voir _show_conversation), pas à chaque
+## événement de scroll une fois le bas déjà atteint.
+var _read_checkpoint_saved: bool = false
+
 
 func _ready() -> void:
 	_database = SmsDatabase.new(data_path)
@@ -65,6 +74,12 @@ func _ready() -> void:
 		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		close_requested.emit()
 	)
+	# Connecté une seule fois ici, jamais par conversation : _messages_scroll
+	# n'est lui-même jamais recréé (seul son contenu l'est), reconnecter à
+	# chaque _show_conversation empilerait une connexion par conversation
+	# ouverte (même piège que le bug corrigé sur MailSection, voir
+	# _clear_detail_root()).
+	_messages_scroll.get_v_scroll_bar().value_changed.connect(_on_messages_scroll_changed)
 	_rebuild_conversation_list()
 	_show_no_selection()
 
@@ -216,6 +231,8 @@ func _show_no_selection() -> void:
 func _show_conversation(conv: SmsConversation) -> void:
 	_conversation_header_row.visible = true
 	_conversation_name_label.text = conv.contact_name
+	_current_conversation = conv
+	_read_checkpoint_saved = false
 	for child in _messages_list.get_children():
 		child.queue_free()
 	if _reveal_tracker != null:
@@ -244,6 +261,11 @@ func _show_conversation(conv: SmsConversation) -> void:
 	## contenu soit stable, sinon ils se déclenchent pendant la construction).
 	await _scroll_to_top()
 	_reveal_tracker.start()
+	## Une conversation assez courte pour tenir sans scroll est déjà "lue en
+	## entier" dès l'ouverture — sans ce rattrapage, elle ne déclencherait
+	## jamais _on_messages_scroll_changed (aucun événement de scroll à
+	## attendre puisqu'il n'y a rien à scroller).
+	_maybe_save_read_checkpoint()
 
 
 ## Fine barre horizontale + la date du message SUIVANT en dessous (pas celui
@@ -380,3 +402,23 @@ func _scroll_to_top() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_messages_scroll.scroll_vertical = 0
+
+
+func _on_messages_scroll_changed(_value: float) -> void:
+	_maybe_save_read_checkpoint()
+
+
+## Point de sauvegarde quand le joueur a fait défiler une conversation SMS
+## jusqu'à son dernier message — "lue en entier", pas juste ouverte. Jamais
+## déclenché sur le texte de substitution d'une conversation cryptée encore
+## verrouillée (rien de réel à y avoir "lu").
+func _maybe_save_read_checkpoint() -> void:
+	if _read_checkpoint_saved or _current_conversation == null:
+		return
+	if _current_conversation.is_crypted and not PhoneVault.is_unlocked():
+		return
+	var v_bar := _messages_scroll.get_v_scroll_bar()
+	if _messages_scroll.scroll_vertical < v_bar.max_value - v_bar.page - 1.0:
+		return
+	_read_checkpoint_saved = true
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())

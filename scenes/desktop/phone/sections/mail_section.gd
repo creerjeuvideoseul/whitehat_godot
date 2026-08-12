@@ -222,6 +222,11 @@ func _show_mail(mail: MailEntry) -> void:
 	## pendant la construction elle-même).
 	if _reveal_tracker != null:
 		_reveal_tracker.start()
+		## Point de sauvegarde à l'ouverture d'un mail réel (envoyé ou reçu) —
+		## _reveal_tracker n'existe que pour du vrai contenu, jamais pour le
+		## texte de substitution d'un mail crypté encore verrouillé (voir
+		## _build_content_frame).
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))
