@@ -50,6 +50,12 @@ var _unseen_clue_count: int = 0
 
 var _pulse_tween: Tween
 
+## Clignotement (voir _start_tor_blink pour le même recette) du bouton
+## Indice une fois la résolution de la mission débloquée — s'arrête dès la
+## première ouverture de la fenêtre (voir _on_clue_button_pressed), mais le
+## bleu (ImportantButton) reste acquis pour de bon.
+var _clue_button_blink_tween: Tween
+
 ## (D) Bandeau réutilisé pour chaque notification, avec une file d'attente :
 ## plusieurs indices peuvent se débloquer dans la même frame (ex. les deux
 ## mots de passe OSINT), ils s'affichent l'un après l'autre plutôt que de se
@@ -75,16 +81,39 @@ func _on_clue_button_pressed() -> void:
 	clue_button_pressed.emit()
 	_unseen_clue_count = 0
 	_update_clue_badge()
+	_stop_clue_button_blink()
 
 
-## Un seul point d'écoute pour les 3 effets — le son suit déjà indépendamment
-## via SfxPlayer sur ce même signal, avec le même délai.
+## Un seul point d'écoute pour les 3 effets déjà en place — le son suit déjà
+## indépendamment via SfxPlayer sur ce même signal, avec le même délai. (E)
+## s'y ajoute : passage en bouton "important" bleu si l'indice qui vient de
+## se débloquer est LA résolution de mission (voir ClueManager.is_solution_clue).
 func _on_clue_unlocked(clue_id: String) -> void:
 	await get_tree().create_timer(CLUE_REVEAL_DELAY_SECONDS).timeout
 	_pulse_clue_button()
 	_unseen_clue_count += 1
 	_update_clue_badge()
 	_queue_toast(clue_id)
+	if ClueManager.is_solution_clue(clue_id):
+		_apply_solution_unlocked_state(true)
+
+
+## A appeler une fois par desktop.gd juste après la construction du header,
+## pour couvrir la reprise d'une sauvegarde où la résolution était déjà
+## débloquée lors d'une session précédente — pas de clignotement dans ce cas
+## (déjà "vu"), même logique que ChatWindow.add_contact() pour une
+## conversation déjà terminée. Le header ne connaît pas lui-même le
+## mission_id courant (voir desktop.gd::CURRENT_MISSION_ID) donc ne peut pas
+## faire cette vérification seul.
+func apply_resumed_clue_state(solution_already_unlocked: bool) -> void:
+	if solution_already_unlocked:
+		_apply_solution_unlocked_state(false)
+
+
+func _apply_solution_unlocked_state(should_blink: bool) -> void:
+	_clue_button.theme_type_variation = &"ImportantButton"
+	if should_blink:
+		_start_clue_button_blink()
 
 
 func _pulse_clue_button() -> void:
@@ -217,3 +246,22 @@ func _start_tor_blink() -> void:
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.tween_property(_tor_icon, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
 	tween.tween_property(_tor_icon, "modulate:a", 1.0, BLINK_SECONDS)
+
+
+## Même recette que _start_tor_blink, sur _clue_button.modulate:a — arrêtée
+## dès la première ouverture de la fenêtre Indice (voir _on_clue_button_pressed).
+func _start_clue_button_blink() -> void:
+	if is_instance_valid(_clue_button_blink_tween):
+		_clue_button_blink_tween.kill()
+	_clue_button_blink_tween = create_tween()
+	_clue_button_blink_tween.set_loops()
+	_clue_button_blink_tween.set_trans(Tween.TRANS_SINE)
+	_clue_button_blink_tween.tween_property(_clue_button, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
+	_clue_button_blink_tween.tween_property(_clue_button, "modulate:a", 1.0, BLINK_SECONDS)
+
+
+func _stop_clue_button_blink() -> void:
+	if is_instance_valid(_clue_button_blink_tween):
+		_clue_button_blink_tween.kill()
+	_clue_button_blink_tween = null
+	_clue_button.modulate.a = 1.0

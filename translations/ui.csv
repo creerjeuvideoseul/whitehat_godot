@@ -45,6 +45,7 @@ CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted
 DESKTOP_CLUES_BUTTON,Collecte d'indice,Clue collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clue collection
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
+REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
 CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."

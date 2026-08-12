@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/report_generation_screen.gd" id="1_script"]
+
+[node name="ReportGenerationScreen" type="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+script = ExtResource("1_script")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 30
+text = "REPORT_GENERATION_TITLE"

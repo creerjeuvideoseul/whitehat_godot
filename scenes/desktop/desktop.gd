@@ -11,6 +11,7 @@ const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
+const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
 ## non génériques : chaque section aura son propre gameplay à terme (SMS, mail,
@@ -94,6 +95,7 @@ var _chat_window: ChatWindow = null
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
+	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 
 	# Debug only (voir Settings.IS_PRODUCTION) : le bouton "revenir avant la
 	# fin de Jean" du footer a chargé un instantané séparé juste avant cet
@@ -347,7 +349,17 @@ func _on_clue_button_pressed() -> void:
 
 	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
 	_clue_board_window.mission_id = CURRENT_MISSION_ID
+	_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
 	_open_window(_clue_board_window)
+
+
+## Écran plein écran temporaire (pas de logique de rapport pour l'instant,
+## voir report_generation_screen.gd) — ajouté directement sur la racine du
+## bureau, comme TerminalConsole (pas de CanvasLayer dédié : un moment de
+## narration propre au bureau, pas un système global accessible d'ailleurs),
+## donc par-dessus header/footer/toutes les fenêtres ouvertes.
+func _on_generate_report_requested() -> void:
+	add_child(REPORT_GENERATION_SCREEN.instantiate())
 
 
 ## Une recherche OSINT réutilise toujours la même fenêtre (jamais de doublon
