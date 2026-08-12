@@ -16,6 +16,14 @@ class_name MailSection
 ## du téléphone), cette scène se contente de signaler la demande.
 
 signal close_requested
+## Émis pour demander l'affichage d'une "pensée du joueur" (voir player_thought.gd)
+## — même signal/contrat que VaultSection, câblé génériquement par desktop.gd
+## via has_signal("thought_requested").
+signal thought_requested(text: String)
+## Émis quand le joueur clique le bouton "important" révélé par la clé
+## META_HACK_PC_MOTHER_KEY — desktop.gd décide ce qu'ouvrir veut dire (sa
+## propre fenêtre dédiée), cette scène ne connaît que son propre bouton.
+signal hack_pc_mother_requested
 
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
 const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
@@ -23,6 +31,16 @@ const AVATAR_SIZE := Vector2(56, 56)
 const ROW_GAP := 8
 const FIELD_GAP := 10
 const DIMMED_TAB_MODULATE := Color(1, 1, 1, 0.5)
+## Même recette que le clignotement TOR du header (voir desktop_header.gd).
+const BLINK_MIN_ALPHA := 0.35
+const BLINK_SECONDS := 1.4
+## Deux clés réservées dans meta_info, gérées à part plutôt qu'affichées comme
+## un champ générique — même esprit que les tags [#indice=xxx]/<indice id="...">
+## ailleurs dans le projet : un mot-clé reconnu par le code plutôt qu'un
+## nouveau rayon JSON séparé, pour ne pas casser la donnée déjà écrite par
+## l'utilisateur dans alizee_mailbox.json.
+const META_PLAYER_THINK_KEY := "Player_Think"
+const META_HACK_PC_MOTHER_KEY := "Hack_PC_Mother"
 
 ## Fichier JSON de la boîte mail affichée — voir MailDatabase. Le seul champ à
 ## changer pour réutiliser cette scène sur un autre personnage/mission.
@@ -39,6 +57,18 @@ var _showing_sent: bool = false
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
 var _reveal_tracker: IndiceRevealTracker
+## Clignotement du bouton "VIEW METADATA" tant qu'on n'a pas cliqué dessus —
+## voir _build_metadata_section. Tué avant de libérer le bouton (voir
+## _clear_detail_root) : même risque que le tracker ci-dessus si on laissait
+## un Tween continuer de cibler un Control déjà libéré au mail suivant.
+var _metadata_blink_tween: Tween
+## Une seule pensée du joueur par mail ouvert, à la première fois où ses
+## métadonnées sont dépliées — remis à faux à chaque nouveau mail (voir
+## _clear_detail_root). Variable d'instance plutôt que capturée par la lambda
+## de _build_metadata_section : une lambda GDScript capture par valeur, pas
+## par référence, la réassigner en son sein ne modifierait pas une variable
+## locale extérieure.
+var _metadata_think_shown: bool = false
 
 
 func _ready() -> void:
@@ -196,6 +226,10 @@ func _clear_detail_root() -> void:
 	if _reveal_tracker != null:
 		_reveal_tracker.dispose()
 		_reveal_tracker = null
+	if is_instance_valid(_metadata_blink_tween):
+		_metadata_blink_tween.kill()
+		_metadata_blink_tween = null
+	_metadata_think_shown = false
 	for child in _detail_root.get_children():
 		child.queue_free()
 
@@ -321,9 +355,16 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 	return label
 
 
-## Repliée par défaut, dépliée au clic sur le bouton "VIEW METADATA" — garde
-## le libellé du bouton en anglais, dans le jargon technique volontairement
-## non traduit du reste de l'interface (voir desktop.gd, _build_jean_dump_lines).
+## Repliée par défaut, dépliée au clic sur le bouton "VIEW METADATA" (qui
+## clignote tant qu'on n'a pas cliqué dessus, pour inciter à le faire — voir
+## BLINK_MIN_ALPHA/BLINK_SECONDS) — garde le libellé du bouton en anglais,
+## dans le jargon technique volontairement non traduit du reste de
+## l'interface (voir desktop.gd, _build_jean_dump_lines).
+##
+## META_PLAYER_THINK_KEY/META_HACK_PC_MOTHER_KEY sont exclues de la liste de
+## champs générique : la première déclenche une pensée du joueur à la
+## première ouverture des métadonnées, la seconde ajoute un bouton
+## "important" séparé plutôt que de s'afficher comme un champ de plus.
 func _build_metadata_section(mail: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", ROW_GAP)
@@ -338,13 +379,53 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 	fields_box.visible = false
 	fields_box.add_theme_constant_override("separation", 4)
 	for key in mail.meta_info.keys():
-		var field_label := Label.new()
-		field_label.text = "%s : %s" % [key, str(mail.meta_info[key])]
+		if key == META_PLAYER_THINK_KEY or key == META_HACK_PC_MOTHER_KEY:
+			continue
+		## RichTextLabel, pas Label : une valeur peut porter <color=important>
+		## (voir Remote_Port dans alizee_mailbox.json), résolu comme partout
+		## ailleurs via RichTextMarkup.html_to_bbcode.
+		var field_label := RichTextLabel.new()
+		field_label.bbcode_enabled = true
+		field_label.selection_enabled = true
+		field_label.fit_content = true
+		field_label.scroll_active = false
 		field_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		field_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
-		field_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+		field_label.add_theme_color_override("default_color", Palette.CONSOLE_TEXT)
+		field_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
+		field_label.text = RichTextMarkup.html_to_bbcode("%s : %s" % [key, str(mail.meta_info[key])])
 		fields_box.add_child(field_label)
+
+	if bool(mail.meta_info.get(META_HACK_PC_MOTHER_KEY, false)):
+		var hack_button := Button.new()
+		hack_button.text = tr("MAIL_HACK_PC_MOTHER_BUTTON")
+		hack_button.theme_type_variation = &"ImportantButton"
+		hack_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		hack_button.pressed.connect(func() -> void:
+			SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+			hack_pc_mother_requested.emit()
+		)
+		fields_box.add_child(hack_button)
+
 	box.add_child(fields_box)
 
-	toggle_button.pressed.connect(func() -> void: fields_box.visible = not fields_box.visible)
+	if is_instance_valid(_metadata_blink_tween):
+		_metadata_blink_tween.kill()
+	_metadata_blink_tween = create_tween()
+	_metadata_blink_tween.set_loops()
+	_metadata_blink_tween.set_trans(Tween.TRANS_SINE)
+	_metadata_blink_tween.tween_property(toggle_button, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
+	_metadata_blink_tween.tween_property(toggle_button, "modulate:a", 1.0, BLINK_SECONDS)
+
+	toggle_button.pressed.connect(func() -> void:
+		fields_box.visible = not fields_box.visible
+		if is_instance_valid(_metadata_blink_tween):
+			_metadata_blink_tween.kill()
+			_metadata_blink_tween = null
+		toggle_button.modulate.a = 1.0
+		if fields_box.visible and not _metadata_think_shown:
+			_metadata_think_shown = true
+			var think_text: String = str(mail.meta_info.get(META_PLAYER_THINK_KEY, ""))
+			if not think_text.is_empty():
+				thought_requested.emit(think_text)
+	)
 	return box
