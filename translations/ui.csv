@@ -3,6 +3,9 @@ MENU_NEW_GAME,Nouvelle partie,New Game
 MENU_OPTIONS,Options,Options
 MENU_CONTINUE,Continuer,Continue
 MENU_QUIT,Quitter,Quit
+MENU_CREDITS,Crédits,Credits
+CREDITS_TITLE,// Crédits,// Credits
+CREDITS_BACK_BUTTON,Retour menu,Back to menu
 MENU_TAGLINE_1,Tu n'as pas piraté le système.,You didn't hack the system.
 MENU_TAGLINE_2,Tu as juste trouvé,You just found
 MENU_TAGLINE_3,une porte que tout le monde avait oublié de fermer.,a door everyone forgot to close.
@@ -42,6 +45,7 @@ CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted
 DESKTOP_CLUES_BUTTON,Collecte d'indice,Clue collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clue collection
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
+REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
 CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
@@ -71,6 +75,7 @@ MAIL_TO_LABEL,À :,To:
 SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
 SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
 SMS_MESSAGE_COUNT,%d messages,%d messages
+SMS_ALIZEE_REMINDER,Alizée,Alizée
 GALLERY_SECTION_TITLE,Galerie du téléphone d'Alizée,Alizée's phone gallery
 GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
 GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
@@ -88,3 +93,15 @@ VAULT_HINT_ELEVEN,Le chiffre me semble une bonne idée. Il revient souvent dans 
 VAULT_HINT_LASTHORIZON,"LastHorizon me semble pertinent, reste à deviner la fin. Un chiffre, peut-être ?","LastHorizon seems relevant, I just need to guess the ending. A number, maybe?"
 VAULT_HINT_GENERIC,"Non, le mot de passe doit forcément être quelque chose de plus devinable. Je dois trouver d'autres indices.","No, the password has to be something easier to guess. I need to find more clues."
 ANALYSIS_TRANSITION_TITLE,Chargement des données en cours...,Loading data...
+MONTH_1,janvier,January
+MONTH_2,février,February
+MONTH_3,mars,March
+MONTH_4,avril,April
+MONTH_5,mai,May
+MONTH_6,juin,June
+MONTH_7,juillet,July
+MONTH_8,août,August
+MONTH_9,septembre,September
+MONTH_10,octobre,October
+MONTH_11,novembre,November
+MONTH_12,décembre,December

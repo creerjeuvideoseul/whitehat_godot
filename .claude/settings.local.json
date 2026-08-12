@@ -26,7 +26,17 @@
       "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless --editor --quit-after 60 > /tmp/godot_dialogstyle_rescan.log 2>&1 *)",
       "Bash(python -c \"import json; json.load\\(open\\('c:/Users/pisto/Documents/white-hat/data/osint_characters.json', encoding='utf-8'\\)\\); print\\('OK'\\)\")",
       "Bash(python -c \"import json; json.load\\(open\\('data/alizee_mailbox.json', encoding='utf-8'\\)\\); print\\('OK'\\)\")",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(find \"/c/Users/pisto/Downloads\" -iname \"Godot*.exe\" 2>/dev/null)",
+      "Read(//c/Users/pisto/Downloads/**)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless res://scenes/desktop/phone/sections/mail_section.tscn)",
+      "Bash(\"/c/Users/pisto/Downloads/Godot_v4.7.1-stable_win64.exe\" --path . --headless res://scenes/desktop/phone/sections/sms_section.tscn)",
+      "Bash(tasklist)",
+      "Bash(taskkill //PID 12532 //F)",
+      "Bash(taskkill //PID 5252 //F)",
+      "Bash(taskkill //PID 46924 //F)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ],
     "additionalDirectories": [
       "\\tmp"

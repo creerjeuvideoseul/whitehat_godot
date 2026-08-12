@@ -22,7 +22,7 @@ const AVATAR_BORDER_WIDTH := 3.0
 const IMAGE_ZOOM := 1.15
 const CATEGORY_LABEL_FONT_SIZE := Palette.SIZE_BODY + 5
 const CIRCULAR_MASK_SHADER := preload("res://assets/shaders/circular_mask.gdshader")
-const PANEL_WIDTH := 370.0
+const PANEL_WIDTH := 420.0
 ## Longueur du trait horizontal entre le tronc et le panneau d'un indice.
 const BRANCH_LENGTH := 40.0
 ## Espace vertical entre le bas de l'avatar et le centre du premier indice —
@@ -218,11 +218,18 @@ func _build_clue_panel(clue_id: String) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(PANEL_WIDTH, 0)
 
-	var label := Label.new()
+	## RichTextLabel, pas Label : le texte d'un indice peut porter <color=important>
+	## (voir translations/indices.csv), résolu via RichTextMarkup.html_to_bbcode
+	## comme partout ailleurs où du texte de donnée brute s'affiche (mail/SMS/
+	## galerie/OSINT).
+	var label := RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.selection_enabled = true
+	label.fit_content = true
+	label.scroll_active = false
 	label.custom_minimum_size = Vector2(PANEL_WIDTH - 28, 0)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_FILL
-	label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
 	panel.add_child(label)
 
 	_clue_id_by_panel[panel] = clue_id
@@ -232,7 +239,7 @@ func _build_clue_panel(clue_id: String) -> PanelContainer:
 	return panel
 
 
-func _apply_panel_state(panel: PanelContainer, label: Label, clue_id: String) -> void:
+func _apply_panel_state(panel: PanelContainer, label: RichTextLabel, clue_id: String) -> void:
 	var is_unlocked: bool = ClueManager.is_unlocked(clue_id)
 
 	var style := StyleBoxFlat.new()
@@ -248,12 +255,12 @@ func _apply_panel_state(panel: PanelContainer, label: Label, clue_id: String) ->
 	if is_unlocked:
 		style.bg_color = Color(0.09, 0.24, 0.16, 1.0)
 		style.border_color = Palette.BORDER_ACCENT
-		label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
-		label.text = tr(clue_id)
+		label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
+		label.text = RichTextMarkup.html_to_bbcode(tr(clue_id))
 	else:
 		style.bg_color = Color(0.1, 0.11, 0.11, 1.0)
 		style.border_color = Palette.TEXT_LOCKED
-		label.add_theme_color_override("font_color", Palette.TEXT_LOCKED)
+		label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		label.text = tr("CLUEBOARD_LOCKED_PLACEHOLDER")
 	panel.add_theme_stylebox_override("panel", style)
 
@@ -288,7 +295,7 @@ func _on_all_unlocked_changed() -> void:
 ## hauteur doit aussi pousser vers le bas tous les panneaux suivants de la
 ## colonne pour ne jamais les chevaucher.
 func _refresh_panel(panel: PanelContainer, clue_id: String) -> void:
-	var label: Label = panel.get_child(0)
+	var label: RichTextLabel = panel.get_child(0)
 	var old_height := panel.size.y
 	_apply_panel_state(panel, label, clue_id)
 	panel.size = panel.get_combined_minimum_size()

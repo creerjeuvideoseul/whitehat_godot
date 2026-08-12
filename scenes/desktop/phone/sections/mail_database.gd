@@ -16,14 +16,17 @@ func _init(data_path: String) -> void:
 	_load(data_path)
 
 
-## Mails de la boîte demandée (envoyés ou reçus), les plus récents en premier.
+## Mails de la boîte demandée (envoyés ou reçus), du plus ancien au plus
+## récent — même logique de lecture que SmsSection (voir _show_conversation :
+## "un dossier qu'on lit depuis le début", pas une appli mail qu'on rouvrirait
+## sur le dernier échange).
 func get_mails(is_sent_box: bool) -> Array[MailEntry]:
 	var locale := _resolve_locale()
 	var result: Array[MailEntry] = []
 	for mail: MailEntry in _mails_by_locale.get(locale, []):
 		if mail.is_sent_box == is_sent_box:
 			result.append(mail)
-	result.sort_custom(func(a: MailEntry, b: MailEntry) -> bool: return a.timestamp > b.timestamp)
+	result.sort_custom(func(a: MailEntry, b: MailEntry) -> bool: return a.timestamp < b.timestamp)
 	return result
 
 

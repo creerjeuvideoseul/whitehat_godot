@@ -1,0 +1,301 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" uid="uid://7qt16mx22lpo" path="res://scenes/credits.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://cao0vwmxi5662" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
+[ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/UI/logo_whitehat.svg" id="3_logo_corner"]
+[ext_resource type="Texture2D" uid="uid://bjgskf4w02knq" path="res://assets/UI/logo_sentinelle.png" id="4_logo_sentinelle"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2_shader")
+shader_parameter/bg_color = Color(0.016, 0.043, 0.031, 1)
+shader_parameter/line_color = Color(0.11, 0.32, 0.22, 0.35)
+shader_parameter/cell_size = 48.0
+shader_parameter/line_width = 1.2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.02, 0.05, 0.04, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.87, 0.45, 0.55)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="SystemFont" id="SystemFont_semibold"]
+font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "Fira Code", "Courier New")
+font_weight = 700
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_divider"]
+color = Color(0.22, 0.87, 0.45, 0.5)
+thickness = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_normal"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_hover"]
+bg_color = Color(1, 1, 1, 0.05)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Credits" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_bg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.016, 0.043, 0.031, 1)
+
+[node name="TopBar" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 56.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="StatusDot" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.22, 0.87, 0.45, 1)
+theme_override_font_sizes/font_size = 20
+text = "●"
+
+[node name="TitleLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.75, 0.85, 0.8, 1)
+theme_override_font_sizes/font_size = 22
+text = "WHITE HAT OS"
+
+[node name="KernelLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+text = "Kernel 6.8.4"
+
+[node name="VSeparator" type="VSeparator" parent="TopBar/Row"]
+layout_mode = 2
+
+[node name="NetworkLabel" type="Label" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+text = "BOOT_NETWORK_STATUS"
+
+[node name="Spacer" type="Control" parent="TopBar/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UptimeLabel" type="Label" parent="TopBar/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.4, 0.5, 0.45, 1)
+theme_override_font_sizes/font_size = 20
+text = "Up 0d 00:00"
+horizontal_alignment = 2
+
+[node name="BottomBar" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 14
+
+[node name="Row" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="VersionLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "v0.9.4-alpha"
+
+[node name="KernelLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "Kernel 6.8.4"
+
+[node name="NetworkLabel" type="Label" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 20
+text = "BOOT_NETWORK_STATUS"
+
+[node name="Spacer" type="Control" parent="BottomBar/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainContent" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 70.0
+offset_bottom = -70.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="MainContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 260
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 260
+theme_override_constants/margin_bottom = 30
+
+[node name="Card" type="PanelContainer" parent="MainContent/Margin"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CardLayout" type="VBoxContainer" parent="MainContent/Margin/Card"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HeaderMargin" type="MarginContainer" parent="MainContent/Margin/Card/CardLayout"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 22
+
+[node name="HeaderLabel" type="Label" parent="MainContent/Margin/Card/CardLayout/HeaderMargin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
+theme_override_fonts/font = SubResource("SystemFont_semibold")
+theme_override_font_sizes/font_size = 32
+text = "CREDITS_TITLE"
+
+[node name="HeaderSeparator" type="HSeparator" parent="MainContent/Margin/Card/CardLayout"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_divider")
+
+[node name="BodyMargin" type="MarginContainer" parent="MainContent/Margin/Card/CardLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 20
+
+[node name="BodyScroll" type="ScrollContainer" parent="MainContent/Margin/Card/CardLayout/BodyMargin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="CreditsLabel" type="RichTextLabel" parent="MainContent/Margin/Card/CardLayout/BodyMargin/BodyScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.82, 0.9, 0.86, 1)
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="FooterSeparator" type="HSeparator" parent="MainContent/Margin/Card/CardLayout"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_divider")
+
+[node name="FooterMargin" type="MarginContainer" parent="MainContent/Margin/Card/CardLayout"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 18
+
+[node name="FooterRow" type="HBoxContainer" parent="MainContent/Margin/Card/CardLayout/FooterMargin"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="MainContent/Margin/Card/CardLayout/FooterMargin/FooterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="MainContent/Margin/Card/CardLayout/FooterMargin/FooterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.63, 0.58, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_back_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_back_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_back_hover")
+text = "CREDITS_BACK_BUTTON"
+flat = true
+
+[node name="LogoIcon" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -158.0
+offset_right = 120.0
+offset_bottom = -70.0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("3_logo_corner")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LogoIcon" type="TextureRect" parent="LogoIcon"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 102.0
+offset_top = -84.0
+offset_right = 190.0
+offset_bottom = 4.0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("4_logo_sentinelle")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="UptimeTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+autostart = true

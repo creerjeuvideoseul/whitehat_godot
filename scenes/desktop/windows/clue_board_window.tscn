@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/desktop/windows/clue_board_window.gd" id="1_script"]
 [ext_resource type="Script" path="res://scenes/desktop/windows/clue_board.gd" id="2_board_script"]
@@ -35,6 +35,18 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border_overlay"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.22, 0.87, 0.45, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="ClueBoardWindow" type="Control"]
 layout_mode = 3
@@ -126,7 +138,7 @@ text = "CLUEBOARD_TITLE_M1"
 [node name="BoardScroll" type="ScrollContainer" parent="Layout/Body/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-horizontal_scroll_mode = 2
+horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 
 [node name="ClueBoard" type="Control" parent="Layout/Body/VBox/BoardScroll"]
@@ -154,3 +166,13 @@ layout_mode = 2
 disabled = true
 theme_type_variation = &"PrimaryButton"
 text = "CLUEBOARD_GENERATE_REPORT_BUTTON"
+
+[node name="BorderOverlay" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border_overlay")

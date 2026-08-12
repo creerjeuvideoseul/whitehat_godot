@@ -56,7 +56,7 @@
 		  "timestamp": "2030-01-12T03:12:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Ma fille…<br><br>Je suis désolée.<br>Le silence a été tellement long, dix ans sans que je puisse te parler.<br>J'ai fait tant d'erreurs dans ma vie.<br>Mais je voulais que tu saches que tu es ma plus belle réussite et que je t'aime plus que tout.<br>J'imagine que tu as de la rancœur et dieu sait ce que ton père a pu te raconter à mon sujet.<br><br>Mais je ne suis pas celle que tu crois, laisse-moi <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>une chance de renouer contact.</color></indice><br>Ta mère, qui t'aime."
+		  "html_content": "Ma fille…<br><br>Je suis désolée.<br><br>Le silence a été tellement long, dix ans sans que je puisse te parler.<br>J'ai fait tant d'erreurs dans ma vie.<br>Mais je voulais que tu saches que tu es ma plus belle réussite et que je t'aime plus que tout.<br>J'imagine que tu as de la rancœur et dieu sait ce que ton père a pu te raconter à mon sujet.<br><br>Mais je ne suis pas celle que tu crois, laisse-moi <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>une chance de renouer contact.</color></indice><br><br>Ta mère, qui t'aime."
 		},
 		{
 		  "mailId": 4,
@@ -79,7 +79,17 @@
 		  "timestamp": "2030-01-30T09:02:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Il faut qu'on se parle.</color></indice>"
+		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Il faut qu'on se parle.</color></indice><br><br>Je t'aime, Christine.",
+		  "meta_info": {
+			  "IP_Origine": "180.252.12.44",
+			  "Serveur": "mail.gomail.co.id", 
+			  "User_Agent": "Webmail-GOMail-v4.2 / Windows 10 (Build 19045) / Chrome 120.0.0.0", 
+			  "Location": "Jakarta, Indonesia (Telkom Indonesia)", 
+			  "OpenVPN_Tunnel": "ACTIVE (Client-IP: 10.8.0.14)",
+			  "Remote_Port": "5900 (VNC) / <color=important>OPEN</color>",
+			  "Player_Think":"Le port du vpn semble ouvert, je dois pouvoir entrer sur son ordinateur.",
+			  "Hack_PC_Mother":1
+			}
 		}
 	  ]
 	},
@@ -139,7 +149,7 @@
 		  "timestamp": "2030-01-12T03:12:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "My daughter…<br>I'm sorry.<br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>a chance to reconnect.</color></indice><br>Your mother, who loves you."
+		  "html_content": "My daughter…<br>I'm sorry.<br><br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>a chance to reconnect.</color></indice><br><br>Your mother, who loves you."
 		},
 		{
 		  "mailId": 4,
@@ -162,7 +172,18 @@
 		  "timestamp": "2030-01-30T09:02:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "I feel so guilty.<br>Your words hurt, my child, but I understand them. <br>Give me a chance to explain what really happened.<br>I don't legally have the right to see you before you turn 18. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>We need to talk.</color></indice>"
+		  "html_content": "I feel so guilty.<br>Your words hurt, my child, but I understand them. <br>Give me a chance to explain what really happened.<br>I don't legally have the right to see you before you turn 18. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>We need to talk.</color></indice>",
+		  "meta_info": {
+			  "IP_Origine": "180.252.12.44",
+			  "Serveur": "mail.gomail.co.id", 
+			  "User_Agent": "Webmail-GOMail-v4.2 / Windows 10 (Build 19045) / Chrome 120.0.0.0", 
+			  "Location": "Jakarta, Indonesia (Telkom Indonesia)", 
+			  "OpenVPN_Tunnel": "ACTIVE (Client-IP: 10.8.0.14)",
+			  "Remote_Port": "5900 (VNC) / <color=important>OPEN</color>",
+			  "Player_Think":"The VPN port seems to be open; I should be able to access his computer.",
+			  "Hack_PC_Mother":1
+			}		
+			  
 		}
 	  ]
 	}

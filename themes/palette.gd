@@ -91,7 +91,7 @@ const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.8, 0.478, 0.0, 1.0)
 ## écrit en dur dans chaque fichier, pour ne changer la teinte qu'à un seul
 ## endroit. Sans rapport avec TEXT_HIGHLIGHT (indices) ni TEXT_DANGER (rouge
 ## pâle réservé au texte d'avertissement) : un rouge vif, dédié.
-const TEXT_IMPORTANT := Color(1.0, 0.1, 0.1, 1.0)
+const TEXT_IMPORTANT := Color(0.996, 0.396, 0.408, 1.0) # #fe6568
 
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.

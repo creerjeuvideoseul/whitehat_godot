@@ -11,17 +11,15 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 @onready var _new_game_button: Button = %NewGameButton
 @onready var _options_button: Button = %OptionsButton
 @onready var _continue_button: MenuItem = %ContinueButton
+@onready var _credits_button: Button = %CreditsButton
 @onready var _quit_button: Button = %QuitButton
 @onready var _new_game_confirm_dialog: ConfirmationDialog = %NewGameConfirmDialog
 
-var _start_ticks_msec: int = 0
-
 func _ready() -> void:
-	_start_ticks_msec = Time.get_ticks_msec()
-
 	_new_game_button.pressed.connect(_on_new_game_pressed)
 	_options_button.pressed.connect(_on_options_pressed)
 	_continue_button.pressed.connect(_on_continue_pressed)
+	_credits_button.pressed.connect(_on_credits_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 
 	_new_game_confirm_dialog.confirmed.connect(_start_new_game)
@@ -45,13 +43,10 @@ func _ready() -> void:
 	MusicPlayer.play(MENU_MUSIC)
 
 func _update_uptime_label() -> void:
-	var elapsed_sec: int = int((Time.get_ticks_msec() - _start_ticks_msec) / 1000.0)
-	var days: int = elapsed_sec / 86400
-	var hours: int = (elapsed_sec % 86400) / 3600
-	var minutes: int = (elapsed_sec % 3600) / 60
-	_uptime_label.text = "Up %dd %02d:%02d" % [days, hours, minutes]
+	_uptime_label.text = BootUptime.format()
 
 func _on_new_game_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	if SaveManager.has_save():
 		_new_game_confirm_dialog.popup_centered()
 		return
@@ -67,11 +62,20 @@ func _start_new_game() -> void:
 	SceneTransition.fade_in()
 
 func _on_options_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	OptionsMenu.open()
+
+## Pas de fondu/coupure de musique : même comportement que le bouton
+## "Continuer ?" annulé ou l'écran de connexion (login.gd), un simple aller
+## vers un autre écran du menu, pas une transition vers le gameplay.
+func _on_credits_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+	get_tree().change_scene_to_file("res://scenes/credits.tscn")
 
 func _on_continue_pressed() -> void:
 	if not SaveManager.has_save():
 		return
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_continue_button.disabled = true
 	MusicPlayer.stop()
 	await SceneTransition.fade_out()
@@ -84,6 +88,7 @@ func _on_continue_pressed() -> void:
 	SceneTransition.fade_in()
 
 func _on_quit_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	MusicPlayer.stop()
 	await get_tree().create_timer(MusicPlayer.DEFAULT_FADE_SECONDS).timeout
 	get_tree().quit()

@@ -1,0 +1,914 @@
+
+debut claude discussion.
+
+Cadre du travail que je vais te demander par la suite :
+-----------------------------
+Parcours le projet Whitehat sur godot 4.7, relis la mémoire associé à ce projet (le pdf du jeu pour l'histoire, les instructions etc)
+
+Garde toujours en tête, l'implémentation de la traduction, comme tu l'as fait sur main_menu ou dialogue. 
+Fait au mieux, utilise les bonnes pratiques dans le milieu du développement solo indépendant de jeu comme "the operator".
+
+Respect la charte graphique que tu as défini, garde les mêmes couleurs quand cela est possible (vert, blanc, etc)
+
+Tu peux corriger l'orthographe de mes contenus texte du jeu à la volée et traduire à la volée en anglais les fichiers de traductions.
+Reste homogéne dans la police choisi et la taille de police suivant le texte.
+
+Demande moi avant de tester tes modifications.
+
+Demande moi si tu dois ajouter un point de sauvegarde après le developpement d'une nouvelle fonctionnalité.
+
+Soit force de proposition de manière générale. Soumet moi des améliorations quand cela est pertinent. 
+
+---------------------------------
+TODO : 
+
+XX Pour les indices, emet un son et une petite animation au niveau de l'indice qui vient d'apparaitre.
+XX Probleme SMS tous les indices.
+XX - Gérer les indices qui bug.
+XX - CPU 100% quand system.
+XX - page des crédits pour les sons et musiques.
+
+Gérer l'heure et le up time du jeu.
+
+Revoir les dialogues pour être "parfait".
+Intro, faire les vidéos avec SON. 
+
+Faire le rapport de la mission 1.
+
+AJOUTER variable joueur des choix
+
+Partie PIRATE Du pc de la mère.
+
+
+-------------------------------
+Faire la page Steam, description, logo. 
+
+Faire une version X ?
+
+Faire un post PATREON ?
+ 
+
+Faire le rapport de la mission 1.
+Une fois les indices : 
+
+
+
+
+
+M1_SOLUTION_OU,Alizée est partie avec Marek le lendemain de ses 18 ans. Elle le suit en tournée.
+
+M1_SOLUTION_MERE,Sa mère l'a abandonnée à ses 8 ans car Jean Ranoud était abominable. Elle n'a pas eu le choix.
+
+
+
+
+
+
+---------------------------------------------------------------
+Voici des sons à mettre aux différents endroits indiquées :
+
+Son : "Acces interdit" : (quand on tente d'accéder aux sms crypté, mail crypté, ou mauvais mot de passe donnée dans l'application coffre fort)
+=> asset/audio/sound/soundreality-ui-no-access-243463.mp3
+Ajoute les dans le code.
+
+Son : "Notification" : Nouvelle conversation (remplacer l'ancienne starcraft_incomping_transmission)
+asset/audio/sound/soundreality-notification-30-313553.mp3
+Ajoute le dans le code.
+
+Son : "Evenement" : Apparition du téléphone d'alizée.
+asset/audio/sound/soundreality-callisto-170178.mp3
+Ajoute le dans le code.
+
+Son : Moment intense d'attente, avec un choix important à faire avec timer :
+asset/audio/sound/soundreality-glitched-lead-135572.mp3
+Non utilisé pour le moment. Peut être pour le rapport de final sur les indices.
+
+Son : "Systeme attente" : Ajoute le à la première fenetre systeme après l'intro.
+asset/audio/sound/juniorsoundays-motion-amp-tansitions-02-527730.mp3
+Ajoute le dans le code.
+
+Musique : Moment intense en émotion, un peu cinématique. 
+asset/audio/alexzavesa-logo-action-cinematic-493773.mp3
+ou
+asset/audio/fronbondi_skegs-sfx-suspense-and-mystery-synth-stab-sound-effect-seamless-loop-475022.mp3
+Non utilisé pour le moment. 
+Peut être pour l'explication d'un rapport ou quand je racconterais un moment à suspence.
+
+Musique : Moment intense en émotion positive.
+asset/audio/hot_dope-winning-elevation-111355
+Non utilisé pour le moment. Peut être pour l'explication d'un rapport ou quand je racconterais un happy ending.
+
+Met ta mémoire à jour avec l'utilisation de cette banque de son, et demande moi à l'avenir si je veux ajouter un son ou une musique, lorsqu'on développera les fonctionnalités futures. Quand c'est pertinent.
+
+----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+Nous allons developper la scene du coffre fort, d'une téléphone d'Alizée.
+
+Meme scene/fenetre que Galerie, un titre et une cellule au centre.
+
+Titre : Section coffre fort.
+
+Dans la cellule centrale :
+Une phrase explicative : 
+
+Des données sont cryptés sur ce téléphone (sms, image, mail..) pour les décrypter, merci d'indiquer le mot de passe.
+
+Champs INPUT de mot de passe. Max 20 caractères. alphanumérique seulement.
+et un bouton VALIDER (bouton habituel)
+Accpeter/transformer la case et les accents pour avoir la chaine la plus simple à vérifier.
+
+Le bon mot de passe est : "lasthorizon11" (sans les guillement, nom du groupe de marek et le chiffre fétiche de Alizée).
+Si il le tape, cela marque en vert : Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégés (sms, mail etc).
+Il faut changer la variable Indice débloqué et le sauvegarder dans la sauvegarde. 
+Tout le contenu protégé du téléphone doit maintenant s'afficher.
+
+Si le mot de passe n'est pas "lasthorizon11" on affiche en rouge : Ce n'est pas le bon mot de passe.
+On va aider le joueur sous forme de pensée (la scene pensé qu'on a fait pour anonghost avant son dialogue), si il se trompe de mot de passe:
+Voici les cas et les phrases associées à afficher sous forme de pensée une fois que le joueur à essayer un de ces mots de passe.
+- Si le joueur entre une date de naissance : 310112, 31/01/12, 120131, 31-01-12 tout ce qui ressemble a une date, afficher en pensée :
+Cela ne peut être une date, ca sera trop simple à trouver par son père Jean.
+- Si le joueur PeaceAndLove, Alizee&Marek, afficher en pensée :
+Non, Alizée n'est normalement pas au courant des mot de passe de Marek.
+- Si le joueur entre : EliteShot$83$, afficher en pensée :
+C'est le même mot de passe que le père, il l’aurait débloqué. Ça ne peut pas être ce mot de passe.
+- Si le joueur entre : Bugsy , afficher en pensée :
+Le père l'aurait trouvé facilement, ça ne peut pas être ce mot de passe.
+- Si le joueur entre le chiffre 11 quelque part dans la chaine de caractère, afficher en pensée :
+Le chiffre me semble une bonne idée. Il revient souvent dans son schéma de mot de passe de Alizée.
+- Si le joueur entre LastHorizon + n'importe quoi (sauf 11), afficher en pensée :
+LastHorizon me semble pertinent, reste à deviner la fin ? Un chiffre peut être ?
+- Si le joueur rentre quoique ce soit d'autre, alors afficher en pensée :
+Non le mot de passe doit forcément être un truc plus devinable. Je dois trouver des indices.
+
+Pas de besoin de vérifier si il a débloqué l'indice dans la sauvegarde des paramétres. Si il a le mot de passe on concidère qu'il a bon.
+
+Ajoute des petits pictos images si cela te semble pertinent.
+
+Si tu as des questions ou des choix à faire, demande moi avant de developper.
+Reste homogène avec la charte graphique. 
+
+
+
+
+
+
+
+
+
+Concernant la fenetre de dialogue, à la reprise de la sauvegarde sur le téléphone d'alizée. 
+Met le par défaut en taille réduite dans la barre des taches, ne l'ouvre pas par défaut à la reprise de la partie.
+
+Dans la barre des taches, mettre les "fenetres" réduites au format bouton habituelle (avec le padding interne défini habituellement)
+
+Dans les mails "cryptés" l'indice ce déclenche alors que le joueur ne voit pas le texte.
+
+Refaire une passe sur tous les indices, remplacer les indices qui n'existe pas par une couleur rouge ? ou <b> importante.
+
+Après l'intro, charger anonghost, le présenter.
+-------------------------
+
+
+J'ai vérifié où vit le bouton visé : ClueButton (texte "COLLECTE D'INDICE") est dans le header du bureau (desktop_header.tscn:90), toujours affiché en haut — bonne nouvelle, sa position écran est stable et atteignable depuis n'importe quel écran.
+
+Voici 4 pistes, de la plus simple à la plus ambitieuse, avec des références du genre :
+
+A — Pulse/halo sur le bouton lui-même
+Au moment du son, le bouton "COLLECTE D'INDICE" grossit brièvement + un halo vert clignote, sans rien traverser l'écran. Référence : icône d'appli qui tressaute pour une notif. Le plus simple à coder (un Tween sur scale/modulate), et discret — cohérent avec un jeu au ton plutôt sobre.
+
+B — Badge compteur persistant
+Un petit badge rond sur le bouton affiche le nombre d'indices pas encore consultés, et reste jusqu'à ouverture de la fenêtre Collecte d'indice (pas juste un flash d'une seconde). Référence : badges de quête non lue, quasi universels dans les jeux à journal. Utile si le joueur entend le son mais n'ouvre pas tout de suite.
+
+C — Trajectoire lumineuse vers le bouton (ton idée)
+Un halo part du point de découverte (la bulle SMS, l'image, la ligne OSINT...) et file vers le bouton, façon pièce qui vole vers le compteur (Candy Crush, ouverture de coffre Clash Royale) ou carte qui rejoint la pile (Slay the Spire). Techniquement faisable simplement — un seul sprite animé le long d'une courbe via Tween, pas besoin d'un vrai système de particules — et IndiceRevealTracker donne déjà le Control source exact. Deux réserves : (1) si une fenêtre est ouverte par-dessus le header, le trait pourrait sembler passer "sous" elle selon l'ordre d'affichage ; (2) ce langage visuel ("loot qui vole") vient plutôt du jeu mobile casual/collection, un peu à contre-courant du ton thriller/hacking sobre du jeu — à calibrer avec une couleur/vitesse discrètes si retenu.
+
+D — Bandeau "Nouvel indice débloqué"
+Une notification glisse depuis un coin de l'écran, affiche le texte de l'indice ~2-3s puis disparaît. Référence directe au genre enquête : Phoenix Wright ("Nouvelle preuve obtenue !"). Avantage sur les autres : il dit quoi, pas juste qu'il y a du nouveau.
+
+Ma recommandation : combiner B + D — le bandeau donne l'info immédiate et thématiquement juste, le badge est un rappel durable si le joueur ne regarde pas tout de suite. Aucun des deux ne dépend de la position exacte de l'écran source ni du risque de passer sous une fenêtre. Option C reste une bonne idée pour une itération suivante si tu veux vraiment cet effet, mais plus de travail et un risque de ton à surveiller.
+
+
+
+
+
+
+
+
+
+
+
+
+
+JOUR 9
+
+La suite du téléphone d'Alizée.
+On s'occuper de la scene Galerie.
+Meme fenetre que Mail en longeur et hauteur + bouton X fermer.
+Cette scene Galerie devra pouvoir être réutilisable avec d'autre fichier JSON par la suite.
+-----------------------------------------
+Un titre : Galerie du téléphone d'Alizée. (variable traduisible)
+----------------------------------------- 
+Pas de sous titre pour cette scene.
+-----------------------------------------
+En dessous un cadre de contenu, en une seule cellule.
+
+Le fichier Json montre toutes les images a afficher. (prevoir un scrollbar).
+
+Tu dois afficher les miniatures comme les miniatures sur un portable (en plus gros, style 250 de largeur (adapte la hauteur, le ratio est 16/9)
+Chaque image est présentée dans un cadre au fond blanc, l'image colle les bords. (cf fichier attaché)
+Il y a 140 pixels en dessous de l'image pour afficher le titre et le nombre de like (champ "nblike") et le nombre de commentaires.)
+"picture" montre l'image a afficher.
+"title", le titre à mettre sous l'image.
+"timestamp", date de la prise de vue, à mettre en francais.
+Petit effet quand on passe la souris dessus pour montrer que c'est cliquable.
+
+------------------------------------------
+Quand on clique sur une image : 
+
+Une nouvelle scene/fenetre s'affiche.
+Cette fenetre est une copie de la fenetre précédente.
+et s'affiche par dessus. On peut la fermer avec la croix.
+-----------------------------------------
+Un titre : Titre de l'image.
+----------------------------------------- 
+En dessous un cadre de contenu, en une seule cellule.
+Affiche l'image le plus grand possible dans cet espace.
+En dessous affiche les commentaires du fichier Json pour cette image.
+Avatar, pseudo
+en dessous : commentaire.
+Si le champ json "indice" est remplit, quand on accéde à l'image en cliquant dessus, la découverte de l'indice s'active et s'ajoute à la sauvegarder du joueur.
+------------------------------------------------------
+
+
+
+
+Jour 8
+La suite du téléphone d'Alizée.
+
+On va s'occuper de la scene SMS. meme fenetre que Mail en longeur et hauteur + bouton X fermer.
+-----------------------------------------
+Un titre : SMS du téléphone d'Alizée. (variable traduisible)
+-----------------------------------------
+Pas de sous titre pour cette scene.
+-----------------------------------------
+En dessous un cadre de contenu, diviser en deux :
+-----------------------------------------
+Cette scene SMS devra pouvoir être réutilisable avec d'autre fichier JSON par la suite.
+-----------------------------------------
+La première colonne fait 1/5 de la totalité et comprendra le destinataire de la conversation SMS.
+
+Un rectangle affiche : 
+- Un petit avatar (champs json "avatar")
+- Le destinataire : champs : "contactName"
+- (Nombre de messages de la conversation.)
+L'ensemble est cliquable et ouvre le mail dans la partie droite de ce container.
+-----------------------------------------------------------------
+Dans l'autre case de 4/5 on va afficher le contenu de la conversation SMS avec le destinataire.
+
+"isAnswer" defini si c'est écrit par Alizé. c'est le responsable du téléphone.
+"messages" contient le message. Si isAnswer = 1 alors il s'affiche à droite dans une couleur
+si isAnswer = 0 alors il s'affiche à gauche avec une autre couleur.
+Les champs a côté de contactName, "colorBackground" définis le fond du rectangle arrondit et "colorFont" défini la couleur de l'écriture du destinataire.
+Le fond et l'écriture du responsable du téléphone (à droite) sera toujours la meme.
+"timestamp" défini l'heure et la date du sms, à afficher discretement en dessous de chaque case de message. A écrire en heure francaise, comme pour les mails.
+"message" Le message a afficher.
+La hauteur du rectangle doit être élastique, on ne connait pas à l'avance la taille du texte. La largeur est fixe. (2/3 centrer à gauche pour les messages de gauche, et 2/3 centrer à droite pour les messages à droites.) Oui cela se superpose, mais comme c'est la ligne du dessous, ce n'est pas grave.
+Le "message" peut contenir des indices, le traitement doit se faire.
+Et du html très simple : <br> et <color> et <b></b> et <i></i>.
+
+Autre particularité, si "isCrypted": 1 la conversation SMS est crypté, on voit qu'il existe mais on au un cadenas dessus.
+Image cadenas
+Mettre : ******** Encrypted ********** Merci de débloquer l'application coffre fort du téléphone.
+/asset/UI/padlock.png pour le cadenas fermé, et open-padlock.png pour l'ouvert.
+Plus tard, quand on aura ouvert le coffre, on pourra voir les conversations. (ils gardent le petit cadenas ouvert pour montrer qu'ils ont été débloqué).
+
+------------------------------------------------------
+Cette fenetre a un scrollbar vertical.
+Cette fenetre est centré en bas de la conversation par défaut.
+C'est normal, on voit toujours le dernier message d'une conversation SMS.
+
+---------------------------------------------------
+Il n'y a pas d'effet typing ici, car tout s'affiche d'un coup, on est dans un dump.
+Fait du code réutilisable, on en aura besoin pour la mission 2+
+Le fichier JSON est donné en pièce jointe.
+Prend le temps qu'il faut pour réfléchir.
+Si tu as des questions ou des choix à faire, demande moi avant de developper.
+Reste homogène avec la charte graphique. 
+Rapproche toi de ce qui se fait en version simplifié pour les boites SMS en terme de présentation. 
+Tu es libre de modifier ou ajouter des infos qui manquerait pour renforcer le réalisme.
+On garde les "keys" en anglais pour tous les champs du json, ceux qui servent de clef, contrairement à l'osint, ce sera fixe dans le temps.
+Ajoute l'anglais au fichier json une fois le francais finalisé.
+------------------------------------
+JSON valide confirmé. Récapitulatif de ce qui a été construit :
+
+Fichiers créés/modifiés :
+
+data/alizee_galerie.json — JSON corrigé (virgules manquantes, mojibake, postId dupliqué → 0-4, "Buggy"→"Bugsy" pour rester cohérent avec l'indice canonique M1_img_bugsy, chemins d'assets asset/→assets/), bilingue fr/en
+scenes/desktop/phone/sections/gallery_{post,comment,database}.gd — même schéma que Mail/SMS (RefCounted + from_dict)
+scenes/desktop/phone/sections/gallery_section.gd/.tscn — grille de vignettes (250×16:9, cadre blanc + bande d'info sombre 140px, effet de survol, scrollbar)
+scenes/desktop/phone/sections/gallery_detail.gd/.tscn — overlay plein écran au clic (photo en grand + commentaires), déclenche ClueManager.unlock() si le champ indice est renseigné
+assets/UI/gallery_heart.svg / gallery_comment.svg — icônes vectorielles vert Palette.BORDER_ACCENT
+translations/ui.csv — 3 nouvelles clés (GALLERY_SECTION_TITLE, GALLERY_LIKE_COUNT, GALLERY_COMMENT_COUNT)
+translations/indices.csv — corrigé un bug préexistant (traduction anglaise de M1_galerie_album qui était en fait du français copié-collé)
+Point à te signaler : dans la description du post "Alizée chante !", le texte original "Maria carré !" m'a semblé être une expression/private joke ambiguë — je l'ai traduite en anglais par "Spot on!" par approximation. Regarde si ça te convient ou si tu voulais dire autre chose (une faute de frappe pour un autre mot ?).
+
+Aucun fichier .tscn/.gd existant n'a eu besoin d'être modifié en dehors des traductions — desktop.gd chargeait déjà gallery_section.tscn dynamiquement, donc le branchement est automatique.
+
+Veux-tu que je lance le jeu pour tester cet écran ?
+
+
+ 
+
+
+
+
+
+JOUR 7 : 
+Téléphone
+
+La suite du téléphone d'Alizée.
+On va s'occuper de la scenes mail.
+Sur les 2/3 de l'écran prévu pour à droite du téléphone (hors header/footer de desktop).
+Rectangle habituelle type chat_window.
+Il prend toute la largeur et la hauteur dispo avec une marge de 50 pixels autour.
+Cet scene scene est divisé en 3 parties.
+-----------------------------------------
+Un titre : Mail du téléphone d'Alizée.
+-----------------------------------------
+En dessous une ligne de sous titre avec 2 boutons (style habituel) : ENVOYER et RECUS (le champs "isSentBox" défini si il est dans la boite d'envoi (1) ou de réception (0)).
+-----------------------------------------
+En dessous un cadre de contenu, diviser en deux :
+-----------------------------------------
+La première colonne fait 1/5 de la totalité et comprendra les émeteurs ou destinataires du mail.
+Il affiche : 
+- Un petit avatar (champs jsons "avatar")
+- Le nom prénom de l'émeteur "sender", ou destinataire "receiver" si "isSentBox" = 1
+- la date et l'heure. (timestamp à reformater en date francaise, ne pas afficher les secondes.)
+- Le titre du message tronqué si il dépasse. (champs "subject")
+L'ensemble est cliquable et ouvre le mail dans la partie droite de ce container.
+-----------------------------------------
+Dans l'autre case de 4/5 on va afficher le contenu du mail cliqué :
+
+En haut :
+Titre du mail, et centrer à droite : L'heure/date.(timestamp à reformater en date francaise, ne pas afficher les secondes.)
+Taille de police habituelle pour les titres, (comme le nom prénom de l'osint).
+En dessous, l'emeteur et son mail.
+
+En dessous dans un cadre distinct le contenu du mail. (champs json "html_content") avec une scrollbar vertical si besoin.
+Le html_content peut contenir des indices, le traitement doit se faire.
+Et du html très simple : <br> et <color> et <b></b> et <i></i>.
+
+Retour à la ligne forcé pour l'horizontale.
+Taille de police habituelle.
+-----------------------------------------
+Tout en bas, si disponible, afficher un bouton VIEW METADATA.
+Qui ouvre le champs json "meta_info"
+
+--------------------------------------------------
+Autre particularité, si "isCrypted": 1 le mail est crypté, on voit qu'il existe mais on au un cadenas dessus. 
+Image cadenas => mail du Sender ou receiver.
+On peut flouter le reste en godot ? sinon, ne mettre que ******** Encrypted ********** Merci de débloquer l'application coffre fort du téléphone.
+/asset/UI/padlock.png pour le cadenas fermé, et open-padlock.png pour l'ouvert.
+Plus tard, quand on aura ouvert le coffre, on pourra voir ces mails. (ils gardent le petit cadenas ouvert pour montrer qu'ils ont été débloqué).
+-----------------------------------------
+Fait du code réutilisable, on en aura besoin pour la mission 2+
+Le fichier JSON est donné en pièce jointe.
+Prend le temps qu'il faut pour réfléchir.
+Si tu as des questions ou des choix à faire, demande moi avant de developper.
+Reste homogène avec la charte graphique. 
+Rapproche toi de ce qui se fait en version simplifié pour les boites mails en terme de présentation. 
+Tu es libre de modifier ou ajouter des infos qui manquerait pour renforcer le réalisme.
+On garde les "keys" en anglais pour tous les champs du json, ceux qui servent de clef, contrairement à l'osint, ce sera fixe dans le temps.
+Ajoute l'anglais pour le moment au fichier json.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Clean. This completes the mail feature. Summary of what was built:
+
+data/alizee_mailbox.json — cleaned/re-encoded the attached JSON (fixed the mojibake, converted the loose <indice=X> markers to the same <indice id="X">...</indice> convention already used by the OSINT feature), renamed body→html_content to match your spec, fixed the Dec-2025 rejection mail's inconsistent timestamp, added correspondentName (needed since the source only had raw email addresses but the list view needs a first/last name), and added sample meta_info on 2 mails (university vs. cult sender, showing legit vs. suspicious server metadata) to demonstrate the VIEW METADATA button. Avatars are wired to existing character portraits, falling back to assets/phone/email.png for institutional senders. English translations added throughout.
+scenes/desktop/windows/rich_text_markup.gd (new shared utility) — resolve_indice_tags() (moved out of OsintWindow, now reused) and a new html_to_bbcode() converting the simple <br>/<color>/<b>/<i> pseudo-HTML into real Godot BBCode.
+scenes/desktop/phone/sections/mail_entry.gd / mail_database.gd (new, reusable) — generic mail data classes; MailDatabase takes data_path as a constructor arg (unlike the hardcoded OsintDatabase) so a mission 2+ mailbox is just a different JSON file.
+scenes/desktop/phone/sections/mail_section.gd / .tscn (replaces the placeholder) — fills PhoneSectionHost exactly, styled like chat_window but without drag/minimize chrome (it's phone content, not a desktop window). SENT/RECEIVED tabs, 1/5-4/5 list/detail split, French date formatting without seconds, subject truncation, crypted mails show a padlock instead of the avatar and a placeholder text in the content pane (per your answer) until a StoryVars.mail_vault_unlocked flag — ready for the future coffre-fort feature to flip — becomes true.
+Added 7 new keys to translations/ui.csv (MAIL_SECTION_TITLE, tab labels, etc.); VIEW METADATA stays untranslated, matching the project's existing convention for terminal/system jargon.
+data/alizee_mailbox.json is already covered by export_presets.cfg's include_filter (data/*.json), so no export-config change needed.
+
+
+
+
+
+
+
+
+
+
+
+
+JOUR 5 :
+Téléphone
+
+On va s'attaquer à la partie téléphone de Alizée.
+
+Toujours sur la scene de desktop.
+Quand le joueur clique sur le bouton fermer de la fenetre Terminal qui s'ouvre après la converation avec Jean.
+La fenetre terminal se ferme.
+Une animation fait apparaitre le téléphone de Alizée sur la partie gauche du bureau. 
+
+Voici les spécifications de la nouvelle scene Téléphone de Alizée :
+- Centrer à gauche de l'écran.
+- Fond : /asset/phone/hd2_portable_full_screen_1920_1080_alizee.png
+- Prévois 1/3 de l'écran en longueur, et la totalité de l'écran en hauteur (hors header/footer).
+- Tout en gardant un margin de 50 pixels sur tous les côtés.
+
+- Le téléphone a un titre en haut au dessous des icônes : 
+"Dump du téléphone de "Alizée" / HackPhoneOS 2.3"
+en haut du téléphone, margin 60pixels du haut, centrer sur la longueur.
+
+- Le téléphone ne sert qu'à afficher des icônes (avec effet de surbreillance quand on passe la souris dessus).
+
+- Voici les icones déjà importer dans Godot :
+	- SMS /asset/phone/chatting.png
+	- Mail /asset/phone/email.png
+	- Galerie /asset/phone/Photo.png
+	- Coffrefort /asset/phone/Rotate Lock.png
+Ils sont présenter comme des icones sur un téléphone portable.
+
+- Les icones vont ouvrir des nouvelles scenes sur les 2/3 restants de l'écran desktop (hors header/footer).
+- Il faut prévoir une scene par icones. (SMS, Mail, Galerie, Coffrefort).
+On ne developpe pas ces scènes pour le moment, affiche juste le titre de la section dans chacune des 4 scenes créés.
+
+Quand on clique sur un icone cela change la scene à droite. on ne supperpose pas les scenes qu'on ouvre avec les icones du téléphone.
+
+
+
+
+
+
+
+
+
+
+
+Jour 6 : 
+----------------------------------------------------
+On va travailler à la fenetre OSINT.
+
+Dans le header, nous avons mis en place un champs texte Recherche OSINT. Ajoute un bouton "Rechercher" à sa droite. (bouton classique, reste homogène).
+Quand on clique sur Rechercher
+Cela ouvre une nouvelle scene centrer sur la scene desktop.
+Taille 1400*900
+Recopie le style de la fenetre DIALOGUE. (chat_window.tscn) 
+
+- En titre :
+Recherche OSINT
+
+- En dessous du titre une seule grande zone découpé comme suit :
+Les données sont données dans un Json donnée en pièce jointe.
+(si il faut modifier le Json pour mettre une balise native à Godot, ou ajouter une langue, modifie le à ta guise).
+Dans le Json gère la couleur des balises: <color=orange> 
+Dans le Json, gère la balise INDICE comme vu précédement : <indice id=\"osint_alizee_pwa\"> cela debloque l'indice pour le joueur (sauvegarder dans la sauvegarde).
+Je dois pouvoir modifier facilement le contenu du json, ajouter des characters et modifier leurs données.
+------------------------------
+Fonctionnalité :
+La recherche doit marcher si on inverse le nom prénom, avec ou sans accent, et avec ou sans majuscule.
+Etre très souple sur le résultat pour faire matcher la personne avec le fichier JSON.
+Toujours garder en tête le multilangue. Notamment le chinois qui pourrait arriver si tu utilises les regex.
+Cas particulier, si le joueur tape son pseudo, on affiche le character "characterId": 0,
+ ------------------------------
+Comment afficher les informations du fichier JSON :
+Dans la fenetre : 
+
+Champs Json:Photo à gauche 150 pixels sur 300 pixels
+à droite de sa photo, sur toute la hauteur de la photo afficher les données Nom, Prénom, Age, Lieu de naissance, Statut.
+
+Puis en dessous de la photo et de l'encart info principale, afficher : ligne par ligne les champs json suivant.
+"Pseudo(s) connu(s)": "",
+"Statut": "Divorcé de Christine Ranoud",
+"Enfant connu": "Alizée Ranoud",
+"Profession": "Agent de sécurité.",
+"Adresse connue": "37 Rue de la Barre, Rennes, depuis 2015",
+"Loisir": "Tir en club. <color=orange>Possède une arme catégorie 1 B4.</color>",
+"IP": "Française.",
+"Mail": "jean.ranoud@protonmail.com",
+"Téléphone": "+33 6 15 45 xx xx",
+"Fuites connues": "Sécurité social, jaune SAS, KFC, Club sportif, Airsoft.",
+"Mots de passe": "<color=orange>EliteShot$83$</color>"
+
+Puis tout en bas : 
+Afficher le champ Json "note personnelle".
+
+La fenetre peut être déplacable comme pour chat_window et elle peut être réduite dans la barre.
+Chercher un pseudo dans le header "reouvre" la fenetre osint si elle était dans la barre.
+Chercher un pseudo dans la barre efface l'ancien contenu de la fenetre OSINT.
+je t'ai donner un exemple d'affichage en pièce jointe.
+
+----------------------------------------------------------------
+
+
+            "Nom": "Jean",
+            "Prenom": "Ranoud",
+            "Pseudo(s) connu(s)": "",    
+            "Photo":"/asset/avatar/portrait_jean.png",
+            "Description": "Mon contact pour ma première mission avec AnonGhost.",
+            "Age": "47 ans, né le 1983, à Caen.",
+            "Statut": "Divorcé de Christine Ranoud",
+            "Enfant connu": "Alizée Ranoud",
+            "Profession": "Agent de sécurité.",
+            "Adresse connue": "37 Rue de la Barre, Rennes, depuis 2015",
+            "Loisir": "Tir en club. <color=orange>Possède une arme catégorie 1 B4.</color>",
+            "IP": "Française.",
+            "Mail": "jean.ranoud@protonmail.com",
+            "Téléphone": "+33 6 15 45 xx xx",
+            "Fuites connues": "Sécurité social, jaune SAS, KFC, Club sportif, Airsoft.",
+            "Mots de passe": "<color=orange>EliteShot$83$</color>"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Le texte du terminal (la séquence "hack" après l'appel de Jean) est dans desktop.gd, fonction _build_jean_dump_lines() (lignes 144-165).
+
+Deux types de contenu là-dedans :
+
+Les lignes techniques (commandes ssh/scp/tar, logs système) sont écrites en dur directement dans cette fonction, en anglais/jargon — volontairement non traduites (un vrai terminal ne se traduit pas, c'est indiqué dans le commentaire juste au-dessus).
+Les deux phrases en langage naturel ("Plusieurs modules téléchargés..." et "Chargement des données...") passent par ui.csv sous les clés TERMINAL_JEAN_DUMP_SUCCESS et TERMINAL_JEAN_DUMP_LOADING (lignes 32-33).
+Il existe aussi un deuxième terminal, celui du boot du système au tout début du jeu (dans scenes/introduction.gd), dont les textes sont dans ui.csv sous TERMINAL_BOOT_TITLE / TERMINAL_BOOT_STARTING_SESSION.
+
+Tu veux modifier lequel des deux, et qu'est-ce que tu veux changer ?
+
+
+
+
+
+- Si systeme à la trigor, cela laisse de la place pour les indices ? les photos ? l'osint ?
+- mais du coup, c'est tout entassé.
+- Si on sort le texte, cela casse l'immertion. mais c'est plus facile à lire.
+
+
+
+Après la fenetre du terminal qui arrive après la conversation avec Jean, la fenetre du terminal se ferme quand 
+
+
+
+-- JOUR 4 : 
+
+A la fin de la discussion avec Jean Ranoud, dans chat_windows.tscn, ajoute une nouvelle scene, dite de transition, qui va afficher un cadre rectangulaire au milieu de l'écran.
+Taille : 800*500pixels
+Bords et fond noir, comme une console ligne de commande Linux.
+Cette boite sera réutilisable avec des textes différents. (Toujours en gardant en tête l'aspect traduction).
+-----------------------------------------
+Pour Jean, voici le texte à afficher, il se déroule automatiquement, avec un typing.
+Avec une coloration syntaxique classique de Linux.
+
+Texte :
+user@whitehat:~$ ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'
+[+] Authenticating against remote host 203.0.113.45:22... Connection established.
+jean@203.0.113.45:~$ scp ./backups/mobile_dump_2026.tar.gz user@192.168.1.12:~/workspace/
+mobile_dump_2026.tar.gz                      100% 3420MB  48.2MB/s   01:11
+=> Mettre ici une simulation de % qui monte. Soit la typologie linux soit une barre de progression en % au choix.
+jean@203.0.113.45:~$ exit
+user@whitehat:~$ tar -xzvf ~/workspace/mobile_dump_2026.tar.gz -C ~/workspace/raw_data/
+unpacking raw_dump.bin... DONE (42,891 blocks processed)
+user@whitehat:~$ ./bin/parser --input ~/workspace/raw_data/ --filter-level deep
+[SYS] Initializing OSINT heuristic analyzer v4.2...
+[SYS] Parsing SQLite databases, app cache, and system logs...
+[SYS] Stripping telemetry data & telemetry noise... (89% discarded)
+[SYS] Rebuilding timeline matrix... DONE
+[SUCCESS] Plusieurs modules télécharger, analysés et simplifiés.
+Chargement des données...
+
+Le tout doit être assez coloré, pour l'immertion du joueur. Ca ne fait rien en soit, c'est juste instructif. 
+Et cela simule le téléchargement des données pour le joueur.
+
+Puis un bouton fermer apparait (style classique du bouton) qui ferme la fenetre et lancera une scene que je te donnerais après.
+ 
+REPOSE : 
+Propre, aucune erreur. Voici le résumé de ce qui a été ajouté.
+
+Nouveaux fichiers (scenes/ui/, réutilisables, hors contenu de Jean) :
+
+terminal_line.gd — petite classe de données (TerminalLine) : une ligne texte (BBCode, tapée lettre par lettre) ou une ligne "progress" (pourcentage qui monte comme un vrai scp).
+terminal_console.gd / terminal_console.tscn — la boîte 800×500, fond/bords noirs façon terminal Linux, scrollable, avec un bouton "Fermer" (style PrimaryButton du thème) qui n'apparaît qu'une fois tout le script déroulé. Le contenu (console.lines) est fourni par l'appelant — même pattern que ClueBoardWindow.mission_id — donc réutilisable telle quelle pour d'autres séquences plus tard.
+Câblage dans desktop.gd : à la fin de la conversation avec Jean (contact_id == "jean_ranoud"), le bureau instancie la console et joue le script du "hack" (ssh → scp avec barre de progression animée → tar → parser OSINT → succès). Le bouton "Fermer" appelle _on_jean_dump_terminal_closed() — laissé vide avec un # TODO : c'est le point unique où brancher la scène suivante que tu me donneras.
+
+Charte graphique : couleurs uniquement puisées dans Palette (prompts en vert BORDER_ACCENT, commandes en blanc TEXT_NORMAL, sortie système en gris CONSOLE_TEXT, succès/pourcentage en vert vif TEXT_ACCENT) — aucune couleur nouvelle inventée.
+
+Traduction : les deux phrases en langage naturel ([SUCCESS] et "Chargement des données...") passent par ui.csv (TERMINAL_JEAN_DUMP_SUCCESS, TERMINAL_JEAN_DUMP_LOADING, avec la faute d'accord corrigée : "téléchargés"). Les lignes de commande/sortie système restent en jargon technique identique quelle que soit la langue — un vrai terminal ne se traduit pas.
+
+Validation : j'ai trouvé un Godot 4.7.1 dans tes téléchargements et j'ai fait tourner le projet en headless — ça a détecté un vrai bug (les @onready de TerminalConsole étaient lus avant que la scène soit prête) que j'ai corrigé, puis un test de fumée confirme que la frappe, l'animation de progression et le signal closed fonctionnent. Recompilation complète du projet sans erreur à la fin.
+
+
+
+
+
+Ok c'est pas mal.
+Double la largeur des cases indices, meme caché.
+
+Sur main_menu :
+Retire la phrase : 
+[ @SECRETGAME - 2020 ]
+au dessus du logo.
+
+Le logo, je veux qu'il prenne plus de largeur et de hauteur, actuellement, 1000*427, multiplie par 1.5
+
+Aligne le haut du logo à gauche avec le menu 01 à droite.
+Remonte un peu le tout de 150 pixels.
+Ce n'est pas grave si le bas de la colonne de gauche dépasse du menu.
+
+
+
+
+Nous allons créer la page de récolte d'indice car tout va dépendre de cela pour la suite.
+---------------------------------------------------------
+Ajouter un bouton "Indice" à cote de WHOS dans le header de desktop. Assez visible.
+
+Le bouton, ouvre une nouvelle scene, qui prend 90% de l'espace de desktop (header et footer exclus). Centrer.
+Fond vert et cadre vert comme les autres "applications" (chat_windows etc).
+
+Dans cette fenetre, qui sera réutiliser pour les autres missions plus tard, on va suivre la récolte d'indice.
+
+Un indice est une indication obtenu en lisant du texte (sms, mail, chat_windows etc) ou en cliquant sur un lien.
+Il y a un indexe à débloquer par le joueur à chaque mission. Une sorte d'inventaire.
+Les indices sont fixes par missions, et doivent être traduisible dans toutes les langue.
+
+La page affiche X personnages/catégorie sous forme d'avatar/image sur la nouvelle scene. L'avatar a une taille de 150*150pixels.
+
+Pour chaque personnage, des traits partent de l'avatar pour aller à une zone de texte qui représente un indice.
+Tous les indices sont par défaut visibles mais caché. La liste est fixe et limité.
+Dès que le joueur trouve l'indice en parcourant les textes, si l'id est présent dans sa liste d'indice débloqué, alors le texte de l'indice devient visible.
+
+-----------------------------------------------------------
+
+- Titre de la page de la récolte d'indice pour la Mission 1 :
+Alyzée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?
+
+-----------------------------------------------------------
+Les données brutes des indices se définisent ainsi :
+
+- Liste des points centraux des indices, isolé dans une autre table pour prévoir la traduction, cela peut être une catégorie ou un personnage :
+
+IdCategUnique;CategorieLabel;Image;IsDisplay
+AG;AnonGhost;/asset/avatar/anonghost_avatar.png;1
+ALIZ;Alizée Ranoud;/asset/avatar/portrait_alizee_rond.webp;1
+MAREK;Marek Trodan;/asset/avatar/portrait_marek.webp;1
+JEAN;Jean Ranoud;/asset/avatar/portrait_jean.webp;1
+COFFRE;Coffre;/asset/avatar/icone_coffre.png;1
+MERE;Christine Ranoud;/asset/avatar/christine_portrait2.webp;1
+FIN;Résultat;/asset/avatar/sentinelle_avatar.webp;0
+FINSECONDAIRE;Résultat;/asset/avatar/sentinelle_avatar.webp;0
+
+=> IsDisplay défini si il faut l'afficher sur le tableau ou non.
+=> CategorieLabel doit pouvoir être traduit.
+
+-----------------------------------------------------------
+- Listes des indices qui gravitent autour d'un point central (IdCategUnique ci dessus.)
+
+IDMission;IDunique;IdCategUnique;LabelIndice
+1;intro_anon_perserverant;AG;AnonGhost m'a dit que j'étais un des seuls à voir réussi. Réussit quoi ? 
+
+1;M1_sms_o_18_ans;ALIZ;Alizée a eu 18 ans le 29 janvier 2030.
+1;M1_sms_cryp_m_bomb;ALIZ;Alizée a acheté une bombe sonore pour se défendre de son père. Au cas où, car les dernières disputes à propos de sa mère étaient très virulentes.
+1;M1_sms_cryp_m_disparue;ALIZ;Après le mail de sa mère le 19 janvier, Alizée est parti errer dans la rue pendant de longue heure. Seule et triste.
+1;M1_sms_concours_chant;ALIZ;Le 5 janvier, Alizée a participé et raté un concours de chant.
+1;M1_mail_secte_write;ALIZ;Dans un soir de désespoir, Alizée s'est tourné vers un site louche. À priori une secte.
+
+1;M1_mail_cryp_mere_rdv;ALIZ;La mère de Alizée lui a donner RDV le 31 janvier, jour de son anniversaire. Elle serait parti avec ?
+
+1;M1_sms_marek_application;MAREK;Marek a installé une application de coffre le 1 janvier 2030 sur le téléphone de Alizée.
+1;M1_sms_cryp_m_baiser;MAREK;Marek a embrasser Alizée le 31 décembre. C'était sa première fois.
+1;M1_sms_Marek_parking;MAREK;Marek a donnée un rdv à Alizée le 1 février 2030 à 20h30 sur un parking. Pourquoi ?
+
+1;M1_sms_pere_sacrifice;JEAN;Bien qu'Alizée soit une bonne élève, son père semble l'isoler, et ne cesse de lui rappeler ses sacrifices. 
+
+1;M1_osint_alizee_pwa;COFFRE;Alizée semble aimer le chiffre 11.
+1;M1_osint_alizee_pwpere;COFFRE;Le père impose un mot de passe à sa fille pour certaines applications.
+1;M1_img_bugsy;COFFRE;Le doudou d'Alizée s'appele : Bugsy
+
+=> IDMission : contiens l'id de la mission en cours (y'en aura plusieurs) 
+=> IDunique : Identifiant unique de l'indice qu'on retrouvera dans les textes du jeu.
+=> IdCategUnique : Contiens l'id de la catégorie pour éviter de mettre le label qui sera traduit.
+=> LabelIndice : Contiens l'indice lui-même, dois pouvoir être traduit.
+
+--------------------------------------------------
+- En bas à droite : Un bouton GENERER LE RAPPORT, grisé pour le moment. Bien visible.
+On le developpera plus tard. Mais garde en tête que pour l'activer il faudra vérifier la présence de cet indice :
+1;M1_SOLUTION_OU;FIN;Alizée est parti avec Marek le lendemain de ses 18 ans. Elle le suit en tournée.
+Le jeu proposera également un choix secondaire au moment de générer le rapport, pareil à stocker dans la sauvegarde. On déclenchera un choix plus tard.
+1;M1_SOLUTION_MERE;FINSECONDAIRE;La mère de Alizée l'a abandonnée à ses 8 ans car Jean Ranoud était abominable. Elle n'a pas eu le choix.
+
+
+----------------------------------------------
+Questions avant de développer : 
+- Comment gérer le stockage de ce fichier ? il doit pouvoir être modifiable facilement.
+- Comment penses-tu pouvoir gérer la traduction ? faut-il un fichier json d'indice par langue ? Ou ajouter une colonne au tableau ci-dessus ? Il faudra prévoir le chinois, l’anglais, le français à terme.
+Propose-moi des solutions pour le stockage des indices, de la trad, et faisons un choix avant développement.
+
+
+
+
+
+
+
+Le système de collecte d'indices est en place. Récapitulatif :
+
+Stockage & traduction (choix validés) : data/clue_categories.csv et data/clues.csv (format ;, éditables dans Excel/Notepad) ne contiennent que des identifiants. Le texte réel vit dans translations/indices.csv, compilé exactement comme ui.csv (même pipeline CSV→.translation, ajouté à project.godot). Ajouter le chinois plus tard = ajouter une colonne zh, aucun code à toucher.
+
+Déblocage générique : j'ai découvert que dialogue_manager a déjà un système natif de tags [#indice=xxx] sur une ligne de dialogue (regex \[#(?<tags>.*?)\]) — je m'y suis branché plutôt que d'inventer un mécanisme parallèle. Le nouvel autoload ClueManager expose unlock_from_tags(line), appelé automatiquement depuis dialogue_balloon.gd et conversation_view.gd — donc balloon narratif ET chat débloquent des indices de la même façon, sans code par écran. La progression est persistée par SaveManager (unlocked_indices).
+
+Fenêtre : bouton "Indice" vert bien visible à côté du logo WHOS (desktop_header.tscn), ouvre ClueBoardWindow (90% de l'écran, centrée, même chrome vert que les autres fenêtres). Le contenu (clue_board.gd) affiche un avatar 150×150 par catégorie avec ses indices en éventail reliés par des traits dessinés, texte caché tant que non débloqué. Bouton "GÉNÉRER LE RAPPORT" présent mais désactivé, comme demandé.
+
+Trois points à trancher avec toi :
+
+Typo/écart de données : jean_intro.dialogue contient déjà 3 tags [#indice=...] (alyzee_disparu_18, M1_phone_empty, M1_crypted) qui ne correspondent à aucun id de ta liste officielle — ils resteront inertes tant qu'ils ne sont pas dans clues.csv. Je les ajoute à la liste, ou tu préfères les retirer du dialogue ?
+J'ai corrigé "intro_anon_perserverant" → "intro_anon_perseverant" pour matcher l'orthographe déjà présente dans le dialogue existant, et "Alyzée" → "Alizée" dans le titre de mission pour rester cohérent avec le reste du jeu.
+Le texte anglais de indices.csv est une traduction de dépannage faite par mes soins (à relire) — le français est fidèle à ce que tu as fourni (petites corrections grammaticales : accords, accents).
+Comme je n'ai pas d'éditeur Godot accessible ici pour lancer le jeu, je n'ai pas pu tester visuellement — ce serait la prochaine étape à faire de ton côté.
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ma recommandation : une partie en cours + checkpoints, pas de multi-slots ni de save-anywhere
+Pourquoi pas plusieurs parties en parallèle : ton jeu n'est pas un RPG à builds multiples, c'est une fiction à conséquences permanentes — le doc le dit explicitement : "chaque rapport aura des conséquences ultérieures", un SMS futur référence un choix passé (ex. Alizée qui dit vivre sa meilleure vie si on l'a aidée). Ça veut dire que l'état du monde (qui sait quoi, quel choix a été fait, quel indice a été découvert) est une chaîne causale unique. Gérer plusieurs parties en parallèle multiplierait l'espace d'état à tester et maintenir pour un bénéfice faible — le joueur qui veut voir une autre fin recommencera une "nouvelle partie", comme dans Return of the Obra Dinn ou Her Story : ce sont des jeux à une enquête en cours, pas des saves multiples de type RPG.
+
+Pourquoi pas "sauvegarder n'importe où" : ton système d'indices est cumulatif et non trivial (un indice débloque un autre indice, le coffre-fort dépend d'avoir vu certains OSINT, le rapport final assemble des choix). Autoriser une sauvegarde à un instant arbitraire pendant la lecture d'un SMS ou en plein clic d'indice t'oblige à modéliser un état intermédiaire complexe (quel indice est "en cours de découverte" vs "découvert"), pour un gain quasi nul en confort joueur — personne ne quitte le jeu au milieu d'un clic sur un mot souligné.
+
+La bonne granularité : des points de contrôle (checkpoints) au niveau des transitions naturelles de ton propre gameplay. Tu as toi-même déjà identifié ces transitions dans le doc (page 11, "Gameplay mission 1 v2") :
+
+après chaque dialogue linéaire résolu (fin d'un échange avec RelayGhost, avec Jean Ranoud, etc.)
+à l'entrée dans la phase de collecte (après le "téléchargement des informations")
+après chaque indice découvert (autosave silencieux — coûte rien en perf, gros gain en confort : le joueur qui ferme le jeu par accident après avoir cliqué 8 indices sur 12 ne les reperd pas)
+avant/après la génération du rapport final (LE moment charnière — check-point obligatoire, potentiellement immédiat car c'est un point de non-retour narratif)
+Donc : une seule sauvegarde active, mise à jour automatiquement (autosave) à ces jalons, pas un bouton "Sauvegarder" que le joueur déclenche consciemment n'importe quand.
+
+Comment réconcilier ça avec ton menu "Sauvegarde" / "Charger" existant
+Ta maquette (page 1 du PDF, qui correspond exactement à control.tscn) a bien deux boutons distincts. Je ne les supprimerais pas, mais je changerais ce qu'ils font :
+
+"Sauvegarde" → à la limite un simple accusé "Partie sauvegardée" déclenché manuellement, mais qui écrit en fait dans le même fichier que l'autosave (pas un nouveau slot). C'est un filet de sécurité psychologique pour le joueur plus qu'une vraie fonctionnalité différente.
+"Charger" devient plutôt "Continuer" en pratique : il recharge le dernier checkpoint. Tu peux même le fusionner avec "Nouvelle partie" → si un save existe, "Nouvelle partie" affiche juste une confirmation d'écrasement (pattern qu'on voit dans plein de walking-sims/enquêtes narratives).
+C'est exactement l'esprit de ta propre ligne directrice design (page 2) : "Sacrifier le réalisme pour la simplicité de l'interface" — un seul fil narratif, pas de gestion de slots à la Dark Souls.
+
+Ce que ça implique pour la structure de données (conceptuel, pas de code)
+Une seule "fiche de partie" à persister, distincte des Settings déjà en place (qui restent globales, hors-partie) :
+
+identité de progression : mission active + position dans le déroulé de cette mission (nœud de dialogue courant, éléments débloqués)
+mémoire des indices : liste des indices découverts + leur état ("vu" / "pourquoi résolu") — c'est ta plus grosse structure de données, la doc en donne déjà la logique exacte (indice → déblocage → réponse)
+scores : éthique (2 axes) et popularité (2 axes), qui déterminent l'avatar
+flags de choix narratifs : ce qui a été dit au père, à qui, décisions du rapport — ce sont ces flags qui alimentent les conséquences futures (SMS ultérieurs, etc.)
+horloge in-game : tu l'as toi-même noté dans le doc ("Pensez à sauvegarder la date heure dans la sauvegarde") — important à cause du twist IA (le temps accélère différemment), donc c'est un champ à part entière, pas dérivé du temps système
+Ça se prêterait bien à une Resource Godot sérialisée (plutôt qu'un ConfigFile comme pour Settings) car la structure est profondément imbriquée (missions → indices → mystères), alors que Settings est plate (deux valeurs scalaires). Mais c'est un détail d'implémentation pour plus tard — pas la priorité de cette discussion.
+
+Write C:\Users\pisto\.claude\projects\c--Users-pisto-Documents-white-hat\memory\project_whitehat_design_bible.md
+54 lines
+---
+name: project-whitehat-design-bible
+description: Core narrative/gameplay design of WhiteHat from the user's design PDF (v1.3, 16/06/26) — vocabulary, loop, meta-systems, Mission 1 full case, and open save-system decision
+metadata:
+  type: project
+---
+
+Source: PDF "White HAT - Projet - Mission 1.pdf", version 1.3 (16/06/2026), shared by the user 2026-08-02. This is the design bible for the game; treat it as authoritative for narrative/gameplay questions until superseded by a newer version. See also [[project_whitehat_overview]] for the technical/code-side snapshot.
+
+## Pitch & tone
+Player is a repentant "white hat" hacker (ex-blackhat gone straight). Game is meant to be **grand public but realistic**, using real-feeling OSINT/hacking tools, explicit reference point: **the game *The Operator*** for tone/balance. Design priority stated explicitly by the user: **"Au niveau du design, je le veux épuré, le minimum d'info nécessaire ... Ne pas perdre le joueur. Sacrifier le réalisme pour la simplicité de l'interface."** — simplicity beats realism whenever they conflict. Resolution target 2560×1440 (matches `project.godot` viewport settings already in the repo).
+
+Story starts **2 février 2030** (in-fiction date, fixed deliberately so SMS/mail timestamps stay consistent).
+
+## Lexicon (use these terms consistently in code/content, not synonyms)
+- **Mission**: one "level" with its own plot + resolution. Only one mission active at a time. Composed of several mystères (main + optional).
+- **Élément**: any investigable document — SMS thread, mail, photo gallery, locked zone, OSINT profile.
+- **Indice**: a clickable underlined keyword/data point inside an élément; clicking it appends a predefined sentence to the "collecte d'infos" panel. Indices can be locked behind other indices ("Déblocage: ...").
+- **Mystère**: the big open questions the indices orbit around; solving main mystères lets the mission's rapport be produced; secondary mystères unlock bonus lore.
+- **Rapport**: the mission's deliverable — built from a sentence with fill-in-the-blank slots (Où / Pourquoi / Avec qui) chosen from a dropdown of unlocked options + a "ne rien dire" option (only shown if other options exist). Sent to the client as an encrypted file, unlocked only if the client pays. Rapports carry the mission's moral/consequential weight.
+
+## Core gameplay loop (3 dimensions, per the doc's own breakdown, p.11)
+1. Linear-ish narrative dialogue (via the dialogue_manager addon already in the repo).
+2. Info-gathering: click indices across élément screens (SMS/Mail/Galerie/Zone Verrouillée + OSINT), which fuse into the "collecte d'infos" panel as they're found.
+3. The rapport itself has its own mini gameplay loop: 3-slot sentence with dropdown choices (max ~2 real choices + "ne rien dire" per slot → under 9 combinations), sorted into two outcome axes (see below).
+
+## Meta-progression: ethics & popularity → avatar
+At the end of each mission the player gets an **éthique score** (2 axes: data-handling honesty ↔ manipulation, and privacy respect ↔ voyeurism) and a **popularité score** (2 axes: hacker-community fame ↔ invisibility, general-public visibility ↔ discretion). These combine into a 4-quadrant "hat" archetype (white/purple/black/orange hat) that renders as a persistent avatar, later shown in in-game messaging UI. This score is **cross-mission cumulative state**, not per-mission-only — important for save design.
+
+## Narrative arcs planned (long-term, not just Mission 1)
+- **Player character may secretly be an AI** — hinted via subtle tells (no physiological needs, can act very fast). In-fiction clock deliberately runs 10× slower than real time (every 10 real seconds = 1 in-game second). The user explicitly flagged: **save data must persist in-game date/time as its own field**, not derive it from real wall-clock time.
+- A hacker group antagonist, annoyed by the player's "repentant" actions, tries to track them down (via a fake mission or through the father character) — needs an "intermission" narrative link across missions.
+- Each mission's moral choices have **later consequences delivered as SMS/messages** referencing past decisions (e.g., a message from a character the player did or didn't help).
+- Companion contact: **RelayGhost** — the mentor/handler NPC who assigns missions and nudges the player when stuck, without excessive hand-holding.
+- Optional "Mode thinking": player can click a "mystère" marker to get a narrator summary of what's been learned + open questions.
+- Game over conditions (not fully decided): being tracked down by the hacker group for insufficient caution.
+- Art direction question still open in the doc: AI-generated images vs Daz Studio renders for scene illustrations (leaning Daz Studio, user wary of "AI backlash" in games).
+
+## Mission 1 (fully designed case — reference for future content/save-schema testing)
+**Setup**: Jean Ranoud (controlling, possessive single father, ex-security agent) hires the player to find his missing 18-year-old daughter **Alizée Ranoud**, who disappeared on her birthday (29/01/2030) after an argument. RelayGhost frames this as the player's first real ethics-tracked case.
+
+**Ground truth**: Alizée left voluntarily with her secret boyfriend **Marek Trodan** (indie rock guitarist), currently touring, last known at Mont Saint-Michel (01/02/2030). Trigger: at 18 she reconnected with her estranged mother **Christine Ranoud** (in Bali, driven away 10 years ago after Jean — revealed as a covert abuser/narcissist per the mother's hidden letter — manipulated a legal case to get sole custody). Alizée bought a "bombe sonore" (rape alarm/panic device) out of fear of her father's reaction, not because of a kidnapping.
+
+**Red herrings deliberately built into the case**: kidnapping by a mystery contact "Benoit", a cult ("Centre d'Harmonie Intérieure") phishing/love-bombing her via a fake support email, a "sugar jeandy" scam email, and a decoy reading of the panic-alarm purchase.
+
+**Key mechanic — the "coffre-fort" (vault) password puzzle**: a password-protected vault app on Alizée's phone gates her most sensitive SMS/mail/photos. Correct password is `LastHorizon11` (derived by combining an OSINT fact about Marek's band name + a recurring "11" pattern from Alizée's other passwords, discoverable via her OSINT profile). Design intent: wrong guesses give contextual hints rather than a generic "wrong password", and the game does **not** need to branch state based on *which* wrong guesses were tried — only whether the correct one was eventually entered (simplifies the state model: "vault_unlocked: bool" is enough, no need to track guess history).
+
+**Report outcomes** (3 branches with different consequences flagged for later missions): tell the father everything (he finds her, keeps control over her, but helps the player later — money gain); confront the father / involve police (father loses custody — high altruism); say nothing (Alizée safe, father keeps custody — neutral/altruism+).
+
+**Characters**: Jean Ranoud (47, security agent, gun club), Christine Ranoud (42, mother, now in Bali), Alizée Ranoud (18), Marek Trodan (19, guitarist, band "Last Horizon").
+
+## Open design decision: save system (discussed 2026-08-02, not yet implemented)
+User asked (explicitly: "don't code yet") what save architecture fits this structure — single continuing playthrough vs. multiple parallel saves, save-anywhere vs. checkpoints. Given the permanent-consequence narrative model above (rapport choices ripple into future missions' SMS) and the cumulative ethics/popularity score, the recommendation given was: **one active save (autosave-driven), no parallel save slots, checkpointed at natural transitions** (end of a dialogue beat, each indice discovery, before/after rapport generation) rather than arbitrary "save anywhere". The existing menu's separate "Sauvegarde"/"Charger" buttons ([control.gd](control.gd)) can stay UI-wise but should both operate on the same single save file rather than implying multiple slots. Save payload should be a nested `Resource` (not a flat `ConfigFile` like [[project_whitehat_overview]]'s `Settings`), holding: current mission + in-mission dialogue position, discovered-indices state, ethics/popularity scores (cumulative across missions), narrative choice flags (for future consequences), and the in-fiction date/time clock (explicitly called out by the user's own doc as something to persist, due to the AI-timescale twist). **This is a recommendation pending the user's decision — revisit once they confirm.**
+Read C:\Users\pisto\.claude\projects\c--Users-pisto-Documents-white-hat\memory\MEMORY.md
+Edit C:\Users\pisto\.claude\projects\c--Users-pisto-Documents-white-hat\memory\MEMORY.md
+Added 1 line
+J'ai bien enregistré tout le contenu du PDF en mémoire (vocabulaire, boucle de gameplay, système éthique/popularité, cas complet de la Mission 1, arcs narratifs), pour pouvoir m'y référer dans nos prochaines sessions sans que tu aies à tout réexpliquer.
+
+En résumé pour ta décision : une seule partie active avec autosave à des points de contrôle (fin de dialogue, chaque indice découvert, avant/après génération du rapport) — pas de slots multiples, pas de save n'importe où. C'est cohérent avec le fait que tes choix ont des conséquences permanentes qui ressurgissent plus tard (SMS futurs référençant une décision passée), donc gérer plusieurs parties en parallèle ajouterait de la complexité pour peu de bénéfice.
+
+Dis-moi si cette direction te convient, ou si tu veux qu'on creuse une alternative (par exemple garder 2-3 slots pour permettre de rejouer une mission avec un choix différent sans perdre sa partie principale).
+
+
+
+Ce qui a été fait
+autoloads/save_manager.gd (nouvel autoload) — la sauvegarde unique de la partie en cours, en JSON plutôt qu'en Resource sérialisée. Pourquoi JSON : un Resource Godot sauvegardé en .tres/.res référence son script par chemin ; si tu renommes ou restructures une classe plus tard (très probable vu l'ampleur du design que tu m'as envoyé), les vieilles sauvegardes peuvent casser au chargement. Le JSON est un format neutre, lisible, facile à faire évoluer à la main — bien plus sûr pour un projet qui va grossir.
+autoloads/scene_transition.gd (nouvel autoload) — un CanvasLayer avec un ColorRect noir, qui survit au changement de scène (contrairement à un ColorRect posé dans control.tscn, qui disparaîtrait avec elle au moment du swap et casserait l'effet). C'est le même principe que MusicPlayer : un autoload conçu pour continuer d'exister pendant la transition.
+control.gd : "Continuer" est grisé (MenuItem.set_locked) s'il n'y a pas de sauvegarde ; sinon il fait fade-out musique + écran noir + change de scène + refade in. "Nouvelle partie" affiche une ConfirmationDialog (traduite) si une sauvegarde existe, et supprime l'ancienne sauvegarde dès la confirmation (pas seulement à la prochaine sauvegarde — sinon quitter le jeu juste après avoir confirmé laissait l'ancienne partie accessible via "Continuer").
+scenes/login.gd : pose un point de sauvegarde juste après la connexion (SaveManager.save_checkpoint("res://scenes/welcome.tscn")), avec le pseudo dedans.
+Traductions : MENU_LOAD → MENU_CONTINUE, MENU_SAVE retiré, ajout de NEWGAME_OVERWRITE_WARNING / COMMON_CONFIRM / COMMON_CANCEL en fr/en dans ui.csv.
+À savoir avant de tester
+Les erreurs affichées par l'éditeur ("SaveManager not declared") pendant que j'éditais sont normales : elles disparaîtront une fois que tu auras rouvert/rechargé le projet dans Godot, car les nouveaux autoloads (SaveManager, SceneTransition) doivent être relus depuis project.godot. De même, les traductions ne s'appliqueront qu'après réimport du CSV (automatique à l'ouverture du projet).
+
+Mes questions
+Le fichier de save reste en user:// après un test — si tu veux repartir de zéro pendant tes essais, il faudra soit passer par "Nouvelle partie", soit supprimer %APPDATA%\Godot\app_userdata\WhiteHat\savegame.json à la main. Ça te va, ou tu veux un moyen plus rapide de le réinitialiser pendant le dev (ex. un raccourci debug) ?
+Durée des fondus : j'ai mis 0.6s pour l'écran (rapide) indépendamment des 2s de la musique (MusicPlayer continue de s'éteindre après le changement de scène, exprès — c'est pour ça qu'il est autoload). Ça te convient ou tu préfères que les deux soient synchronisés sur la même durée ?
+Pour la suite : je n'ai pas touché à PlayerSession.password (non persisté). Tu confirmes que le mot de passe n'a pas besoin d'être sauvegardé (probablement un champ fictif pour l'ambiance hacker, pas une vraie auth) ?
+
+
+
+Ce qui a changé
+autoloads/options_menu.gd (nouvel autoload, CanvasLayer) — possède l'unique instance du panneau Options et écoute ÉCHAP globalement pour l'ouvrir/fermer. Comme c'est un autoload, introduction.tscn, welcome.tscn et toute future scène en héritent automatiquement, sans aucun code à ajouter dans chacune — c'est tout l'intérêt de le centraliser plutôt que de dupliquer un _unhandled_input dans chaque scène.
+control.gd simplifié : _on_options_pressed() délègue maintenant à OptionsMenu.open() au lieu de gérer sa propre instance locale — ça évite le risque d'avoir deux panneaux ouverts en même temps (un via clic, un via ÉCHAP).
+options_panel.gd : bouton rouge "Quitter la partie" ajouté à gauche du bouton Fermer (séparés par le spacer existant — extrémités opposées de la barre, comme le Cancel/Confirm d'un ConfirmationDialog, pour éviter les clics accidentels sur une action destructive). Masqué automatiquement si le panneau est ouvert depuis le menu principal. Au clic : avertissement dynamique avec le nombre de minutes écoulées depuis le dernier checkpoint, puis fondu + retour à control.tscn.
+save_manager.gd : nouveau get_minutes_since_checkpoint(), basé sur Time.get_ticks_msec() local à la session (pas une date persistée — redémarrer l'appli remet le compteur à zéro, ce qui est le comportement voulu : rien n'est "en jeu" tant qu'on n'a pas rejoué).
+Un effet de bord à connaître
+dialogue_balloon.gd (l'addon dialogue) utilisait déjà ÉCHAP pour accélérer l'affichage du texte pendant l'intro. Comme OptionsMenu a une priorité d'entrée plus haute (layer=50 contre layer=1 par défaut pour le dialogue), ÉCHAP ouvrira désormais Options même pendant l'intro, et cette accélération-clavier devient inaccessible — mais le clic souris pour accélérer le texte fonctionne toujours, donc ce n'est pas une perte de fonctionnalité complète. Dis-moi si tu veux que je préserve spécifiquement le raccourci clavier pendant l'intro (ça demanderait de modifier le comportement du balloon pour laisser passer ÉCHAP quand il ne sert pas à skip).
+
+
+Rôle	Valeur	Usage
+TEXT_NORMAL	Color(0.92, 0.96, 0.94)	texte courant
+TEXT_ACCENT	Color(0.24, 1.0, 0.5)	titres, texte mis en valeur
+TEXT_DANGER	Color(1.0, 0.36, 0.36)	texte destructif
+TEXT_LOCKED	Color(0.4, 0.45, 0.42)	texte désactivé/verrouillé
+BORDER_ACCENT	Color(0.22, 0.87, 0.45)	bordures, focus, statut
+SIZE_SMALL…SIZE_HERO	20 / 22 / 26 / 30 / 32 / 38 / 48	échelle de tailles

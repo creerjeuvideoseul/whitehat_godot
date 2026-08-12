@@ -43,7 +43,10 @@ var _reveal_tracker: IndiceRevealTracker
 
 func _ready() -> void:
 	_database = MailDatabase.new(data_path)
-	_close_button.pressed.connect(func() -> void: close_requested.emit())
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		close_requested.emit()
+	)
 	_sent_button.pressed.connect(func() -> void: _select_tab(true))
 	_received_button.pressed.connect(func() -> void: _select_tab(false))
 	_select_tab(false)
@@ -125,7 +128,8 @@ func _build_row_avatar(mail: MailEntry) -> Control:
 	style.set_border_width_all(2)
 	style.border_color = Palette.BORDER_ACCENT
 	style.set_corner_radius_all(10)
-	style.set_content_margin_all(0)
+	style.content_margin_left = 7
+	style.content_margin_right = 7
 	frame.add_theme_stylebox_override("panel", style)
 	frame.custom_minimum_size = AVATAR_SIZE
 
@@ -158,6 +162,7 @@ func _resolve_row_texture(mail: MailEntry) -> Texture2D:
 
 func _on_mail_row_gui_input(event: InputEvent, mail: MailEntry) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		_select_mail(mail)
 
 
@@ -181,9 +186,22 @@ func _set_row_selected(mail_id: int, is_selected: bool) -> void:
 		row.remove_theme_stylebox_override("panel")
 
 
-func _show_no_selection() -> void:
+## Partagé par _show_no_selection/_show_mail : le tracker doit toujours être
+## disposé AVANT de libérer les Control de _detail_root (dont le ScrollContainer
+## qu'il surveille), sinon dispose() plante sur une instance déjà libérée au
+## prochain affichage — bug constaté en changeant d'onglet (Reçus/Envoyés)
+## juste avant de sélectionner un mail : _select_tab() appelait
+## _show_no_selection() sans jamais disposer le tracker du mail précédent.
+func _clear_detail_root() -> void:
+	if _reveal_tracker != null:
+		_reveal_tracker.dispose()
+		_reveal_tracker = null
 	for child in _detail_root.get_children():
 		child.queue_free()
+
+
+func _show_no_selection() -> void:
+	_clear_detail_root()
 
 	var label := Label.new()
 	label.text = tr("MAIL_NO_SELECTION")
@@ -193,20 +211,23 @@ func _show_no_selection() -> void:
 
 
 func _show_mail(mail: MailEntry) -> void:
-	for child in _detail_root.get_children():
-		child.queue_free()
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-		_reveal_tracker = null
+	_clear_detail_root()
 
 	_detail_root.add_child(_build_detail_header(mail))
 	_detail_root.add_child(_build_detail_sender_row(mail))
 	_detail_root.add_child(_build_content_frame(mail))
 	## Une fois le cadre attaché à l'arbre (pas avant : ses Control n'ont pas
-	## de position globale valide tant qu'ils sont détachés) — rattrape ce
-	## qui est déjà visible avant même de scroller.
+	## de position globale valide tant qu'ils sont détachés) — démarre la
+	## surveillance (voir IndiceRevealTracker.start() : ne pas connecter ses
+	## signaux avant que le contenu soit stable, sinon ils se déclenchent
+	## pendant la construction elle-même).
 	if _reveal_tracker != null:
-		_reveal_tracker.check_visible()
+		_reveal_tracker.start()
+		## Point de sauvegarde à l'ouverture d'un mail réel (envoyé ou reçu) —
+		## _reveal_tracker n'existe que pour du vrai contenu, jamais pour le
+		## texte de substitution d'un mail crypté encore verrouillé (voir
+		## _build_content_frame).
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))
@@ -225,7 +246,7 @@ func _build_detail_header(mail: MailEntry) -> Control:
 	row.add_child(title_label)
 
 	var date_label := Label.new()
-	date_label.text = PhoneTime.format_timestamp(mail.timestamp)
+	date_label.text = PhoneTime.format_full_datetime(mail.timestamp)
 	date_label.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
 	date_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
 	row.add_child(date_label)
@@ -265,6 +286,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	frame.add_child(scroll)
 
 	if mail.is_crypted and not PhoneVault.is_unlocked():
+		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 		var locked_label := _build_body_label(tr("VAULT_ENCRYPTED_PLACEHOLDER"))
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		scroll.add_child(locked_label)
@@ -288,6 +310,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 func _build_body_label(raw_text: String) -> RichTextLabel:
 	var label := RichTextLabel.new()
 	label.bbcode_enabled = true
+	label.selection_enabled = true
 	label.fit_content = true
 	label.scroll_active = false
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

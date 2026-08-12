@@ -7,6 +7,10 @@ class_name ClueBoardWindow
 ## clue_board.gd — donc réutilisable tel quel pour les prochaines missions.
 
 signal minimize_requested(window: Control, window_title: String)
+## Bubbled up to desktop.gd, qui décide ce qu'ouvrir "générer le rapport"
+## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
+## son propre bouton.
+signal generate_report_requested
 
 @export var mission_id: int = 1:
 	set(value):
@@ -18,10 +22,15 @@ signal minimize_requested(window: Control, window_title: String)
 @onready var _minimize_button: Button = %MinimizeButton
 @onready var _question_label: Label = %QuestionLabel
 @onready var _clue_board: ClueBoard = %ClueBoard
+@onready var _generate_report_button: Button = %GenerateReportButton
 
 
 func _ready() -> void:
 	_minimize_button.pressed.connect(_on_minimize_pressed)
+	_generate_report_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		generate_report_requested.emit()
+	)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
 	_apply_mission()
 
@@ -34,6 +43,7 @@ func _apply_mission() -> void:
 	## s'affiche dès la toute première ouverture, avant même d'avoir mis les
 	## pieds sur le téléphone d'Alizée.
 	_question_label.visible = ClueManager.has_mission_started(mission_id)
+	_update_report_button()
 
 
 ## Un indice fraîchement débloqué peut être le tout premier de cette mission
@@ -42,8 +52,20 @@ func _apply_mission() -> void:
 func _on_clue_unlocked(_clue_id: String) -> void:
 	if not _question_label.visible:
 		_question_label.visible = ClueManager.has_mission_started(mission_id)
+	_update_report_button()
+
+
+## Grisé (PrimaryButton) tant que la résolution de CETTE mission n'est pas
+## trouvée, bleu (ImportantButton, voir main_theme.tres) et cliquable une
+## fois débloquée — même condition générique que desktop_header.gd, mais
+## scopée à mission_id puisque cette fenêtre en a une propre.
+func _update_report_button() -> void:
+	var unlocked := ClueManager.has_unlocked_mission_solution(mission_id)
+	_generate_report_button.disabled = not unlocked
+	_generate_report_button.theme_type_variation = &"ImportantButton" if unlocked else &"PrimaryButton"
 
 
 func _on_minimize_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
 	minimize_requested.emit(self, _title_label.text)

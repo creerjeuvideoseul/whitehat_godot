@@ -26,6 +26,14 @@ const CATEGORIES_CSV_PATH := "res://data/clue_categories.txt"
 const CLUES_CSV_PATH := "res://data/clues.txt"
 const CSV_DELIMITER := ";"
 
+## Catégorie de l'indice de résolution principal d'une mission (ex.
+## M1_SOLUTION_OU) — jamais affichée sur le tableau (IsDisplay=0, voir
+## clue_categories.txt), mais sert de déclencheur générique pour le rapport
+## de mission : chaque future mission n'a qu'à donner cette catégorie à son
+## propre indice de résolution, rien à coder de spécifique par mission.
+## Distincte de FINSECONDAIRE (fin secondaire/bonus), qui ne déclenche rien.
+const SOLUTION_CATEGORY_ID := "FIN"
+
 ## Emis quand un nouvel indice est débloqué (pas rejoué si déjà connu) —
 ## utile plus tard pour une notification/toast "nouvel indice".
 signal clue_unlocked(clue_id: String)
@@ -142,6 +150,25 @@ func get_category_id_for_clue(clue_id: String) -> String:
 		if clue.id == clue_id:
 			return clue.category_id
 	return ""
+
+
+## Vrai si `clue_id` est l'indice de résolution principal de sa mission (voir
+## SOLUTION_CATEGORY_ID) — pour desktop_header.gd, qui n'a besoin de savoir
+## que "est-ce que l'indice qui vient de se débloquer est LE bon", pas de
+## connaître un mission_id précis.
+func is_solution_clue(clue_id: String) -> bool:
+	return get_category_id_for_clue(clue_id) == SOLUTION_CATEGORY_ID
+
+
+## Vrai si la résolution de cette mission précise est déjà débloquée — scopé
+## par mission_id (pas juste "un indice FIN débloqué, n'importe lequel") pour
+## rester correct une fois plusieurs missions jouées dans la même sauvegarde :
+## la mission 2 ne doit pas hériter du rapport déjà généré de la mission 1.
+func has_unlocked_mission_solution(mission_id: int) -> bool:
+	for clue in _clues:
+		if clue.mission_id == mission_id and clue.category_id == SOLUTION_CATEGORY_ID and is_unlocked(clue.id):
+			return true
+	return false
 
 
 func get_clues_for_category(mission_id: int, category_id: String) -> Array[ClueDefinition]:

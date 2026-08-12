@@ -49,10 +49,20 @@ func search(query: String) -> void:
 		_build_no_result()
 	else:
 		_build_profile(character)
+		## Point de sauvegarde à l'ouverture d'une fiche OSINT trouvée — pas
+		## de distinction "avec/sans indice" comme pour la galerie, plus
+		## simple ainsi et une fiche vaut la peine d'être retenue même sans
+		## indice caché dedans (recherche du bon pseudo, par exemple).
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
-	## Rattrape ce qui est déjà visible avant même de scroller (le cas
-	## habituel : une fiche qui tient dans la fenêtre).
-	_reveal_tracker.check_visible()
+	## Attend que la mise en page des lignes fraîchement construites soit
+	## stable, puis démarre la surveillance (voir IndiceRevealTracker.start() :
+	## ne pas connecter ses signaux avant que le contenu soit stable, sinon ils
+	## se déclenchent pendant la construction elle-même — cause réelle d'un
+	## déblocage prématuré, voir sms_section.gd pour le détail).
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_reveal_tracker.start()
 
 
 ## Comme ChatWindow.nudge_position : décale la fenêtre sans jamais la sortir
@@ -72,6 +82,7 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 
 
 func _on_minimize_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
 	minimize_requested.emit(self, _title_label.text)
 
@@ -187,6 +198,7 @@ func _build_field_row(label: String, raw_value: String) -> Control:
 
 	var value_rich := RichTextLabel.new()
 	value_rich.bbcode_enabled = true
+	value_rich.selection_enabled = true
 	value_rich.fit_content = true
 	value_rich.scroll_active = false
 	value_rich.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -225,6 +237,7 @@ func _build_note(raw_note: String) -> RichTextLabel:
 
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true
+	rich.selection_enabled = true
 	rich.fit_content = true
 	rich.scroll_active = false
 	rich.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -35,8 +35,14 @@ const GAP_SIZE := 16
 func _ready() -> void:
 	# RETOUR (à gauche) fait exactement la même chose que la croix (à droite) —
 	# deux façons d'accéder à la même action, pas deux comportements différents.
-	_back_button.pressed.connect(func() -> void: closed.emit())
-	_close_button.pressed.connect(func() -> void: closed.emit())
+	_back_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		closed.emit()
+	)
+	_close_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		closed.emit()
+	)
 
 
 ## L'indice éventuel de la publication se débloque à l'ouverture du détail —
@@ -50,6 +56,7 @@ func show_post(post: GalleryPost) -> void:
 
 	if not locked and not post.indice.is_empty():
 		ClueManager.unlock(post.indice)
+		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	for child in _detail_root.get_children():
 		child.queue_free()
@@ -98,6 +105,7 @@ func _build_image(post: GalleryPost) -> Control:
 func _build_description(post: GalleryPost) -> Control:
 	var label := RichTextLabel.new()
 	label.bbcode_enabled = true
+	label.selection_enabled = true
 	label.fit_content = true
 	label.scroll_active = false
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -131,6 +139,7 @@ func _build_comment_row(comment: GalleryComment) -> Control:
 	## s'affichaient telles quelles au lieu d'être interprétées.
 	var message_label := RichTextLabel.new()
 	message_label.bbcode_enabled = true
+	message_label.selection_enabled = true
 	message_label.fit_content = true
 	message_label.scroll_active = false
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
