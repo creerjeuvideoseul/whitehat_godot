@@ -168,6 +168,7 @@ func _resolve_row_texture(conv: SmsConversation) -> Texture2D:
 
 func _on_conversation_row_gui_input(event: InputEvent, conv: SmsConversation) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		_select_conversation(conv)
 
 

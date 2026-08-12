@@ -32,6 +32,13 @@ const ACCESS_DENIED_SFX := preload("res://assets/audio/sound/soundreality-ui-no-
 ## preload dans chacun des deux, même raison qu'ACCESS_DENIED_SFX ci-dessus.
 const MAJOR_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-callisto-170178.mp3")
 
+## Petit "clic" très court pour meubler le faux OS — sélectionner une
+## conversation SMS, ouvrir un mail, ouvrir une photo de la galerie. Pas un
+## indice narratif comme les sons ci-dessus, juste du feedback UI ; centralisé
+## quand même pour la même raison qu'ACCESS_DENIED_SFX (un seul preload, trois
+## appelants sans lien entre eux).
+const UI_CLICK_SFX := preload("res://assets/audio/sound/u_o8xh7gwsrj-bubble_pop_1-476367-2.mp3")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).

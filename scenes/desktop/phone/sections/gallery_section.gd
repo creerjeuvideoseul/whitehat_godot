@@ -199,6 +199,7 @@ func _build_counter(icon: Texture2D, label_text: String) -> Control:
 
 func _on_thumbnail_gui_input(event: InputEvent, post: GalleryPost) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		_open_detail(post)
 
 
