@@ -22,7 +22,7 @@ const AVATAR_BORDER_WIDTH := 3.0
 const IMAGE_ZOOM := 1.15
 const CATEGORY_LABEL_FONT_SIZE := Palette.SIZE_BODY + 5
 const CIRCULAR_MASK_SHADER := preload("res://assets/shaders/circular_mask.gdshader")
-const PANEL_WIDTH := 370.0
+const PANEL_WIDTH := 420.0
 ## Longueur du trait horizontal entre le tronc et le panneau d'un indice.
 const BRANCH_LENGTH := 40.0
 ## Espace vertical entre le bas de l'avatar et le centre du premier indice —
