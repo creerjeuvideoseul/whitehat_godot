@@ -41,6 +41,9 @@ const BLINK_SECONDS := 1.4
 ## l'utilisateur dans alizee_mailbox.json.
 const META_PLAYER_THINK_KEY := "Player_Think"
 const META_HACK_PC_MOTHER_KEY := "Hack_PC_Mother"
+## Fondu d'entrée/sortie de la musique d'un mail (voir MailEntry.play_music) —
+## même valeur pour les deux, "fadeout 1" demandé explicitement pour la sortie.
+const MAIL_MUSIC_FADE_SECONDS := 1.0
 
 ## Fichier JSON de la boîte mail affichée — voir MailDatabase. Le seul champ à
 ## changer pour réutiliser cette scène sur un autre personnage/mission.
@@ -230,8 +233,19 @@ func _clear_detail_root() -> void:
 		_metadata_blink_tween.kill()
 		_metadata_blink_tween = null
 	_metadata_think_shown = false
+	## Coupe la musique du mail qu'on quitte (voir MailEntry.play_music) — sans
+	## effet si aucune n'était en cours (MusicPlayer.stop() se charge déjà de
+	## ce cas). _show_mail() la relance juste après si le mail suivant en a une.
+	MusicPlayer.stop(MAIL_MUSIC_FADE_SECONDS)
 	for child in _detail_root.get_children():
 		child.queue_free()
+
+
+## Coupe la musique d'un mail encore en cours si la section entière disparaît
+## (autre icône du téléphone, voir desktop.gd) — _clear_detail_root() ne
+## tourne alors pas, le nœud est libéré directement par l'appelant.
+func _exit_tree() -> void:
+	MusicPlayer.stop(MAIL_MUSIC_FADE_SECONDS)
 
 
 func _show_no_selection() -> void:
@@ -262,6 +276,11 @@ func _show_mail(mail: MailEntry) -> void:
 		## texte de substitution d'un mail crypté encore verrouillé (voir
 		## _build_content_frame).
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+		## Musique de fond du mail (voir MailEntry.play_music) — même garde-fou
+		## que le point de sauvegarde ci-dessus : jamais sur un mail encore
+		## crypté/verrouillé, où il n'y a rien de réel à "mettre en ambiance".
+		if not mail.play_music.is_empty() and ResourceLoader.exists(mail.play_music):
+			MusicPlayer.play(load(mail.play_music), MAIL_MUSIC_FADE_SECONDS)
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))

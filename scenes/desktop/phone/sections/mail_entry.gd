@@ -20,6 +20,9 @@ var html_content: String
 ## Dictionnaire libre clé -> valeur (ex. IP, serveur...), affiché seulement
 ## si non vide via le bouton "VIEW METADATA".
 var meta_info: Dictionary
+## Chemin res:// d'une musique à jouer en fond tant que ce mail reste ouvert
+## (voir MailSection) — vide par défaut, la plupart des mails n'en ont pas.
+var play_music: String
 
 
 static func from_dict(data: Dictionary) -> MailEntry:
@@ -35,6 +38,7 @@ static func from_dict(data: Dictionary) -> MailEntry:
 	entry.is_crypted = int(data.get("isCrypted", 0)) == 1
 	entry.html_content = str(data.get("html_content", ""))
 	entry.meta_info = data.get("meta_info", {})
+	entry.play_music = str(data.get("play_music", ""))
 	return entry
 
 
