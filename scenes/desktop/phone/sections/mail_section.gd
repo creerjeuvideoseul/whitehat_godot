@@ -27,13 +27,22 @@ signal hack_pc_mother_requested
 
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
 const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
+const ATTACHMENT_VIEWER := preload("res://scenes/desktop/phone/sections/attachment_viewer.tscn")
 const AVATAR_SIZE := Vector2(56, 56)
 const ROW_GAP := 8
 const FIELD_GAP := 10
+## Ratio 16/9 plutôt que le ratio quasi carré des vignettes de la galerie —
+## voir _build_attachment_thumbnail.
+const ATTACHMENT_THUMB_WIDTH := 750.0
+const ATTACHMENT_THUMB_HEIGHT := 422.0
 const DIMMED_TAB_MODULATE := Color(1, 1, 1, 0.5)
 ## Même recette que le clignotement TOR du header (voir desktop_header.gd).
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
+## Délai avant que le bouton PIRATER LE PC et la pensée du joueur n'apparaissent
+## après le dépli des métadonnées — laisse le temps de lire les champs plutôt
+## que de tout faire surgir d'un coup au clic sur VIEW METADATA.
+const METADATA_REVEAL_DELAY_SECONDS := 1.0
 ## Deux clés réservées dans meta_info, gérées à part plutôt qu'affichées comme
 ## un champ générique — même esprit que les tags [#indice=xxx]/<indice id="...">
 ## ailleurs dans le projet : un mot-clé reconnu par le code plutôt qu'un
@@ -65,6 +74,10 @@ var _reveal_tracker: IndiceRevealTracker
 ## _clear_detail_root) : même risque que le tracker ci-dessus si on laissait
 ## un Tween continuer de cibler un Control déjà libéré au mail suivant.
 var _metadata_blink_tween: Tween
+## Même rôle que _metadata_blink_tween, pour le bouton PIRATER LE PC une fois
+## révélé (voir _start_hack_button_blink) — un Tween séparé, les deux boutons
+## clignotent indépendamment l'un de l'autre.
+var _hack_button_blink_tween: Tween
 ## Une seule pensée du joueur par mail ouvert, à la première fois où ses
 ## métadonnées sont dépliées — remis à faux à chaque nouveau mail (voir
 ## _clear_detail_root). Variable d'instance plutôt que capturée par la lambda
@@ -232,6 +245,9 @@ func _clear_detail_root() -> void:
 	if is_instance_valid(_metadata_blink_tween):
 		_metadata_blink_tween.kill()
 		_metadata_blink_tween = null
+	if is_instance_valid(_hack_button_blink_tween):
+		_hack_button_blink_tween.kill()
+		_hack_button_blink_tween = null
 	_metadata_think_shown = false
 	## Coupe la musique du mail qu'on quitte (voir MailEntry.play_music) — sans
 	## effet si aucune n'était en cours (MusicPlayer.stop() se charge déjà de
@@ -281,6 +297,11 @@ func _show_mail(mail: MailEntry) -> void:
 		## crypté/verrouillé, où il n'y a rien de réel à "mettre en ambiance".
 		if not mail.play_music.is_empty() and ResourceLoader.exists(mail.play_music):
 			MusicPlayer.play(load(mail.play_music), MAIL_MUSIC_FADE_SECONDS)
+		## Pensée déclenchée à l'ouverture du mail lui-même (voir MailEntry.player_think) —
+		## distincte de META_PLAYER_THINK_KEY dans meta_info, qui se déclenche au
+		## dépli de VIEW METADATA (voir _build_metadata_section).
+		if not mail.player_think.is_empty():
+			thought_requested.emit(mail.player_think)
 
 	if not mail.meta_info.is_empty():
 		_detail_root.add_child(_build_metadata_section(mail))
@@ -344,6 +365,19 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		scroll.add_child(locked_label)
 	else:
+		## Boîte intermédiaire (au lieu du corps directement dans le scroll) :
+		## laisse ajouter la vignette de pièce jointe juste en dessous du texte,
+		## dans le même cadre bordé — voir MailEntry.attach_image plus bas.
+		var content_box := VBoxContainer.new()
+		## Sans ça, la ScrollContainer laisse la boîte se réduire à la taille
+		## minimale de son contenu au lieu de remplir toute la largeur du
+		## cadre — le texte se retrouvait à faire un retour à la ligne bien
+		## avant le bord (mur invisible), body_label avait ce flag mais pas
+		## son nouveau parent.
+		content_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		content_box.add_theme_constant_override("separation", ROW_GAP)
+		scroll.add_child(content_box)
+
 		## Un seul RichTextLabel pour tout le corps : le découper en segments
 		## autour de <indice> (un Control par segment, pour que
 		## IndiceRevealTracker sache lequel est visible) forçait un saut de
@@ -353,9 +387,12 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		## une bulle SMS (voir sms_section.gd), pas une régression.
 		_reveal_tracker = IndiceRevealTracker.new(scroll)
 		var body_label := _build_body_label(RichTextMarkup.strip_indice_tags(mail.html_content))
-		scroll.add_child(body_label)
+		content_box.add_child(body_label)
 		for clue_id in RichTextMarkup.extract_indice_ids(mail.html_content):
 			_reveal_tracker.watch(body_label, clue_id)
+
+		if not mail.attach_image.is_empty():
+			content_box.add_child(_build_attachment_thumbnail(mail))
 
 	return frame
 
@@ -374,6 +411,52 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 	return label
 
 
+## Vignette 16/9 de MailEntry.attach_image, sous le corps du mail — fond blanc
+## comme les vraies photos de la galerie (voir GallerySection._build_thumbnail_image),
+## recadrée (STRETCH_KEEP_ASPECT_COVERED) plutôt que réduite avec des bandes
+## vides. Cliquable pour l'agrandir (voir _open_attachment_viewer).
+func _build_attachment_thumbnail(mail: MailEntry) -> Control:
+	var frame := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color.WHITE
+	style.set_corner_radius_all(8)
+	style.set_content_margin_all(0)
+	frame.add_theme_stylebox_override("panel", style)
+	frame.custom_minimum_size = Vector2(ATTACHMENT_THUMB_WIDTH, ATTACHMENT_THUMB_HEIGHT)
+	frame.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	frame.clip_contents = true
+	frame.mouse_filter = Control.MOUSE_FILTER_STOP
+	frame.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	frame.gui_input.connect(_on_attachment_gui_input.bind(mail))
+
+	var rect := TextureRect.new()
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	if ResourceLoader.exists(mail.attach_image):
+		rect.texture = load(mail.attach_image)
+	frame.add_child(rect)
+	return frame
+
+
+func _on_attachment_gui_input(event: InputEvent, mail: MailEntry) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		_open_attachment_viewer(mail)
+
+
+## Reprend le chrome de GalleryDetail (fenêtre bordée, bouton "Retour" en
+## haut qui ferme) plutôt qu'un simple fond assombri — voir AttachmentViewer.
+## Jetable comme GalleryDetail : une instance par ouverture, libérée à la
+## fermeture.
+func _open_attachment_viewer(mail: MailEntry) -> void:
+	var viewer: AttachmentViewer = ATTACHMENT_VIEWER.instantiate()
+	viewer.closed.connect(func() -> void: viewer.queue_free())
+	add_child(viewer)
+	viewer.show_image(mail.attach_image, tr("MAIL_ATTACHMENT_VIEWER_TITLE"))
+
+
 ## Repliée par défaut, dépliée au clic sur le bouton "VIEW METADATA" (qui
 ## clignote tant qu'on n'a pas cliqué dessus, pour inciter à le faire — voir
 ## BLINK_MIN_ALPHA/BLINK_SECONDS) — garde le libellé du bouton en anglais,
@@ -388,11 +471,36 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", ROW_GAP)
 
+	## Ligne d'en-tête horizontale : VIEW METADATA + (si présent) le bouton
+	## PIRATER LE PC juste à côté, séparés de 50px. Le bouton hack reste
+	## masqué tant que les métadonnées ne sont pas dépliées (voir le connect
+	## de toggle_button plus bas).
+	var header_row := HBoxContainer.new()
+	header_row.add_theme_constant_override("separation", 50)
+	box.add_child(header_row)
+
 	var toggle_button := Button.new()
 	toggle_button.text = "VIEW METADATA"
 	toggle_button.theme_type_variation = &"PrimaryButton"
 	toggle_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	box.add_child(toggle_button)
+	header_row.add_child(toggle_button)
+
+	var hack_button: Button = null
+	if bool(mail.meta_info.get(META_HACK_PC_MOTHER_KEY, false)):
+		hack_button = Button.new()
+		hack_button.text = tr("MAIL_HACK_PC_MOTHER_BUTTON")
+		hack_button.theme_type_variation = &"ImportantButton"
+		hack_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		hack_button.visible = false
+		hack_button.pressed.connect(func() -> void:
+			SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+			if is_instance_valid(_hack_button_blink_tween):
+				_hack_button_blink_tween.kill()
+				_hack_button_blink_tween = null
+			hack_button.modulate.a = 1.0
+			hack_pc_mother_requested.emit()
+		)
+		header_row.add_child(hack_button)
 
 	var fields_box := VBoxContainer.new()
 	fields_box.visible = false
@@ -414,17 +522,6 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 		field_label.text = RichTextMarkup.html_to_bbcode("%s : %s" % [key, str(mail.meta_info[key])])
 		fields_box.add_child(field_label)
 
-	if bool(mail.meta_info.get(META_HACK_PC_MOTHER_KEY, false)):
-		var hack_button := Button.new()
-		hack_button.text = tr("MAIL_HACK_PC_MOTHER_BUTTON")
-		hack_button.theme_type_variation = &"ImportantButton"
-		hack_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		hack_button.pressed.connect(func() -> void:
-			SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
-			hack_pc_mother_requested.emit()
-		)
-		fields_box.add_child(hack_button)
-
 	box.add_child(fields_box)
 
 	if is_instance_valid(_metadata_blink_tween):
@@ -441,10 +538,61 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 			_metadata_blink_tween.kill()
 			_metadata_blink_tween = null
 		toggle_button.modulate.a = 1.0
-		if fields_box.visible and not _metadata_think_shown:
+
+		if not fields_box.visible:
+			# Fermeture : le bouton hack se recache tout de suite (pas de délai
+			# à l'envers), et une révélation en attente ne doit pas surgir
+			# après coup — voir la double vérification fields_box.visible dans
+			# _reveal_hack_button_after_delay.
+			if is_instance_valid(hack_button):
+				hack_button.visible = false
+				if is_instance_valid(_hack_button_blink_tween):
+					_hack_button_blink_tween.kill()
+					_hack_button_blink_tween = null
+			return
+
+		if is_instance_valid(hack_button):
+			_reveal_hack_button_after_delay(hack_button, fields_box)
+
+		if not _metadata_think_shown:
 			_metadata_think_shown = true
 			var think_text: String = str(mail.meta_info.get(META_PLAYER_THINK_KEY, ""))
 			if not think_text.is_empty():
-				thought_requested.emit(think_text)
+				_reveal_metadata_thought_after_delay(fields_box, think_text)
 	)
 	return box
+
+
+## Laisse le joueur lire les métadonnées une seconde avant de faire surgir le
+## bouton "important" — voir METADATA_REVEAL_DELAY_SECONDS. Vérifie que les
+## métadonnées sont toujours dépliées à la fin de l'attente : si le joueur a
+## refermé VIEW METADATA entre-temps (ou changé de mail, qui libère hack_button),
+## la révélation est simplement annulée.
+func _reveal_hack_button_after_delay(hack_button: Button, fields_box: Control) -> void:
+	await get_tree().create_timer(METADATA_REVEAL_DELAY_SECONDS).timeout
+	if not is_instance_valid(hack_button) or not is_instance_valid(fields_box) or not fields_box.visible:
+		return
+	hack_button.visible = true
+	_start_hack_button_blink(hack_button)
+
+
+## Clignote tant que le joueur n'a pas cliqué le bouton — même recette que
+## _metadata_blink_tween pour VIEW METADATA, tué au clic (voir le connect de
+## hack_button plus haut) ou à la fermeture des métadonnées.
+func _start_hack_button_blink(hack_button: Button) -> void:
+	if is_instance_valid(_hack_button_blink_tween):
+		_hack_button_blink_tween.kill()
+	_hack_button_blink_tween = create_tween()
+	_hack_button_blink_tween.set_loops()
+	_hack_button_blink_tween.set_trans(Tween.TRANS_SINE)
+	_hack_button_blink_tween.tween_property(hack_button, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
+	_hack_button_blink_tween.tween_property(hack_button, "modulate:a", 1.0, BLINK_SECONDS)
+
+
+## Même délai que _reveal_hack_button_after_delay, pour la pensée du joueur —
+## voir METADATA_REVEAL_DELAY_SECONDS.
+func _reveal_metadata_thought_after_delay(fields_box: Control, think_text: String) -> void:
+	await get_tree().create_timer(METADATA_REVEAL_DELAY_SECONDS).timeout
+	if not is_instance_valid(fields_box) or not fields_box.visible:
+		return
+	thought_requested.emit(think_text)

@@ -93,6 +93,17 @@ const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.8, 0.478, 0.0, 1.0)
 ## pâle réservé au texte d'avertissement) : un rouge vif, dédié.
 const TEXT_IMPORTANT := Color(0.996, 0.396, 0.408, 1.0) # #fe6568
 
+## Bordure des panneaux d'indices "de résolution" (catégories FIN/FINSECONDAIRE
+## du tableau d'enquête, voir ClueBoard._apply_panel_state) une fois débloqués —
+## même bleu que ImportantButton (voir themes/main_theme.tres), pour rappeler
+## visuellement que ce sont ces indices-là qui débloquent le bouton "Générer
+## le rapport".
+const CLUE_SOLUTION_BORDER := Color(0.25, 0.55, 0.95, 1.0)
+## Fond des mêmes panneaux — même rapport d'assombrissement/désaturation que
+## le fond vert habituel d'un indice débloqué (Color(0.09, 0.24, 0.16, 1.0))
+## par rapport à BORDER_ACCENT, mais décliné en bleu.
+const CLUE_SOLUTION_BG := Color(0.09, 0.16, 0.28, 1.0)
+
 # --- Font sizes ---------------------------------------------------------
 # Named scale, reused as-is rather than picking new one-off sizes per screen.
 

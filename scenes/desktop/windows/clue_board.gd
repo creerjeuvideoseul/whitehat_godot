@@ -241,6 +241,11 @@ func _build_clue_panel(clue_id: String) -> PanelContainer:
 
 func _apply_panel_state(panel: PanelContainer, label: RichTextLabel, clue_id: String) -> void:
 	var is_unlocked: bool = ClueManager.is_unlocked(clue_id)
+	## Les indices "de résolution" (catégories FIN/FINSECONDAIRE) se
+	## distinguent en bleu une fois débloqués plutôt que le vert habituel —
+	## signale que ce sont les indices qui concluent l'enquête (voir
+	## Palette.CLUE_SOLUTION_*).
+	var is_solution := ClueManager.get_category_id_for_clue(clue_id).begins_with(ClueManager.SOLUTION_CATEGORY_ID)
 
 	var style := StyleBoxFlat.new()
 	style.set_corner_radius_all(8)
@@ -253,8 +258,8 @@ func _apply_panel_state(panel: PanelContainer, label: RichTextLabel, clue_id: St
 	# a node further back show right through it, which read as a rendering
 	# glitch rather than "this clue is behind that one".
 	if is_unlocked:
-		style.bg_color = Color(0.09, 0.24, 0.16, 1.0)
-		style.border_color = Palette.BORDER_ACCENT
+		style.bg_color = Palette.CLUE_SOLUTION_BG if is_solution else Color(0.09, 0.24, 0.16, 1.0)
+		style.border_color = Palette.CLUE_SOLUTION_BORDER if is_solution else Palette.BORDER_ACCENT
 		label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 		label.text = RichTextMarkup.html_to_bbcode(tr(clue_id))
 	else:

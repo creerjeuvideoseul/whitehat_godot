@@ -70,10 +70,10 @@ Jean: J'ai une bonne retraite. J'ai travaillé pour ça !
 
 Jean: Voilà l'archive.
 Player: Merci, je vous ferai un rapport complet dès que possible.
-Jean: J'attend votre rapport ! [#debug_checkpoint]
+Jean: J'attends votre rapport ! [#debug_checkpoint]
 
 System: Déconnexion...
 System: J'ai désormais accès aux archives du téléphone d'Alizée.
-System: Je dois trouver pourquoi elle a disparu, si elle va bien, qui est au courant.. et à quel endroit elle se trouve.
+System: Je dois trouver pourquoi elle a disparu, si elle va bien, qui est au courant... et à quel endroit elle se trouve.
 
 => END

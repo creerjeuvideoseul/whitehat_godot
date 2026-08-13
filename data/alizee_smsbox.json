@@ -34,14 +34,14 @@
 			{ "messageId": 20, "isAnswer": 1, "timestamp": "2029-12-14T16:33:00", "message": "Oui, merci." },
 			{ "messageId": 21, "isAnswer": 0, "timestamp": "2029-12-31T20:04:00", "message": "J'ai dit ok pour ce soir. Oublie pas ton engagement. 18 de moyenne minimum sur le semestre. C'est acté." },
 			{ "messageId": 22, "isAnswer": 0, "timestamp": "2030-01-05T14:00:00", "message": "Je te l'avais dit. <indice id=\"M1_sms_concours_chant\"><color=indice>Ce concours de chant</color></indice>, c'est une perte de temps, ça mène à rien." },
-			{ "messageId": 23, "isAnswer": 1, "timestamp": "2030-01-05T15:50:00", "message": "J'ai fini, ça c'est pas très bien passée." },
+			{ "messageId": 23, "isAnswer": 1, "timestamp": "2030-01-05T15:50:00", "message": "J'ai fini, ça s'est pas très bien passé." },
 			{ "messageId": 24, "isAnswer": 0, "timestamp": "2030-01-05T16:00:00", "message": "Moi j'ai fait ma part, je t'ai déposée. J'espère que t'as compris maintenant." },
 			{ "messageId": 25, "isAnswer": 0, "timestamp": "2030-01-12T10:34:00", "message": "T'es où ? J'ai pas aimé <indice id=\"M1_sms_ton_agressif\"><color=indice>ton ton</color></indice> ce matin." },
 			{ "messageId": 26, "isAnswer": 1, "timestamp": "2030-01-12T10:38:00", "message": "Tu m'avais dit que maman nous avait abandonnés !" },
 			{ "messageId": 27, "isAnswer": 0, "timestamp": "2030-01-12T10:40:00", "message": "Et c'est vrai. Point." },
 			{ "messageId": 28, "isAnswer": 1, "timestamp": "2030-01-12T11:04:00", "message": "C'est pas ce qu'elle me dit. Tu fais chier !" },
 			{ "messageId": 29, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "Je vais faire comme si t'avais pas dit ça. Tu parles à ton père là ! Tu me dois tout." },
-			{ "messageId": 30, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "Si <indice id=\"M1_sms_vieille_sorciere\"><color=indice>cette vieille sorcière</color></indice> t'a recontactée, c'est qu'elle veut nous faire du mal. Ne crois rien de ce qu'elle peut te dire, c'est moi qui t'es élevé !" },
+			{ "messageId": 30, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "Si <indice id=\"M1_sms_vieille_sorciere\"><color=indice>cette vieille sorcière</color></indice> t'a recontactée, c'est qu'elle veut nous faire du mal. Ne crois rien de ce qu'elle peut te dire, c'est moi qui t'ai élevé !" },
 			{ "messageId": 31, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Tu es où ?" },
 			{ "messageId": 32, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Réponds ! Je m'inquiète !" },
 			{ "messageId": 33, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "ALIZÉE !" }
@@ -71,7 +71,7 @@
 			{ "messageId": 13, "isAnswer": 0, "timestamp": "2030-01-05T15:31:00", "message": "Tu sais très bien que c'est faux. J'arrive." },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "<color=important>Ce qui est arrivé hier</color>, ne doit pas se reproduire !" },
 			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "C'est compliqué, tu le sais. Désolé." },
-			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Non. <color=important>Ma proposition</color> tiens toujours." },
+			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Non. <color=important>Ma proposition</color> tient toujours." },
 			{ "messageId": 17, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "C'est de la folie. Ne t'en mêle pas." },
 			{ "messageId": 18, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Mouais." },
 			{ "messageId": 19, "isAnswer": 1, "timestamp": "2030-01-19T11:01:00", "message": "J'ai <color=important>écrit hier soir au site</color> dont je t'avais parlé. Enfin j'ai essayé." },
@@ -130,7 +130,7 @@
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "Ce que tu me proposes me semble tellement impossible… Mais je te promets d'y réfléchir. Les choses vont trop vite." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "Je ne te promets pas le luxe, ma vie d'artiste est difficile, mais je prendrai soin de toi." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>J'ai revu ma mère</color>, J'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
+			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>J'ai revu ma mère</color>, j'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
 		  ]
 		}
 	  ]

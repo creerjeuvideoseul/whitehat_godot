@@ -28,9 +28,12 @@ const PHONE_SECTIONS := {
 const PHONE_REVEAL_SECONDS := 0.6
 ## Décalage de départ (hors écran vers la gauche) pour l'effet de glissement.
 const PHONE_REVEAL_SLIDE_OFFSET := 120.0
-## De combien le téléphone doit commencer à apparaître avant la fin réelle de
-## la transition "analyse en cours" (voir _play_analysis_transition_and_reveal_phone).
-const PHONE_EARLY_REVEAL_SECONDS := 0.7
+## De combien la chose révélée (téléphone d'Alizée, fenêtre du PC de la mère)
+## doit commencer à apparaître avant la fin réelle de la transition "analyse
+## en cours" (voir _play_analysis_transition_and_reveal_phone/
+## _play_analysis_transition_and_reveal_hack_pc_mother_window) — partagée par
+## les deux, même effet recherché dans les deux cas.
+const ANALYSIS_EARLY_REVEAL_SECONDS := 0.7
 ## Durée/amplitude du glissement de rangement de la fenêtre de chat vers la
 ## barre des tâches (voir _minimize_window_with_slide), même esprit que
 ## PHONE_REVEAL_SECONDS/OFFSET mais en sens inverse (vers le bas).
@@ -44,11 +47,20 @@ const ANONGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
 const ANONGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
-## Bruitage de frappe joué pendant le terminal simulant le rapatriement des
-## données du téléphone d'Alizée (voir _play_jean_dump_terminal) — le joueur
-## y "tape" des commandes, contrairement au boot système après l'intro qui ne
-## reçoit volontairement pas ce son (voir Introduction).
-const JEAN_DUMP_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
+## Bruitage de frappe joué pendant les terminaux où le joueur "tape" des
+## commandes (dump du téléphone d'Alizée, voir _play_jean_dump_terminal ;
+## scan réseau + connexion RDP vers le PC de la mère, voir
+## _play_hack_pc_mother_login_terminal) — contrairement au boot système après
+## l'intro qui ne reçoit volontairement pas ce son (voir Introduction).
+const COMMAND_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
+## Adresse IP simulée du PC de la mère (voir _build_hack_pc_mother_login_lines) —
+## cohérente avec le mail crypté qui déclenche ce piratage (voir mail_section.gd).
+const HACK_PC_MOTHER_IP := "180.252.12.44"
+## Mot de passe RDP de Christine, trouvable dans sa fiche OSINT (voir
+## data/osint_characters.json, champ "Mots de passe") — comparé de façon
+## insensible à la casse et au séparateur "_"/espace (voir
+## TerminalConsole._normalize_login_password).
+const HACK_PC_MOTHER_PASSWORD := "Putriku_tersayang"
 
 ## The chat window auto-opens on desktop load for now — there's no "how do
 ## you open a window" system yet (icons, notifications, ...), so this is
@@ -69,12 +81,10 @@ const JEAN_REVEAL_DELAY_SECONDS := 1.0
 @onready var _phone_section_host: Control = %PhoneSectionHost
 
 ## Kept so pressing "Indice" a second time re-shows the same window (and its
-## already-unlocked state) instead of stacking duplicates — it can't be
-## closed, only minimized, so a second instance would linger forever.
+## already-unlocked state) instead of rebuilding it from scratch — this
+## window closes (×) rather than minimizes (see clue_board_window.gd), no
+## taskbar entry to juggle like the other windows below.
 var _clue_board_window: ClueBoardWindow = null
-## Last title it minimized under, so re-showing it via the header button (as
-## opposed to its own taskbar icon) can clear that now-stale icon.
-var _clue_board_window_title: String = ""
 
 ## Même principe que _clue_board_window : une seule fenêtre OSINT réutilisée
 ## d'une recherche à l'autre (jamais de doublon dans la taskbar), son contenu
@@ -88,6 +98,12 @@ var _osint_window_title: String = ""
 ## déclencheur dans meta_info.
 var _hack_pc_mother_window: HackPcMotherWindow = null
 var _hack_pc_mother_window_title: String = ""
+## Terminal de connexion RDP (voir _play_hack_pc_mother_login_terminal) —
+## réductible comme les fenêtres ci-dessus le temps que le joueur aille
+## chercher le mot de passe dans les mails ; se libère de lui-même (queue_free)
+## une fois le mot de passe validé, pas besoin de le garder après coup.
+var _hack_pc_mother_login_console: TerminalConsole = null
+var _hack_pc_mother_login_console_title: String = ""
 
 ## Le téléphone d'Alizée reste affiché en permanence une fois révélé — pas de
 ## fermeture/minimisation prévue, donc une seule instance possible (utile
@@ -225,7 +241,7 @@ func _play_jean_dump_terminal() -> void:
 
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_jean_dump_lines()
-	console.typing_sound = JEAN_DUMP_TYPING_SOUND
+	console.typing_sound = COMMAND_TYPING_SOUND
 	console.fade_out_on_close = true
 	console.closed.connect(_on_jean_dump_terminal_closed)
 	add_child(console)
@@ -267,7 +283,7 @@ func _play_analysis_transition_and_reveal_phone() -> void:
 	var transition: AnalysisTransition = ANALYSIS_TRANSITION.instantiate()
 	_window_layer.add_child(transition)
 
-	var wait_seconds := maxf(0.0, AnalysisTransition.TOTAL_SECONDS - PHONE_EARLY_REVEAL_SECONDS)
+	var wait_seconds := maxf(0.0, AnalysisTransition.TOTAL_SECONDS - ANALYSIS_EARLY_REVEAL_SECONDS)
 	await get_tree().create_timer(wait_seconds).timeout
 
 	_header.set_system_load_spike(false)
@@ -276,7 +292,7 @@ func _play_analysis_transition_and_reveal_phone() -> void:
 		_window_layer.move_child(_alizee_phone, transition.get_index())
 
 
-## Glissement + fondu vers le bas (même esprit que _animate_phone_reveal,
+## Glissement + fondu vers le bas (même esprit que _animate_reveal_slide,
 ## sens inverse) avant de ranger réellement la fenêtre — pour un rangement
 ## visible plutôt que la disparition instantanée du bouton "réduire".
 func _minimize_window_with_slide(window: Control, window_title: String) -> void:
@@ -304,11 +320,19 @@ func _minimize_window_with_slide(window: Control, window_title: String) -> void:
 ## dans leur jargon technique quelle que soit la langue (un vrai terminal ne
 ## se traduit pas) — seules les deux phrases en langage naturel passent par
 ## ui.csv, comme le reste du chrome de l'interface.
+## BBCode hex ("#rrggbb") d'une couleur Palette — factorisé pour ne pas
+## recalculer le même Palette.X.to_html(false) dans chaque script de terminal
+## (dump de Jean, connexion RDP du PC de la mère) : un seul endroit à changer
+## si le format de couleur BBCode devait un jour évoluer.
+func _terminal_color_hex(color: Color) -> String:
+	return "#%s" % color.to_html(false)
+
+
 func _build_jean_dump_lines() -> Array[TerminalLine]:
-	var prompt := "#%s" % Palette.BORDER_ACCENT.to_html(false)
-	var normal := "#%s" % Palette.TEXT_NORMAL.to_html(false)
-	var muted := "#%s" % Palette.CONSOLE_TEXT.to_html(false)
-	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
+	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
+	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+	var muted := _terminal_color_hex(Palette.CONSOLE_TEXT)
+	var accent := _terminal_color_hex(Palette.TEXT_ACCENT)
 
 	var lines: Array[TerminalLine] = []
 	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'[/color]" % [prompt, normal], true))
@@ -338,29 +362,29 @@ func _open_window(window) -> void:
 
 
 func _on_window_minimize_requested(window: Control, window_title: String) -> void:
-	if window == _clue_board_window:
-		_clue_board_window_title = window_title
-	elif window == _osint_window:
+	if window == _osint_window:
 		_osint_window_title = window_title
 	elif window == _hack_pc_mother_window:
 		_hack_pc_mother_window_title = window_title
+	elif window == _hack_pc_mother_login_console:
+		_hack_pc_mother_login_console_title = window_title
 	_footer.add_minimized_window(window_title, func() -> void: window.show())
 
 
 ## "Indice" always reopens the same board so its layout/unlocked state isn't
 ## rebuilt from scratch every click — only the first press instantiates it.
-## It has no close button (only minimize), so a second instance would linger
-## on screen forever if we let one get created.
+## Pas de passage par _open_window()/la barre des tâches : cette fenêtre se
+## ferme (×) plutôt que se réduit, le bouton "Indice" du header (toujours
+## visible) suffit à la retrouver — voir clue_board_window.gd.
 func _on_clue_button_pressed() -> void:
 	if is_instance_valid(_clue_board_window):
-		_footer.remove_minimized_window(_clue_board_window_title)
 		_clue_board_window.show()
 		return
 
 	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
 	_clue_board_window.mission_id = CURRENT_MISSION_ID
 	_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
-	_open_window(_clue_board_window)
+	_window_layer.add_child(_clue_board_window)
 
 
 ## Écran plein écran temporaire (pas de logique de rapport pour l'instant,
@@ -373,15 +397,155 @@ func _on_generate_report_requested() -> void:
 
 
 ## Même principe que _on_clue_button_pressed/_on_osint_search_requested :
-## une seule instance réutilisée, jamais de doublon dans la taskbar.
+## une seule instance réutilisée, jamais de doublon dans la taskbar. La toute
+## première fois, la fenêtre n'apparaît qu'après le terminal de connexion RDP
+## (voir _play_hack_pc_mother_login_terminal) — pas de persistance d'une
+## sauvegarde à l'autre, comme _hack_pc_mother_window lui-même.
 func _on_hack_pc_mother_requested() -> void:
 	if is_instance_valid(_hack_pc_mother_window):
 		_footer.remove_minimized_window(_hack_pc_mother_window_title)
 		_hack_pc_mother_window.show()
 		return
 
+	# Le terminal de connexion est réductible (voir _play_hack_pc_mother_login_terminal) :
+	# sans ce garde-fou, recliquer PIRATER LE PC pendant qu'il tourne déjà
+	# (réduit ou non) en relancerait un second en plus du premier.
+	if is_instance_valid(_hack_pc_mother_login_console):
+		_footer.remove_minimized_window(_hack_pc_mother_login_console_title)
+		_hack_pc_mother_login_console.show()
+		return
+
+	_play_hack_pc_mother_login_terminal()
+
+
+## Terminal "système" (voir TerminalConsole) qui simule un scan réseau puis
+## une connexion RDP jusqu'à une demande de mot de passe — le joueur a autant
+## de tentatives que voulu (mot de passe trouvable dans la fiche OSINT de
+## Christine). Réductible (window_title) : rien n'empêche d'aller relire le
+## mail de la mère pendant que ce terminal attend une saisie. Se ferme tout
+## seul dès que le mot de passe est correct (voir TerminalConsole.login_prompt_text),
+## ce qui déclenche closed ci-dessous.
+func _play_hack_pc_mother_login_terminal() -> void:
+	var danger := _terminal_color_hex(Palette.TEXT_DANGER)
+
+	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.lines = _build_hack_pc_mother_login_lines()
+	console.typing_sound = COMMAND_TYPING_SOUND
+	console.login_prompt_text = "Password for Christine@%s:" % HACK_PC_MOTHER_IP
+	console.login_expected_password = HACK_PC_MOTHER_PASSWORD
+	console.login_wrong_message = "[color=%s]%s[/color]" % [danger, tr("TERMINAL_WRONG_PASSWORD")]
+	console.window_title = tr("TERMINAL_WINDOW_TITLE")
+	console.closed.connect(_on_hack_pc_mother_login_succeeded)
+	_hack_pc_mother_login_console = console
+	_open_window(console)
+
+
+## Le mot de passe correct ferme le terminal (voir closed ci-dessus) puis
+## enchaîne sur la même transition "analyse en cours" que celle utilisée
+## entre la fin de l'appel de Jean et l'apparition du téléphone d'Alizée
+## (voir _play_analysis_transition_and_reveal_phone) — même bascule, pas de
+## raison d'en inventer une autre pour ce second "dump de données".
+func _on_hack_pc_mother_login_succeeded() -> void:
+	_hack_pc_mother_login_console = null
+	await _play_analysis_transition_and_reveal_hack_pc_mother_window()
+
+
+## Même recette que _play_analysis_transition_and_reveal_phone (transition,
+## puis la fenêtre émerge à travers son fondu de sortie plutôt que d'attendre
+## qu'elle ait fini) — dupliquée plutôt que factorisée : les deux revealed
+## (Control plein écran vs fenêtre réductible) et leurs effets d'entrée
+## (glissement latéral vs glissement + SFX déjà géré par _animate_reveal_slide)
+## ne partagent pas assez pour valoir une abstraction commune à ce stade.
+func _play_analysis_transition_and_reveal_hack_pc_mother_window() -> void:
+	var transition: AnalysisTransition = ANALYSIS_TRANSITION.instantiate()
+	_window_layer.add_child(transition)
+
+	var wait_seconds := maxf(0.0, AnalysisTransition.TOTAL_SECONDS - ANALYSIS_EARLY_REVEAL_SECONDS)
+	await get_tree().create_timer(wait_seconds).timeout
+
 	_hack_pc_mother_window = HACK_PC_MOTHER_WINDOW.instantiate()
 	_open_window(_hack_pc_mother_window)
+	SfxPlayer.play(SfxPlayer.MAJOR_REVEAL_SFX)
+	_animate_reveal_slide(_hack_pc_mother_window)
+	if is_instance_valid(_hack_pc_mother_window) and is_instance_valid(transition):
+		_window_layer.move_child(_hack_pc_mother_window, transition.get_index())
+
+
+## Script du scan réseau + de la connexion RDP simulés avant la demande de mot
+## de passe (voir _play_hack_pc_mother_login_terminal) — jargon technique brut
+## non traduit quelle que soit la langue, même choix que _build_jean_dump_lines
+## (un vrai terminal ne se traduit pas), sauf la toute dernière ligne qui
+## passe par ui.csv (seule phrase en langage naturel du script). Les crochets
+## littéraux de la sortie des outils ([+], [INFO], [Christine]...) sont
+## échappés en [lb]/[rb] : ce ne sont pas des balises BBCode, juste du texte
+## de commande.
+func _build_hack_pc_mother_login_lines() -> Array[TerminalLine]:
+	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
+	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+	var muted := _terminal_color_hex(Palette.CONSOLE_TEXT)
+	var accent := _terminal_color_hex(Palette.TEXT_ACCENT)
+	var ip := HACK_PC_MOTHER_IP
+
+	var lines: Array[TerminalLine] = []
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ping %s[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s]PING %s (%s) 56(84) bytes of data.[/color]" % [muted, ip, ip]))
+	lines.append(TerminalLine.text_line("[color=%s]64 bytes from %s: icmp_seq=1 ttl=128 time=142 ms[/color]" % [muted, ip]))
+	lines.append(TerminalLine.text_line("[color=%s]64 bytes from %s: icmp_seq=2 ttl=128 time=139 ms[/color]" % [muted, ip]))
+	lines.append(TerminalLine.text_line("[color=%s]--- %s ping statistics ---[/color]" % [muted, ip]))
+	lines.append(TerminalLine.text_line("[color=%s]2 packets transmitted, 2 received, 0%% packet loss, time 1001ms[/color]" % muted))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]nmap -p 135,139,445,3389 %s[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s]Starting Nmap 7.94 ( https://nmap.org ) at 2030-01-30 09:15 CET[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]Nmap scan report for %s[/color]" % [muted, ip]))
+	lines.append(TerminalLine.text_line("[color=%s]PORT     STATE SERVICE[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]135/tcp  open  msrpc[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]139/tcp  open  netbios-ssn[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]445/tcp  open  microsoft-ds[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]3389/tcp open  ms-wbt-server[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]Nmap done: 1 IP address (1 host up) scanned in 1.42 seconds[/color]" % muted))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]nmap -sV --script rdp-enum-encryption,smb-os-discovery -p 445,3389 %s[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s]PORT     STATE SERVICE       VERSION[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]445/tcp  open  microsoft-ds  Windows 10 Home 19045[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]| smb-os-discovery:[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]|   OS: Windows 10 Home (Windows 10 Home 6.3)[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]|_  Computer name: [color=%s]DESKTOP-CRANOUD[/color][/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s]3389/tcp open  ms-wbt-server Microsoft Terminal Services[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]|_rdp-enum-encryption: CredSSP (NLA) supported, RDP encryption supported[/color]" % muted))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]smbclient -L //%s -N[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s]Anonymous login successful[/color][/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s]Sharename       Type      Comment[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]---------       ----      -------[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]ADMIN$          Disk      Remote Admin[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]C$              Disk      Default share[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]Users           Disk      Public Directory[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]IPC$            IPC       Remote IPC[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]Reconnecting with SMB1 for workgroup listing.[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]Server           Comment[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]---------        -------[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s]DESKTOP-CRANOUD  Workgroup: WORKGROUP[/color]" % muted))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]enum4linux -U %s | grep \"user:\"[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s][lb]+[rb] User count: 2[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s][lb]+[rb] user:[lb][color=%s]Christine[/color][rb] rid:[lb]0x3e8[rb][/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][lb]+[rb] user:[lb]DefaultAccount[rb] rid:[lb]0x1f7[rb][/color]" % muted))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]nc -zv %s 3389[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s]Connection to %s 3389 port [lb]tcp/ms-wbt-server[rb] [color=%s]succeeded![/color][/color]" % [muted, ip, accent]))
+
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]xfreerdp /v:%s /u:Christine /cert:ignore[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s][lb]09:18:02:112[rb] [lb]INFO[rb][lb]com.freerdp.core[rb] - Connecting to host %s:3389[/color]" % [muted, ip]))
+	lines.append(TerminalLine.text_line("[color=%s][lb]09:18:02:450[rb] [lb]INFO[rb][lb]com.freerdp.tls[rb] - TLS connection established with CredSSP[/color]" % muted))
+	lines.append(TerminalLine.text_line("[color=%s][lb]09:18:02:810[rb] [lb]INFO[rb][lb]com.freerdp.core[rb] - Authentication required for user: [color=%s]Christine[/color][/color]" % [muted, accent]))
+
+	# Seule phrase en langage naturel de tout le script (voir doc de fonction) :
+	# passe par ui.csv, bien visible en vert juste avant la demande de mot de
+	# passe (voir TerminalConsole.login_prompt_text).
+	lines.append(TerminalLine.text_line("[color=%s]%s[/color]" % [accent, tr("TERMINAL_LOGIN_ACCESS_GRANTED")]))
+
+	return lines
 
 
 ## Une recherche OSINT réutilise toujours la même fenêtre (jamais de doublon
@@ -412,23 +576,26 @@ func _reveal_alizee_phone(animate: bool) -> void:
 
 	if animate:
 		SfxPlayer.play(SfxPlayer.MAJOR_REVEAL_SFX)
-		_animate_phone_reveal(_alizee_phone)
+		_animate_reveal_slide(_alizee_phone)
 
 
 ## Glissement + fondu depuis la gauche, dans le même esprit que le shake de
-## ChatWindow (tween direct sur position/modulate, sans toucher aux ancres).
-func _animate_phone_reveal(phone: Control) -> void:
+## ChatWindow (tween direct sur position/modulate, sans toucher aux ancres) —
+## partagé par l'apparition du téléphone d'Alizée et celle de la fenêtre
+## "Piratage — PC de la mère" une fois le mot de passe RDP validé (voir
+## _on_hack_pc_mother_login_succeeded).
+func _animate_reveal_slide(control: Control) -> void:
 	await get_tree().process_frame
-	var target_x := phone.position.x
-	phone.position.x = target_x - PHONE_REVEAL_SLIDE_OFFSET
-	phone.modulate.a = 0.0
+	var target_x := control.position.x
+	control.position.x = target_x - PHONE_REVEAL_SLIDE_OFFSET
+	control.modulate.a = 0.0
 
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(phone, "position:x", target_x, PHONE_REVEAL_SECONDS)
-	tween.tween_property(phone, "modulate:a", 1.0, PHONE_REVEAL_SECONDS)
+	tween.tween_property(control, "position:x", target_x, PHONE_REVEAL_SECONDS)
+	tween.tween_property(control, "modulate:a", 1.0, PHONE_REVEAL_SECONDS)
 
 
 ## Affiche la section choisie dans les 2/3 restants — une seule à la fois,

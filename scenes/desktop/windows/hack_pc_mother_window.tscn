@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scenes/desktop/windows/hack_pc_mother_window.gd" id="1_script"]
 
@@ -20,6 +20,10 @@ border_width_bottom = 2
 border_color = Color(0.22, 0.87, 0.45, 0.5)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_list_panel"]
+bg_color = Color(0.07, 0.18, 0.13, 1)
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_minimize"]
 bg_color = Color(1, 1, 1, 0)
@@ -95,7 +99,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
 theme_override_font_sizes/font_size = 26
-text = "MAIL_HACK_PC_WINDOW_TITLE"
+text = "HACK_PC_MOTHER_WINDOW_TITLE"
 
 [node name="Spacer" type="Control" parent="Layout/TitleBar/Margin/Row"]
 layout_mode = 2
@@ -114,16 +118,56 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_minimize_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_minimize_hover")
 text = "—"
 
-[node name="Body" type="CenterContainer" parent="Layout"]
+[node name="Body" type="HBoxContainer" parent="Layout"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 
-[node name="BodyLabel" type="Label" parent="Layout/Body"]
+[node name="ListPanel" type="PanelContainer" parent="Layout/Body"]
 layout_mode = 2
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
-theme_override_font_sizes/font_size = 30
-text = "MAIL_HACK_PC_WINDOW_BODY"
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_list_panel")
+
+[node name="Margin" type="MarginContainer" parent="Layout/Body/ListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Scroll" type="ScrollContainer" parent="Layout/Body/ListPanel/Margin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DocumentList" type="VBoxContainer" parent="Layout/Body/ListPanel/Margin/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="DetailPanel" type="Control" parent="Layout/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Layout/Body/DetailPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="DetailRoot" type="VBoxContainer" parent="Layout/Body/DetailPanel/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="BorderOverlay" type="Panel" parent="."]
 layout_mode = 1

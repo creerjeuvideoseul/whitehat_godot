@@ -50,6 +50,9 @@ CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
 TERMINAL_JEAN_DUMP_LOADING,Chargement des données...,Loading data...
+TERMINAL_WRONG_PASSWORD,Mot de passe incorrect.,Incorrect password.
+TERMINAL_WINDOW_TITLE,Commande système :,System command:
+TERMINAL_LOGIN_ACCESS_GRANTED,"Accès au système réussi, insérez le mot de passe pour accéder aux données.","System access granted, enter the password to access the data."
 TERMINAL_BOOT_TITLE,Initialisation du système,System initialization
 TERMINAL_BOOT_STARTING_SESSION,Démarrage de la session...,Starting session...
 INTRO_LIVE_BADGE,EN DIRECT,LIVE
@@ -73,8 +76,7 @@ VAULT_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'a
 MAIL_FROM_LABEL,De :,From:
 MAIL_TO_LABEL,À :,To:
 MAIL_HACK_PC_MOTHER_BUTTON,PIRATER LE PC,HACK THE PC
-MAIL_HACK_PC_WINDOW_TITLE,Piratage — PC de la mère,Hack — Mother's PC
-MAIL_HACK_PC_WINDOW_BODY,Hack du PC de la mère...,Hacking mother's PC...
+HACK_PC_MOTHER_WINDOW_TITLE,Information extraite du PC de Christine Ranoud.,Information extracted from Christine Ranoud's PC.
 SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
 SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
 SMS_MESSAGE_COUNT,%d messages,%d messages
@@ -82,19 +84,24 @@ SMS_ALIZEE_REMINDER,Alizée,Alizée
 GALLERY_SECTION_TITLE,Galerie du téléphone d'Alizée,Alizée's phone gallery
 GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
 GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
+MAIL_ATTACHMENT_VIEWER_TITLE,Pièce jointe,Attachment
 VAULT_SECTION_TITLE,Section coffre-fort,Vault section
 VAULT_EXPLANATION,"Des données sont cryptées sur ce téléphone (SMS, images, mails...). Merci d'indiquer le mot de passe pour les décrypter.","Some data on this phone is encrypted (SMS, images, emails...). Please enter the password to decrypt it."
 VAULT_PASSWORD_PLACEHOLDER,Mot de passe,Password
 VAULT_VALIDATE_BUTTON,VALIDER,SUBMIT
 VAULT_SUCCESS_MESSAGE,"Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégées (SMS, mails, etc.).","Encrypted content unlocked — you can now access the protected information (SMS, emails, etc.)."
 VAULT_WRONG_PASSWORD,Ce n'est pas le bon mot de passe.,This is not the right password.
+VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de simple.,It has to be something simple.
+VAULT_HINT_ATTEMPT_2,"Quelque chose que Marek ou Alizée peut savoir, Marek a installé le coffre-fort.","Something Marek or Alizée might know — Marek installed the vault."
+VAULT_HINT_ATTEMPT_3,Peut-être que je pourrais trouver des pistes dans l'OSINT ?,Maybe I could find some leads in the OSINT search?
+VAULT_HINT_ATTEMPT_4,Qu'est-ce qui est le plus important pour Marek ? Sa musique ?,What matters most to Marek? His music?
+VAULT_HINT_ATTEMPT_5,Les gens aiment bien ajouter des chiffres au mot de passe...,People love adding numbers to their passwords...
 VAULT_HINT_DATE,"Cela ne peut pas être une date, ce serait trop simple à trouver pour son père Jean.",It can't be a date — that would be too easy for her father Jean to guess.
 VAULT_HINT_SOCIAL,"Non, Alizée n'est normalement pas au courant des mots de passe de Marek.","No, Alizée normally doesn't know Marek's passwords."
 VAULT_HINT_ELITESHOT,"C'est le même mot de passe que celui du père, il l'aurait déjà débloqué. Ça ne peut pas être ce mot de passe.","That's the same password as her father's — he would have unlocked it already. It can't be this one."
 VAULT_HINT_BUGSY,"Le père l'aurait trouvé facilement, ça ne peut pas être ce mot de passe.","Her father would have found this one easily, it can't be the right password."
 VAULT_HINT_ELEVEN,Le chiffre me semble une bonne idée. Il revient souvent dans le schéma de mots de passe d'Alizée.,That number seems like a good lead. It comes up often in Alizée's password pattern.
 VAULT_HINT_LASTHORIZON,"LastHorizon me semble pertinent, reste à deviner la fin. Un chiffre, peut-être ?","LastHorizon seems relevant, I just need to guess the ending. A number, maybe?"
-VAULT_HINT_GENERIC,"Non, le mot de passe doit forcément être quelque chose de plus devinable. Je dois trouver d'autres indices.","No, the password has to be something easier to guess. I need to find more clues."
 ANALYSIS_TRANSITION_TITLE,Chargement des données en cours...,Loading data...
 MONTH_1,janvier,January
 MONTH_2,février,February

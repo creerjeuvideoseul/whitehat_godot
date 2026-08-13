@@ -1,12 +1,18 @@
 extends Control
 class_name ClueBoardWindow
 ## Fenêtre "collecte d'indices" : même chrome (fond/cadre vert, barre de
-## titre, réduction) que les autres fenêtres du bureau (ex. ChatWindow), mais
-## prend 90% de l'espace du bureau et reste centrée (voir les ancres de la
-## scène). Le contenu (ClueBoard) est générique par mission — voir
-## clue_board.gd — donc réutilisable tel quel pour les prochaines missions.
+## titre) que les autres fenêtres du bureau (ex. ChatWindow), mais prend 90%
+## de l'espace du bureau et reste centrée (voir les ancres de la scène). Le
+## contenu (ClueBoard) est générique par mission — voir clue_board.gd — donc
+## réutilisable tel quel pour les prochaines missions.
+##
+## Bouton "×" plutôt que "—" (réduction) : contrairement aux autres fenêtres,
+## celle-ci se rouvre toujours au même endroit (le bouton "Indice" du header,
+## en permanence visible) — pas besoin d'une icône dans la barre des tâches en
+## plus pour la retrouver, se fermer directement suffit (voir desktop.gd,
+## _on_clue_button_pressed : l'instance est réutilisée en interne, seule sa
+## visibilité change).
 
-signal minimize_requested(window: Control, window_title: String)
 ## Bubbled up to desktop.gd, qui décide ce qu'ouvrir "générer le rapport"
 ## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
 ## son propre bouton.
@@ -18,15 +24,14 @@ signal generate_report_requested
 		if is_node_ready():
 			_apply_mission()
 
-@onready var _title_label: Label = %TitleLabel
-@onready var _minimize_button: Button = %MinimizeButton
+@onready var _close_button: Button = %CloseButton
 @onready var _question_label: Label = %QuestionLabel
 @onready var _clue_board: ClueBoard = %ClueBoard
 @onready var _generate_report_button: Button = %GenerateReportButton
 
 
 func _ready() -> void:
-	_minimize_button.pressed.connect(_on_minimize_pressed)
+	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(func() -> void:
 		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		generate_report_requested.emit()
@@ -65,7 +70,6 @@ func _update_report_button() -> void:
 	_generate_report_button.theme_type_variation = &"ImportantButton" if unlocked else &"PrimaryButton"
 
 
-func _on_minimize_pressed() -> void:
+func _on_close_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
-	minimize_requested.emit(self, _title_label.text)

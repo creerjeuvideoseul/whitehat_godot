@@ -14,12 +14,12 @@ func _init(data_path: String) -> void:
 	_load(data_path)
 
 
-## Publications de la boîte demandée, les plus récentes en premier — comme un
-## vrai fil de galerie, plutôt que dans l'ordre brut (non garanti) du JSON.
+## Publications de la boîte demandée, des plus anciennes aux plus récentes
+## (date de prise, pas l'ordre brut/postId du JSON).
 func get_posts() -> Array[GalleryPost]:
 	var locale := _resolve_locale()
 	var result: Array[GalleryPost] = _posts_by_locale.get(locale, []).duplicate()
-	result.sort_custom(func(a: GalleryPost, b: GalleryPost) -> bool: return a.timestamp > b.timestamp)
+	result.sort_custom(func(a: GalleryPost, b: GalleryPost) -> bool: return a.timestamp < b.timestamp)
 	return result
 
 

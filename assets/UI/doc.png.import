@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg7jiaj83lxvd"
-path="res://.godot/imported/wh_m1_image_fin.webp-05d28c15241a716ea51d1a79b075d78e.ctex"
+uid="uid://dugycnpbwlxog"
+path="res://.godot/imported/doc.png-250a349be7d3e941f6031421f7227b55.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images_mission1/wh_m1_image_fin.webp"
-dest_files=["res://.godot/imported/wh_m1_image_fin.webp-05d28c15241a716ea51d1a79b075d78e.ctex"]
+source_file="res://assets/UI/doc.png"
+dest_files=["res://.godot/imported/doc.png-250a349be7d3e941f6031421f7227b55.ctex"]
 
 [params]
 

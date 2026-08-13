@@ -1,0 +1,48 @@
+{
+  "translations": [
+	{
+	  "languageCode": "fr",
+	  "documents": [
+		{
+		  "documentId": 0,
+		  "title": "DOCUMENT 1 : Interdiction d'approcher ou de communiquer avec Alizée Ranoud avant ses 18 ans.docx",
+		  "content": "TRIBUNAL JUDICIAIRE DE PARIS<br>Affaire N° 14/08219-B<br><br><b><color=important>ORDONNANCE D'INTERDICTION DE CONTACT ET D'APPROCHE</color></b><br><br>En application des articles 515-9 et suivants du Code civil, et au vu des éléments probants versés au dossier contestant la capacité éducative et la sécurité de l'enfant mineur :<br><br>Il est fait interdiction stricte et immédiate à Mme Ranoud Christine :<br><br>- De se présenter au domicile, à l'établissement scolaire ou sur tout lieu de fréquentation habituel de l'enfant mineure Alizée Ranoud.<br><br>- D'établir toute communication, par n'importe quel moyen que ce soit (téléphonique, postal, électronique, réseaux sociaux ou par tiers interposé), avec la mineure Alizée Ranoud.<br><br>- De s'approcher à moins de 500 mètres de la mineure jusqu'à sa majorité légale.<br><br>Tout manquement à ces obligations exposera l'intéressée à des poursuites pénales immédiates et à une peine d'emprisonnement conformément à la loi.",
+		  "image": "res://assets/images_mission1/certificat_justice.png"
+		},
+		{
+		  "documentId": 1,
+		  "title": "DOCUMENT 2 : L'injonction.docx",
+		  "content": "<b><color=important>EXTRAIT DU JUGEMENT D'INJONCTION DE SOINS ET D'ÉLOIGNEMENT</color></b><br><br>Attendu que les rapports d'expertise médico-psychologique font état d'une instabilité comportementale sévère et d'actes d'agressivité physique caractérisés envers la mineure Alizée Ranoud ;<br><br>Attendu que la sécurité physique et psychologique de l'enfant ne peut être garantie en présence de la mère ;<br><br><b>Le Tribunal :</b><br><br>Ordonne le retrait total de l'autorité parentale de Mme [lb]Nom de la mère[rb] au profit exclusif du père, désigné comme unique représentant légal.<br><br>Injoint Mme Ranoud Christine à suivre un parcours de soins psychiatriques obligatoire.<br><br>Prononce une obligation de quitter le territoire départemental sous un délai de 30 jours pour garantir la tranquillité et la reconstruction de la cellule familiale résiduelle.",
+		  "image": "res://assets/images_mission1/certificat_justice.png"
+		},
+		{
+		  "documentId": 2,
+		  "title": "DOCUMENT 3 : mon amour de fille.docx",
+		  "content": "Tu as grandi, tu vas avoir 18 ans, et je peux enfin tout te dire sur le cauchemar d'il y a 10 ans.<br>Ma plus grande erreur.<br><br>Ton père est un <indice id=\"M1_SOLUTION_MERE\"><color=indice>pervers narcissique</color></indice>.<br>Il m'a isolée, dévalorisée et contrôlée jusqu'à me détruire.<br>Le jour où je l'ai surpris avec une autre, j'ai explosé.<br>Lui est resté glacial, sans un mot, pendant que j'étais hystérique.<br>Cette ordure filmait tout et n'a gardé que mes accès de colère pour me faire passer pour une folle.<br><br>Puis l'impensable est arrivé. Un jour, dépassée et à bout, je t'ai mis une claque pour une broutille.<br>Une tache indélébile sur mon âme...<br>J'ai compris plus tard qu'il me droguait à mon insu pour me mettre sur les nerfs et ainsi fabriquer ses « preuves ». Et il a réussi à nous séparer... Il est très méthodique pour ça...<br><br>Brisée, incapable de me défendre face à ses manipulations et traitée comme une criminelle par la justice, j'ai fui en Indonésie. <color=important>T'abandonner à lui a été la pire décision de ma vie</color>.<br><br>Aujourd'hui, je me suis reconstruite. Je suis debout, forte et lucide.<br>Je veux un avenir avec toi, si tu trouves un jour la force de me pardonner...<br><br>J'espère pouvoir te dire ces mots en face prochainement..."
+		}
+	  ]
+	},
+	{
+	  "languageCode": "en",
+	  "documents": [
+		{
+		  "documentId": 0,
+		  "title": "DOCUMENT 1: Restraining order preventing contact with Alizée Ranoud before she turns 18.docx",
+		  "content": "PARIS JUDICIAL COURT<br>Case No. 14/08219-B<br><br><b><color=important>RESTRAINING AND NO-CONTACT ORDER</color></b><br><br>Pursuant to Articles 515-9 et seq. of the Civil Code, and in view of the evidence in the case file challenging the parenting capacity and safety of the minor child:<br><br>Mrs. Ranoud Christine is strictly and immediately prohibited from:<br><br>- Appearing at the home, school, or any place habitually frequented by the minor Alizée Ranoud.<br><br>- Establishing any form of communication (by phone, mail, electronic means, social media, or through a third party) with the minor Alizée Ranoud.<br><br>- Approaching within 500 meters of the minor until she reaches legal majority.<br><br>Any breach of these obligations will expose the person concerned to immediate criminal prosecution and imprisonment in accordance with the law.",
+		  "image": "res://assets/images_mission1/certificat_justice.png"
+		},
+		{
+		  "documentId": 1,
+		  "title": "DOCUMENT 2: The injunction.docx",
+		  "content": "<b><color=important>EXTRACT FROM THE COURT-ORDERED TREATMENT AND REMOVAL RULING</color></b><br><br>Whereas the medico-psychological expert reports indicate severe behavioral instability and documented acts of physical aggression toward the minor Alizée Ranoud;<br><br>Whereas the child's physical and psychological safety cannot be guaranteed in the mother's presence;<br><br><b>The Court:</b><br><br>Orders the complete removal of parental authority from Mrs. [lb]Mother's name[rb] in exclusive favor of the father, designated as sole legal representative.<br><br>Orders Mrs. Ranoud Christine to undergo mandatory psychiatric treatment.<br><br>Issues an order to leave the departmental territory within 30 days to ensure the peace and rebuilding of the remaining family unit.",
+		  "image": "res://assets/images_mission1/certificat_justice.png"
+		},
+		{
+		  "documentId": 2,
+		  "title": "DOCUMENT 3: my darling daughter.docx",
+		  "content": "You've grown up, you're about to turn 18, and I can finally tell you everything about the nightmare from 10 years ago.<br>My biggest mistake.<br><br>Your father is a <indice id=\"M1_SOLUTION_MERE\"><color=indice>narcissistic pervert</color></indice>.<br>He isolated me, belittled me, and controlled me until he destroyed me.<br>The day I caught him with someone else, I exploded.<br>He stayed cold, silent, while I was hysterical.<br>That scum filmed everything and only kept my outbursts to make me look crazy.<br><br>Then the unthinkable happened. One day, overwhelmed and at my limit, I slapped you over nothing.<br>An indelible stain on my soul...<br>I later understood he was drugging me without my knowledge to push me over the edge and manufacture his \"evidence.\" And he succeeded in separating us... He's very methodical about that...<br><br>Broken, unable to defend myself against his manipulations, and treated like a criminal by the courts, I fled to Indonesia. <color=important>Abandoning you to him was the worst decision of my life</color>.<br><br>Today, I've rebuilt myself. I'm standing, strong, and clear-headed.<br>I want a future with you, if you ever find the strength to forgive me...<br><br>I hope to be able to tell you these words in person soon..."
+		}
+	  ]
+	}
+  ]
+}

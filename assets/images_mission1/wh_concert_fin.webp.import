@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2gdlcbdl8812"
-path="res://.godot/imported/gconcert.webp-8ab7317da139de480f836ac45d06a15e.ctex"
+uid="uid://ceqo2557g7ltc"
+path="res://.godot/imported/wh_concert_fin.webp-0c1712e174db958674af43459511b867.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images_mission1/gconcert.webp"
-dest_files=["res://.godot/imported/gconcert.webp-8ab7317da139de480f836ac45d06a15e.ctex"]
+source_file="res://assets/images_mission1/wh_concert_fin.webp"
+dest_files=["res://.godot/imported/wh_concert_fin.webp-0c1712e174db958674af43459511b867.ctex"]
 
 [params]
 

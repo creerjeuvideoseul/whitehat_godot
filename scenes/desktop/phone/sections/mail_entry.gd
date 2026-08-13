@@ -23,6 +23,14 @@ var meta_info: Dictionary
 ## Chemin res:// d'une musique à jouer en fond tant que ce mail reste ouvert
 ## (voir MailSection) — vide par défaut, la plupart des mails n'en ont pas.
 var play_music: String
+## Chemin res:// d'une image jointe, affichée en miniature 16/9 sous le corps
+## du mail — vide par défaut, voir MailSection._build_attachment_thumbnail.
+var attach_image: String
+## Pensée du joueur affichée à l'ouverture du mail (voir MailSection._show_mail) —
+## champ de premier niveau, distinct du "Player_Think" dans meta_info (celui-ci
+## se déclenche au dépli de VIEW METADATA, pas à l'ouverture du mail). Vide par
+## défaut, la plupart des mails n'en ont pas.
+var player_think: String
 
 
 static func from_dict(data: Dictionary) -> MailEntry:
@@ -39,6 +47,8 @@ static func from_dict(data: Dictionary) -> MailEntry:
 	entry.html_content = str(data.get("html_content", ""))
 	entry.meta_info = data.get("meta_info", {})
 	entry.play_music = str(data.get("play_music", ""))
+	entry.attach_image = str(data.get("attach_image", ""))
+	entry.player_think = str(data.get("Player_Think", ""))
 	return entry
 
 

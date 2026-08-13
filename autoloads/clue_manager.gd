@@ -27,11 +27,13 @@ const CLUES_CSV_PATH := "res://data/clues.txt"
 const CSV_DELIMITER := ";"
 
 ## Catégorie de l'indice de résolution principal d'une mission (ex.
-## M1_SOLUTION_OU) — jamais affichée sur le tableau (IsDisplay=0, voir
-## clue_categories.txt), mais sert de déclencheur générique pour le rapport
-## de mission : chaque future mission n'a qu'à donner cette catégorie à son
-## propre indice de résolution, rien à coder de spécifique par mission.
-## Distincte de FINSECONDAIRE (fin secondaire/bonus), qui ne déclenche rien.
+## M1_SOLUTION_OU) — affichée sur le tableau comme les autres (voir
+## clue_categories.txt), mais dans un style distinct (voir ClueBoard, fond
+## bleu Palette.CLUE_SOLUTION_*) puisqu'elle sert aussi de déclencheur
+## générique pour le rapport de mission : chaque future mission n'a qu'à
+## donner cette catégorie à son propre indice de résolution, rien à coder de
+## spécifique par mission. Distincte de FINSECONDAIRE (fin secondaire/bonus),
+## qui ne déclenche rien mais partage le même style "résolution".
 const SOLUTION_CATEGORY_ID := "FIN"
 
 ## Emis quand un nouvel indice est débloqué (pas rejoué si déjà connu) —
