@@ -73,6 +73,7 @@
 		{
 		  "mailId": 5,
 		  "sender": "c.ranoud@gomail.co.id",
+		  "play_music":"res://assets/audio/soundreality-cinematic-tension-2-504666.mp3",
 		  "avatar": "res://assets/avatar/christine_portrait2.webp",
 		  "correspondentName": "Christine Ranoud",
 		  "subject": "re: re: Je suis si désolée Alizée.",
@@ -86,11 +87,22 @@
 			  "User_Agent": "Webmail-GOMail-v4.2 / Windows 10 (Build 19045) / Chrome 120.0.0.0", 
 			  "Location": "Jakarta, Indonesia (Telkom Indonesia)", 
 			  "OpenVPN_Tunnel": "ACTIVE (Client-IP: 10.8.0.14)",
-			  "Remote_Port": "5900 (VNC) / <color=important>OPEN</color>",
-			  "Player_Think":"Le port du vpn semble ouvert, je dois pouvoir entrer sur son ordinateur.",
+			  "Remote_Port": "3389 (RDP) / <color=important>OPEN</color>",
+			  "Player_Think":"Le port de bureau à distance (RDP) semble ouvert, je dois pouvoir entrer sur son ordinateur.",
 			  "Hack_PC_Mother":1
 			}
-		}
+		},
+		{
+		  "mailId": 6,
+		  "sender": "marek@lasthorizon.org",
+		  "avatar": "res://assets/images_mission1/wh_concert_fin.webp",
+		  "correspondentName": "Marek",
+		  "subject": "Photo du concert.",
+		  "timestamp": "2030-02-01T23:55:05",
+		  "isSentBox": 0,
+		  "isCrypted": 1,
+		  "html_content": "Salut ma puce,<br>comme promis voici la photo de la soirée faite par un pote !<br>C'était génial de te savoir dans la salle !<br>Vivement le prochain concert, dans 3 jours !<br><br>Je suis si content que tu te sois enfin décidée <indice id=\"M1_SOLUTION_OU\"><color=indice>à me suivre dans ma tournée</color></indice>, tu es majeure maintenant !<br><br>Ton Marek qui t'aime..."
+		},
 	  ]
 	},
 	{
@@ -165,6 +177,7 @@
 		},
 		{
 		  "mailId": 5,
+		  "play_music":"res://assets/audio/soundreality-cinematic-tension-2-504666.mp3",
 		  "sender": "c.ranoud@gomail.co.id",
 		  "avatar": "res://assets/avatar/christine_portrait2.webp",
 		  "correspondentName": "Christine Ranoud",
@@ -179,8 +192,8 @@
 			  "User_Agent": "Webmail-GOMail-v4.2 / Windows 10 (Build 19045) / Chrome 120.0.0.0", 
 			  "Location": "Jakarta, Indonesia (Telkom Indonesia)", 
 			  "OpenVPN_Tunnel": "ACTIVE (Client-IP: 10.8.0.14)",
-			  "Remote_Port": "5900 (VNC) / <color=important>OPEN</color>",
-			  "Player_Think":"The VPN port seems to be open; I should be able to access his computer.",
+			  "Remote_Port": "3389 (RDP) / <color=important>OPEN</color>",
+			  "Player_Think":"The remote desktop (RDP) port seems to be open; I should be able to access her computer.",
 			  "Hack_PC_Mother":1
 			}		
 			  

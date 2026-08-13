@@ -11,12 +11,21 @@ class_name TerminalConsole
 ## à l'appelant, pas un système global accessible depuis n'importe où.
 
 signal closed
+## Même contrat que ChatWindow/ClueBoardWindow/OsintWindow/HackPcMotherWindow
+## (minimize_requested(window, window_title)) — n'est émis qu'en mode fenêtré,
+## voir window_title.
+signal minimize_requested(window: Control, window_title: String)
 
 const LINE_GAP_SECONDS := 0.15
 const PROGRESS_STEP_SECONDS := 0.03
-## Vitesse de frappe des lignes texte — 4x plus rapide que le défaut de
+## Vitesse de frappe des lignes "tapées" par le joueur (prompts user@/jean@,
+## voir TerminalLine.plays_typing_sound) — 4x plus rapide que le défaut de
 ## DialogueLabel (0.02s/caractère), pour un terminal qui ne traîne pas.
 const TYPING_SECONDS_PER_STEP := 0.005
+## Les lignes système (sorties d'outils, sans plays_typing_sound) s'écrivent
+## 3x plus vite que ci-dessus : c'est le joueur qui "tape" les commandes, pas
+## le reste du texte qui défile à l'écran.
+const SYSTEM_LINE_TYPING_SECONDS_PER_STEP := TYPING_SECONDS_PER_STEP / 3.0
 ## Largeur de la colonne "nom de fichier" des lignes PROGRESS, pour aligner
 ## le pourcentage comme le ferait un vrai scp/rsync.
 const FILENAME_COLUMN_WIDTH := 46
@@ -25,8 +34,11 @@ const FILENAME_COLUMN_WIDTH := 46
 const AUTO_CLOSE_DELAY_SECONDS := 0.6
 ## Fondu (entrée et sortie) du bruitage de frappe autour de chaque ligne qui
 ## le déclenche (voir TerminalLine.plays_typing_sound) — pas une seule fois
-## pour tout le terminal, mais à chaque phrase.
-const TYPING_SOUND_FADE_SECONDS := 0.5
+## pour tout le terminal, mais à chaque phrase. Volontairement court : une
+## commande tapée dure souvent moins de 0.5s à s'afficher (TYPING_SECONDS_PER_STEP),
+## un fondu trop long ne finissait jamais de monter avant d'être coupé par
+## stop_ambient(), rendant le son quasi inaudible.
+const TYPING_SOUND_FADE_SECONDS := 0.1
 ## Durée du fondu de fermeture, si fade_out_on_close est activé.
 const CLOSE_FADE_SECONDS := 0.3
 
@@ -60,7 +72,35 @@ var typing_sound: AudioStream = null
 ## d'analyse plutôt que de disparaître brutalement juste avant qu'il
 ## n'apparaisse. À définir avant add_child(), comme `lines`.
 var fade_out_on_close: bool = false
+## BBCode déjà formé (voir `lines` plus haut) retapé en boucle avant d'attendre
+## un mot de passe — ex. "Password for Christine@180.252.12.44:". Laissé vide
+## par défaut : aucun palier "mot de passe", le terminal se comporte comme
+## avant (bouton Fermer ou auto-fermeture, voir _play()). Si renseigné, aucun
+## bouton Fermer n'apparaît : la seule sortie possible est un mot de passe
+## correct (voir _play_login_gate). À définir avant add_child(), comme `lines`.
+var login_prompt_text: String = ""
+## Valeur de référence comparée à la saisie du joueur, normalisée via
+## _normalize_login_password (insensible à la casse, "_" et espace
+## interchangeables) — permet un copier-coller depuis une source en jeu (ex.
+## une fiche OSINT) sans se soucier du séparateur exact. À définir avant
+## add_child(), comme `lines`.
+var login_expected_password: String = ""
+## BBCode déjà formé (voir `lines`) affiché après une tentative incorrecte,
+## avant de redemander le mot de passe (autant de tentatives que voulu). À
+## définir avant add_child(), comme `lines`.
+var login_wrong_message: String = ""
+## Titre affiché dans une vraie barre de fenêtre réductible (voir
+## minimize_requested), à la place du cadre modal habituel (Backdrop assombri
+## qui bloque tout le reste, pas de réduction possible) — laissé vide par
+## défaut : comportement inchangé (boot système de l'intro, dump de Jean).
+## Si renseigné, le terminal devient une fenêtre comme les autres
+## (ClueBoardWindow, OsintWindow...) : réductible dans la barre des tâches
+## via desktop.gd._open_window(), ce qui laisse le joueur aller consulter
+## autre chose (ex. un mail pour y trouver un mot de passe) sans perdre sa
+## progression dans le terminal. À définir avant add_child(), comme `lines`.
+var window_title: String = ""
 
+@onready var _backdrop: ColorRect = $Backdrop
 @onready var _title_label: Label = %TitleLabel
 @onready var _scroll_container: ScrollContainer = %ScrollContainer
 @onready var _lines_list: VBoxContainer = %LinesList
@@ -75,7 +115,63 @@ func _ready() -> void:
 	_close_button.hide()
 	_close_button.pressed.connect(_on_close_pressed)
 	gui_input.connect(_on_gui_input)
+	if not window_title.is_empty():
+		_setup_window_chrome()
 	_play()
+
+
+## Bascule du cadre modal (Backdrop assombri plein écran, bloque tout le
+## reste) vers une vraie fenêtre réductible : ajoute une barre de titre avec
+## un bouton "—" au-dessus du contenu existant, plutôt que de dupliquer toute
+## la scène. mouse_filter passe à IGNORE sur la racine (plein écran) pour
+## qu'un clic en dehors de la boîte (désormais sans Backdrop pour l'absorber)
+## traverse jusqu'à ce qu'il y a en dessous (ex. le téléphone d'Alizée) au
+## lieu d'être avalé par cette zone invisible.
+func _setup_window_chrome() -> void:
+	_backdrop.hide()
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var bar := HBoxContainer.new()
+	bar.add_theme_constant_override("separation", 16)
+
+	var bar_title := Label.new()
+	bar_title.text = window_title
+	bar_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar_title.add_theme_color_override("font_color", Palette.TEXT_ACCENT)
+	bar_title.add_theme_font_size_override("font_size", Palette.SIZE_SUBTITLE)
+	bar.add_child(bar_title)
+
+	var minimize_button := Button.new()
+	minimize_button.text = "—"
+	minimize_button.custom_minimum_size = Vector2(44, 44)
+	minimize_button.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
+	minimize_button.add_theme_font_size_override("font_size", Palette.SIZE_SUBTITLE)
+	var minimize_hover := StyleBoxFlat.new()
+	minimize_hover.bg_color = Color(1, 1, 1, 0.08)
+	minimize_hover.corner_radius_top_left = 4
+	minimize_hover.corner_radius_top_right = 4
+	minimize_hover.corner_radius_bottom_left = 4
+	minimize_hover.corner_radius_bottom_right = 4
+	minimize_button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	minimize_button.add_theme_stylebox_override("hover", minimize_hover)
+	minimize_button.add_theme_stylebox_override("pressed", minimize_hover)
+	minimize_button.add_theme_stylebox_override("focus", minimize_hover)
+	minimize_button.pressed.connect(func() -> void:
+		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+		hide()
+		minimize_requested.emit(self, window_title)
+	)
+	bar.add_child(minimize_button)
+
+	var separator := ColorRect.new()
+	separator.color = Palette.BORDER_ACCENT
+	separator.custom_minimum_size = Vector2(0, 2)
+
+	var layout := _title_label.get_parent()
+	layout.add_child(separator)
+	layout.move_child(separator, 0)
+	layout.add_child(bar)
+	layout.move_child(bar, 0)
 
 
 ## Déroule les lignes dans l'ordre, puis affiche le bouton "Fermer" — ou
@@ -87,6 +183,11 @@ func _play() -> void:
 		else:
 			await _play_text_line(line)
 		await get_tree().create_timer(LINE_GAP_SECONDS).timeout
+
+	if not login_prompt_text.is_empty():
+		await _play_login_gate()
+		_on_close_pressed()
+		return
 
 	if show_close_button:
 		_close_button.show()
@@ -109,6 +210,7 @@ func _play_text_line(line: TerminalLine) -> void:
 	var dialogue_line := DialogueLine.new()
 	dialogue_line.text = line.text
 	label.dialogue_line = dialogue_line
+	label.seconds_per_step = TYPING_SECONDS_PER_STEP if line.plays_typing_sound else SYSTEM_LINE_TYPING_SECONDS_PER_STEP
 
 	var plays_sound := line.plays_typing_sound and typing_sound != null
 	if plays_sound:
@@ -157,6 +259,66 @@ func _parse_mmss(value: String) -> float:
 func _format_mmss(total_seconds: float) -> String:
 	var seconds := int(round(total_seconds))
 	return "%02d:%02d" % [seconds / 60, seconds % 60]
+
+
+## Retape le prompt puis attend une saisie du joueur (Entrée pour valider,
+## autant de tentatives que voulu) jusqu'à un mot de passe correct — voir
+## login_prompt_text/login_expected_password/login_wrong_message. C'est la
+## seule façon de sortir de cette boucle : pas de bouton Fermer tant que ce
+## mode est actif (voir _play()).
+func _play_login_gate() -> void:
+	var expected := _normalize_login_password(login_expected_password)
+	while true:
+		await _play_text_line(TerminalLine.text_line(login_prompt_text))
+		var line_edit := _add_login_line_edit()
+		line_edit.grab_focus()
+
+		while true:
+			var entered: String = await line_edit.text_submitted
+			if entered.strip_edges().is_empty():
+				continue
+			if _normalize_login_password(entered) == expected:
+				return
+			SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+			line_edit.editable = false
+			await _play_text_line(TerminalLine.text_line(login_wrong_message))
+			break
+
+		await get_tree().create_timer(LINE_GAP_SECONDS).timeout
+
+
+## Champ de saisie "en ligne" dans le terminal : fond transparent (se fond
+## dans le noir de la boîte, comme le reste du contenu) et texte masqué,
+## comme un vrai prompt de mot de passe.
+func _add_login_line_edit() -> LineEdit:
+	var line_edit := LineEdit.new()
+	line_edit.secret = true
+	line_edit.caret_blink = true
+	line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	line_edit.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	line_edit.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
+	line_edit.add_theme_color_override("caret_color", Palette.BORDER_ACCENT)
+	# Curseur "bloc" façon terminal plutôt que la fine barre par défaut — bien
+	# visible, clignote tout seul (caret_blink ci-dessus) tant qu'aucune touche
+	# n'est pressée, pour signaler que le système attend une saisie.
+	line_edit.add_theme_constant_override("caret_width", 12)
+	var empty_style := StyleBoxEmpty.new()
+	line_edit.add_theme_stylebox_override("normal", empty_style)
+	line_edit.add_theme_stylebox_override("focus", empty_style)
+
+	_lines_list.add_child(line_edit)
+	_scroll_to_bottom()
+	return line_edit
+
+
+## Insensible à la casse, "_" et espace interchangeables (ex. "Putriku_tersayang"
+## == "putriku tersayang") — permet un copier-coller depuis une source en jeu
+## (ex. une fiche OSINT) sans se soucier du séparateur exact utilisé côté données.
+func _normalize_login_password(text: String) -> String:
+	var normalized := text.strip_edges().to_lower().replace("_", " ")
+	while normalized.contains("  "):
+		normalized = normalized.replace("  ", " ")
+	return normalized
 
 
 func _add_label() -> DialogueLabel:

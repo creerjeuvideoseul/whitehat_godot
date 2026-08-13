@@ -19,6 +19,18 @@ const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
 
 const CORRECT_PASSWORD := "lasthorizon11"
 
+## Pensées affichées dans l'ordre à chaque mot de passe incorrect — de plus en
+## plus précises pour aider un joueur qui bloque, puis en boucle une fois la
+## liste épuisée plutôt que de se taire après la dernière (voir
+## _next_wrong_attempt_hint).
+const WRONG_ATTEMPT_HINT_KEYS := [
+	"VAULT_HINT_ATTEMPT_1",
+	"VAULT_HINT_ATTEMPT_2",
+	"VAULT_HINT_ATTEMPT_3",
+	"VAULT_HINT_ATTEMPT_4",
+	"VAULT_HINT_ATTEMPT_5",
+]
+
 ## Caractères autorisés à la saisie : alphanumérique + les symboles utilisés
 ## dans les mots de passe à deviner (dates avec / ou -, EliteShot$83$, Alizee&Marek).
 const INVALID_CHARS_PATTERN := "[^A-Za-z0-9/$&-]"
@@ -41,6 +53,11 @@ const _ACCENT_MAP := {
 @onready var _status_label: Label = %StatusLabel
 
 var _invalid_chars_regex := RegEx.new()
+## Nombre de mots de passe incorrects saisis depuis l'ouverture du coffre —
+## fait avancer dans WRONG_ATTEMPT_HINT_KEYS (voir _next_wrong_attempt_hint).
+## Remis à zéro à chaque nouvelle instance (on ressort du téléphone puis on y
+## revient) : pas de persistance voulue au-delà d'une session d'affichage.
+var _wrong_attempt_count: int = 0
 
 
 func _ready() -> void:
@@ -83,7 +100,7 @@ func _on_validate_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 	_status_label.add_theme_color_override("font_color", Palette.TEXT_DANGER)
 	_status_label.text = tr("VAULT_WRONG_PASSWORD")
-	thought_requested.emit(_resolve_hint(normalized))
+	thought_requested.emit(_resolve_wrong_password_hint(normalized))
 
 
 ## `announce`: vrai juste après une validation réussie (déclenche la
@@ -105,12 +122,14 @@ func _show_success(announce: bool) -> void:
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 
-## Ordre de vérification = l'ordre du plus spécifique (une piste nommée) au
-## plus générique (repli), tel que conçu. `normalized` est déjà en minuscules
-## et débarrassé de tout caractère hors [a-z0-9] (voir _normalize) — les
-## mots de passe de référence ci-dessous sont comparés sous la même forme,
-## donc "EliteShot$83$" et "EliteShot83" déclenchent la même pensée.
-func _resolve_hint(normalized: String) -> String:
+## Pistes spécifiques à CE que le joueur vient de taper (une saisie proche
+## d'un mot de passe connu mais erroné) — prioritaires sur la progression
+## générale par tentative (voir _next_wrong_attempt_hint), qui ne sert de
+## repli que si aucune de ces exceptions ne correspond. `normalized` est déjà
+## en minuscules et débarrassé de tout caractère hors [a-z0-9] (voir
+## _normalize), donc "EliteShot$83$" et "EliteShot83" déclenchent la même
+## pensée.
+func _resolve_wrong_password_hint(normalized: String) -> String:
 	if normalized.is_valid_int() and normalized.length() == 6:
 		return tr("VAULT_HINT_DATE")
 	if normalized == "peaceandlove" or normalized == "alizeemarek":
@@ -123,7 +142,17 @@ func _resolve_hint(normalized: String) -> String:
 		return tr("VAULT_HINT_ELEVEN")
 	if normalized.begins_with("lasthorizon"):
 		return tr("VAULT_HINT_LASTHORIZON")
-	return tr("VAULT_HINT_GENERIC")
+	return _next_wrong_attempt_hint()
+
+
+## Une pensée différente à chaque tentative incorrecte "générique" (voir
+## WRONG_ATTEMPT_HINT_KEYS et _resolve_wrong_password_hint ci-dessus), de plus
+## en plus précise pour aider un joueur qui reste bloqué — puis en boucle une
+## fois la liste épuisée, plutôt que de ne plus rien dire.
+func _next_wrong_attempt_hint() -> String:
+	var key: String = WRONG_ATTEMPT_HINT_KEYS[_wrong_attempt_count % WRONG_ATTEMPT_HINT_KEYS.size()]
+	_wrong_attempt_count += 1
+	return tr(key)
 
 
 ## Minuscules + accents repliés + tout caractère hors [a-z0-9] retiré — "la

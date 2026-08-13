@@ -36,7 +36,13 @@
       "Bash(taskkill //PID 5252 //F)",
       "Bash(taskkill //PID 46924 //F)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Read(//c/Users/pisto/.claude/projects/c--Users-pisto-Documents-white-hat/**)",
+      "Bash(python3 -)",
+      "Bash(/c/Python314/python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 /c/Python314/python -c ' *)",
+      "PowerShell(if \\($?\\) { \"OK\" })",
+      "PowerShell(if \\($?\\) { \"JSON OK\" })"
     ],
     "additionalDirectories": [
       "\\tmp"

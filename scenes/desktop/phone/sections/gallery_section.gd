@@ -13,9 +13,16 @@ class_name GallerySection
 signal close_requested
 
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
+const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
 const HEART_ICON := preload("res://assets/UI/gallery_heart.svg")
 const COMMENT_ICON := preload("res://assets/UI/gallery_comment.svg")
 const GALLERY_DETAIL := preload("res://scenes/desktop/phone/sections/gallery_detail.tscn")
+
+## Petit cadenas ouvert rappelant qu'une publication déchiffrée était
+## protégée (voir _build_thumbnail_image) — posé en bas à gauche de la photo,
+## pas à la taille du cadenas fermé qui lui remplace toute la vignette.
+const PADLOCK_BADGE_SIZE := Vector2(50, 50)
+const PADLOCK_BADGE_MARGIN := 8.0
 
 ## Largeur fixe d'une vignette ; hauteur d'image relevée de 90px par rapport
 ## au ratio 16/9 strict (retour utilisateur : trop fine). L'espace d'info sous
@@ -104,7 +111,15 @@ func _style_hover_border(border: Panel, is_hovered: bool) -> void:
 ## (STRETCH_KEEP_ASPECT_COVERED) plutôt que réduite avec des bandes vides.
 ## Publication cryptée et coffre pas encore débloqué : cadenas centré à la
 ## place de la vraie photo, même logique que Mail/SMS.
+##
+## Enveloppé dans un Control simple (pas directement le PanelContainer) pour
+## pouvoir ajouter le petit badge "cadenas ouvert" en bas à gauche sans qu'un
+## Container ne l'étire à toute la taille de la vignette (voir PADLOCK_BADGE_*).
 func _build_thumbnail_image(post: GalleryPost, locked: bool) -> Control:
+	var wrapper := Control.new()
+	wrapper.custom_minimum_size = Vector2(THUMB_WIDTH, THUMB_IMAGE_HEIGHT)
+	wrapper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
 	var frame := PanelContainer.new()
 	var style := StyleBoxFlat.new()
 	# Fond blanc uniquement pour une vraie photo (demandé explicitement) — une
@@ -115,7 +130,7 @@ func _build_thumbnail_image(post: GalleryPost, locked: bool) -> Control:
 	style.corner_radius_top_right = 10
 	style.set_content_margin_all(0)
 	frame.add_theme_stylebox_override("panel", style)
-	frame.custom_minimum_size = Vector2(THUMB_WIDTH, THUMB_IMAGE_HEIGHT)
+	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
 	frame.clip_contents = true
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -129,7 +144,25 @@ func _build_thumbnail_image(post: GalleryPost, locked: bool) -> Control:
 		rect.texture = load(post.picture_path)
 		rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	frame.add_child(rect)
-	return frame
+	wrapper.add_child(frame)
+
+	## Rappelle qu'une publication déchiffrée était protégée — jamais affiché
+	## si `locked` (le cadenas fermé occupe alors déjà toute la vignette).
+	if post.is_crypted and not locked:
+		var badge := TextureRect.new()
+		badge.texture = PADLOCK_OPEN
+		## Sans ça, TextureRect rapporte la taille native de la texture comme
+		## taille minimale et l'impose malgré size/position ci-dessous — c'est
+		## ce qui faisait déborder un cadenas énorme sous la vignette.
+		badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		badge.custom_minimum_size = PADLOCK_BADGE_SIZE
+		badge.position = Vector2(PADLOCK_BADGE_MARGIN, THUMB_IMAGE_HEIGHT - PADLOCK_BADGE_SIZE.y - PADLOCK_BADGE_MARGIN)
+		badge.size = PADLOCK_BADGE_SIZE
+		badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		wrapper.add_child(badge)
+
+	return wrapper
 
 
 func _build_thumbnail_info(post: GalleryPost, locked: bool) -> Control:
