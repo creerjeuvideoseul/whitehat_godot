@@ -38,7 +38,7 @@ func refresh() -> void:
 		return
 
 	for entry: Dictionary in thought_log:
-		_messages_list.add_child(_build_entry(entry))
+		_build_entry(entry)
 
 
 func _build_empty_label() -> Label:
@@ -54,7 +54,14 @@ func _build_empty_label() -> Label:
 ## le joueur change de langue en cours de partie. Repli sur le texte brut déjà
 ## enregistré sinon (pensées sans clé ui.csv, ex. celles du mail — voir
 ## mail_section.gd).
-func _build_entry(entry: Dictionary) -> Control:
+##
+## `column` doit rejoindre _messages_list (déjà dans l'arbre) AVANT que
+## `bubble` n'y soit ajouté et configuré — ChatBubble.configure() s'appuie sur
+## %DialogueLabel, résolu par @onready seulement une fois le nœud réellement
+## entré dans l'arbre (voir ConversationView._add_bubble, même contrainte
+## d'ordre). Construire toute la colonne à part puis l'ajouter d'un bloc, comme
+## la première version le faisait, laissait ChatBubble configuré "hors arbre".
+func _build_entry(entry: Dictionary) -> void:
 	var key: String = entry.get("key", "")
 	var text: String = tr(key) if not key.is_empty() else str(entry.get("text", ""))
 
@@ -64,6 +71,7 @@ func _build_entry(entry: Dictionary) -> Control:
 	var column := VBoxContainer.new()
 	column.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	column.add_theme_constant_override("separation", 4)
+	_messages_list.add_child(column)
 
 	var bubble: ChatBubble = CHAT_BUBBLE.instantiate()
 	column.add_child(bubble)
@@ -75,8 +83,6 @@ func _build_entry(entry: Dictionary) -> Control:
 	timestamp.add_theme_color_override("font_color", Palette.CONSOLE_TEXT)
 	timestamp.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 	column.add_child(timestamp)
-
-	return column
 
 
 func _on_close_pressed() -> void:

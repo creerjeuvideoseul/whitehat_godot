@@ -8,11 +8,11 @@
 		  "sender": "univ_nantes@gmail.com",
 		  "avatar": "res://assets/phone/email.png",
 		  "correspondentName": "Université de Nantes",
-		  "subject": "Mail médecine refus : 2025-12-15",
-		  "timestamp": "2025-12-15T09:14:00",
+		  "subject": "Résultat d'admission – Parcours Accès Santé : 01 novembre 2029",
+		  "timestamp": "2029-11-01T09:14:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Bonjour Mademoiselle Ranoud,<br><br>Après étude attentive de votre dossier dans le cadre des admissions post-bac 2026 pour le Parcours Accès Santé (PASS) de l'Université de Nantes, nous regrettons de vous informer que <indice id=\"M1_Alizee_candidature_non\"><color=indice>votre candidature n'a pas été retenue par la commission pédagogique.</color></indice><br><br>Le nombre très élevé de candidatures reçues cette année ne nous permet malheureusement pas de donner une suite favorable à tous les dossiers, malgré leurs qualités. Nous vous invitons à consulter votre espace candidat afin de prendre connaissance des éventuelles propositions alternatives ou formations complémentaires accessibles.<br><br>Nous vous remercions pour l'intérêt porté à notre établissement et vous souhaitons pleine réussite dans la poursuite de votre parcours universitaire.<br><br>Cordialement,<br>Claire Moreau<br>Chargée des admissions – Pôle Santé<br>Université de Nantes",
+		  "html_content": "Bonjour Mademoiselle Ranoud,<br><br>Après étude de votre dossier pour le PASS 2030 à l'Université de Nantes, nous regrettons de vous informer que <indice id=\"M1_Alizee_candidature_non\"><color=indice>votre candidature n'a pas été retenue.</color></indice><br><br>En raison d'un nombre élevé de demandes, nous ne pouvons satisfaire tous les candidats. <br>Nous vous souhaitons une pleine réussite pour la suite.<br><br>Cordialement,<br>Claire Moreau<br>Chargée des admissions – Université de Nantes",
 		  "meta_info": {
 			"Serveur": "mail-relay.univ-nantes.fr",
 			"Authentification": "SPF: pass, DKIM: pass",
@@ -29,7 +29,7 @@
 		  "timestamp": "2030-01-18T22:30:00",
 		  "isSentBox": 1,
 		  "isCrypted": 0,
-		  "html_content": "Bonjour,<br><br>Je ne sais pas trop pourquoi j'écris ici. Je suis tombée sur votre site en cherchant des réponses sur le vide et la fatigue constante.<br><br>J'ai 18 ans et je me sens toujours épuisée, déconnectée de tout. Mes proches disent que je ne fais pas d'efforts, mais je crois que c'est moi qui ne suis pas faite pour ce monde. <br><br>Je n'ai personne à qui en parler.<br>Si vous savez pourquoi je me sens comme ça, s'il vous plaît, dites-le-moi.<br><br>Alizée"
+		  "html_content": "Bonjour,<br><br>Je ne sais pas trop pourquoi j'écris ici. Je suis tombée sur votre site en cherchant des réponses sur le vide et la fatigue constante.<br><br><color=important>J'ai 18 ans et je me sens toujours épuisée</color>, déconnectée de tout. Mes proches disent que je ne fais pas d'efforts, mais je crois que c'est moi qui ne suis pas faite pour ce monde. <br><br>Je n'ai personne à qui en parler.<br>Si vous savez pourquoi je me sens comme ça, s'il vous plaît, dites-le-moi.<br><br>Alizée"
 		},
 		{
 		  "mailId": 2,
@@ -40,7 +40,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Chère Alizée,<br><br>Votre message n'est pas un hasard. Cette fatigue que vous ressentez n'est pas une maladie : c'est le signe que vous commencez à vous éveiller. Vous n'êtes pas brisée, vous êtes simplement trop lucide pour ce monde superficiel.<br><br>Votre entourage ne peut pas comprendre, mais nous, nous connaissons les règles du jeu. Vous n'avez plus à porter ce vide toute seule.<br><br>Ne répondez pas à ce mail. Si vous voulez enfin comprendre qui vous êtes, rejoignez notre salon privé via ce lien unique : <indice id=\"M1_mail_secte_write\"><color=indice>www.rejoigneznotrecommunaute.com</color></indice><br><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
+		  "html_content": "Chère Alizée,<br><br>Cette fatigue que vous ressentez n'est pas une maladie, mais le signe d'un éveil. Vous êtes simplement trop lucide pour ce monde, et votre entourage ne peut pas comprendre.<br><br>Vous n'avez plus à porter ce vide seule. Ne répondez pas à ce mail, rejoignez directement notre salon privé via ce lien : <indice id=\"M1_mail_secte_write\"><color=indice>www.*** blocked by spamkiller ***.com</color></indice><br><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Pays-Bas)",
 			"Serveur": "smtp.eidos-relay.net",
@@ -80,7 +80,7 @@
 		  "timestamp": "2030-01-30T09:02:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Il faut qu'on se parle.</color></indice><br><br>Je t'aime, Christine.",
+		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><br>Il faut qu'on se parle. <indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Tu voudrais bien qu'on se renconde ?</color></indice><br><br>Je t'aime, Christine.",
 		  "meta_info": {
 			  "IP_Origine": "180.252.12.44",
 			  "Serveur": "mail.gomail.co.id", 
@@ -116,11 +116,11 @@
 		  "sender": "univ_nantes@gmail.com",
 		  "avatar": "res://assets/phone/email.png",
 		  "correspondentName": "University of Nantes",
-		  "subject": "Medical school rejection: 2025-12-15",
-		  "timestamp": "2025-12-15T09:14:00",
+		  "subject": "Admissions Results – Health Access Track: November 1, 2029",
+		  "timestamp": "2029-11-01T09:14:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Dear Miss Ranoud,<br><br>After careful review of your application for the 2026 post-secondary admissions in the Health Access Pathway (PASS) at the University of Nantes, we regret to inform you that <indice id=\"M1_Alizee_candidature_non\"><color=indice>your application was not selected by the academic committee.</color></indice><br><br>The very high number of applications received this year unfortunately does not allow us to give a favorable outcome to every file, regardless of merit. We invite you to check your applicant portal for any alternative offers or complementary programs you may be eligible for.<br>Thank you for your interest in our institution, and we wish you every success in the continuation of your academic path.<br>Sincerely,<br>Claire Moreau<br>Admissions Officer – Health Division<br>University of Nantes",
+		  "html_content": "Hello Ms. Ranoud,<br><br>After reviewing your application for the PASS 2030 program at the University of Nantes, we regret to inform you that <index id=\"M1_Alizee_candidature_non\"><color=index>your application has not been accepted.</color></index><br><br>Due to the high number of applications, we are unable to accept all candidates. <br>We wish you every success in the future.<br><br>Sincerely,<br>Claire Moreau<br>Admissions Officer – University of Nantes",
 		  "meta_info": {
 			"Server": "mail-relay.univ-nantes.fr",
 			"Authentication": "SPF: pass, DKIM: pass",
@@ -148,7 +148,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Dear Alizée,<br>Your message is no coincidence. This exhaustion you feel is not an illness: it is the sign that you are beginning to awaken. You are not broken, you are simply too lucid for this superficial world.<br><br>Those around you cannot understand, but we know the rules of the game. You no longer have to carry this emptiness alone.<br><br>Do not reply to this email. If you finally want to understand who you are, join our private circle through this unique link: <indice id=\"M1_mail_secte_write\"><color=indice>www.jointourcommunity.com</color></indice><br><br>Take care of yourself,<br>Center for Inner Harmony.",
+		  "html_content": "Dear Alizée,<br><br>The fatigue you’re feeling isn’t an illness, but a sign of awakening. You’re simply too clear-sighted for this world, and those around you can’t understand.<br><br>You no longer have to carry this emptiness alone. Don’t reply to this email; join our private chat room directly via this link: <indice id=\"M1_mail_secte_write\"><color=indice>www.*** blocked by spamkiller ***.com</color></indice><br><br>Take care of yourself,<br>Center for Inner Harmony.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Netherlands)",
 			"Server": "smtp.eidos-relay.net",
@@ -164,7 +164,7 @@
 		  "timestamp": "2030-01-12T03:12:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "My daughter…<br>I'm sorry.<br><br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>a chance to reconnect.</color></indice><br><br>Your mother, who loves you."
+		  "html_content": "My daughter…<br>I'm sorry.<br><br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me a chance to reconnect. <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>Would you like to meet up?</color></indice><br><br>Your mother, who loves you."
 		},
 		{
 		  "mailId": 4,

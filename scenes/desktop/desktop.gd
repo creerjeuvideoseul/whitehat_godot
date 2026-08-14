@@ -378,6 +378,16 @@ func _open_window(window) -> void:
 	_window_layer.add_child(window)
 
 
+## Une fenêtre réutilisée (show() sans repasser par add_child) garde le rang
+## qu'elle avait dans _window_layer au moment de sa création — jamais mis à
+## jour depuis, contrairement à sa visibilité. Ça la laissait derrière le
+## téléphone d'Alizée (ajouté après elle) une fois rouverte (retour joueur :
+## Indice/OSINT passaient derrière). L'ordre des enfants d'un Control pilote
+## l'empilement visuel : le dernier enfant se dessine au premier plan.
+func _bring_window_to_front(window: Control) -> void:
+	_window_layer.move_child(window, _window_layer.get_child_count() - 1)
+
+
 func _on_window_minimize_requested(window: Control, window_title: String) -> void:
 	if window == _osint_window:
 		_osint_window_title = window_title
@@ -385,7 +395,10 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 		_hack_pc_mother_window_title = window_title
 	elif window == _hack_pc_mother_login_console:
 		_hack_pc_mother_login_console_title = window_title
-	_footer.add_minimized_window(window_title, func() -> void: window.show())
+	_footer.add_minimized_window(window_title, func() -> void:
+		window.show()
+		_bring_window_to_front(window)
+	)
 
 
 ## "Indice" always reopens the same board so its layout/unlocked state isn't
@@ -396,6 +409,7 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 func _on_clue_button_pressed() -> void:
 	if is_instance_valid(_clue_board_window):
 		_clue_board_window.show()
+		_bring_window_to_front(_clue_board_window)
 		return
 
 	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
@@ -416,6 +430,7 @@ func _on_thought_log_button_pressed() -> void:
 		_window_layer.add_child(_thought_log_window)
 	_thought_log_window.refresh()
 	_thought_log_window.show()
+	_bring_window_to_front(_thought_log_window)
 
 
 ## N'arrive qu'après confirmation du joueur (voir ClueBoardWindow.
@@ -440,6 +455,7 @@ func _on_hack_pc_mother_requested() -> void:
 	if is_instance_valid(_hack_pc_mother_window):
 		_footer.remove_minimized_window(_hack_pc_mother_window_title)
 		_hack_pc_mother_window.show()
+		_bring_window_to_front(_hack_pc_mother_window)
 		return
 
 	# Le terminal de connexion est réductible (voir _play_hack_pc_mother_login_terminal) :
@@ -590,6 +606,7 @@ func _on_osint_search_requested(query: String) -> void:
 	if is_instance_valid(_osint_window):
 		_footer.remove_minimized_window(_osint_window_title)
 		_osint_window.show()
+		_bring_window_to_front(_osint_window)
 	else:
 		_osint_window = OSINT_WINDOW.instantiate()
 		_open_window(_osint_window)

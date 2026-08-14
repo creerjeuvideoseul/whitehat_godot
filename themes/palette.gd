@@ -93,7 +93,7 @@ const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.879, 0.393, 0.038, 1.0)
 ## qu'à un seul endroit. Sans rapport avec TEXT_HIGHLIGHT (indices) ni
 ## TEXT_DANGER (rouge pâle réservé au texte d'avertissement) : un rouge vif,
 ## dédié.
-const TEXT_IMPORTANT := Color(0.802, 0.359, 0.991, 1.0)
+const TEXT_IMPORTANT := Color(0.917, 0.166, 0.0, 1.0)
 
 ## Variante de TEXT_IMPORTANT pour un fond clair (bulles SMS pastel de
 ## certains contacts, voir SmsConversation.color_background) — même teinte,
@@ -101,7 +101,7 @@ const TEXT_IMPORTANT := Color(0.802, 0.359, 0.991, 1.0)
 ## is_light() pour savoir laquelle des deux utiliser selon le fond). Seul
 ## resolve_important_color() (dialogues, toujours sur fond sombre) n'a pas
 ## besoin de cette variante — voir html_to_bbcode() pour <color=important>.
-const TEXT_IMPORTANT_ON_LIGHT := Color(0.626, 0.039, 0.817, 1.0)
+const TEXT_IMPORTANT_ON_LIGHT := Color(0.644, 0.081, 0.158, 1.0)
 
 ## Bordure des panneaux d'indices "de résolution" (catégories FIN/FINSECONDAIRE
 ## du tableau d'enquête, voir ClueBoard._apply_panel_state) une fois débloqués —

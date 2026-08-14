@@ -7,7 +7,6 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
 @onready var _credit_label: RichTextLabel = %CreditLabel
-@onready var _logo_video: VideoStreamPlayer = %LogoImage
 
 @onready var _new_game_button: Button = %NewGameButton
 @onready var _options_button: Button = %OptionsButton
@@ -42,11 +41,6 @@ func _ready() -> void:
 	_new_game_button.grab_focus()
 
 	MusicPlayer.play(MENU_MUSIC)
-
-	## VideoStreamPlayer ne boucle pas nativement — on relance à la main à
-	## chaque fin de lecture pour que le logo tourne en continu comme une
-	## simple image animée.
-	_logo_video.finished.connect(_logo_video.play)
 
 func _update_uptime_label() -> void:
 	_uptime_label.text = BootUptime.format()

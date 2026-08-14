@@ -168,6 +168,24 @@
 		  "Téléphone": "+33 6 44 92 xx xx",
 		  "Fuites connues": "VNews Internal Leak (2028), Forum Hardware.fr",
 		  "Mots de passe": "RootAdmin#2030, KarinelLaisseMoiParler"
+		},
+		{
+		  "characterId": 9,
+		  "Photo": "res://assets/avatar/portrait_claire.png",
+		  "Nom": "Moreau",
+		  "Prenom": "Claire",
+		  "Pseudo(s) connu(s)": "Claire40F",
+		  "Lieu de naissance": "Nantes",
+		  "Age": "40",
+		  "Statut": "En couple", 
+		  "Profession": "Chargée des admissions – Pôle Santé",
+		  "Adresse connue": "Nantes, Loire-Atlantique",
+		  "Loisir": "Lecture, randonnée, bénévolat associatif",
+		  "IP": "Française",
+		  "Mail": "claire.moreau@univ-nantes44.fr",
+		  "Téléphone": "+33 6 82 15 xx xx",
+		  "Fuites connues": "UnivNantes_Database_Leak",
+		  "Mots de passe": "IloveZidane#2026, IloveMelenchon"
 		}
 	  ]
 	},
