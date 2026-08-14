@@ -9,7 +9,6 @@ const INVALID_PSEUDO_CHARS := "[^A-Za-z0-9_]"
 @onready var _password_edit: LineEdit = %PasswordEdit
 @onready var _error_label: Label = %ErrorLabel
 @onready var _connect_button: Button = %ConnectButton
-@onready var _back_button: Button = %BackButton
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
 @onready var _credit_label: RichTextLabel = %CreditLabel
@@ -21,7 +20,6 @@ func _ready() -> void:
 
 	_pseudo_edit.text_changed.connect(_on_pseudo_text_changed)
 	_connect_button.pressed.connect(_on_connect_pressed)
-	_back_button.pressed.connect(_on_back_pressed)
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
 	## BBCode : ne peut pas compter sur l'auto-traduction d'un RichTextLabel
@@ -29,6 +27,10 @@ func _ready() -> void:
 	## explicitement — même raison que _quit_game_confirm_dialog.dialog_text
 	## dans options_panel.gd.
 	_credit_label.text = tr("BOOT_CREDIT")
+
+	## Mot de passe pré-rempli par défaut (juste esthétique, non validé :
+	## le joueur peut l'effacer/modifier sans que ça change quoi que ce soit).
+	_password_edit.text = "*********"
 
 	_pseudo_edit.grab_focus()
 
@@ -51,6 +53,3 @@ func _on_connect_pressed() -> void:
 	PlayerSession.set_login(pseudo, _password_edit.text)
 	SaveManager.save_checkpoint("res://scenes/desktop/desktop.tscn")
 	get_tree().change_scene_to_file("res://scenes/desktop/desktop.tscn")
-
-func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://main_menu.tscn")

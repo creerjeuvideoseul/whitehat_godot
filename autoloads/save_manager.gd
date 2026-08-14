@@ -113,6 +113,28 @@ func is_conversation_complete(contact_id: String) -> bool:
 	return conversations.get(contact_id, {}).get("complete", false)
 
 
+## Ajoute une pensée à l'historique consultable (voir ThoughtLogWindow) — pas
+## de dédoublonnage voulu, la même pensée peut légitimement revenir plusieurs
+## fois (ex. indices du coffre-fort). `translation_key` vide si le texte n'a
+## pas de clé ui.csv (ex. pensées déclenchées depuis le mail, déjà résolues
+## par langue dans le JSON de données — voir mail_section.gd) : get_thought_log()
+## retombe alors sur `text` tel quel plutôt que sur une clé de traduction.
+func record_thought(text: String, translation_key: String = "") -> void:
+	var thought_log: Array = _data.get("thought_log", [])
+	thought_log.append({
+		"text": text,
+		"key": translation_key,
+		"game_unix_time": GameClock.get_unix_time(),
+	})
+	_data["thought_log"] = thought_log
+
+
+## Historique complet, du plus ancien au plus récent (voir record_thought) —
+## chaque entrée est {"text": String, "key": String, "game_unix_time": int}.
+func get_thought_log() -> Array:
+	return _data.get("thought_log", [])
+
+
 ## How long the player has been playing since their progress was last
 ## checkpointed — i.e. how much would be lost by quitting right now.
 func get_minutes_since_checkpoint() -> int:
@@ -143,6 +165,7 @@ func capture_debug_checkpoint() -> void:
 		"story_vars": StoryVars.get_all(),
 		"unlocked_indices": ClueManager.get_unlocked_ids(),
 		"conversations": _data.get("conversations", {}).duplicate(true),
+		"thought_log": _data.get("thought_log", []).duplicate(true),
 	}
 	var file := FileAccess.open(DEBUG_SAVE_PATH, FileAccess.WRITE)
 	if file == null:

@@ -7,6 +7,7 @@ extends Control
 
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
 const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
+const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
 const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
@@ -75,6 +76,10 @@ const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
 ## a short pause first so the two don't blur together.
 const JEAN_REVEAL_DELAY_SECONDS := 1.0
 
+## Laisse le temps au joueur de "digérer" la fin de la conversation avec Jean
+## avant que le terminal système (dump du téléphone) ne s'ouvre par-dessus.
+const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 2.0
+
 @onready var _window_layer: Control = %WindowLayer
 @onready var _footer: Control = %DesktopFooter
 @onready var _header: DesktopHeader = %DesktopHeader
@@ -85,6 +90,11 @@ const JEAN_REVEAL_DELAY_SECONDS := 1.0
 ## window closes (×) rather than minimizes (see clue_board_window.gd), no
 ## taskbar entry to juggle like the other windows below.
 var _clue_board_window: ClueBoardWindow = null
+
+## Même principe que _clue_board_window : une seule fenêtre "Analyse
+## Rétrospective" réutilisée à chaque clic sur le bouton "Pensées" du footer —
+## voir _on_thought_log_button_pressed.
+var _thought_log_window: ThoughtLogWindow = null
 
 ## Même principe que _clue_board_window : une seule fenêtre OSINT réutilisée
 ## d'une recherche à l'autre (jamais de doublon dans la taskbar), son contenu
@@ -119,6 +129,7 @@ var _chat_window: ChatWindow = null
 func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
+	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 
 	# Debug only (voir Settings.IS_PRODUCTION) : le bouton "revenir avant la
@@ -169,7 +180,7 @@ func _ready() -> void:
 	# Jean" couverte par cette même branche (voir commentaire ci-dessus), où
 	# AnonGhost a déjà été rencontré lors d'une session précédente.
 	if not SaveManager.is_conversation_complete("anonghost"):
-		_show_player_thought(tr("THOUGHT_ANONGHOST_CONTACT"))
+		_show_player_thought(tr("THOUGHT_ANONGHOST_CONTACT"), "THOUGHT_ANONGHOST_CONTACT")
 
 	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
 	_chat_window = _build_chat_window()
@@ -177,11 +188,16 @@ func _ready() -> void:
 
 
 ## Petit encart "pensée du joueur" en bas de l'écran (voir player_thought.gd)
-## — se montre et se referme tout seul, rien à garder côté appelant.
-func _show_player_thought(text: String) -> void:
+## — se montre et se referme tout seul, rien à garder côté appelant. Journalise
+## aussi la pensée dans SaveManager (voir ThoughtLogWindow) : `translation_key`
+## vide si l'appelant n'a pas de clé ui.csv pour ce texte (ex. pensées
+## déclenchées depuis le mail, déjà résolues par langue dans le JSON de
+## données — voir mail_section.gd).
+func _show_player_thought(text: String, translation_key: String = "") -> void:
 	var thought: PlayerThought = PLAYER_THOUGHT.instantiate()
 	thought.text = text
 	_window_layer.add_child(thought)
+	SaveManager.record_thought(text, translation_key)
 
 
 func _build_chat_window() -> ChatWindow:
@@ -198,6 +214,7 @@ func _build_chat_window() -> ChatWindow:
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
 		elif contact_id == "jean_ranoud":
+			await get_tree().create_timer(JEAN_DUMP_TERMINAL_DELAY_SECONDS).timeout
 			_play_jean_dump_terminal()
 	)
 	return window
@@ -387,13 +404,31 @@ func _on_clue_button_pressed() -> void:
 	_window_layer.add_child(_clue_board_window)
 
 
-## Écran plein écran temporaire (pas de logique de rapport pour l'instant,
-## voir report_generation_screen.gd) — ajouté directement sur la racine du
-## bureau, comme TerminalConsole (pas de CanvasLayer dédié : un moment de
-## narration propre au bureau, pas un système global accessible d'ailleurs),
-## donc par-dessus header/footer/toutes les fenêtres ouvertes.
+## "Pensées" du footer, même schéma que "Indice" ci-dessus : une seule
+## instance réutilisée, jamais fermée/détruite. refresh() est appelé à chaque
+## clic (pas seulement à la création) pour refléter les pensées ajoutées
+## depuis la dernière ouverture — contrairement à ClueBoardWindow, cette
+## fenêtre n'écoute aucun signal pour se mettre à jour toute seule pendant
+## qu'elle reste ouverte, ce n'est pas nécessaire ici.
+func _on_thought_log_button_pressed() -> void:
+	if not is_instance_valid(_thought_log_window):
+		_thought_log_window = THOUGHT_LOG_WINDOW.instantiate()
+		_window_layer.add_child(_thought_log_window)
+	_thought_log_window.refresh()
+	_thought_log_window.show()
+
+
+## N'arrive qu'après confirmation du joueur (voir ClueBoardWindow.
+## ReportConfirmDialog, "pas de retour en arrière possible") : un vrai
+## changement de scène plutôt qu'une fenêtre par-dessus le bureau, puisque
+## ClueBoardWindow ne rouvrira plus derrière — même fondu (SceneTransition)
+## que les autres changements de scène du jeu (voir introduction.gd). Contenu
+## du rapport lui-même (report_generation_screen.gd) à venir dans une
+## prochaine passe ; pour l'instant l'écran n'a que son propre header/footer.
 func _on_generate_report_requested() -> void:
-	add_child(REPORT_GENERATION_SCREEN.instantiate())
+	await SceneTransition.fade_out()
+	get_tree().change_scene_to_packed(REPORT_GENERATION_SCREEN)
+	SceneTransition.fade_in()
 
 
 ## Même principe que _on_clue_button_pressed/_on_osint_search_requested :

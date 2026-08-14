@@ -59,16 +59,6 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_normal"]
-bg_color = Color(1, 1, 1, 0)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_hover"]
-bg_color = Color(1, 1, 1, 0.05)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_connect_normal"]
 bg_color = Color(0.086, 0.302, 0.176, 0.35)
 border_width_left = 2
@@ -307,13 +297,19 @@ layout_mode = 2
 theme_override_constants/separation = 34
 alignment = 1
 
+[node name="PseudoLabel" type="Label" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/BodyMargin/BodyBox" unique_id=1731028493]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.68, 0.63, 1)
+theme_override_font_sizes/font_size = 22
+text = "LOGIN_PSEUDO_LABEL"
+
 [node name="PseudoEdit" type="LineEdit" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/BodyMargin/BodyBox" unique_id=1565001877]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(700, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.08, 0.1, 0.09, 1)
-theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
+theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
@@ -326,8 +322,8 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(700, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.08, 0.1, 0.09, 1)
-theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_colors/font_placeholder_color = Color(0.45, 0.48, 0.46, 1)
+theme_override_colors/caret_color = Color(0.08, 0.1, 0.09, 1)
 theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 theme_override_styles/focus = SubResource("StyleBoxFlat_input_focus")
@@ -356,18 +352,6 @@ theme_override_constants/margin_bottom = 18
 
 [node name="FooterRow" type="HBoxContainer" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/FooterMargin" unique_id=988915866]
 layout_mode = 2
-
-[node name="BackButton" type="Button" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/FooterMargin/FooterRow" unique_id=1160866662]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.63, 0.58, 1)
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_back_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_back_hover")
-theme_override_styles/focus = SubResource("StyleBoxFlat_back_hover")
-text = "LOGIN_BACK_BUTTON"
-flat = true
 
 [node name="FooterSpacer" type="Control" parent="MainContent/Margin/HBox/RightPanel/Card/CardLayout/FooterMargin/FooterRow" unique_id=34594747]
 layout_mode = 2

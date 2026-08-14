@@ -1,13 +1,17 @@
 extends Control
 ## The desktop's bottom bar. Left side is a taskbar for minimized windows
 ## (chat/phone/mail/file explorer, ...) — see add_minimized_window(). Right
-## side is connection/session status: VPN, TOR relay count, a decorative
-## signal readout, and the in-fiction clock (GameClock).
+## side is connection/session status: a "Pensées" button (thought history,
+## see ThoughtLogWindow), VPN, TOR relay count, a decorative signal readout,
+## and the in-fiction clock (GameClock).
+
+signal thought_log_button_pressed
 
 @onready var _clock_label: Label = %ClockLabel
 @onready var _minimized_windows_bar: HBoxContainer = %MinimizedWindowsBar
 @onready var _debug_clue_button: Button = %DebugClueButton
 @onready var _debug_jean_checkpoint_button: Button = %DebugJeanCheckpointButton
+@onready var _thought_log_button: Button = %ThoughtLogButton
 
 ## Toggle state for the debug button — it doesn't ask ClueManager "is
 ## everything unlocked", it just remembers which action it last took.
@@ -17,6 +21,7 @@ var _debug_indices_unlocked: bool = false
 func _ready() -> void:
 	_update_clock_label()
 	GameClock.tick.connect(_update_clock_label)
+	_thought_log_button.pressed.connect(func() -> void: thought_log_button_pressed.emit())
 
 	if Settings.IS_PRODUCTION:
 		_debug_clue_button.queue_free()

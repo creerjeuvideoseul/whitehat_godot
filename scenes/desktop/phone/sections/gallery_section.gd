@@ -28,9 +28,16 @@ const PADLOCK_BADGE_MARGIN := 8.0
 ## au ratio 16/9 strict (retour utilisateur : trop fine). L'espace d'info sous
 ## l'image n'a plus de hauteur imposée — il s'ajuste à son propre contenu
 ## (retour utilisateur : trop de vide sous le titre avec une hauteur fixe).
-const THUMB_WIDTH := 250
-const THUMB_IMAGE_HEIGHT := 231
+const THUMB_WIDTH := 380
+## Garde le même ratio largeur/hauteur que l'ancienne vignette (231/250)
+## plutôt qu'un 16/9 strict — voir commentaire ci-dessus.
+const THUMB_IMAGE_HEIGHT := 277
 const ICON_SIZE := Vector2(20, 20)
+## Marge autour du cadenas fermé (publication verrouillée) uniquement —
+## laisse de l'air tout autour au lieu qu'il remplisse toute la vignette,
+## contrairement aux vraies photos qui collent les bords (voir
+## _build_thumbnail_image).
+const LOCKED_PADLOCK_MARGIN := 40.0
 
 ## Fichier JSON de la galerie affichée — voir GalleryDatabase. Le seul champ à
 ## changer pour réutiliser cette scène sur un autre personnage/mission.
@@ -128,7 +135,7 @@ func _build_thumbnail_image(post: GalleryPost, locked: bool) -> Control:
 	style.bg_color = Color(0, 0, 0, 0) if locked else Color.WHITE
 	style.corner_radius_top_left = 10
 	style.corner_radius_top_right = 10
-	style.set_content_margin_all(0)
+	style.set_content_margin_all(LOCKED_PADLOCK_MARGIN if locked else 0.0)
 	frame.add_theme_stylebox_override("panel", style)
 	frame.set_anchors_preset(Control.PRESET_FULL_RECT)
 	frame.clip_contents = true

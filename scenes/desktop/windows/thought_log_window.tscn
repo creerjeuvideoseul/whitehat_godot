@@ -1,6 +1,6 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://scenes/desktop/windows/chat_window.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/desktop/windows/thought_log_window.gd" id="1_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window_bg"]
 bg_color = Color(0.03, 0.1, 0.07, 0.98)
@@ -21,18 +21,14 @@ border_color = Color(0.22, 0.87, 0.45, 0.5)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sidebar"]
-bg_color = Color(0.07, 0.18, 0.13, 1)
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_minimize"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
 bg_color = Color(1, 1, 1, 0)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_left = 4
 corner_radius_bottom_right = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_minimize_hover"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_hover"]
 bg_color = Color(1, 1, 1, 0.08)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
@@ -48,26 +44,25 @@ border_width_bottom = 3
 border_color = Color(0.22, 0.87, 0.45, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
-corner_radius_bottom_left = 12
 corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
-[node name="ChatWindow" type="Control"]
+[node name="ThoughtLogWindow" type="Control"]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -750.0
+offset_left = -600.0
 offset_top = -400.0
-offset_right = 750.0
+offset_right = 600.0
 offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
 [node name="Background" type="Panel" parent="."]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,7 +81,6 @@ grow_vertical = 2
 theme_override_constants/separation = 0
 
 [node name="TitleBar" type="PanelContainer" parent="Layout"]
-unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_titlebar")
@@ -105,66 +99,45 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
 theme_override_font_sizes/font_size = 26
-text = "CHAT_WINDOW_TITLE"
+text = "THOUGHT_LOG_WINDOW_TITLE"
 
 [node name="Spacer" type="Control" parent="Layout/TitleBar/Margin/Row"]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
 
-[node name="MinimizeButton" type="Button" parent="Layout/TitleBar/Margin/Row"]
+[node name="CloseButton" type="Button" parent="Layout/TitleBar/Margin/Row"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
-theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_minimize")
-theme_override_styles/hover = SubResource("StyleBoxFlat_minimize_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_minimize_hover")
-theme_override_styles/focus = SubResource("StyleBoxFlat_minimize_hover")
-text = "—"
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_close")
+theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_close_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_close_hover")
+text = "×"
 
-[node name="Body" type="HBoxContainer" parent="Layout"]
+[node name="Body" type="ScrollContainer" parent="Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 0
+horizontal_scroll_mode = 0
 
-[node name="Sidebar" type="PanelContainer" parent="Layout/Body"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_sidebar")
-
-[node name="Margin" type="MarginContainer" parent="Layout/Body/Sidebar"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-
-[node name="VBox" type="VBoxContainer" parent="Layout/Body/Sidebar/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="ContactsLabel" type="Label" parent="Layout/Body/Sidebar/Margin/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.63, 0.58, 1)
-theme_override_font_sizes/font_size = 20
-text = "CHAT_CONTACTS_LABEL"
-
-[node name="ContactsList" type="VBoxContainer" parent="Layout/Body/Sidebar/Margin/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="ConversationHost" type="Control" parent="Layout/Body"]
-unique_name_in_owner = true
+[node name="Margin" type="MarginContainer" parent="Layout/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="MessagesList" type="VBoxContainer" parent="Layout/Body/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 20
 
 [node name="BorderOverlay" type="Panel" parent="."]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

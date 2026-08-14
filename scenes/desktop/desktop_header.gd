@@ -61,7 +61,7 @@ var _clue_button_blink_tween: Tween
 ## mots de passe OSINT), ils s'affichent l'un après l'autre plutôt que de se
 ## chevaucher.
 var _toast: PanelContainer
-var _toast_label: Label
+var _toast_label: RichTextLabel
 var _toast_queue: Array[String] = []
 var _toast_showing: bool = false
 
@@ -95,25 +95,26 @@ func _on_clue_unlocked(clue_id: String) -> void:
 	_update_clue_badge()
 	_queue_toast(clue_id)
 	if ClueManager.is_solution_clue(clue_id):
-		_apply_solution_unlocked_state(true)
+		_apply_solution_unlocked_state()
 
 
 ## A appeler une fois par desktop.gd juste après la construction du header,
 ## pour couvrir la reprise d'une sauvegarde où la résolution était déjà
-## débloquée lors d'une session précédente — pas de clignotement dans ce cas
-## (déjà "vu"), même logique que ChatWindow.add_contact() pour une
-## conversation déjà terminée. Le header ne connaît pas lui-même le
+## débloquée lors d'une session précédente. Clignote quand même : rien ne
+## persiste "le joueur a déjà ouvert la fenêtre Indice depuis", donc tant que
+## le bouton n'a pas encore été cliqué (ce qui arrête le clignotement, voir
+## _on_clue_button_pressed) il doit continuer d'attirer l'oeil, y compris
+## après un rechargement de session. Le header ne connaît pas lui-même le
 ## mission_id courant (voir desktop.gd::CURRENT_MISSION_ID) donc ne peut pas
 ## faire cette vérification seul.
 func apply_resumed_clue_state(solution_already_unlocked: bool) -> void:
 	if solution_already_unlocked:
-		_apply_solution_unlocked_state(false)
+		_apply_solution_unlocked_state()
 
 
-func _apply_solution_unlocked_state(should_blink: bool) -> void:
+func _apply_solution_unlocked_state() -> void:
 	_clue_button.theme_type_variation = &"ImportantButton"
-	if should_blink:
-		_start_clue_button_blink()
+	_start_clue_button_blink()
 
 
 func _pulse_clue_button() -> void:
@@ -181,10 +182,18 @@ func _build_toast() -> void:
 	style.content_margin_bottom = 14
 	_toast.add_theme_stylebox_override("panel", style)
 
-	_toast_label = Label.new()
+	## RichTextLabel, pas Label : le texte d'un indice peut porter
+	## <color=important> (voir translations/indices.csv), résolu via
+	## RichTextMarkup.html_to_bbcode comme partout ailleurs où du texte de
+	## donnée brute s'affiche (voir ClueBoard._build_clue_panel) — un Label
+	## afficherait la balise telle quelle au lieu de l'interpréter.
+	_toast_label = RichTextLabel.new()
+	_toast_label.bbcode_enabled = true
+	_toast_label.fit_content = true
+	_toast_label.scroll_active = false
 	_toast_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_toast_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
-	_toast_label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
+	_toast_label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
+	_toast_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	_toast.add_child(_toast_label)
 
 	add_child(_toast)
@@ -205,7 +214,7 @@ func _advance_toast_queue() -> void:
 	## L'id de l'indice sert lui-même de clé de traduction (voir
 	## translations/indices.csv), comme sur le tableau d'enquête (ClueBoard).
 	var clue_id: String = _toast_queue.pop_front()
-	_toast_label.text = tr(clue_id)
+	_toast_label.text = RichTextMarkup.html_to_bbcode(tr(clue_id))
 	## Aligné à gauche sous le bouton "COLLECTE D'INDICE" — _clue_button est
 	## niché dans Margin/Row/LeftGroup, pas un enfant direct du header, donc
 	## converti en position locale à la main (Control n'a pas de to_local(),

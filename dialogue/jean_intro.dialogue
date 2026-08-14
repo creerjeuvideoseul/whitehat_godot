@@ -5,9 +5,11 @@ Jean: C'est vous le Taïe What ?
 Player: C'est White Hat.
 
 - Et vous, vous êtes le boomer en détresse ?
+	set StoryVars.player_jean_boomer = 1
 	Player: Et vous, vous êtes le boomer en détresse ?
 	Jean: Oh, un peu de respect. Je paye, j'ai le droit de me tromper de nom !
 - Que puis-je pour vous ?
+	set StoryVars.player_jean_respect = 1
 	Player: Que puis-je pour vous ?
 	Jean: Bon... enfin quelqu'un qui va servir à quelque chose.
 
@@ -26,7 +28,7 @@ Jean: C'est une honte.
 Player: Vous avez une idée de l'endroit où elle pourrait être ?
 Jean: Si je le savais, je ne paierais pas un hacker.
 Jean: Ces derniers temps, elle était sur les nerfs. Quelqu'un lui a retourné le cerveau, c'est sûr.
-Jean: Elle contestait tout : les règles, les horaires, mes décisions... Je l'élève seul depuis 10 ans ! Je fais tout pour son bien.
+Jean: Elle contestait tout : les règles, les horaires, mes décisions... Je l'élève seul [color=important]depuis 10 ans[/color] ! Je fais tout pour son bien.
 Jean: Je sais que je ne suis pas parfait, mais qui l'est ? Enfin bref.
 Jean: J'ai déjà avancé sur l'enquête. Je suis un peu hacker moi-même.
 Jean: Vous vous y connaissez...
@@ -34,6 +36,7 @@ Jean: Vous vous y connaissez...
 - Vous êtes hacker ?
 	Player: Vous êtes hacker ?
 - Un débutant ?
+	set StoryVars.player_jean_troll += 1
 	Player: Un débutant ?
 
 Jean: J'ai trouvé un gars sur le darkweb qui m'a vendu une clé USB magique.
@@ -45,11 +48,13 @@ Jean: Évidemment ! C'est pas un inconnu d'ailleurs, je lui ai déjà acheté un
 	Player: C'est d'une imprudence totale.
 	Jean: Ben quoi ? Ça a marché.
 - Il s'est passé quoi ensuite ?
+	set StoryVars.player_jean_respect += 1
 	Player: Il s'est passé quoi ensuite ?
-	Jean: Merci. Mais j'attends une ristourne, vu que j'ai fait le plus gros.
 - Impressionnant, vous êtes un vrai hacker !
+	set StoryVars.player_jean_troll += 1
 	Player: Impressionnant, vous êtes un vrai hacker !
-
+	Jean: Merci. Mais j'attends une ristourne, vu que j'ai fait le plus gros.
+	
 Jean: Par contre, le [color=important]téléphone est étonnamment vide[/color], peu de sms, mail, ou images.
 Jean: Et y'a un truc [color=important]crypté[/color] que j'ai pas réussi à lire.
 Jean: Bref, à vous de jouer.
@@ -60,10 +65,10 @@ Player: En revanche, vous savez que ce n'est pas gratuit ? Payable en crypto-mon
 Jean: L'argent n'est pas un problème.
 Jean: J'ai une bonne retraite. J'ai travaillé pour ça !
 
-- Ce sera 2 000 € en cas de succès uniquement.
+- Ce sera 2 000 €.
 	Player: Ce sera 2 000 € en cas de succès uniquement.
 	Jean: Ça me va, mais dépêchez-vous.
-- Vu la complexité et l'urgence, ce sera 4 000 € en cas de succès uniquement.
+- Vu la complexité et l'urgence, ce sera 4 000 €.
 	Player: Vu la complexité et l'urgence, ce sera 4 000 € en cas de succès uniquement.
 	set StoryVars.player_argent = 1
 	Jean: C'est cher payé pour ouvrir un fichier, mais j'ai pas le choix. Dépêchez-vous.

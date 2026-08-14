@@ -167,6 +167,13 @@ disabled = true
 theme_type_variation = &"PrimaryButton"
 text = "CLUEBOARD_GENERATE_REPORT_BUTTON"
 
+[node name="ReportConfirmDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "REPORT_CONFIRM_TITLE"
+initial_position = 1
+size = Vector2i(720, 380)
+ok_button_text = "COMMON_YES"
+
 [node name="BorderOverlay" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15

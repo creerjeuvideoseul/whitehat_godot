@@ -11,8 +11,11 @@ class_name VaultSection
 signal close_requested
 ## Émis pour demander l'affichage d'une "pensée du joueur" (voir player_thought.gd) —
 ## cette scène ne connaît pas WindowLayer (c'est desktop.gd qui y ajoute les
-## pensées), elle se contente de fournir le texte déjà traduit.
-signal thought_requested(text: String)
+## pensées), elle se contente de fournir le texte déjà traduit ainsi que sa
+## clé ui.csv (voir _resolve_wrong_password_hint_key) — desktop.gd s'en sert
+## pour journaliser la pensée dans SaveManager.record_thought() sans dépendre
+## du texte brut, robuste à un changement de langue en cours de partie.
+signal thought_requested(text: String, translation_key: String)
 
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
 const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
@@ -74,6 +77,9 @@ func _ready() -> void:
 		_show_success(false)
 	else:
 		_padlock_icon.texture = PADLOCK_CLOSED
+		# Le joueur doit pouvoir taper le mot de passe dès l'ouverture du
+		# coffre, sans avoir à cliquer d'abord dans le champ.
+		_password_edit.grab_focus()
 
 
 ## Même filtrage en direct que login.gd (PseudoEdit) : on retire les
@@ -100,7 +106,8 @@ func _on_validate_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 	_status_label.add_theme_color_override("font_color", Palette.TEXT_DANGER)
 	_status_label.text = tr("VAULT_WRONG_PASSWORD")
-	thought_requested.emit(_resolve_wrong_password_hint(normalized))
+	var hint_key := _resolve_wrong_password_hint_key(normalized)
+	thought_requested.emit(tr(hint_key), hint_key)
 
 
 ## `announce`: vrai juste après une validation réussie (déclenche la
@@ -124,35 +131,37 @@ func _show_success(announce: bool) -> void:
 
 ## Pistes spécifiques à CE que le joueur vient de taper (une saisie proche
 ## d'un mot de passe connu mais erroné) — prioritaires sur la progression
-## générale par tentative (voir _next_wrong_attempt_hint), qui ne sert de
+## générale par tentative (voir _next_wrong_attempt_hint_key), qui ne sert de
 ## repli que si aucune de ces exceptions ne correspond. `normalized` est déjà
 ## en minuscules et débarrassé de tout caractère hors [a-z0-9] (voir
 ## _normalize), donc "EliteShot$83$" et "EliteShot83" déclenchent la même
-## pensée.
-func _resolve_wrong_password_hint(normalized: String) -> String:
+## pensée. Retourne la clé ui.csv (pas le texte traduit) — voir
+## _on_validate_pressed, qui l'utilise pour journaliser la pensée dans
+## SaveManager.record_thought() sans dépendre du texte déjà résolu.
+func _resolve_wrong_password_hint_key(normalized: String) -> String:
 	if normalized.is_valid_int() and normalized.length() == 6:
-		return tr("VAULT_HINT_DATE")
+		return "VAULT_HINT_DATE"
 	if normalized == "peaceandlove" or normalized == "alizeemarek":
-		return tr("VAULT_HINT_SOCIAL")
+		return "VAULT_HINT_SOCIAL"
 	if normalized == "eliteshot83":
-		return tr("VAULT_HINT_ELITESHOT")
+		return "VAULT_HINT_ELITESHOT"
 	if normalized == "bugsy":
-		return tr("VAULT_HINT_BUGSY")
+		return "VAULT_HINT_BUGSY"
 	if normalized.contains("11"):
-		return tr("VAULT_HINT_ELEVEN")
+		return "VAULT_HINT_ELEVEN"
 	if normalized.begins_with("lasthorizon"):
-		return tr("VAULT_HINT_LASTHORIZON")
-	return _next_wrong_attempt_hint()
+		return "VAULT_HINT_LASTHORIZON"
+	return _next_wrong_attempt_hint_key()
 
 
 ## Une pensée différente à chaque tentative incorrecte "générique" (voir
-## WRONG_ATTEMPT_HINT_KEYS et _resolve_wrong_password_hint ci-dessus), de plus
-## en plus précise pour aider un joueur qui reste bloqué — puis en boucle une
-## fois la liste épuisée, plutôt que de ne plus rien dire.
-func _next_wrong_attempt_hint() -> String:
+## WRONG_ATTEMPT_HINT_KEYS et _resolve_wrong_password_hint_key ci-dessus), de
+## plus en plus précise pour aider un joueur qui reste bloqué — puis en boucle
+## une fois la liste épuisée, plutôt que de ne plus rien dire.
+func _next_wrong_attempt_hint_key() -> String:
 	var key: String = WRONG_ATTEMPT_HINT_KEYS[_wrong_attempt_count % WRONG_ATTEMPT_HINT_KEYS.size()]
 	_wrong_attempt_count += 1
-	return tr(key)
+	return key
 
 
 ## Minuscules + accents repliés + tout caractère hors [a-z0-9] retiré — "la

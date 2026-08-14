@@ -11,9 +11,9 @@ MENU_TAGLINE_2,Tu as juste trouvé,You just found
 MENU_TAGLINE_3,une porte que tout le monde avait oublié de fermer.,a door everyone forgot to close.
 LOGIN_PSEUDO_ERROR,"Pseudo requis : 2 à 20 caractères (lettres, chiffres, _).","Username required: 2 to 20 characters (letters, digits, _)."
 LOGIN_TITLE,// Connexion,// Login
+LOGIN_PSEUDO_LABEL,Entrez votre login :,Enter your login:
 LOGIN_PSEUDO_PLACEHOLDER,Pseudo,Username
 LOGIN_PASSWORD_PLACEHOLDER,Mot de passe,Password
-LOGIN_BACK_BUTTON,Retour menu,Back to menu
 LOGIN_CONNECT_BUTTON,SE CONNECTER,LOG IN
 BOOT_NETWORK_STATUS,réseau - chiffré,network - encrypted
 BOOT_CREDIT,"Fait avec passion par [color=#39ff7a][b]SecretGame[/b][/color]","Made with passion by [color=#39ff7a][b]SecretGame[/b][/color]"
@@ -33,19 +33,28 @@ NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie
 COMMON_CONFIRM,Confirmer,Confirm
 COMMON_CANCEL,Annuler,Cancel
 COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
-DESKTOP_SEARCH_PLACEHOLDER,recherche OSINT,OSINT search
+COMMON_YES,Oui,Yes
+COMMON_NO,Non,No
+DESKTOP_SEARCH_PLACEHOLDER,Recherche nom prénom,Search first and last name
 DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
+DESKTOP_THOUGHT_LOG_BUTTON,Pensées,Thoughts
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
 THOUGHT_ANONGHOST_CONTACT,AnonGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,AnonGhost should contact me. AnonGhost is my only real-world contact. Someone I trust, whom I've known for years.
+THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
+THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
-DESKTOP_CLUES_BUTTON,Collecte d'indice,Clue collection
+DESKTOP_CLUES_BUTTON,Collecte d'indices,Clue collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clue collection
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
 REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
+REPORT_CONFIRM_TITLE,Finir la mission de M. Ranoud.,Finish M. Ranoud's mission.
+REPORT_CONFIRM_INTENT,Souhaitez-vous commencer le rapport de la mission donnée par M. Ranoud ?,Do you want to start the report for the mission given by M. Ranoud?
+REPORT_CONFIRM_WARNING,Vous ne pourrez plus revenir en arrière.,You will not be able to go back.
+REPORT_CONFIRM_QUESTION,Passez à l'étape de génération du rapport ?,Proceed to the report generation step?
 CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
@@ -81,7 +90,7 @@ SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
 SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
 SMS_MESSAGE_COUNT,%d messages,%d messages
 SMS_ALIZEE_REMINDER,Alizée,Alizée
-GALLERY_SECTION_TITLE,Galerie du téléphone d'Alizée,Alizée's phone gallery
+GALLERY_SECTION_TITLE,NewGalerie2028 : Vos photos directement en ligne !,NewGalerie2028: Your photos, straight online!
 GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
 GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
 MAIL_ATTACHMENT_VIEWER_TITLE,Pièce jointe,Attachment

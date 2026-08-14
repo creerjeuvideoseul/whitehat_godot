@@ -18,6 +18,12 @@ class_name ClueBoardWindow
 ## son propre bouton.
 signal generate_report_requested
 
+## Même recette de clignotement que le bouton Indice du header (voir
+## desktop_header.gd::_start_clue_button_blink) — attire l'oeil sur GENERER
+## LE RAPPORT dès qu'il devient bleu/cliquable, s'arrête au premier clic.
+const BLINK_MIN_ALPHA := 0.35
+const BLINK_SECONDS := 1.4
+
 @export var mission_id: int = 1:
 	set(value):
 		mission_id = value
@@ -28,14 +34,21 @@ signal generate_report_requested
 @onready var _question_label: Label = %QuestionLabel
 @onready var _clue_board: ClueBoard = %ClueBoard
 @onready var _generate_report_button: Button = %GenerateReportButton
+@onready var _report_confirm_dialog: ConfirmationDialog = %ReportConfirmDialog
+
+var _report_button_blink_tween: Tween
 
 
 func _ready() -> void:
 	_close_button.pressed.connect(_on_close_pressed)
-	_generate_report_button.pressed.connect(func() -> void:
-		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
-		generate_report_requested.emit()
-	)
+	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
+	## "Non" n'a besoin d'aucun câblage : le bouton Annuler d'un
+	## ConfirmationDialog se contente de le cacher (comportement natif
+	## d'AcceptDialog), et cette fenêtre n'a jamais été cachée derrière —
+	## on s'y retrouve donc automatiquement.
+	_report_confirm_dialog.get_cancel_button().text = "COMMON_NO"
+	DialogStyle.style_warning_dialog(_report_confirm_dialog)
+	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
 	_apply_mission()
 
@@ -68,8 +81,46 @@ func _update_report_button() -> void:
 	var unlocked := ClueManager.has_unlocked_mission_solution(mission_id)
 	_generate_report_button.disabled = not unlocked
 	_generate_report_button.theme_type_variation = &"ImportantButton" if unlocked else &"PrimaryButton"
+	if unlocked:
+		_start_report_button_blink()
+	else:
+		_stop_report_button_blink()
 
 
 func _on_close_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
+
+
+## N'émet pas encore generate_report_requested : demande d'abord confirmation
+## (voir _on_report_confirmed), puisque passer à l'étape suivante est
+## irréversible pour le joueur (voir REPORT_CONFIRM_WARNING).
+func _on_generate_report_button_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+	_stop_report_button_blink()
+	_report_confirm_dialog.dialog_text = "%s\n\n%s\n\n%s" % [
+		tr("REPORT_CONFIRM_INTENT"), tr("REPORT_CONFIRM_WARNING"), tr("REPORT_CONFIRM_QUESTION")
+	]
+	_report_confirm_dialog.popup_centered()
+
+
+func _on_report_confirmed() -> void:
+	generate_report_requested.emit()
+
+
+## Même recette que desktop_header.gd::_start_tor_blink/_start_clue_button_blink.
+func _start_report_button_blink() -> void:
+	if is_instance_valid(_report_button_blink_tween):
+		return
+	_report_button_blink_tween = create_tween()
+	_report_button_blink_tween.set_loops()
+	_report_button_blink_tween.set_trans(Tween.TRANS_SINE)
+	_report_button_blink_tween.tween_property(_generate_report_button, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
+	_report_button_blink_tween.tween_property(_generate_report_button, "modulate:a", 1.0, BLINK_SECONDS)
+
+
+func _stop_report_button_blink() -> void:
+	if is_instance_valid(_report_button_blink_tween):
+		_report_button_blink_tween.kill()
+	_report_button_blink_tween = null
+	_generate_report_button.modulate.a = 1.0

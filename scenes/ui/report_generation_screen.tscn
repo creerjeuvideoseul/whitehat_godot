@@ -1,18 +1,28 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/report_generation_screen.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/desktop_header.tscn" id="3_header"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/desktop_footer.tscn" id="4_footer"]
 
-[node name="ReportGenerationScreen" type="ColorRect"]
-layout_mode = 1
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
+shader = ExtResource("2_shader")
+shader_parameter/bg_color = Color(0.016, 0.043, 0.031, 1)
+shader_parameter/line_color = Color(0.11, 0.32, 0.22, 0.35)
+shader_parameter/cell_size = 48.0
+shader_parameter/line_width = 1.2
+
+[node name="ReportGenerationScreen" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
 script = ExtResource("1_script")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_bg")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,10 +30,24 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+color = Color(0.016, 0.043, 0.031, 1)
 
-[node name="TitleLabel" type="Label" parent="CenterContainer"]
-layout_mode = 2
-horizontal_alignment = 1
-theme_override_colors/font_color = Color(0.24, 1, 0.5, 1)
-theme_override_font_sizes/font_size = 30
-text = "REPORT_GENERATION_TITLE"
+[node name="ContentLayer" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 90.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DesktopHeader" parent="." instance=ExtResource("3_header")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="DesktopFooter" parent="." instance=ExtResource("4_footer")]
+unique_name_in_owner = true
+layout_mode = 1

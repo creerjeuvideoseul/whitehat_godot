@@ -64,7 +64,7 @@
 		  "Pseudo(s) connu(s)": "BlueFret44, Horizon44",
 		  "Lieu de naissance": "Nantes",
 		  "Age": "19",
-		  "Etudes": "École des arts.",
+		  "Etudes": "École des beaux arts.",
 		  "Statut": "Fils de Benjamin Trodan.",
 		  "Enfant connu": "Aucun",
 		  "Profession": "Étudiant en école des arts. Guitariste dans un petit groupe de rock indépendant.",
@@ -90,8 +90,8 @@
 		  "IP": "Française.",
 		  "Mail": "alizee.ranoud@gomail.com",
 		  "Téléphone": "+33 7 33 01 xx xx",
-		  "Fuites connues": "Crous, Éducation nationale, Crunchyroll.",
-		  "Mots de passe": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing11, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
+		  "Fuites connues": "Crous, Éducation nationale.",
+		  "Mots de passe": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,
@@ -99,7 +99,7 @@
 		  "Nom": "Ranoud",
 		  "Prenom": "Christine",
 		  "Pseudo(s) connu(s)": "NC",
-		  "Lieu de naissance": "Bretz",
+		  "Lieu de naissance": "Rennes",
 		  "Age": "42",
 		  "Statut": "Divorcée de Jean Ranoud",
 		  "Nationalité": "Française (résidente permanente en Indonésie)",
@@ -130,7 +130,7 @@
 		  "Mail": "oceane.dumont@gomail.com",
 		  "Téléphone": "+33 6 42 18 xx xx",
 		  "Fuites connues": "Éducation nationale, ancien forum étudiant",
-		  "Mots de passe": "Ocean35!, Rennes2012, OceDumont18"
+		  "Mots de passe": "Ocean35!, Rennes2012"
 		},
 		{
 		  "characterId": 7,
@@ -145,10 +145,10 @@
 		  "Adresse connue": "14 Rue du Grand Écran, 75015 Paris",
 		  "Loisir": "Yoga, Pilates",
 		  "IP": "Française",
-		  "Mail": "kristell.delonay@vnews.fr",
+		  "Mail": "Karine.delonay@vnews.fr",
 		  "Téléphone": "+33 6 44 92 xx xx",
 		  "Fuites connues": "VNews Internal Leak (2028), LinkedIn",
-		  "Mots de passe": "Prompteur2030!, GillesTaitToi"
+		  "Mots de passe": "Prompteur2030!, GillesTaisToi"
 		},
 		{
 		  "characterId": 8,
@@ -164,10 +164,10 @@
 		  "Adresse connue": "Boulogne-Billancourt, Hauts-de-Seine",
 		  "Loisir": "Astronomie, échecs et nouvelles technologies",
 		  "IP": "Française",
-		  "Mail": "gilles.delatourette@vnews.fr",
+		  "Mail": "gilles.delatouret@vnews.fr",
 		  "Téléphone": "+33 6 44 92 xx xx",
 		  "Fuites connues": "VNews Internal Leak (2028), Forum Hardware.fr",
-		  "Mots de passe": "RootAdmin#2030, KristellLaisseMoiParler"
+		  "Mots de passe": "RootAdmin#2030, KarinelLaisseMoiParler"
 		}
 	  ]
 	},
@@ -224,7 +224,7 @@
 		  "IP": "French.",
 		  "Email": "jean.ranoud@protonmail.com",
 		  "Phone": "+33 6 15 45 xx xx",
-		  "Known leaks": "Social security, Jaune SAS, KFC, sports club, Airsoft.",
+		  "Known leaks": "Social security, KFC, sports club.",
 		  "Passwords": "<color=important>EliteShot$83$</color>"
 		},
 		{
@@ -239,7 +239,7 @@
 		  "Status": "Son of Benjamin Trodan.",
 		  "Known child": "None",
 		  "Occupation": "Art school student. Guitarist in a small indie rock band.",
-		  "Known address": "15 avenue Carnut, 35288 Saint-Malo, since 2020",
+		  "Known address": "15 avenue Carnut, 35000 Rennes, since 2020",
 		  "Hobbies": "Guitar, darts.",
 		  "IP": "French",
 		  "Email": "marek.trodan@gomail.com",
@@ -261,8 +261,8 @@
 		  "IP": "French.",
 		  "Email": "alizee.ranoud@gomail.com",
 		  "Phone": "+33 7 33 01 xx xx",
-		  "Known leaks": "Crous, national education, Crunchyroll.",
-		  "Passwords": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing11, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
+		  "Known leaks": "Crous, national education.",
+		  "Passwords": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,
@@ -270,7 +270,7 @@
 		  "Name": "Ranoud",
 		  "First name": "Christine",
 		  "Known alias(es)": "N/A",
-		  "Birthplace": "Bretz",
+		  "Birthplace": "Rennes",
 		  "Age": "42",
 		  "Status": "Divorced from Jean Ranoud",
 		  "Nationality": "French (permanent resident in Indonesia)",
@@ -282,7 +282,7 @@
 		  "Email": "c.ranoud@gomail.co.id",
 		  "Phone": "N/A",
 		  "Known leaks": "Tokopedia, AirBnb",
-		  "Passwords": "Putriku_tersayang (\"my beloved daughter\" in Indonesian)"
+		  "Passwords": "Putriku_tersayang"
 		},
 		{
 		  "characterId": 6,
@@ -301,7 +301,7 @@
 		  "Email": "oceane.dumont@gomail.com",
 		  "Phone": "+33 6 42 18 xx xx",
 		  "Known leaks": "National education, old student forum",
-		  "Passwords": "Ocean35!, Rennes2012, OceDumont18"
+		  "Passwords": "Ocean35!, Rennes2012"
 		},
 		{
 		  "characterId": 7,
@@ -316,10 +316,10 @@
 		  "Known address": "14 Rue du Grand Écran, 75015 Paris",
 		  "Hobbies": "Yoga, Pilates",
 		  "IP": "French",
-		  "Email": "kristell.delonay@vnews.fr",
+		  "Email": "Karine.delonay@vnews.fr",
 		  "Phone": "+33 6 44 92 xx xx",
 		  "Known leaks": "VNews internal leak (2028), LinkedIn",
-		  "Passwords": "Prompteur2030!, GillesTaitToi"
+		  "Passwords": "Teleprompter2030!, GillesShutUp"
 		},
 		{
 		  "characterId": 8,
@@ -337,8 +337,8 @@
 		  "IP": "French",
 		  "Email": "gilles.delatourette@vnews.fr",
 		  "Phone": "+33 6 44 92 xx xx",
-		  "Known leaks": "VNews internal leak (2028), Hardware.fr forum",
-		  "Passwords": "RootAdmin#2030, KristellLaisseMoiParler"
+		  "Known leaks": "VNews internal leak (2028), Hardware.com",
+		  "Passwords": "RootAdmin#2030, KarineLetMeSpeak"
 		}
 	  ]
 	}

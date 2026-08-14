@@ -65,7 +65,7 @@
 		{
 		  "postId": 3,
 		  "picture": "res://assets/images_mission1/wh_marek_disk.webp",
-		  "title": "L'album de Marek",
+		  "title": "L'album du groupe LastHorizon de Marek",
 		  "timestamp": "2030-01-02T14:08:02",
 		  "nbLike": 9,
 		  "isCrypted": 0,
@@ -76,7 +76,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "J'ai hâte que tu me dises quelle est ta chanson préférée ! <color=important>Passes-nous voir à l'occasion à la salle.</color>"
+			  "message": "J'ai hâte que tu me dises quelle est ta chanson préférée ! <color=important>Passes-nous voir à l'occasion sur scène !</color>"
 			}
 		  ]
 		},
@@ -200,7 +200,7 @@
 		{
 		  "postId": 3,
 		  "picture": "res://assets/images_mission1/wh_marek_disk.webp",
-		  "title": "Marek's album",
+		  "title": "Marek's group",
 		  "timestamp": "2030-01-02T14:08:02",
 		  "nbLike": 9,
 		  "isCrypted": 0,
@@ -211,7 +211,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "I can't wait to hear which song is your favorite! <color=indice>Come by the venue sometime.</color>"
+			  "message": "I can't wait to hear which song is your favorite! <color=indice>Come and see us on stage!</color>"
 			}
 		  ]
 		},

@@ -7,7 +7,7 @@ AnonGhost: Nous avons suffisamment travaillé ensemble pour que je connaisse ta 
 AnonGhost: Tu fais partie des [color=important]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_anon_perseverant]
 
 - Je suis génial !
-	set StoryVars.player_emotion += 1
+	set StoryVars.player_orgueil += 1
 	Player: C'est parce que je suis surpuissant !
 	AnonGhost: Une conclusion audacieuse.
 	AnonGhost: Continue d'exploiter cette intelligence émotionnelle, elle sera précieuse.
@@ -23,12 +23,15 @@ AnonGhost: Elle ne demande aucune compétence technique... et pourtant, elle fer
 AnonGhost: As-tu deviné de quoi je parle ?
 
 - Le charisme ?
+	set StoryVars.player_choix_charisme = 1
 	Player: Le charisme !
 	AnonGhost: Une réponse inattendue. Intéressante, mais inexacte.
 - L'éthique ?
+	set StoryVars.player_choix_ethique = 1
 	Player: L'éthique !
 	AnonGhost: Exact. Tu as identifié la bonne variable.
 - Je ne sais pas.
+	set StoryVars.player_choix_nesaispas = 1
 	Player: Je ne sais pas.
 	AnonGhost: Admettre une absence de données est le premier pas vers une analyse rigoureuse. C'est le début de la sagesse.
 
