@@ -42,7 +42,7 @@ DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
 DESKTOP_THOUGHT_LOG_BUTTON,Pensées,Thoughts
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
-THOUGHT_ANONGHOST_CONTACT,AnonGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,AnonGhost should contact me. AnonGhost is my only real-world contact. Someone I trust, whom I've known for years.
+THOUGHT_RELAYGHOST_CONTACT,RelayGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,RelayGhost should contact me. RelayGhost is my only real-world contact. Someone I trust, whom I've known for years.
 THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
 THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
@@ -100,7 +100,7 @@ VAULT_PASSWORD_PLACEHOLDER,Mot de passe,Password
 VAULT_VALIDATE_BUTTON,VALIDER,SUBMIT
 VAULT_SUCCESS_MESSAGE,"Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégées (SMS, mails, etc.).","Encrypted content unlocked — you can now access the protected information (SMS, emails, etc.)."
 VAULT_WRONG_PASSWORD,Ce n'est pas le bon mot de passe.,This is not the right password.
-VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de simple.,It has to be something simple.
+VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de logique et simple.,It has to be something logic and simple.
 VAULT_HINT_ATTEMPT_2,"Quelque chose que Marek ou Alizée peut savoir, Marek a installé le coffre-fort.","Something Marek or Alizée might know — Marek installed the vault."
 VAULT_HINT_ATTEMPT_3,Peut-être que je pourrais trouver des pistes dans l'OSINT ?,Maybe I could find some leads in the OSINT search?
 VAULT_HINT_ATTEMPT_4,Qu'est-ce qui est le plus important pour Marek ? Sa musique ?,What matters most to Marek? His music?

@@ -23,9 +23,9 @@
 		{
 		  "characterId": 1,
 		  "Photo": "res://assets/avatar/anonghost_avatar.png",
-		  "Nom": "AnonGhost",
+		  "Nom": "RelayGhost",
 		  "Prenom": "~",
-		  "Pseudo(s) connu(s)": "RelayGhost",
+		  "Pseudo(s) connu(s)": "AnonGhost",
 		  "Note personnelle": "Mon seul et unique contact de confiance.",
 		  "Age": "Inconnu",
 		  "Statut": "Contact",
@@ -53,7 +53,7 @@
 		  "IP": "Française.",
 		  "Mail": "jean.ranoud@protonmail.com",
 		  "Téléphone": "+33 6 15 45 xx xx",
-		  "Fuites connues": "Sécurité sociale, jaune SAS, KFC, club sportif, Airsoft.",
+		  "Fuites connues": "Sécurité sociale, KFC, club sportif.",
 		  "Mots de passe": "<color=indice>EliteShot$83$</color>"
 		},
 		{
@@ -212,9 +212,9 @@
 		{
 		  "characterId": 1,
 		  "Photo": "res://assets/avatar/anonghost_avatar.png",
-		  "Name": "AnonGhost",
+		  "Name": "RelayGhost",
 		  "First name": "~",
-		  "Known alias(es)": "RelayGhost",
+		  "Known alias(es)": "AnonGhost",
 		  "Note personnelle": "My one and only trusted contact.",
 		  "Age": "Unknown",
 		  "Status": "Contact",
@@ -357,6 +357,24 @@
 		  "Phone": "+33 6 44 92 xx xx",
 		  "Known leaks": "VNews internal leak (2028), Hardware.com",
 		  "Passwords": "RootAdmin#2030, KarineLetMeSpeak"
+		},
+		{
+		  "characterId": 9,
+		  "Photo": "res://assets/avatar/portrait_claire.png",
+		  "Name": "Moreau",
+		  "First name": "Claire",
+		  "Known alias(es)": "Claire40F",
+		  "Birthplace": "Nantes",
+		  "Age": "40",
+		  "Status": "In a relationship",
+		  "Occupation": "Admissions officer – Health Sciences Department",
+		  "Known address": "Nantes, Loire-Atlantique",
+		  "Hobbies": "Reading, hiking, volunteer work",
+		  "IP": "French",
+		  "Email": "claire.moreau@univ-nantes44.fr",
+		  "Phone": "+33 6 82 15 xx xx",
+		  "Known leaks": "UnivNantes_Database_Leak",
+		  "Passwords": "IloveZidane#2026, IloveMelenchon"
 		}
 	  ]
 	}

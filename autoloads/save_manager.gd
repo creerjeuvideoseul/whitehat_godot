@@ -92,7 +92,7 @@ func restore_unlocked_indices() -> void:
 
 
 ## Stage a finished conversation's rendered message log in memory, keyed by
-## contact id (e.g. "anonghost"). Not written to disk until the next
+## contact id (e.g. "relayghost"). Not written to disk until the next
 ## save_checkpoint() call — a conversation only "counts" once the checkpoint
 ## after it actually happens, same as everything else this session.
 func record_conversation(contact_id: String, messages: Array) -> void:

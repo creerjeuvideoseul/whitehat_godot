@@ -14,7 +14,7 @@ const BUBBLE_MAX_WIDTH := 640.0
 ## the label so the caller can decide how to reveal it (type_out() for a
 ## live line, or leave it fully visible when replaying saved history).
 ## other_color lets each contact have their own bubble tint (e.g. Jean's
-## blue vs. AnonGhost's default green) — irrelevant when is_player is true.
+## blue vs. RelayGhost's default green) — irrelevant when is_player is true.
 func configure(line: DialogueLine, is_player: bool, other_color: Color = Palette.BUBBLE_OTHER) -> DialogueLabel:
 	var style := StyleBoxFlat.new()
 	style.bg_color = Palette.BUBBLE_PLAYER if is_player else other_color

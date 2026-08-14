@@ -138,8 +138,16 @@ func _show_success(announce: bool) -> void:
 ## pensée. Retourne la clé ui.csv (pas le texte traduit) — voir
 ## _on_validate_pressed, qui l'utilise pour journaliser la pensée dans
 ## SaveManager.record_thought() sans dépendre du texte déjà résolu.
+##
+## VAULT_HINT_ELEVEN volontairement en dernier parmi ces pistes spécifiques
+## (juste avant le repli générique) : "contains('11')" est un test large qui
+## peut correspondre à une saisie visant surtout autre chose (ex. une date
+## comme "0811") — retour joueur, ce message apparaissait trop souvent et
+## passait avant des pistes plus pertinentes. Date reconnue à tout nombre
+## entier, pas seulement 6 chiffres : un "0811" (jour+mois) doit lui aussi
+## être lu comme une tentative de date, pas comme visant le chiffre 11.
 func _resolve_wrong_password_hint_key(normalized: String) -> String:
-	if normalized.is_valid_int() and normalized.length() == 6:
+	if normalized.is_valid_int():
 		return "VAULT_HINT_DATE"
 	if normalized == "peaceandlove" or normalized == "alizeemarek":
 		return "VAULT_HINT_SOCIAL"
@@ -147,10 +155,10 @@ func _resolve_wrong_password_hint_key(normalized: String) -> String:
 		return "VAULT_HINT_ELITESHOT"
 	if normalized == "bugsy":
 		return "VAULT_HINT_BUGSY"
-	if normalized.contains("11"):
-		return "VAULT_HINT_ELEVEN"
 	if normalized.begins_with("lasthorizon"):
 		return "VAULT_HINT_LASTHORIZON"
+	if normalized.contains("11"):
+		return "VAULT_HINT_ELEVEN"
 	return _next_wrong_attempt_hint_key()
 
 

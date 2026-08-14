@@ -68,7 +68,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 2
+vertical_scroll_mode = 1
 
 [node name="LinesList" type="VBoxContainer" parent="Box/Layout/ScrollContainer"]
 unique_name_in_owner = true

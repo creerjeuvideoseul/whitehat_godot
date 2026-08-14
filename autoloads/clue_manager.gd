@@ -131,7 +131,7 @@ func get_categories_for_mission(mission_id: int) -> Array[ClueCategory]:
 ## Vrai si l'enquête de cette mission a réellement commencé : au moins un
 ## indice débloqué dont l'id suit la convention "M<mission_id>_..." (voir
 ## clues.txt). Volontairement plus strict que "la mission a au moins un
-## indice débloqué" : l'indice de fin d'intro d'AnonGhost (intro_anon_perseverant)
+## indice débloqué" : l'indice de fin d'intro de RelayGhost (intro_anon_perseverant)
 ## ne suit pas cette convention et ne doit pas suffire à faire apparaître le
 ## titre de la fenêtre Collecte d'indices avant que le joueur n'ait vraiment
 ## commencé à fouiller le téléphone d'Alizée (voir ClueBoardWindow).

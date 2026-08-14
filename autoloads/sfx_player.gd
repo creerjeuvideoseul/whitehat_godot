@@ -17,7 +17,7 @@ const CLUE_REVEAL_SFX := preload("res://assets/audio/sound/tithuh-level-up-02-52
 ## Laisse un instant au joueur avant de signaler la découverte — un son
 ## littéralement au pixel près où l'indice devient visible arrivait trop tôt,
 ## avant même que l'œil n'ait eu le temps de se poser dessus.
-const CLUE_REVEAL_DELAY_SECONDS := 1.0
+const CLUE_REVEAL_DELAY_SECONDS := 3.0
 
 ## "Accès interdit" — joué à chaque tentative d'accès à du contenu crypté
 ## (SMS/mail encore verrouillés) ou à une mauvaise saisie dans le coffre-fort

@@ -15,7 +15,7 @@ const BLINK_SECONDS := 1.4
 ## Même délai que SfxPlayer avant de déclencher pulse/badge/bandeau — les deux
 ## doivent rester synchronisés puisqu'ils réagissent au même instant perçu
 ## par le joueur (voir sfx_player.gd::CLUE_REVEAL_DELAY_SECONDS).
-const CLUE_REVEAL_DELAY_SECONDS := 1.0
+const CLUE_REVEAL_DELAY_SECONDS := 3.0
 const CLUE_PULSE_SECONDS := 0.2
 const CLUE_PULSE_SCALE := Vector2(1.15, 1.15)
 const TOAST_WIDTH := 470.0

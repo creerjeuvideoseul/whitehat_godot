@@ -8,13 +8,18 @@ class_name ThoughtLogWindow
 ## _on_thought_log_button_pressed), jamais fermée/détruite, juste cachée (voir
 ## _on_close_pressed).
 ##
-## Chaque entrée est affichée comme un message de ChatWindow (voir ChatBubble)
-## teinté "pensée du joueur" (Palette.BUBBLE_PLAYER), alignée à gauche comme
-## une entrée de journal plutôt qu'à droite comme une réponse à un
-## interlocuteur — avec la date/heure du jeu juste en dessous, en gris, même
-## recette que SmsSection.
+## Chaque entrée prend toute la largeur disponible (retour utilisateur : pas
+## question de rester étroit comme les bulles SMS de la colonne de gauche) —
+## un style "carte" dédié plutôt que la vraie ChatBubble de ChatWindow, qui
+## elle est justement pensée pour se réduire au texte. Teinte "pensée du
+## joueur" (Palette.BUBBLE_PLAYER) conservée, avec la date/heure du jeu juste
+## en dessous, en gris, même recette que SmsSection.
 
-const CHAT_BUBBLE := preload("res://scenes/desktop/windows/chat_bubble.tscn")
+## Même padding/arrondi que ChatBubble, pour rester dans le même langage
+## visuel malgré le style différent (voir chat_bubble.gd::configure).
+const CARD_CORNER_RADIUS := 14
+const CARD_MARGIN_H := 18
+const CARD_MARGIN_V := 12
 
 @onready var _close_button: Button = %CloseButton
 @onready var _messages_list: VBoxContainer = %MessagesList
@@ -53,29 +58,34 @@ func _build_empty_label() -> Label:
 ## l'enregistrement (voir SaveManager.record_thought) — pour rester juste si
 ## le joueur change de langue en cours de partie. Repli sur le texte brut déjà
 ## enregistré sinon (pensées sans clé ui.csv, ex. celles du mail — voir
-## mail_section.gd).
-##
-## `column` doit rejoindre _messages_list (déjà dans l'arbre) AVANT que
-## `bubble` n'y soit ajouté et configuré — ChatBubble.configure() s'appuie sur
-## %DialogueLabel, résolu par @onready seulement une fois le nœud réellement
-## entré dans l'arbre (voir ConversationView._add_bubble, même contrainte
-## d'ordre). Construire toute la colonne à part puis l'ajouter d'un bloc, comme
-## la première version le faisait, laissait ChatBubble configuré "hors arbre".
+## mail_section.gd). Texte brut simple (jamais de BBCode côté données, voir
+## MailEntry.player_think) — un Label suffit, pas besoin d'un RichTextLabel.
 func _build_entry(entry: Dictionary) -> void:
 	var key: String = entry.get("key", "")
 	var text: String = tr(key) if not key.is_empty() else str(entry.get("text", ""))
 
-	var line := DialogueLine.new()
-	line.text = text
-
 	var column := VBoxContainer.new()
-	column.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 4)
 	_messages_list.add_child(column)
 
-	var bubble: ChatBubble = CHAT_BUBBLE.instantiate()
-	column.add_child(bubble)
-	bubble.configure(line, true)
+	var card := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Palette.BUBBLE_PLAYER
+	style.set_corner_radius_all(CARD_CORNER_RADIUS)
+	style.content_margin_left = CARD_MARGIN_H
+	style.content_margin_right = CARD_MARGIN_H
+	style.content_margin_top = CARD_MARGIN_V
+	style.content_margin_bottom = CARD_MARGIN_V
+	card.add_theme_stylebox_override("panel", style)
+
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
+	label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
+	card.add_child(label)
+	column.add_child(card)
 
 	var timestamp := Label.new()
 	var iso_timestamp := Time.get_datetime_string_from_unix_time(int(entry.get("game_unix_time", 0)))

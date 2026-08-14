@@ -45,7 +45,7 @@ const BUBBLE_PLAYER := Color(0.086, 0.302, 0.176, 0.9)
 
 ## Alternate bubble tint (blue) — lets one contact's messages read as
 ## distinct from another's inside the same chat window (e.g. Jean Ranoud
-## vs. AnonGhost's default BUBBLE_OTHER green-neutral).
+## vs. RelayGhost's default BUBBLE_OTHER green-neutral).
 const BUBBLE_BLUE := Color(0.1, 0.15, 0.28, 1.0)
 
 ## Plain "system/console" text — connection status, terminal-style asides —

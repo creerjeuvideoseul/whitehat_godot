@@ -42,9 +42,9 @@
 			{ "messageId": 28, "isAnswer": 1, "timestamp": "2030-01-12T11:04:00", "message": "C'est pas ce qu'elle me dit. Tu fais chier !" },
 			{ "messageId": 29, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "Je vais faire comme si t'avais pas dit ça. Tu parles à ton père là ! Tu me dois tout." },
 			{ "messageId": 30, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "Si <indice id=\"M1_sms_vieille_sorciere\"><color=indice>cette vieille sorcière</color></indice> t'a recontactée, c'est qu'elle veut nous faire du mal. Ne crois rien de ce qu'elle peut te dire, c'est moi qui t'ai élevé !" },
-			{ "messageId": 31, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Tu es où ?" },
-			{ "messageId": 32, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Réponds ! Je m'inquiète !" },
-			{ "messageId": 33, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "ALIZÉE !" }
+			{ "messageId": 31, "isAnswer": 0, "timestamp": "2030-01-31T20:01:07", "message": "Tu es où ?" },
+			{ "messageId": 32, "isAnswer": 0, "timestamp": "2030-01-31T20:45:08", "message": "Réponds ! Je m'inquiète !" },
+			{ "messageId": 33, "isAnswer": 0, "timestamp": "2030-02-01T12:45:05", "message": "ALIZÉE !" }
 		  ]
 		},
 		{
@@ -105,7 +105,7 @@
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-01T20:47:00", "message": "Les refus ça arrive !" },
 			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-11-01T20:47:00", "message": "Mon père a tellement fait pour que j'y arrive… Il a raison, médecine c'est un avenir. Je l'ai déçu. Encore." },
 			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-11-01T20:47:00", "message": "Alizée ! Appelle-moi... On va trouver une solution." },
-			{ "messageId": 13, "isAnswer": 1, "timestamp": "2030-01-10T17:46:00", "message": "Tu ne vas pas le croire, <color=important>j'ai reçu un mail de ma mère Christine. Je l'ai mis dans mon appli coffre fort.</color>" },
+			{ "messageId": 13, "isAnswer": 1, "timestamp": "2030-01-10T17:46:00", "message": "Tu ne vas pas le croire, <color=important>j'ai reçu un mail de ma mère Christine</color>. Je l'ai mis dans mon appli coffre fort." },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-10T17:47:00", "message": "C'est un scam non ? Personne ne reviendrait après tout ce temps. Elle te demande de l'argent ?" },
 			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-10T17:47:00", "message": "Non, juste reprendre contact. Comme si ça allait réparer son absence ! Je lui en veux tellement." },
 			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-10T17:47:00", "message": "Essaye, ça ne coûte rien..." },
@@ -130,7 +130,7 @@
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "Ce que tu me proposes me semble tellement impossible… Mais je te promets d'y réfléchir. Les choses vont trop vite." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "Je ne te promets pas le luxe, ma vie d'artiste est difficile, mais je prendrai soin de toi." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>J'ai revu ma mère</color>, j'ai enfin compris pourquoi elle nous avait abandonnés. Mon père est une véritable ordure, je ne veux plus le voir." }
+			{ "messageId": 10, "isAnswer": 1, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>Ma mère m'a demandé un RDV</color>, je ne sais pas trop si j'ai envie de la voir... Rien ne peut excuser un abandon...  " }
 		  ]
 		}
 	  ]
@@ -177,10 +177,10 @@
 			{ "messageId": 28, "isAnswer": 1, "timestamp": "2030-01-12T11:04:00", "message": "That's not what she tells me. You're unbelievable!" },
 			{ "messageId": 29, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "I'll pretend you didn't say that. You're talking to your father here! You owe me everything." },
 			{ "messageId": 30, "isAnswer": 0, "timestamp": "2030-01-12T11:04:00", "message": "If <indice id=\"M1_sms_vieille_sorciere\"><color=indice>that old witch</color></indice> contacted you again, it's because she wants to hurt us. Don't believe a word she says, I'm the one who raised you!" },
-			{ "messageId": 31, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Where are you?" },
-			{ "messageId": 32, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "Answer! I'm worried!" },
-			{ "messageId": 33, "isAnswer": 0, "timestamp": "2030-02-01T18:45:00", "message": "ALIZÉE!" }
-		  ]
+			{ "messageId": 31, "isAnswer": 0, "timestamp": "2030-01-31T20:01:07", "message": "Where are you?" },
+			{ "messageId": 32, "isAnswer": 0, "timestamp": "2030-01-31T20:45:08", "message": "Answer! I'm worried!" },
+			{ "messageId": 33, "isAnswer": 0, "timestamp": "2030-02-01T12:45:05", "message": "ALIZÉE!" }
+		  ]	
 		},
 		{
 		  "conversationId": 1,
@@ -240,7 +240,7 @@
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-01T20:47:00", "message": "Rejections happen!" },
 			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-11-01T20:47:00", "message": "My dad did so much so I could make it… He's right, medicine is a future. I let him down. Again." },
 			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-11-01T20:47:00", "message": "Alizée! Call me... We'll find a solution." },
-			{ "messageId": 13, "isAnswer": 1, "timestamp": "2030-01-10T17:46:00", "message": "You won't believe it, <color=important>I got an email from my mother Christine. I put it in my vault app.</color>" },
+			{ "messageId": 13, "isAnswer": 1, "timestamp": "2030-01-10T17:46:00", "message": "You won't believe it, <color=important>I got an email from my mother Christine</color>. I put it in my vault app." },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-10T17:47:00", "message": "Isn't that a scam? No one would come back after all this time. Is she asking you for money?" },
 			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-10T17:47:00", "message": "No, just to reconnect. As if that would fix her being gone! I resent her so much." },
 			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-10T17:47:00", "message": "Try it, it costs nothing..." },
@@ -265,7 +265,7 @@
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "What you're offering seems so impossible… But I promise I'll think about it. Things are moving too fast." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a rape alarm</color></indice>, we don't know how your father might react if he finds out about us." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>I saw my mother again</color>. I finally understood why she abandoned us. My father is a real piece of garbage, I don't want to see him anymore." }
+			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>My mom asked me to meet up with her</color>, but I'm not really sure if I want to see her... Nothing can excuse abandoning someone... " }
 		  ]
 		}
 	  ]

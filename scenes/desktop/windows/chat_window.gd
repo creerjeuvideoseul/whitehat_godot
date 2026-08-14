@@ -2,7 +2,7 @@ extends Control
 class_name ChatWindow
 ## A reusable "encrypted chat" window: a contacts sidebar shared by several
 ## conversations (one ConversationView per contact, only one visible at a
-## time). Built for AnonGhost + Jean Ranoud first, meant to be reused as-is
+## time). Built for RelayGhost + Jean Ranoud first, meant to be reused as-is
 ## for future contacts by just adding to `contacts`.
 ##
 ## No close button by design: minimizing is the only way to dismiss it (see
@@ -80,8 +80,8 @@ func add_contact(contact: ChatContact) -> void:
 	_build_conversation_view(contact)
 	# Une conversation déjà terminée (reprise de sauvegarde, voir desktop.gd)
 	# n'est pas un nouveau message qui vient d'arriver — seul un contact qui
-	# apparaît vraiment pour la première fois pendant la session (AnonGhost au
-	# tout début, Jean une fois AnonGhost fini) mérite le son + la secousse
+	# apparaît vraiment pour la première fois pendant la session (RelayGhost au
+	# tout début, Jean une fois RelayGhost fini) mérite le son + la secousse
 	# + le clignotement de sa ligne tant qu'on n'a pas cliqué dessus.
 	if not SaveManager.is_conversation_complete(contact.contact_id):
 		_notify_new_message()

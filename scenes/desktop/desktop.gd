@@ -44,8 +44,8 @@ const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
 const CURRENT_MISSION_ID := 1
-const ANONGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
-const ANONGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
+const RELAYGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
+const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
 ## Bruitage de frappe joué pendant les terminaux où le joueur "tape" des
@@ -72,7 +72,7 @@ const HACK_PC_MOTHER_PASSWORD := "Putriku_tersayang"
 ## immédiatement à l'arrivée sur le bureau.
 const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
 
-## Jean only shows up in the sidebar once AnonGhost's briefing is over, with
+## Jean only shows up in the sidebar once RelayGhost's briefing is over, with
 ## a short pause first so the two don't blur together.
 const JEAN_REVEAL_DELAY_SECONDS := 1.0
 
@@ -120,7 +120,7 @@ var _hack_pc_mother_login_console_title: String = ""
 ## surtout pour éviter d'en recréer une seconde au retour d'une sauvegarde).
 var _alizee_phone: AlizeePhone = null
 
-## Référence à la fenêtre de discussion AnonGhost/Jean ouverte au tout début
+## Référence à la fenêtre de discussion RelayGhost/Jean ouverte au tout début
 ## du bureau — gardée pour pouvoir la ranger (voir _minimize_window_with_slide)
 ## une fois le téléphone d'Alizée sur le point d'apparaître.
 var _chat_window: ChatWindow = null
@@ -151,7 +151,7 @@ func _ready() -> void:
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
 	if jean_done:
 		_reveal_alizee_phone(false)
-		# Sans ça, la conversation AnonGhost/Jean n'était accessible que
+		# Sans ça, la conversation RelayGhost/Jean n'était accessible que
 		# pendant la session où elle s'est terminée : desktop.gd repart de
 		# zéro à chaque chargement de sauvegarde et ne la recréait jamais
 		# après coup, la rendant introuvable (aucune icône dans la taskbar).
@@ -169,18 +169,18 @@ func _ready() -> void:
 
 	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
 	# reste quelque chose à découvrir dans le chat (première arrivée après
-	# l'intro/login, ou reprise entre la fin d'AnonGhost et celle de Jean) —
+	# l'intro/login, ou reprise entre la fin de RelayGhost et celle de Jean) —
 	# pas une reprise après coup, où tout a déjà été lu et où seul le
-	# téléphone d'Alizée reste à l'écran. Pas de is_conversation_complete("anonghost")
-	# ici : ça stranderait le joueur qui reprend juste après AnonGhost, sans
+	# téléphone d'Alizée reste à l'écran. Pas de is_conversation_complete("relayghost")
+	# ici : ça stranderait le joueur qui reprend juste après RelayGhost, sans
 	# autre moyen de rouvrir le chat pour parler à Jean (pas d'icône/taskbar
 	# pour ça pour l'instant).
 	# Immédiat, sans attendre le délai d'ouverture du chat ci-dessous —
-	# seulement le tout premier contact, pas la reprise "entre AnonGhost et
+	# seulement le tout premier contact, pas la reprise "entre RelayGhost et
 	# Jean" couverte par cette même branche (voir commentaire ci-dessus), où
-	# AnonGhost a déjà été rencontré lors d'une session précédente.
-	if not SaveManager.is_conversation_complete("anonghost"):
-		_show_player_thought(tr("THOUGHT_ANONGHOST_CONTACT"), "THOUGHT_ANONGHOST_CONTACT")
+	# RelayGhost a déjà été rencontré lors d'une session précédente.
+	if not SaveManager.is_conversation_complete("relayghost"):
+		_show_player_thought(tr("THOUGHT_RELAYGHOST_CONTACT"), "THOUGHT_RELAYGHOST_CONTACT")
 
 	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
 	_chat_window = _build_chat_window()
@@ -202,15 +202,15 @@ func _show_player_thought(text: String, translation_key: String = "") -> void:
 
 func _build_chat_window() -> ChatWindow:
 	var window: ChatWindow = CHAT_WINDOW.instantiate()
-	window.contacts = [_build_anonghost_contact()]
-	# Si la conversation avec AnonGhost est déjà terminée (reprise d'une
+	window.contacts = [_build_relayghost_contact()]
+	# Si la conversation avec RelayGhost est déjà terminée (reprise d'une
 	# sauvegarde), le signal contact_conversation_finished ne se redéclenchera
 	# jamais — _replay_saved_log() ne le réémet pas. Jean doit donc déjà être
 	# dans la liste initiale plutôt que d'attendre ce signal.
-	if SaveManager.is_conversation_complete("anonghost"):
+	if SaveManager.is_conversation_complete("relayghost"):
 		window.contacts.append(_build_jean_contact())
 	window.contact_conversation_finished.connect(func(contact_id: String) -> void:
-		if contact_id == "anonghost":
+		if contact_id == "relayghost":
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
 		elif contact_id == "jean_ranoud":
@@ -220,12 +220,12 @@ func _build_chat_window() -> ChatWindow:
 	return window
 
 
-func _build_anonghost_contact() -> ChatContact:
+func _build_relayghost_contact() -> ChatContact:
 	var contact := ChatContact.new()
-	contact.contact_id = "anonghost"
-	contact.contact_name = "AnonGhost"
-	contact.avatar = ANONGHOST_AVATAR
-	contact.dialogue_resource = ANONGHOST_DIALOGUE
+	contact.contact_id = "relayghost"
+	contact.contact_name = "RelayGhost"
+	contact.avatar = RELAYGHOST_AVATAR
+	contact.dialogue_resource = RELAYGHOST_DIALOGUE
 	return contact
 
 

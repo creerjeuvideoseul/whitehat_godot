@@ -6,7 +6,7 @@ class_name PlayerThought
 ## l'ajoute à l'arbre ; elle se montre, reste affichée quelques secondes puis
 ## se referme et se libère toute seule, sans rien à nettoyer côté appelant.
 ##
-## Premier appel : desktop.gd, au moment où AnonGhost contacte le joueur.
+## Premier appel : desktop.gd, au moment où RelayGhost contacte le joueur.
 
 ## Durée d'affichage plein, avant le fondu de sortie.
 const HOLD_SECONDS := 5.0
