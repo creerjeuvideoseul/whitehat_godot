@@ -11,9 +11,9 @@ IDMission;IDunique;IdCategUnique
 1;M1_sms_Marek_parking;MAREK
 1;M1_galerie_album;MAREK
 1;M1_sms_pere_sacrifice;JEAN
-1;M1_osint_alizee_pwa;COFFRE
-1;M1_osint_alizee_pwpere;COFFRE
-1;M1_img_bugsy;COFFRE
+1;M1_osint_alizee_pwa;ALIZ
+1;M1_osint_alizee_pwpere;JEAN
+1;M1_img_bugsy;ALIZ
 1;M1_Alizee_candidature_non;ALIZ
 1;M1_SOLUTION_OU;FIN
 1;M1_SOLUTION_MERE;MERE

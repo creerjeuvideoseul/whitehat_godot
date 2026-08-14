@@ -29,7 +29,7 @@
 		  "timestamp": "2030-01-18T22:30:00",
 		  "isSentBox": 1,
 		  "isCrypted": 0,
-		  "html_content": "Bonjour,<br><br>Je ne sais pas trop pourquoi j'écris ici. Je suis tombée sur votre site en cherchant des réponses sur le vide et la fatigue constante.<br><br>J'ai 18 ans et je me sens toujours épuisée, déconnectée de tout. Mes proches disent que je ne fais pas d'efforts, mais je crois que c'est moi qui ne suis pas faite pour ce monde. <br><br>Je n'ai personne à qui en parler.<br>Si vous savez pourquoi je me sens comme ça, s'il vous plaît, dites-le-moi.<br>Alizée"
+		  "html_content": "Bonjour,<br><br>Je ne sais pas trop pourquoi j'écris ici. Je suis tombée sur votre site en cherchant des réponses sur le vide et la fatigue constante.<br><br>J'ai 18 ans et je me sens toujours épuisée, déconnectée de tout. Mes proches disent que je ne fais pas d'efforts, mais je crois que c'est moi qui ne suis pas faite pour ce monde. <br><br>Je n'ai personne à qui en parler.<br>Si vous savez pourquoi je me sens comme ça, s'il vous plaît, dites-le-moi.<br><br>Alizée"
 		},
 		{
 		  "mailId": 2,
@@ -40,7 +40,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Chère Alizée,<br><br>Votre message n'est pas un hasard. Cette fatigue que vous ressentez n'est pas une maladie : c'est le signe que vous commencez à vous éveiller. Vous n'êtes pas brisée, vous êtes simplement trop lucide pour ce monde superficiel.<br>Votre entourage ne peut pas comprendre, mais nous, nous connaissons les règles du jeu. Vous n'avez plus à porter ce vide toute seule.<br>Ne répondez pas à ce mail. Si vous voulez enfin comprendre qui vous êtes, rejoignez notre salon privé via ce lien unique : <indice id=\"M1_mail_secte_write\"><color=indice>www.rejoigneznotrecommunaute.com</color></indice><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
+		  "html_content": "Chère Alizée,<br><br>Votre message n'est pas un hasard. Cette fatigue que vous ressentez n'est pas une maladie : c'est le signe que vous commencez à vous éveiller. Vous n'êtes pas brisée, vous êtes simplement trop lucide pour ce monde superficiel.<br><br>Votre entourage ne peut pas comprendre, mais nous, nous connaissons les règles du jeu. Vous n'avez plus à porter ce vide toute seule.<br><br>Ne répondez pas à ce mail. Si vous voulez enfin comprendre qui vous êtes, rejoignez notre salon privé via ce lien unique : <indice id=\"M1_mail_secte_write\"><color=indice>www.rejoigneznotrecommunaute.com</color></indice><br><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Pays-Bas)",
 			"Serveur": "smtp.eidos-relay.net",
@@ -148,7 +148,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Dear Alizée,<br>Your message is no coincidence. This exhaustion you feel is not an illness: it is the sign that you are beginning to awaken. You are not broken, you are simply too lucid for this superficial world.<br>Those around you cannot understand, but we know the rules of the game. You no longer have to carry this emptiness alone.<br>Do not reply to this email. If you finally want to understand who you are, join our private circle through this unique link: <indice id=\"M1_mail_secte_write\"><color=indice>www.jointourcommunity.com</color></indice><br>Take care of yourself,<br>Center for Inner Harmony.",
+		  "html_content": "Dear Alizée,<br>Your message is no coincidence. This exhaustion you feel is not an illness: it is the sign that you are beginning to awaken. You are not broken, you are simply too lucid for this superficial world.<br><br>Those around you cannot understand, but we know the rules of the game. You no longer have to carry this emptiness alone.<br><br>Do not reply to this email. If you finally want to understand who you are, join our private circle through this unique link: <indice id=\"M1_mail_secte_write\"><color=indice>www.jointourcommunity.com</color></indice><br><br>Take care of yourself,<br>Center for Inner Harmony.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Netherlands)",
 			"Server": "smtp.eidos-relay.net",

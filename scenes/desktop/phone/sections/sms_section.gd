@@ -376,8 +376,10 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	message.add_theme_color_override("default_color", font_color)
 	message.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	var resolved := RichTextMarkup.strip_indice_tags(entry.message)
-	var highlight_color := Palette.TEXT_HIGHLIGHT_ON_LIGHT if Palette.is_light(bg_color) else Palette.TEXT_HIGHLIGHT
-	var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color)
+	var is_light_bg := Palette.is_light(bg_color)
+	var highlight_color := Palette.TEXT_HIGHLIGHT_ON_LIGHT if is_light_bg else Palette.TEXT_HIGHLIGHT
+	var important_color := Palette.TEXT_IMPORTANT_ON_LIGHT if is_light_bg else Palette.TEXT_IMPORTANT
+	var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color, important_color)
 	message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
 	bubble.add_child(message)
 

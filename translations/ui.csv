@@ -47,8 +47,8 @@ THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
 THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
-DESKTOP_CLUES_BUTTON,Collecte d'indices,Clue collection
-CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clue collection
+DESKTOP_CLUES_BUTTON,Collecte d'indices,Clues collection
+CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
 REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
 REPORT_CONFIRM_TITLE,Finir la mission de M. Ranoud.,Finish M. Ranoud's mission.
