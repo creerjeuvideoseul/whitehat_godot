@@ -15,6 +15,10 @@ signal closed
 ## (minimize_requested(window, window_title)) — n'est émis qu'en mode fenêtré,
 ## voir window_title.
 signal minimize_requested(window: Control, window_title: String)
+## Émis une seule fois, juste avant la toute première demande de mot de passe
+## (voir login_prompt_text/_play_login_gate) — pas rejoué à chaque tentative
+## incorrecte. Seulement pertinent quand login_prompt_text est renseigné.
+signal login_gate_started
 
 const LINE_GAP_SECONDS := 0.15
 const PROGRESS_STEP_SECONDS := 0.03
@@ -99,8 +103,15 @@ var login_wrong_message: String = ""
 ## autre chose (ex. un mail pour y trouver un mot de passe) sans perdre sa
 ## progression dans le terminal. À définir avant add_child(), comme `lines`.
 var window_title: String = ""
+## Taille de la boîte centrée (voir Box dans terminal_console.tscn, dont
+## c'est la valeur par défaut) — à définir avant add_child(), comme `lines`,
+## pour un appelant qui a besoin de plus de place (ex. le terminal de
+## connexion RDP du PC de la mère, voir desktop.gd) sans agrandir les autres
+## usages (boot système de l'intro, dump de Jean) qui partagent cette même scène.
+var box_size: Vector2 = Vector2(1100.0, 680.0)
 
 @onready var _backdrop: ColorRect = $Backdrop
+@onready var _box: Control = $Box
 @onready var _title_label: Label = %TitleLabel
 @onready var _scroll_container: ScrollContainer = %ScrollContainer
 @onready var _lines_list: VBoxContainer = %LinesList
@@ -110,6 +121,10 @@ var _current_label: DialogueLabel = null
 
 
 func _ready() -> void:
+	_box.offset_left = -box_size.x * 0.5
+	_box.offset_right = box_size.x * 0.5
+	_box.offset_top = -box_size.y * 0.5
+	_box.offset_bottom = box_size.y * 0.5
 	_title_label.visible = not title.is_empty()
 	_title_label.text = title
 	_close_button.hide()
@@ -267,6 +282,7 @@ func _format_mmss(total_seconds: float) -> String:
 ## seule façon de sortir de cette boucle : pas de bouton Fermer tant que ce
 ## mode est actif (voir _play()).
 func _play_login_gate() -> void:
+	login_gate_started.emit()
 	var expected := _normalize_login_password(login_expected_password)
 	while true:
 		await _play_text_line(TerminalLine.text_line(login_prompt_text))

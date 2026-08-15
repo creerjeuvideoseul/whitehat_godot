@@ -49,6 +49,10 @@ const METADATA_REVEAL_DELAY_SECONDS := 1.0
 ## l'utilisateur dans alizee_mailbox.json.
 const META_PLAYER_THINK_KEY := "Player_Think"
 const META_HACK_PC_MOTHER_KEY := "Hack_PC_Mother"
+## Préfixe de citation ajouté à chaque ligne du mail cité en réponse (voir
+## MailEntry.mail_previous_id/_build_quoted_previous_mail) — convention
+## universelle de citation de mail, pour bien montrer "reply to".
+const QUOTE_PREFIX := "> "
 ## Fondu d'entrée/sortie de la musique d'un mail (voir MailEntry.play_music) —
 ## même valeur pour les deux, "fadeout 1" demandé explicitement pour la sortie.
 const MAIL_MUSIC_FADE_SECONDS := 1.0
@@ -447,6 +451,11 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		if not mail.attach_image.is_empty():
 			content_box.add_child(_build_attachment_thumbnail(mail))
 
+		if mail.mail_previous_id >= 0:
+			var previous: MailEntry = _database.get_mail_by_id(mail.mail_previous_id)
+			if previous != null:
+				content_box.add_child(_build_quoted_previous_mail(previous))
+
 	return frame
 
 
@@ -462,6 +471,38 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	label.text = RichTextMarkup.html_to_bbcode(raw_text)
 	return label
+
+
+## Le mail cité en réponse (voir MailEntry.mail_previous_id), sous le corps du
+## mail courant : sa propre ligne "De/À" (_build_detail_sender_row, correcte
+## quel que soit son sens puisqu'elle ne dépend que de `previous`) puis son
+## corps préfixé de "> " ligne par ligne (voir _quote_lines), en gris plus
+## sombre pour le distinguer visuellement du mail courant — même principe
+## qu'une vraie citation de mail. Un seul niveau : même si `previous` a
+## lui-même un mail_previous_id, il n'est jamais résolu ici, pour ne pas
+## empiler des citations de citations.
+func _build_quoted_previous_mail(previous: MailEntry) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", FIELD_GAP)
+
+	box.add_child(_build_detail_sender_row(previous))
+
+	var quoted_html := _quote_lines(RichTextMarkup.strip_indice_tags(previous.html_content))
+	var quoted_label := _build_body_label(quoted_html)
+	quoted_label.add_theme_color_override("default_color", Palette.CONSOLE_TEXT)
+	box.add_child(quoted_label)
+
+	return box
+
+
+## Préfixe chaque ligne (séparée par <br>, comme le reste du pseudo-HTML de
+## alizee_mailbox.json) d'un chevron "> " — convention universelle de citation
+## de mail, voir _build_quoted_previous_mail.
+func _quote_lines(html: String) -> String:
+	var lines := html.split("<br>")
+	for i in lines.size():
+		lines[i] = QUOTE_PREFIX + lines[i]
+	return "<br>".join(lines)
 
 
 ## Vignette 16/9 de MailEntry.attach_image, sous le corps du mail — fond blanc

@@ -40,6 +40,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
+		  "mailPrevious":1,
 		  "html_content": "Chère Alizée,<br><br>Cette fatigue que vous ressentez n'est pas une maladie, mais le signe d'un éveil. Vous êtes simplement trop lucide pour ce monde, et votre entourage ne peut pas comprendre.<br><br>Vous n'avez plus à porter ce vide seule. Ne répondez pas à ce mail, rejoignez directement notre salon privé via ce lien : <indice id=\"M1_mail_secte_write\"><color=indice>www.*** blocked by spamkiller ***.com</color></indice><br><br>Prenez soin de vous,<br>Centre d'Harmonie Intérieure.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Pays-Bas)",
@@ -78,9 +79,10 @@
 		  "correspondentName": "Christine Ranoud",
 		  "subject": "re: re: Je suis si désolée Alizée.",
 		  "timestamp": "2030-01-30T09:02:00",
+		  "mailPrevious":4,
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><br>Il faut qu'on se parle. <indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Tu voudrais bien qu'on se renconde ?</color></indice><br><br>Je t'aime, Christine.",
+		  "html_content": "Je m'en veux tellement.<br><br>Tes mots me coûtent, mon enfant, mais je les comprends. <br>Laisse-moi une chance de t'expliquer ce qui s'est vraiment passé.<br>Je n'ai pas légalement le droit de te voir avant tes 18 ans. <br><br>Il faut qu'on se parle. <indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>Tu voudrais bien qu'on se rencontre ?</color></indice><br><br>Je t'aime, Christine.",
 		  "meta_info": {
 			  "IP_Origine": "180.252.12.44",
 			  "Serveur": "mail.gomail.co.id", 
@@ -148,6 +150,7 @@
 		  "timestamp": "2030-01-18T23:05:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
+		  "mailPrevious":1,
 		  "html_content": "Dear Alizée,<br><br>The fatigue you’re feeling isn’t an illness, but a sign of awakening. You’re simply too clear-sighted for this world, and those around you can’t understand.<br><br>You no longer have to carry this emptiness alone. Don’t reply to this email; join our private chat room directly via this link: <indice id=\"M1_mail_secte_write\"><color=indice>www.*** blocked by spamkiller ***.com</color></indice><br><br>Take care of yourself,<br>Center for Inner Harmony.",
 		  "meta_info": {
 			"IP": "185.220.101.47 (VPN - Netherlands)",
@@ -186,6 +189,7 @@
 		  "correspondentName": "Christine Ranoud",
 		  "subject": "re: re: I'm so sorry, Alizée.",
 		  "timestamp": "2030-01-30T09:02:00",
+		  "mailPrevious":4,		
 		  "isSentBox": 0,
 		  "isCrypted": 1,
 		  "html_content": "I feel so guilty.<br>Your words hurt, my child, but I understand them. <br>Give me a chance to explain what really happened.<br>I don't legally have the right to see you before you turn 18. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>We need to talk.</color></indice>",

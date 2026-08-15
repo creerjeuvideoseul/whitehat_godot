@@ -60,8 +60,9 @@ func remove_minimized_window(window_title: String) -> void:
 
 
 ## Caché par défaut dans la scène (voir desktop_footer.tscn) : n'apparaît
-## qu'une fois la conversation d'introduction RelayGhost terminée (voir
-## desktop.gd), l'aide n'ayant de sens qu'une fois l'enquête commencée.
+## qu'une fois le téléphone d'Alizée révélé (voir desktop.gd::_reveal_alizee_phone,
+## après Jean et le terminal système), l'aide n'ayant de sens qu'une fois
+## l'enquête vraiment commencée.
 func set_help_button_visible(should_show: bool) -> void:
 	_help_button.visible = should_show
 

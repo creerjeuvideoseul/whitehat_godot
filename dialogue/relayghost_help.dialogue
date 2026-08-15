@@ -2,7 +2,7 @@
 
 RelayGhost: Que puis-je pour toi ?
 
-- Demander de l'aide sur l'affaire.
+- Demander de l'aide.
 	set StoryVars.player_ask_help += 1
 	Player: RelayGhost, je suis bloqué sur l'affaire Jean Ranoud.
 	if not StoryVars.phone_vault_unlocked 
@@ -28,6 +28,31 @@ RelayGhost: Que puis-je pour toi ?
 	if not StoryVars.phone_vault_unlocked 
 		RelayGhost: Tu devrais également exploiter le module de recherche de vulnérabilités OSINT disponible dans l'en-tête de ton interface.
 		
+
+- Demander comment il va.
+    set StoryVars.player_ask_feeling = 1
+    Player: Comment tu vas, RelayGhost ?
+	RelayGhost: Je vais bien.
+	RelayGhost: Mon état n'a aucune incidence sur cette mission.
+	RelayGhost: Je suis néanmoins surpris par ta question.
+    RelayGhost: Elle n'apporte aucune information utile à notre enquête.
+    RelayGhost: Pourquoi me la poses-tu ?
+
+    - Je me sens bien.
+        set StoryVars.player_is_good = 1
+		Player: Je me sens très bien. Prêt à continuer.
+		RelayGhost: C'est noté.
+		RelayGhost: Un état stable facilite généralement la prise de décision.
+
+    - Je ne me sens pas très bien.
+		set StoryVars.player_is_bad = 1
+		Player: Pas très bien... La pression est forte.
+		RelayGhost: Alors réduis-la.
+		RelayGhost: La pression altère la qualité de l'analyse lorsqu'elle devient suffisamment importante.
+		RelayGhost: Prends quelques secondes. Reprends les faits dans l'ordre.
+		
+	RelayGhost: Replonge-toi dans l'analyse. Jean Ranoud attend toujours ton rapport.
+
 - Ne rien demander.
 
 => END

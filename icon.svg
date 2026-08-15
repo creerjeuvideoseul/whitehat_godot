@@ -1,1 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="124" height="124" x="2" y="2" fill="#363d52" stroke="#212532" stroke-width="4" rx="14"/><g fill="#fff" transform="translate(12.322 12.322)scale(.101)"><path d="M105 673v33q407 354 814 0v-33z"/><path fill="#478cbf" d="m105 673 152 14q12 1 15 14l4 67 132 10 8-61q2-11 15-15h162q13 4 15 15l8 61 132-10 4-67q3-13 15-14l152-14V427q30-39 56-81-35-59-83-108-43 20-82 47-40-37-88-64 7-51 8-102-59-28-123-42-26 43-46 89-49-7-98 0-20-46-46-89-64 14-123 42 1 51 8 102-48 27-88 64-39-27-82-47-48 49-83 108 26 42 56 81zm0 33v39c0 276 813 276 814 0v-39l-134 12-5 69q-2 10-14 13l-162 11q-12 0-16-11l-10-65H446l-10 65q-4 11-16 11l-162-11q-12-3-14-13l-5-69z"/><path d="M483 600c0 34 58 34 58 0v-86c0-34-58-34-58 0z"/><circle cx="725" cy="526" r="90"/><circle cx="299" cy="526" r="90"/></g><g fill="#414042" transform="translate(12.322 12.322)scale(.101)"><circle cx="307" cy="532" r="60"/><circle cx="717" cy="532" r="60"/></g></svg>
+<svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Fond texturé subtil -->
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="75%">
+      <stop offset="0%" stop-color="#0a1410"/>
+      <stop offset="100%" stop-color="#040604"/>
+    </radialGradient>
+
+    <!-- Glow vert pour le W -->
+    <filter id="glowGreen" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7" result="blur1"/>
+      <feFlood flood-color="#39ff8f" flood-opacity="0.9"/>
+      <feComposite in2="blur1" operator="in" result="glow1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2"/>
+      <feFlood flood-color="#39ff8f" flood-opacity="0.7"/>
+      <feComposite in2="blur2" operator="in" result="glow2"/>
+      <feMerge>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Ombre rouge portée pour le S -->
+    <filter id="glowRed" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6" result="blur1"/>
+      <feFlood flood-color="#ff2b2b" flood-opacity="0.85"/>
+      <feComposite in2="blur1" operator="in" result="glow1"/>
+      <feMerge>
+        <feMergeNode in="glow1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Dégradé vert du W (plus clair en haut) -->
+    <linearGradient id="wGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8dffc4"/>
+      <stop offset="45%" stop-color="#3fe38a"/>
+      <stop offset="100%" stop-color="#1f9d5e"/>
+    </linearGradient>
+
+    <!-- Dégradé rouge du S -->
+    <linearGradient id="sGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff5555"/>
+      <stop offset="55%" stop-color="#c81f1f"/>
+      <stop offset="100%" stop-color="#7a0f0f"/>
+    </linearGradient>
+
+    <!-- Scanlines texture -->
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="transparent"/>
+      <rect width="4" height="1" fill="#000000" opacity="0.18"/>
+    </pattern>
+
+    <clipPath id="frame">
+      <rect x="0" y="0" width="300" height="340" rx="6"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <!-- Fond -->
+    <rect width="300" height="340" fill="url(#bgGrad)"/>
+
+    <!-- W lumineux -->
+    <text x="150" y="255" text-anchor="middle"
+          font-family="Arial Black, Arial, sans-serif" font-weight="900"
+          font-size="260" fill="url(#wGrad)" filter="url(#glowGreen)"
+          letter-spacing="-6">W</text>
+
+    <!-- S rouge en surimpression -->
+    <text x="150" y="200" text-anchor="middle"
+          font-family="Arial Black, Arial, sans-serif" font-weight="900"
+          font-size="150" fill="url(#sGrad)" filter="url(#glowRed)"
+          stroke="#3a0505" stroke-width="1">S</text>
+
+    <!-- Texture scanlines par-dessus -->
+    <rect width="300" height="340" fill="url(#scan)"/>
+
+    <!-- Vignette légère pour resserrer le regard au centre -->
+    <rect width="300" height="340" fill="url(#bgGrad)" opacity="0.15"/>
+  </g>
+</svg>

@@ -81,7 +81,7 @@
 			{
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
-			  "username": "Océanne",
+			  "username": "Océane",
 			  "message": "Je crois que ton groupe <color=indice>LastHorizon</color> est programmé à Rennes la semaine prochaine non ?"
 			},
 			{
@@ -136,12 +136,12 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
 			  "username": "Alizée",
-			  "message": "Merci Océanne pour la photo, elle me rappelle qu'un autre avenir est peut-être possible..."
+			  "message": "Merci Océane pour la photo, elle me rappelle qu'un autre avenir est peut-être possible..."
 			},
 			{
 			  "commentId": 2,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
-			  "username": "Océanne",
+			  "username": "Océane",
 			  "message": "You're welcome. Carpe diem, ma grande !"
 			}
 		  ]
@@ -240,7 +240,7 @@
 			{
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
-			  "username": "Océanne",
+			  "username": "Océane",
 			  "message": "I think your band <color=indice>LastHorizon</color> is scheduled to play in Rennes next week, right?"
 			},
 			{
@@ -295,12 +295,12 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
 			  "username": "Alizée",
-			  "message": "Thank you, Océanne, for the photo; it reminds me that another future might be possible..."
+			  "message": "Thank you, Océane, for the photo; it reminds me that another future might be possible..."
 			},
 			{
 			  "commentId": 2,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
-			  "username": "Océanne",
+			  "username": "Océane",
 			  "message": "You're welcome. Carpe diem, that's great! !"
 			}
 		  ]

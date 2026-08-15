@@ -31,6 +31,10 @@ var attach_image: String
 ## se déclenche au dépli de VIEW METADATA, pas à l'ouverture du mail). Vide par
 ## défaut, la plupart des mails n'en ont pas.
 var player_think: String
+## Id du mail auquel celui-ci répond (voir MailDatabase.get_mail_by_id),
+## affiché en citation sous le corps de ce mail (voir
+## MailSection._build_quoted_previous_mail) — -1 par défaut, aucun mail cité.
+var mail_previous_id: int
 
 
 static func from_dict(data: Dictionary) -> MailEntry:
@@ -49,6 +53,7 @@ static func from_dict(data: Dictionary) -> MailEntry:
 	entry.play_music = str(data.get("play_music", ""))
 	entry.attach_image = str(data.get("attach_image", ""))
 	entry.player_think = str(data.get("Player_Think", ""))
+	entry.mail_previous_id = int(data.get("mailPrevious", -1))
 	return entry
 
 

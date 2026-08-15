@@ -65,6 +65,11 @@ const HACK_PC_MOTHER_IP := "180.252.12.44"
 ## insensible à la casse et au séparateur "_"/espace (voir
 ## TerminalConsole._normalize_login_password).
 const HACK_PC_MOTHER_PASSWORD := "Putriku_tersayang"
+## Plus grand que la taille par défaut de TerminalConsole (1100×680, voir
+## TerminalConsole.box_size) — seulement pour ce terminal de connexion RDP,
+## pas pour les autres usages de la même scène (boot système de l'intro, dump
+## de Jean).
+const HACK_PC_MOTHER_TERMINAL_SIZE := Vector2(1180.0, 730.0)
 
 ## The chat window auto-opens on desktop load for now — there's no "how do
 ## you open a window" system yet (icons, notifications, ...), so this is
@@ -134,12 +139,6 @@ func _ready() -> void:
 	_header.osint_search_requested.connect(_on_osint_search_requested)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
-	# Le bouton "Aide" n'a de sens qu'une fois l'enquête commencée : caché tant
-	# que RelayGhost n'a pas fini son briefing (voir set_help_button_visible),
-	# réévalué ici pour couvrir aussi bien une reprise de sauvegarde qu'une
-	# nouvelle partie (auquel cas le signal contact_conversation_finished,
-	# voir _build_chat_window, se chargera de le révéler en cours de session).
-	_footer.set_help_button_visible(SaveManager.is_conversation_complete("relayghost"))
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
@@ -207,7 +206,6 @@ func _build_chat_window() -> ChatWindow:
 		window.contacts.append(_build_jean_contact())
 	window.contact_conversation_finished.connect(func(contact_id: String) -> void:
 		if contact_id == "relayghost":
-			_footer.set_help_button_visible(true)
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
 		elif contact_id == "jean_ranoud":
@@ -430,8 +428,8 @@ func _on_thought_log_button_pressed() -> void:
 
 
 ## "Aide" du footer : rouvre (ou remonte) la fenêtre de chat déjà existante à
-## ce stade (voir set_help_button_visible, caché avant que RelayGhost n'ait
-## fini son briefing) sur l'onglet RelayGhost, puis rejoue le titre "help" de
+## ce stade (voir set_help_button_visible, caché jusqu'à l'apparition du
+## téléphone d'Alizée) sur l'onglet RelayGhost, puis rejoue le titre "help" de
 ## son dialogue — voir ChatWindow.trigger_help/ConversationView.trigger_help.
 func _on_help_button_pressed() -> void:
 	if not is_instance_valid(_chat_window):
@@ -490,6 +488,7 @@ func _play_hack_pc_mother_login_terminal() -> void:
 	var danger := _terminal_color_hex(Palette.TEXT_DANGER)
 
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.box_size = HACK_PC_MOTHER_TERMINAL_SIZE
 	console.lines = _build_hack_pc_mother_login_lines()
 	console.typing_sound = COMMAND_TYPING_SOUND
 	console.login_prompt_text = "Password for Christine@%s:" % HACK_PC_MOTHER_IP
@@ -497,6 +496,12 @@ func _play_hack_pc_mother_login_terminal() -> void:
 	console.login_wrong_message = "[color=%s]%s[/color]" % [danger, tr("TERMINAL_WRONG_PASSWORD")]
 	console.window_title = tr("TERMINAL_WINDOW_TITLE")
 	console.closed.connect(_on_hack_pc_mother_login_succeeded)
+	# Pas au tout début du terminal (le scan réseau/la connexion tournent encore
+	# à ce moment-là) : seulement une fois qu'il en arrive vraiment à demander
+	# le mot de passe — voir TerminalConsole.login_gate_started.
+	console.login_gate_started.connect(func() -> void:
+		_show_player_thought(tr("THOUGHT_HACK_PC_MOTHER_PASSWORD"), "THOUGHT_HACK_PC_MOTHER_PASSWORD")
+	)
 	_hack_pc_mother_login_console = console
 	_open_window(console)
 
@@ -634,6 +639,12 @@ func _reveal_alizee_phone(animate: bool) -> void:
 	_alizee_phone = ALIZEE_PHONE.instantiate()
 	_alizee_phone.icon_pressed.connect(_on_phone_icon_pressed)
 	_window_layer.add_child(_alizee_phone)
+	# Le bouton "Aide" n'a de sens qu'une fois l'enquête vraiment commencée :
+	# caché jusqu'à ce que le téléphone d'Alizée apparaisse (après Jean, après
+	# le terminal de dump) — pas dès la fin de RelayGhost, voir
+	# set_help_button_visible. Couvre aussi bien l'apparition animée en cours
+	# de session que la reprise d'une sauvegarde postérieure (animate=false).
+	_footer.set_help_button_visible(true)
 
 	if animate:
 		SfxPlayer.play(SfxPlayer.ALIZEE_PHONE_REVEAL_SFX)

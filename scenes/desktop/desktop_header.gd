@@ -182,11 +182,10 @@ func _build_toast() -> void:
 	style.content_margin_bottom = 14
 	_toast.add_theme_stylebox_override("panel", style)
 
-	## RichTextLabel, pas Label : le texte d'un indice peut porter
-	## <color=important> (voir translations/indices.csv), résolu via
-	## RichTextMarkup.html_to_bbcode comme partout ailleurs où du texte de
-	## donnée brute s'affiche (voir ClueBoard._build_clue_panel) — un Label
-	## afficherait la balise telle quelle au lieu de l'interpréter.
+	## RichTextLabel pour fit_content/autowrap comme le reste des labels
+	## construits en code ici — le texte affiché est désormais toujours le même
+	## message générique (voir _advance_toast_queue), plus besoin d'interpréter
+	## de balises comme avant.
 	_toast_label = RichTextLabel.new()
 	_toast_label.bbcode_enabled = true
 	_toast_label.fit_content = true
@@ -211,10 +210,12 @@ func _advance_toast_queue() -> void:
 		return
 	_toast_showing = true
 
-	## L'id de l'indice sert lui-même de clé de traduction (voir
-	## translations/indices.csv), comme sur le tableau d'enquête (ClueBoard).
-	var clue_id: String = _toast_queue.pop_front()
-	_toast_label.text = RichTextMarkup.html_to_bbcode(tr(clue_id))
+	## Texte générique plutôt que celui de l'indice lui-même (comme sur le
+	## tableau d'enquête, ClueBoard) : le joueur n'a de toute façon pas le
+	## temps de le lire avant que le bandeau ne disparaisse. `clue_id` ne sert
+	## donc plus qu'à savoir qu'une notification est en attente.
+	_toast_queue.pop_front()
+	_toast_label.text = tr("CLUE_UNLOCKED_TOAST")
 	## Aligné à gauche sous le bouton "COLLECTE D'INDICE" — _clue_button est
 	## niché dans Margin/Row/LeftGroup, pas un enfant direct du header, donc
 	## converti en position locale à la main (Control n'a pas de to_local(),

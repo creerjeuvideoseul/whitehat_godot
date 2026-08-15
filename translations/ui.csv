@@ -44,12 +44,14 @@ DESKTOP_THOUGHT_LOG_BUTTON,Historique des pensées,Thought History
 DESKTOP_HELP_BUTTON,Aide,Help
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
 THOUGHT_RELAYGHOST_CONTACT,RelayGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,RelayGhost should contact me. RelayGhost is my only real-world contact. Someone I trust, whom I've known for years.
+THOUGHT_HACK_PC_MOTHER_PASSWORD,"Hum, il faut maintenant que je trouve le mot de passe du PC de Christine Ranoud pour aller plus loin.","Hmm, I now need to find Christine Ranoud's PC password to go any further."
 THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
 THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
 DESKTOP_CLUES_BUTTON,Collecte d'indices,Clues collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection
+CLUE_UNLOCKED_TOAST,Indice débloqué.,Clue unlocked.
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
 REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
 REPORT_CONFIRM_TITLE,Finir la mission de M. Ranoud.,Finish M. Ranoud's mission.
@@ -96,14 +98,14 @@ GALLERY_COMMENT_COUNT,%d commentaire(s),%d comment(s)
 GALLERY_DETAIL_BACK_BUTTON,RETOUR,BACK
 MAIL_ATTACHMENT_VIEWER_TITLE,Pièce jointe,Attachment
 VAULT_SECTION_TITLE,Section coffre-fort,Vault section
-VAULT_EXPLANATION,"Des données sont cryptées sur ce téléphone (SMS, images, mails...). Merci d'indiquer le mot de passe pour les décrypter.","Some data on this phone is encrypted (SMS, images, emails...). Please enter the password to decrypt it."
+VAULT_EXPLANATION,"Des données sont cryptées sur ce téléphone (SMS, images, mails...). Merci d'indiquer le mot de passe pour les décrypter. Alphanumérique uniquement.","Some data on this phone is encrypted (SMS, images, emails...). Please enter the password to decrypt it. Alphanumeric only."
 VAULT_PASSWORD_PLACEHOLDER,Mot de passe,Password
 VAULT_VALIDATE_BUTTON,VALIDER,SUBMIT
 VAULT_SUCCESS_MESSAGE,"Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégées (SMS, mails, etc.).","Encrypted content unlocked — you can now access the protected information (SMS, emails, etc.)."
 VAULT_WRONG_PASSWORD,Ce n'est pas le bon mot de passe.,This is not the right password.
 VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de logique et simple.,It has to be something logic and simple.
 VAULT_HINT_ATTEMPT_2,"Quelque chose que Marek ou Alizée peut savoir, Marek a installé le coffre-fort.","Something Marek or Alizée might know — Marek installed the vault."
-VAULT_HINT_ATTEMPT_3,Peut-être que je pourrais trouver des pistes dans l'OSINT ?,Maybe I could find some leads in the OSINT search?
+VAULT_HINT_ATTEMPT_3,Peut-être que je pourrais trouver des pistes dans la recherche nom/prénom en haut ?,Maybe I could find some leads by searching by first and last name at the top?
 VAULT_HINT_ATTEMPT_4,Qu'est-ce qui est le plus important pour Marek ? Sa musique ?,What matters most to Marek? His music?
 VAULT_HINT_ATTEMPT_5,Les gens aiment bien ajouter des chiffres au mot de passe...,People love adding numbers to their passwords...
 VAULT_HINT_DATE,"Cela ne peut pas être une date, ce serait trop simple à trouver pour son père Jean.",It can't be a date — that would be too easy for her father Jean to guess.

@@ -2,16 +2,21 @@ extends Control
 class_name ClueBoardWindow
 ## Fenêtre "collecte d'indices" : même chrome (fond/cadre vert, barre de
 ## titre) que les autres fenêtres du bureau (ex. ChatWindow), mais prend 90%
-## de l'espace du bureau et reste centrée (voir les ancres de la scène). Le
-## contenu (ClueBoard) est générique par mission — voir clue_board.gd — donc
-## réutilisable tel quel pour les prochaines missions.
+## de l'espace du bureau et reste centrée (voir les ancres de la scène) —
+## contrairement aux autres qui ont une taille fixe en pixels : le tableau
+## d'enquête peut compter plusieurs colonnes de catégories et a besoin de
+## suivre la taille de l'écran, pas d'être borné comme un fil de chat ou un
+## mail. Le contenu (ClueBoard) est générique par mission — voir
+## clue_board.gd — donc réutilisable tel quel pour les prochaines missions.
 ##
 ## Bouton "×" plutôt que "—" (réduction) : contrairement aux autres fenêtres,
 ## celle-ci se rouvre toujours au même endroit (le bouton "Indice" du header,
 ## en permanence visible) — pas besoin d'une icône dans la barre des tâches en
 ## plus pour la retrouver, se fermer directement suffit (voir desktop.gd,
 ## _on_clue_button_pressed : l'instance est réutilisée en interne, seule sa
-## visibilité change).
+## visibilité change). Déplaçable par la barre de titre comme les autres,
+## malgré tout (voir _on_title_bar_gui_input) — sa position n'est pas
+## persistée, elle repart centrée à chaque nouvelle ouverture de session.
 
 ## Bubbled up to desktop.gd, qui décide ce qu'ouvrir "générer le rapport"
 ## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
@@ -30,6 +35,7 @@ const BLINK_SECONDS := 1.4
 		if is_node_ready():
 			_apply_mission()
 
+@onready var _title_bar: PanelContainer = %TitleBar
 @onready var _close_button: Button = %CloseButton
 @onready var _question_label: Label = %QuestionLabel
 @onready var _clue_board: ClueBoard = %ClueBoard
@@ -37,9 +43,11 @@ const BLINK_SECONDS := 1.4
 @onready var _report_confirm_dialog: ConfirmationDialog = %ReportConfirmDialog
 
 var _report_button_blink_tween: Tween
+var _dragging: bool = false
 
 
 func _ready() -> void:
+	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
 	## "Non" n'a besoin d'aucun câblage : le bouton Annuler d'un
@@ -90,6 +98,15 @@ func _update_report_button() -> void:
 func _on_close_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
+
+
+## Glisser par la barre de titre, comme OsintWindow/ThoughtLogWindow.
+func _on_title_bar_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		_dragging = event.pressed
+	elif event is InputEventMouseMotion and _dragging:
+		var max_position: Vector2 = get_parent_area_size() - size
+		position = (position + event.relative).clamp(Vector2.ZERO, max_position)
 
 
 ## N'émet pas encore generate_report_requested : demande d'abord confirmation

@@ -30,6 +30,18 @@ func get_mails(is_sent_box: bool) -> Array[MailEntry]:
 	return result
 
 
+## Le mail donné par son id, toutes boîtes confondues (envoyés + reçus) — pour
+## un mail cité en réponse (voir MailEntry.mail_previous_id), qui peut être de
+## l'autre boîte que celui qui le cite (ex. mail 5 reçu qui cite le mail 4
+## envoyé). null si l'id ne correspond à rien.
+func get_mail_by_id(mail_id: int) -> MailEntry:
+	var locale := _resolve_locale()
+	for mail: MailEntry in _mails_by_locale.get(locale, []):
+		if mail.mail_id == mail_id:
+			return mail
+	return null
+
+
 func _resolve_locale() -> String:
 	if _mails_by_locale.has(Settings.locale):
 		return Settings.locale

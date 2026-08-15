@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="WhiteHat"
+config/description="An accessible, frustration-free investigation game packed with tough moral dilemmas. Solve missions with escalating consequences against a relentless AI through a sleek interface. A multi-faceted story full of secrets, forged by my experience as a creator."
+config/version="1.0"
 run/main_scene="res://main_menu.tscn"
+config/custom_user_dir_name="whitehat"
 config/features=PackedStringArray("4.7", "Mobile")
-config/icon="res://icon.svg"
+run/max_fps=60
+config/icon="uid://biveoehljcb8l"
+config/windows_native_icon="uid://biveoehljcb8l"
 
 [audio]
 
