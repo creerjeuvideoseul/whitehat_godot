@@ -6,7 +6,7 @@
 		{
 		  "characterId": 0,
 		  "Photo": "res://assets/avatar/logo_joueur_bleu.png",
-		  "Nom": "JOUEUR",
+		  "Nom": "WhiteHat",
 		  "Prenom": "~",
 		  "Note personnelle": "C'est ma fiche. C'est étonnant que je ressorte avec mon pseudo ?",
 		  "Age": "Inconnu",
@@ -22,10 +22,10 @@
 		},
 		{
 		  "characterId": 1,
-		  "Photo": "res://assets/avatar/anonghost_avatar.png",
+		  "Photo": "res://assets/avatar/relayghost_avatar.png",
 		  "Nom": "RelayGhost",
 		  "Prenom": "~",
-		  "Pseudo(s) connu(s)": "AnonGhost",
+		  "Pseudo(s) connu(s)": "Personne",
 		  "Note personnelle": "Mon seul et unique contact de confiance.",
 		  "Age": "Inconnu",
 		  "Statut": "Contact",
@@ -194,8 +194,8 @@
 	  "characters": [
 		{
 		  "characterId": 0,
-		  "Photo": "res://assets/avatar/sentinelle_avatar.png",
-		  "Name": "PLAYER",
+		  "Photo": "res://assets/avatar/logo_joueur_bleu.png",
+		  "Name": "WhiteHat",
 		  "First name": "~",
 		  "Note personnelle": "This is my own file. Surprising that it comes up when I search my own handle.",
 		  "Age": "Unknown",
@@ -211,10 +211,10 @@
 		},
 		{
 		  "characterId": 1,
-		  "Photo": "res://assets/avatar/anonghost_avatar.png",
+		  "Photo": "res://assets/avatar/relayghost_avatar.png",
 		  "Name": "RelayGhost",
 		  "First name": "~",
-		  "Known alias(es)": "AnonGhost",
+		  "Known alias(es)": "Nobody",
 		  "Note personnelle": "My one and only trusted contact.",
 		  "Age": "Unknown",
 		  "Status": "Contact",

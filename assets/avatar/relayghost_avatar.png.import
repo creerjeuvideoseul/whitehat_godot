@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qg12rlmqgafh"
-path="res://.godot/imported/anonghost_avatar.png-faeb29064f4dc25d7f27a1dd1975ba0f.ctex"
+uid="uid://t1a61cuvp15h"
+path="res://.godot/imported/relayghost_avatar.png-be1271fc9af4c7135086b1239ac59f99.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/avatar/anonghost_avatar.png"
-dest_files=["res://.godot/imported/anonghost_avatar.png-faeb29064f4dc25d7f27a1dd1975ba0f.ctex"]
+source_file="res://assets/avatar/relayghost_avatar.png"
+dest_files=["res://.godot/imported/relayghost_avatar.png-be1271fc9af4c7135086b1239ac59f99.ctex"]
 
 [params]
 

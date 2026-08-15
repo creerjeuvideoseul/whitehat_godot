@@ -44,8 +44,8 @@ const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
 const CURRENT_MISSION_ID := 1
-const RELAYGHOST_AVATAR := preload("res://assets/avatar/anonghost_avatar.png")
-const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/anonghost_intro.dialogue")
+const RELAYGHOST_AVATAR := preload("res://assets/avatar/relayghost_avatar.png")
+const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_intro.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
 ## Bruitage de frappe joué pendant les terminaux où le joueur "tape" des
