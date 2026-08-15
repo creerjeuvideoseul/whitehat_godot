@@ -1,15 +1,12 @@
 extends Control
 class_name ClueBoardWindow
 ## Fenêtre "collecte d'indices" : même chrome (fond/cadre vert, barre de
-## titre) que les autres fenêtres du bureau (ex. ChatWindow), mais prend 90%
-## de l'espace du bureau et reste centrée (voir les ancres de la scène) —
-## contrairement aux autres qui ont une taille fixe en pixels choisie à la
-## main dans la scène : le tableau d'enquête peut compter plusieurs colonnes
-## de catégories, sa taille dépend donc de l'espace du bureau plutôt que
-## d'être bornée comme un fil de chat ou un mail — d'où le calcul par ancres
-## (voir _freeze_size() plus bas pour pourquoi ce calcul n'a besoin d'avoir
-## lieu qu'une fois). Le contenu (ClueBoard) est générique par mission — voir
-## clue_board.gd — donc réutilisable tel quel pour les prochaines missions.
+## titre) et même style d'ancrage (centrée, taille fixe en pixels) que les
+## autres fenêtres du bureau (ex. ChatWindow/OsintWindow, voir les ancres de
+## la scène) — juste plus grande (2400x1200) puisque le tableau d'enquête
+## peut compter plusieurs colonnes de catégories. Le contenu (ClueBoard) est
+## générique par mission — voir clue_board.gd — donc réutilisable tel quel
+## pour les prochaines missions.
 ##
 ## Bouton "×" plutôt que "—" (réduction) : contrairement aux autres fenêtres,
 ## celle-ci se rouvre toujours au même endroit (le bouton "Indice" du header,
@@ -19,20 +16,6 @@ class_name ClueBoardWindow
 ## visibilité change). Déplaçable par la barre de titre comme les autres,
 ## malgré tout (voir _on_title_bar_gui_input) — sa position n'est pas
 ## persistée, elle repart centrée à chaque nouvelle ouverture de session.
-##
-## Les ancres 5%/95% de la scène ne servent qu'au calcul de la taille
-## initiale : _freeze_size() les fige ensuite en offsets fixes (voir plus
-## bas). En mode d'affichage "canvas_items" (voir project.godot), tout le
-## layout tourne dans un canevas virtuel de résolution fixe (2560x1440) quelle
-## que soit la taille physique de la fenêtre — les ancres en pourcentage ne
-## "suivent" donc jamais rien de nouveau après le premier calcul, elles se
-## contentent de le refaire à l'identique à chaque redimensionnement (plein
-## écran <-> fenêtré, resize OS...). Ce recalcul répété pouvait laisser
-## Background/BorderOverlay (des Panel simples, ancrés donc redimensionnés
-## instantanément) et TitleBar (dans le VBoxContainer Layout, qui doit
-## repasser par une passe de layout) désynchronisés une frame durant pendant
-## une transition — d'où un coin de la barre de titre qui dépassait
-## visuellement du cadre jusqu'au prochain redraw complet de la zone.
 
 ## Bubbled up to desktop.gd, qui décide ce qu'ouvrir "générer le rapport"
 ## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
@@ -63,7 +46,6 @@ var _dragging: bool = false
 
 
 func _ready() -> void:
-	_freeze_size()
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
@@ -76,18 +58,6 @@ func _ready() -> void:
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
 	_apply_mission()
-
-
-## Fige la taille/position calculées par les ancres 5%/95% de la scène en
-## offsets fixes — voir le commentaire en tête de fichier pour le pourquoi.
-## Un frame d'attente est nécessaire : juste après l'ajout à l'arbre, les
-## ancres n'ont pas encore produit leur premier rect.
-func _freeze_size() -> void:
-	await get_tree().process_frame
-	var frozen_rect := get_rect()
-	set_anchors_preset(Control.PRESET_TOP_LEFT)
-	position = frozen_rect.position
-	size = frozen_rect.size
 
 
 func _apply_mission() -> void:

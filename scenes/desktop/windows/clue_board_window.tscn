@@ -50,11 +50,15 @@ corner_radius_bottom_left = 12
 
 [node name="ClueBoardWindow" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_left = 0.05
-anchor_top = 0.05
-anchor_right = 0.95
-anchor_bottom = 0.95
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1200.0
+offset_top = -600.0
+offset_right = 1200.0
+offset_bottom = 600.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
