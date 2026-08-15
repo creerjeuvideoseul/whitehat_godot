@@ -4,7 +4,7 @@ class_name MonologueScreen
 ## frappe que le reste du jeu, voir DialogueLabel), dans un cadre invisible
 ## centré à l'écran, texte aligné à gauche. Générique et réutilisable comme
 ## TerminalConsole (voir scenes/ui/terminal_console.gd) : rien n'est en dur
-## ici, `text`/`music` viennent de l'appelant — voir introduction.gd pour
+## ici, `text`/`music`/`typing_sound` viennent de l'appelant — voir introduction.gd pour
 ## l'usage actuel (monologue de rédemption juste après le JT).
 ##
 ## Ajoutée directement en enfant de la scène appelante (pas de CanvasLayer
@@ -20,10 +20,17 @@ var text: String = ""
 ## laissée à null : pas de musique. À définir avant add_child(), comme `text`.
 var music: AudioStream = null
 var music_fade_seconds: float = 1.0
+## Bruitage de frappe au clavier pendant que le texte s'écrit (même mécanique
+## que TerminalConsole.typing_sound) — laissé à null : pas de bruitage. À
+## définir avant add_child(), comme `text`.
+var typing_sound: AudioStream = null
 
 ## Plus lent que le défaut de DialogueLabel (0.02s/caractère) : rythme plus
 ## solennel, adapté à un monologue plutôt qu'à un dialogue qui s'enchaîne vite.
 const SECONDS_PER_STEP := 0.035
+## Même durée de fondu que TerminalConsole.TYPING_SOUND_FADE_SECONDS, pour le
+## même bruitage de frappe.
+const TYPING_SOUND_FADE_SECONDS := 0.1
 ## Pause après la fin de la frappe avant que l'indicateur "cliquez pour
 ## continuer" apparaisse — laisse un instant de silence avant de rendre la
 ## main au joueur, plutôt que de l'afficher instantanément sur le dernier mot.
@@ -47,8 +54,16 @@ func _play() -> void:
 	dialogue_line.text = text
 	_label.dialogue_line = dialogue_line
 	_label.seconds_per_step = SECONDS_PER_STEP
+
+	var plays_typing_sound := typing_sound != null
+	if plays_typing_sound:
+		SfxPlayer.play_ambient(typing_sound, TYPING_SOUND_FADE_SECONDS)
+
 	_label.type_out()
 	await _label.finished_typing
+
+	if plays_typing_sound:
+		SfxPlayer.stop_ambient(TYPING_SOUND_FADE_SECONDS)
 
 	## Même son que les autres "grandes révélations" du jeu (voir
 	## SfxPlayer.MAJOR_REVEAL_SFX, desktop.gd/vault_section.gd) — le moment où

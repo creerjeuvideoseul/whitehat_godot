@@ -17,6 +17,10 @@ const BOOT_SYSTEM_SFX := preload("res://assets/audio/sound/juniorsoundays-motion
 ## Partage MUSIC_FADE_SECONDS (1s) ci-dessous avec la musique du JT.
 const MONOLOGUE_SCREEN := preload("res://scenes/monologue_screen.tscn")
 const MONOLOGUE_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
+## Même bruitage de frappe que le terminal de Jean (voir desktop.gd,
+## COMMAND_TYPING_SOUND) — le joueur "écrit" ce monologue, comme une commande
+## tapée dans un terminal ou un message dans ChatWindow.
+const MONOLOGUE_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 
 const MUSIC_FADE_SECONDS := 1.0
 ## Durée du fondu enchaîné (crossfade) entre deux images, façon Ren'Py.
@@ -173,14 +177,17 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 
 
 ## Monologue de rédemption, écran noir avant le boot du système — voir
-## MonologueScreen. "WHITE HAT" est injecté en code (couleur Palette.TEXT_ACCENT,
-## la teinte "marque" du jeu) plutôt que codé en dur dans le texte traduit, pour
-## ne pas coupler translations/ui.csv à une couleur.
+## MonologueScreen. "WHITE HAT"/"Black Hats" sont injectés en code (couleur
+## Palette.TEXT_ACCENT/TEXT_DANGER, police +5 par rapport au reste du texte)
+## plutôt que codés en dur dans le texte traduit, pour ne pas coupler
+## translations/ui.csv à une couleur/taille.
 func _play_monologue() -> void:
 	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
-	var whitehat := "[b][color=%s]WHITE HAT[/color][/b]" % accent
+	var danger := "#%s" % Palette.TEXT_DANGER.to_html(false)
+	var whitehat := "[font_size=%d][b][color=%s]WHITE HAT[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, accent]
+	var black_hats := "[font_size=%d][b][color=%s]Black Hats[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, danger]
 	var text := "%s\n%s\n%s\n\n%s\n\n%s\n%s\n\n%s\n\n%s" % [
-		tr("INTRO_MONOLOGUE_1"), tr("INTRO_MONOLOGUE_2"), tr("INTRO_MONOLOGUE_3"),
+		tr("INTRO_MONOLOGUE_1"), tr("INTRO_MONOLOGUE_2") % black_hats, tr("INTRO_MONOLOGUE_3"),
 		tr("INTRO_MONOLOGUE_4"),
 		tr("INTRO_MONOLOGUE_5"), tr("INTRO_MONOLOGUE_6"),
 		tr("INTRO_MONOLOGUE_7"),
@@ -191,6 +198,7 @@ func _play_monologue() -> void:
 	monologue.text = text
 	monologue.music = MONOLOGUE_MUSIC
 	monologue.music_fade_seconds = MUSIC_FADE_SECONDS
+	monologue.typing_sound = MONOLOGUE_TYPING_SOUND
 	add_child(monologue)
 	await monologue.closed
 

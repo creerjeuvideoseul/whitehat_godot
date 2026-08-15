@@ -127,7 +127,7 @@ MONTH_10,octobre,October
 MONTH_11,novembre,November
 MONTH_12,décembre,December
 INTRO_MONOLOGUE_1,"Invisibles, omnipotents. Domotique, téléphones, caméras : rien ne nous échappe.","Invisible, omnipotent. Home automation, phones, cameras: nothing escapes us."
-INTRO_MONOLOGUE_2,Nous sommes les Black Hats.,We are the Black Hats.
+INTRO_MONOLOGUE_2,Nous sommes les %s.,We are the %s.
 INTRO_MONOLOGUE_3,"Nous exploitons le système pour le pouvoir, l'argent et le contrôle, j'ai été de ceux-là.","We exploit the system for power, money and control — I used to be one of them."
 INTRO_MONOLOGUE_4,J'ai été une mauvaise personne...,I was a bad person...
 INTRO_MONOLOGUE_5,Mais un événement a tout changé.,But something happened that changed everything.
