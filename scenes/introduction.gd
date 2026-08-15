@@ -23,6 +23,12 @@ const MONOLOGUE_MUSIC := preload("res://assets/audio/soundreality-cinematic-tens
 const MONOLOGUE_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 
 const MUSIC_FADE_SECONDS := 1.0
+## Fondu au noir entre l'écran du monologue et la fenêtre système (voir
+## _on_dialogue_ended) — plus court que SceneTransition.DEFAULT_FADE_SECONDS
+## (0.6s, retour joueur : 1.4s traînait trop) : une coupure nette entre deux
+## temps du jeu (l'intime du monologue vs le système qui démarre), pas un
+## enchaînement lent.
+const MONOLOGUE_TO_BOOT_FADE_SECONDS := 0.5
 ## Durée du fondu enchaîné (crossfade) entre deux images, façon Ren'Py.
 const DISSOLVE_SECONDS := 0.15
 
@@ -121,12 +127,26 @@ func _on_dialogue_line_shown(character: String, text: String) -> void:
 ## avancent le dialogue), ce qui arrête tout événement souris avant qu'il
 ## n'atteigne _unhandled_input — la molette n'arrivait donc jamais ici.
 ## _input() est appelé avant le passage GUI, donc insensible à ce filtre.
+##
+## Un clic gauche pendant la consultation de l'historique (pas encore revenu
+## à la ligne live) avance d'un cran, façon Ren'Py — plutôt que de ne rien
+## faire (DialogueBalloon.is_waiting_for_input reste à false tant qu'on
+## consulte l'historique, donc son propre clic-pour-avancer est inopérant ici,
+## voir dialogue_balloon.gd). Sans risque de sauter un mutate/indice/save
+## puisque intro.dialogue n'en déclenche aucun.
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_rewind(-1)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_rewind(1)
+		elif event.button_index == MOUSE_BUTTON_LEFT and _is_browsing_history():
+			get_viewport().set_input_as_handled()
+			_rewind(1)
+
+
+func _is_browsing_history() -> bool:
+	return _history_index >= 0 and _history_index < _history.size() - 1
 
 
 func _rewind(step: int) -> void:
@@ -168,6 +188,9 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 	SceneTransition.fade_in()
 
 	await _play_monologue()
+
+	await SceneTransition.fade_out(MONOLOGUE_TO_BOOT_FADE_SECONDS)
+	SceneTransition.fade_in(MONOLOGUE_TO_BOOT_FADE_SECONDS)
 
 	await _play_boot_terminal()
 

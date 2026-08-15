@@ -138,6 +138,13 @@ func next(next_id: String) -> void:
 ## Introduction._rewind()). Le texte apparaît intégralement, sans effet de
 ## frappe. Utiliser resume_live_line() pour revenir à la ligne réellement en
 ## cours.
+##
+## is_typing coupé AVANT de changer dialogue_line (voir _force_full_text) :
+## sinon, si la ligne live était encore en train de s'écrire au moment du
+## retour en arrière, DialogueLabel._process() pouvait continuer à faire
+## avancer visible_characters sur le nouveau texte d'après l'ancien état de
+## frappe interrompu — le texte de l'historique restait alors figé en plein
+## milieu au lieu de s'afficher entier (retour joueur).
 func show_history_line(character: String, text: String) -> void:
 	if is_waiting_for_input:
 		_live_was_waiting_for_input = true
@@ -149,8 +156,7 @@ func show_history_line(character: String, text: String) -> void:
 
 	var history_line := DialogueLine.new()
 	history_line.text = text
-	dialogue_label.dialogue_line = history_line
-	dialogue_label.visible_ratio = 1.0
+	_force_full_text(history_line)
 
 
 ## Restaure l'affichage de la ligne réellement en cours après un ou
@@ -162,13 +168,24 @@ func resume_live_line() -> void:
 	character_label.visible = not dialogue_line.character.is_empty()
 	character_label.text = _colored_character_name(dialogue_line.character)
 
-	dialogue_label.dialogue_line = dialogue_line
-	dialogue_label.visible_ratio = 1.0
+	_force_full_text(dialogue_line)
 
 	if _live_was_waiting_for_input:
 		_live_was_waiting_for_input = false
 		is_waiting_for_input = true
 		progress_label.show()
+
+
+## Coupe toute frappe en cours puis affiche `line` entièrement et
+## immédiatement — visible_characters = -1 plutôt que visible_ratio = 1.0 :
+## ce dernier se calcule à partir du nombre de caractères de l'ANCIEN texte
+## si DialogueLabel n'a pas encore fini de re-parser le nouveau (voir
+## show_history_line), -1 (convention RichTextLabel "pas de limite") est
+## immédiat et ne dépend d'aucun recalcul.
+func _force_full_text(line: DialogueLine) -> void:
+	dialogue_label.is_typing = false
+	dialogue_label.dialogue_line = line
+	dialogue_label.visible_characters = -1
 
 
 func _colored_character_name(character: String) -> String:
