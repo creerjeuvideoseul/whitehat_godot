@@ -182,8 +182,8 @@ text = "DESKTOP_MEM_LABEL"
 [node name="MemGauge" parent="Margin/Row/RightGroup/MemGroup" instance=ExtResource("4_usage_gauge")]
 layout_mode = 2
 size_flags_vertical = 4
-min_percent = 55.0
-max_percent = 75.0
+min_percent = 50.0
+max_percent = 65.0
 
 [node name="PseudoLabel" type="Label" parent="Margin/Row/RightGroup"]
 unique_name_in_owner = true
