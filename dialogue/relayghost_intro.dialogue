@@ -4,7 +4,7 @@ RelayGhost: {{PlayerSession.pseudo}}, initialisation de la phase opérationnelle
 RelayGhost: On y est.
 RelayGhost: Aujourd'hui, je vais te confier ta première affaire.
 RelayGhost: Nous avons suffisamment travaillé ensemble pour que je connaisse ta valeur.
-RelayGhost: Tu fais partie des [color=important]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_anon_perseverant]
+RelayGhost: Tu fais partie des [color=indice]rares[/color] profils qui ont tenu jusqu'au bout. [#indice=intro_relay_perseverant]
 
 - Je suis génial !
 	set StoryVars.player_orgueil += 1

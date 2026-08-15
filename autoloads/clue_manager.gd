@@ -119,7 +119,7 @@ func get_categories_for_mission(mission_id: int) -> Array[ClueCategory]:
 	var seen: Dictionary = {}
 	var result: Array[ClueCategory] = []
 	for clue in _clues:
-		if clue.mission_id != mission_id or seen.has(clue.category_id) or not is_unlocked(clue.id):
+		if not _clue_visible_for_mission(clue, mission_id) or seen.has(clue.category_id) or not is_unlocked(clue.id):
 			continue
 		var categ: ClueCategory = _categories.get(clue.category_id)
 		if categ != null and categ.is_display:
@@ -128,10 +128,18 @@ func get_categories_for_mission(mission_id: int) -> Array[ClueCategory]:
 	return result
 
 
+## Vrai si `clue` doit apparaître sur le tableau ouvert pour `mission_id` :
+## soit sa propre mission, soit la mission "0" — convention réservée aux
+## indices hors mission (ex. RelayGhost, voir intro_relay_perseverant plus
+## bas), toujours visibles quelle que soit la mission en cours.
+func _clue_visible_for_mission(clue: ClueDefinition, mission_id: int) -> bool:
+	return clue.mission_id == mission_id or clue.mission_id == 0
+
+
 ## Vrai si l'enquête de cette mission a réellement commencé : au moins un
 ## indice débloqué dont l'id suit la convention "M<mission_id>_..." (voir
 ## clues.txt). Volontairement plus strict que "la mission a au moins un
-## indice débloqué" : l'indice de fin d'intro de RelayGhost (intro_anon_perseverant)
+## indice débloqué" : l'indice de fin d'intro de RelayGhost (intro_relay_perseverant)
 ## ne suit pas cette convention et ne doit pas suffire à faire apparaître le
 ## titre de la fenêtre Collecte d'indices avant que le joueur n'ait vraiment
 ## commencé à fouiller le téléphone d'Alizée (voir ClueBoardWindow).
@@ -176,7 +184,7 @@ func has_unlocked_mission_solution(mission_id: int) -> bool:
 func get_clues_for_category(mission_id: int, category_id: String) -> Array[ClueDefinition]:
 	var result: Array[ClueDefinition] = []
 	for clue in _clues:
-		if clue.mission_id == mission_id and clue.category_id == category_id:
+		if _clue_visible_for_mission(clue, mission_id) and clue.category_id == category_id:
 			result.append(clue)
 	return result
 

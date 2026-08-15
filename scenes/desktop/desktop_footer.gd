@@ -1,8 +1,8 @@
 extends Control
 ## The desktop's bottom bar. Left side is a taskbar for minimized windows
 ## (chat/phone/mail/file explorer, ...) — see add_minimized_window(). Right
-## side is connection/session status: a "Pensées" button (thought history,
-## see ThoughtLogWindow), VPN, TOR relay count, a decorative signal readout,
+## side is connection/session status: an "Historique des pensées" button
+## (see ThoughtLogWindow), VPN, TOR relay count, a decorative signal readout,
 ## and the in-fiction clock (GameClock).
 
 signal thought_log_button_pressed

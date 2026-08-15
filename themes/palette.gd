@@ -93,7 +93,7 @@ const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.879, 0.393, 0.038, 1.0)
 ## qu'à un seul endroit. Sans rapport avec TEXT_HIGHLIGHT (indices) ni
 ## TEXT_DANGER (rouge pâle réservé au texte d'avertissement) : un rouge vif,
 ## dédié.
-const TEXT_IMPORTANT := Color(0.917, 0.166, 0.0, 1.0)
+const TEXT_IMPORTANT := Color(1.0, 0.401, 0.295, 1.0)
 
 ## Variante de TEXT_IMPORTANT pour un fond clair (bulles SMS pastel de
 ## certains contacts, voir SmsConversation.color_background) — même teinte,

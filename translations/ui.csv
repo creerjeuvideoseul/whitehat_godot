@@ -40,7 +40,7 @@ DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
-DESKTOP_THOUGHT_LOG_BUTTON,Pensées,Thoughts
+DESKTOP_THOUGHT_LOG_BUTTON,Historique des pensées,Thought History
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
 THOUGHT_RELAYGHOST_CONTACT,RelayGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,RelayGhost should contact me. RelayGhost is my only real-world contact. Someone I trust, whom I've known for years.
 THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
@@ -74,7 +74,7 @@ PHONE_ICON_MAIL,Mail,Mail
 PHONE_ICON_GALLERY,Galerie,Gallery
 PHONE_ICON_VAULT,Coffre-fort,Vault
 DESKTOP_SEARCH_BUTTON,Rechercher,Search
-OSINT_WINDOW_TITLE,Recherche OSINT,OSINT search
+OSINT_WINDOW_TITLE,Résultat OSINT : Profilage en ligne & fuites de données,OSINT Results: Online Profiling & Data Leaks
 OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.
 MAIL_SECTION_TITLE,Mail du téléphone d'Alizée,Alizée's phone mail
 MAIL_TAB_SENT,ENVOYÉS,SENT

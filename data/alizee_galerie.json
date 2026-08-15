@@ -76,7 +76,19 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "J'ai hâte que tu me dises quelle est ta chanson préférée ! <color=important>Passes-nous voir à l'occasion sur scène !</color>"
+			  "message": "J'ai hâte que tu me dises quelle est ta chanson préférée ! Passes-nous voir à l'occasion sur scène !"
+			},
+			{
+			  "commentId": 0,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océanne",
+			  "message": "Je crois que ton groupe <color=indice>LastHorizon</color> est programmé à Rennes la semaine prochaine non ?"
+			},
+			{
+			  "commentId": 0,
+			  "avatar": "res://assets/avatar/portrait_marek.webp",
+			  "username": "Marek",
+			  "message": "C'est ça ! Et à Saint-Malot ensuite !"
 			}
 		  ]
 		},
@@ -211,7 +223,19 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "I can't wait to hear which song is your favorite! <color=indice>Come and see us on stage!</color>"
+			  "message": "I can't wait to hear which song is your favorite! Come and see us on stage!"
+			},
+			{
+			  "commentId": 0,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océanne",
+			  "message": "I think your band <color=indice>LastHorizon</color> is scheduled to play in Rennes next week, right?"
+			},
+			{
+			  "commentId": 0,
+			  "avatar": "res://assets/avatar/portrait_marek.webp",
+			  "username": "Marek",
+			  "message": "That's right! And then on to Saint-Malot!"
 			}
 		  ]
 		},

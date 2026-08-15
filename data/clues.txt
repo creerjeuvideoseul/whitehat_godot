@@ -1,5 +1,6 @@
 IDMission;IDunique;IdCategUnique
-1;intro_anon_perseverant;AG
+0;intro_relay_perseverant;AG
+0;intro_relay_observe;AG
 1;M1_sms_o_18_ans;ALIZ
 1;M1_sms_cryp_m_bomb;ALIZ
 1;M1_sms_cryp_m_disparue;ALIZ
