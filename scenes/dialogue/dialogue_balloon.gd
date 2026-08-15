@@ -89,7 +89,7 @@ func apply_dialogue_line() -> void:
 	mutation_cooldown.stop()
 
 	ClueManager.unlock_from_tags(dialogue_line)
-	dialogue_line.text = RichTextMarkup.resolve_important_color(dialogue_line.text)
+	dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(dialogue_line.text)
 
 	progress_label.hide()
 	is_waiting_for_input = false

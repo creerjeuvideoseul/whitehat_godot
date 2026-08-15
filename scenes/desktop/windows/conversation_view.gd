@@ -124,7 +124,7 @@ func _advance(next_id: String) -> void:
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
 	ClueManager.unlock_from_tags(line)
-	line.text = RichTextMarkup.resolve_important_color(line.text)
+	line.text = RichTextMarkup.resolve_dialogue_colors(line.text)
 
 	if line.character == SYSTEM_CHARACTER:
 		await _type_out(_add_console_line(line))

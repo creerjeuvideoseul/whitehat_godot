@@ -37,12 +37,17 @@ static func extract_indice_ids(text: String) -> Array[String]:
 
 ## Les fichiers .dialogue (intro, chat) écrivent déjà du BBCode natif
 ## directement (pas le pseudo-HTML de html_to_bbcode ci-dessous, qui ne
-## concerne que les données mail/SMS/OSINT) — [color=important] y est un
-## mot-clé sémantique ("mot à souligner"), pas un nom de couleur BBCode
-## valide, à résoudre vers Palette.TEXT_IMPORTANT avant affichage pour ne
-## changer la teinte qu'à un seul endroit (voir palette.gd).
-static func resolve_important_color(text: String) -> String:
-	return text.replace("[color=important]", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
+## concerne que les données mail/SMS/OSINT) — [color=important] et
+## [color=indice] y sont des mots-clés sémantiques ("mot à souligner"/"passage
+## indice mis en évidence"), pas des noms de couleur BBCode valides (sans
+## résolution, un RichTextLabel les ignore silencieusement et affiche le texte
+## en blanc par défaut — bug constaté sur relayghost_intro.dialogue), à
+## résoudre vers Palette.TEXT_IMPORTANT/TEXT_HIGHLIGHT avant affichage pour ne
+## changer chaque teinte qu'à un seul endroit (voir palette.gd).
+static func resolve_dialogue_colors(text: String) -> String:
+	var result := text.replace("[color=important]", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
+	result = result.replace("[color=indice]", "[color=#%s]" % Palette.TEXT_HIGHLIGHT.to_html(false))
+	return result
 
 
 ## Convertit le pseudo-HTML très simple utilisé dans les données "brutes"

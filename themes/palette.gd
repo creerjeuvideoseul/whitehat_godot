@@ -87,7 +87,7 @@ const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.879, 0.393, 0.038, 1.0)
 
 ## Mise en évidence des mots "importants" dans les dialogues (intro, chat) et
 ## les données brutes (mail/SMS) — la balise [color=important] des fichiers
-## .dialogue (voir RichTextMarkup.resolve_important_color) et <color=important>
+## .dialogue (voir RichTextMarkup.resolve_dialogue_colors) et <color=important>
 ## des données JSON (voir RichTextMarkup.html_to_bbcode) pointent ici plutôt
 ## que sur un hex écrit en dur dans chaque fichier, pour ne changer la teinte
 ## qu'à un seul endroit. Sans rapport avec TEXT_HIGHLIGHT (indices) ni
@@ -99,7 +99,7 @@ const TEXT_IMPORTANT := Color(1.0, 0.401, 0.295, 1.0)
 ## certains contacts, voir SmsConversation.color_background) — même teinte,
 ## assombrie sans désaturer, même recette que TEXT_HIGHLIGHT_ON_LIGHT (voir
 ## is_light() pour savoir laquelle des deux utiliser selon le fond). Seul
-## resolve_important_color() (dialogues, toujours sur fond sombre) n'a pas
+## resolve_dialogue_colors() (dialogues, toujours sur fond sombre) n'a pas
 ## besoin de cette variante — voir html_to_bbcode() pour <color=important>.
 const TEXT_IMPORTANT_ON_LIGHT := Color(0.644, 0.081, 0.158, 1.0)
 
