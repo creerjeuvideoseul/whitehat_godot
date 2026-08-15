@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/monologue_screen.gd" id="1_script"]
+[ext_resource type="Script" path="res://addons/dialogue_manager/dialogue_label.gd" id="2_dialogue_label_script"]
+
+[node name="MonologueScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextFrame" type="MarginContainer" parent="Center"]
+layout_mode = 2
+mouse_filter = 2
+custom_minimum_size = Vector2(1500, 0)
+
+[node name="Label" type="RichTextLabel" parent="Center/TextFrame"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 30
+script = ExtResource("2_dialogue_label_script")
+
+[node name="ContinueHint" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -90.0
+offset_top = -70.0
+offset_right = -40.0
+offset_bottom = -34.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.45, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 2
+text = "▼"

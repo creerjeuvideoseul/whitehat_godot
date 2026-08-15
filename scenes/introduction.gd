@@ -12,6 +12,11 @@ const INTRO_MUSIC := preload("res://assets/audio/shadowsandechoes-breaking-news-
 ## OS juste après cette cutscene, voir _play_boot_terminal) — un seul coup,
 ## pas une ambiance, pour marquer la bascule "cinématique -> interface système".
 const BOOT_SYSTEM_SFX := preload("res://assets/audio/sound/juniorsoundays-motion-amp-tansitions-02-527730.mp3")
+## Monologue de rédemption ("Je veux être un... WHITE HAT"), joué écran noir
+## juste après le JT et avant le boot du système — voir _play_monologue().
+## Partage MUSIC_FADE_SECONDS (1s) ci-dessous avec la musique du JT.
+const MONOLOGUE_SCREEN := preload("res://scenes/monologue_screen.tscn")
+const MONOLOGUE_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
 
 const MUSIC_FADE_SECONDS := 1.0
 ## Durée du fondu enchaîné (crossfade) entre deux images, façon Ren'Py.
@@ -158,11 +163,36 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 	_flash_info_banner.hide()
 	SceneTransition.fade_in()
 
+	await _play_monologue()
+
 	await _play_boot_terminal()
 
 	await SceneTransition.fade_out()
 	get_tree().change_scene_to_file("res://scenes/login.tscn")
 	SceneTransition.fade_in()
+
+
+## Monologue de rédemption, écran noir avant le boot du système — voir
+## MonologueScreen. "WHITE HAT" est injecté en code (couleur Palette.TEXT_ACCENT,
+## la teinte "marque" du jeu) plutôt que codé en dur dans le texte traduit, pour
+## ne pas coupler translations/ui.csv à une couleur.
+func _play_monologue() -> void:
+	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
+	var whitehat := "[b][color=%s]WHITE HAT[/color][/b]" % accent
+	var text := "%s\n%s\n%s\n\n%s\n\n%s\n%s\n\n%s\n\n%s" % [
+		tr("INTRO_MONOLOGUE_1"), tr("INTRO_MONOLOGUE_2"), tr("INTRO_MONOLOGUE_3"),
+		tr("INTRO_MONOLOGUE_4"),
+		tr("INTRO_MONOLOGUE_5"), tr("INTRO_MONOLOGUE_6"),
+		tr("INTRO_MONOLOGUE_7"),
+		tr("INTRO_MONOLOGUE_8") % whitehat,
+	]
+
+	var monologue: MonologueScreen = MONOLOGUE_SCREEN.instantiate()
+	monologue.text = text
+	monologue.music = MONOLOGUE_MUSIC
+	monologue.music_fade_seconds = MUSIC_FADE_SECONDS
+	add_child(monologue)
+	await monologue.closed
 
 
 ## Simule le démarrage du système d'exploitation avant la page de connexion,
