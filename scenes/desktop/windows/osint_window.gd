@@ -1,12 +1,15 @@
 extends Control
 class_name OsintWindow
 ## Fenêtre "Recherche OSINT" : même chrome (fond/cadre vert, barre de titre,
-## réduction, déplacement) que ChatWindow, mais un contenu unique — la fiche
-## du personnage trouvé — plutôt qu'une liste de contacts. Entièrement
+## déplacement) que ChatWindow, mais un contenu unique — la fiche du
+## personnage trouvé — plutôt qu'une liste de contacts. Entièrement
 ## reconstruite à chaque recherche (search()), jamais accumulée : "chercher
 ## un pseudo efface l'ancien contenu de la fenêtre OSINT."
-
-signal minimize_requested(window: Control, window_title: String)
+##
+## Bouton "×" plutôt que "—" (réduction) : comme ClueBoardWindow, elle se
+## rouvre toujours au même endroit (une nouvelle recherche, voir desktop.gd
+## _on_osint_search_requested) — pas besoin d'une icône dans la barre des
+## tâches en plus pour la retrouver, se fermer directement suffit.
 
 const AVATAR_WIDTH := 200.0
 const AVATAR_HEIGHT := 200.0
@@ -18,8 +21,7 @@ const SECTION_GAP := 24
 const LABEL_COLUMN_WIDTH := 280.0
 
 @onready var _title_bar: PanelContainer = %TitleBar
-@onready var _title_label: Label = %TitleLabel
-@onready var _minimize_button: Button = %MinimizeButton
+@onready var _close_button: Button = %CloseButton
 @onready var _content_root: VBoxContainer = %ContentRoot
 @onready var _scroll: ScrollContainer = %Body
 
@@ -31,7 +33,7 @@ var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
-	_minimize_button.pressed.connect(_on_minimize_pressed)
+	_close_button.pressed.connect(_on_close_pressed)
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 
 
@@ -81,10 +83,9 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 		position = (position + event.relative).clamp(Vector2.ZERO, max_position)
 
 
-func _on_minimize_pressed() -> void:
+func _on_close_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
-	minimize_requested.emit(self, _title_label.text)
 
 
 func _build_no_result() -> void:

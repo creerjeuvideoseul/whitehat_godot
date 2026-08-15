@@ -75,7 +75,7 @@ Jean: J'ai une bonne retraite. J'ai travaillé pour ça !
 
 Jean: Voilà l'archive.
 Player: Merci, je vous ferai un rapport complet dès que possible.
-Jean: J'attends votre rapport ! [#debug_checkpoint]
+Jean: J'attends votre rapport !
 
 System: Déconnexion...
 System: J'ai désormais accès aux archives du téléphone d'Alizée.

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://bt4ba0df3cma2"
+path="res://.godot/imported/relayghost_help.dialogue-26a8a474c3771f4409afc9dcf9603fc3.tres"
+
+[deps]
+
+source_file="res://dialogue/relayghost_help.dialogue"
+dest_files=["res://.godot/imported/relayghost_help.dialogue-26a8a474c3771f4409afc9dcf9603fc3.tres"]
+
+[params]
+
+defaults=true

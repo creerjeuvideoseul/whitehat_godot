@@ -1,0 +1,33 @@
+~ help
+
+RelayGhost: Que puis-je pour toi ?
+
+- Demander de l'aide sur l'affaire.
+	set StoryVars.player_ask_help += 1
+	Player: RelayGhost, je suis bloqué sur l'affaire Jean Ranoud.
+	if not StoryVars.phone_vault_unlocked 
+		Player: Je n'arrive pas à trouver le mot de passe du coffre.
+		RelayGhost: Un blocage indique généralement qu'une information pertinente n'a pas encore été correctement corrélée.
+
+	if StoryVars.phone_vault_unlocked
+		RelayGhost: Tu as pourtant déverrouillé le coffre.
+		RelayGhost: Je doute que mon assistance te soit encore nécessaire pour cette étape.
+		RelayGhost: Prends connaissance des données décryptées et génère ton rapport.
+		RelayGhost: Une précision : garde un œil sur METADATA. Elles te permettront d'infiltrer d'autres systèmes au moment opportun.
+	elif not ClueManager.is_unlocked("M1_galerie_album")
+		RelayGhost: Reprends ton analyse depuis le début.
+		RelayGhost: As-tu examiné l'intégralité des éléments de sa galerie d'images ?
+		RelayGhost: L'information est rarement cachée. Elle est souvent simplement mal classée.
+	else
+		RelayGhost: Tes données sont déjà suffisantes.
+		RelayGhost: L'élément recherché se trouve dans ta collecte d'indices.
+		RelayGhost: Les mots de passe reposent souvent sur des informations que leur propriétaire considère comme mémorables.
+		RelayGhost: Cherche une association entre une donnée personnelle et une suite numérique.
+		RelayGhost: Quel mot pourrait avoir une signification commune pour Alizée et Marek ?
+
+	if not StoryVars.phone_vault_unlocked 
+		RelayGhost: Tu devrais également exploiter le module de recherche de vulnérabilités OSINT disponible dans l'en-tête de ton interface.
+		
+- Ne rien demander.
+
+=> END

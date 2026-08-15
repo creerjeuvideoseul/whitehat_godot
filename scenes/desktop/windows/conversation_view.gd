@@ -28,6 +28,15 @@ var _contact: ChatContact
 var _log: Array = []
 var _current_label: DialogueLabel = null
 var _connecting_line: Label = null
+## Ressource actuellement parcourue par _advance() : dialogue_resource
+## pendant le flux normal, help_dialogue_resource pendant un appel à
+## trigger_help() — les deux ne cohabitent jamais (voir gating du bouton
+## AIDE dans desktop.gd, qui n'apparaît qu'une fois dialogue_resource fini).
+var _active_dialogue_resource: DialogueResource
+## Quoi appeler quand _active_dialogue_resource atteint sa fin — distinct
+## selon le flux en cours (_on_conversation_finished vs _on_help_finished),
+## assigné juste avant chaque appel à _advance() côté setup()/trigger_help().
+var _pending_on_finished: Callable
 
 
 func _ready() -> void:
@@ -45,7 +54,25 @@ func setup(contact: ChatContact) -> void:
 	else:
 		_show_connecting_line()
 		await get_tree().create_timer(CONNECTING_LINE_SECONDS).timeout
+		_active_dialogue_resource = _contact.dialogue_resource
+		_pending_on_finished = _on_conversation_finished
 		_advance(_contact.dialogue_start_title)
+
+
+## Rejoue help_dialogue_resource depuis son titre (bouton AIDE du footer, voir
+## desktop.gd::_on_help_button_pressed) : ajoute la suite au fil déjà affiché,
+## sans jamais déclencher les effets de fin de conversation normale (ex.
+## révélation de Jean, voir desktop.gd::_build_chat_window) — seulement
+## persister le log grandissant (voir _on_help_finished). Rappelable autant de
+## fois que voulu : un fichier .dialogue n'a aucune notion "déjà joué", chaque
+## appel repart du tout début du titre. Sans effet si ce contact n'a pas de
+## contenu d'aide (voir ChatContact.help_dialogue_resource).
+func trigger_help() -> void:
+	if _contact.help_dialogue_resource == null:
+		return
+	_active_dialogue_resource = _contact.help_dialogue_resource
+	_pending_on_finished = _on_help_finished
+	await _advance(_contact.help_dialogue_start_title)
 
 
 ## Anywhere in this view: a click completes the line currently typing out,
@@ -87,9 +114,9 @@ func _replay_saved_log() -> void:
 
 
 func _advance(next_id: String) -> void:
-	var line: DialogueLine = await _contact.dialogue_resource.get_next_dialogue_line(next_id, [self])
+	var line: DialogueLine = await _active_dialogue_resource.get_next_dialogue_line(next_id, [self])
 	if line == null:
-		_on_conversation_finished()
+		_pending_on_finished.call()
 		return
 	await _display_line(line)
 
@@ -97,7 +124,6 @@ func _advance(next_id: String) -> void:
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
 	ClueManager.unlock_from_tags(line)
-	SaveManager.maybe_capture_debug_checkpoint(line)
 	line.text = RichTextMarkup.resolve_important_color(line.text)
 
 	if line.character == SYSTEM_CHARACTER:
@@ -129,6 +155,15 @@ func _on_conversation_finished() -> void:
 	SaveManager.record_conversation(_contact.contact_id, _log)
 	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 	conversation_finished.emit()
+
+
+## Symétrique de _on_conversation_finished ci-dessus, pour trigger_help() :
+## pas de conversation_finished.emit() ici, une demande d'aide n'est pas une
+## "fin de conversation" au sens narratif (pas de révélation de Jean à
+## déclencher) — juste un fil qui vient de grandir, à persister comme le reste.
+func _on_help_finished() -> void:
+	SaveManager.record_conversation(_contact.contact_id, _log)
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 
 func _show_typing_indicator() -> void:

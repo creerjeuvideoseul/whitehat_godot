@@ -27,10 +27,15 @@ const CLUE_REVEAL_DELAY_SECONDS := 3.0
 const ACCESS_DENIED_SFX := preload("res://assets/audio/sound/soundreality-ui-no-access-243463.mp3")
 
 ## "Grande révélation" — joué à chaque jalon narratif majeur : l'apparition
-## du téléphone d'Alizée (desktop.gd) et le déverrouillage réussi du
+## de la fenêtre "Piratage — PC de la mère" et le déverrouillage réussi du
 ## coffre-fort (vault_section.gd). Centralisé ici plutôt que dupliqué en
 ## preload dans chacun des deux, même raison qu'ACCESS_DENIED_SFX ci-dessus.
-const MAJOR_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-callisto-170178.mp3")
+const MAJOR_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-notification-center-443093.mp3")
+
+## Apparition du téléphone d'Alizée sur le bureau (desktop.gd) — distinct de
+## MAJOR_REVEAL_SFX ci-dessus : un son de notification plutôt qu'une
+## "révélation", propre à ce moment précis.
+const ALIZEE_PHONE_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-notification-center-443093.mp3")
 
 ## Petit "clic" très court pour meubler le faux OS — sélectionner une
 ## conversation SMS, ouvrir un mail, ouvrir une photo de la galerie. Pas un

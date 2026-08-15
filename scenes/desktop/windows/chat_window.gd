@@ -88,6 +88,18 @@ func add_contact(contact: ChatContact) -> void:
 		_start_row_blink(contact.contact_id)
 
 
+## Rejoue le contenu d'aide du contact donné (bouton AIDE du footer, voir
+## desktop.gd::_on_help_button_pressed) : sélectionne son onglet puis délègue
+## à sa ConversationView (voir ConversationView.trigger_help). Sans effet si
+## le contact n'existe pas encore dans cette fenêtre ou n'a pas de contenu
+## d'aide configuré.
+func trigger_help(contact_id: String) -> void:
+	if not _conversation_views.has(contact_id):
+		return
+	_select_contact(contact_id)
+	await _conversation_views[contact_id].trigger_help()
+
+
 ## Nudge the window from its default centered position (e.g. so several
 ## windows opened at once "cascade" instead of fully overlapping), clamped
 ## to stay on the desktop just like dragging does.

@@ -41,6 +41,7 @@ DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
 DESKTOP_TOR_STATUS,TOR ×3,TOR ×3
 DESKTOP_THOUGHT_LOG_BUTTON,Historique des pensées,Thought History
+DESKTOP_HELP_BUTTON,Aide,Help
 CHAT_WINDOW_TITLE,Discussion cryptée : Online,Encrypted chat: Online
 THOUGHT_RELAYGHOST_CONTACT,RelayGhost devrait me contacter. C'est mon unique contact au réel. Une personne de confiance que je connais depuis des années.,RelayGhost should contact me. RelayGhost is my only real-world contact. Someone I trust, whom I've known for years.
 THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis

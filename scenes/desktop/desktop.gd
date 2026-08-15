@@ -46,6 +46,9 @@ const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
 const CURRENT_MISSION_ID := 1
 const RELAYGHOST_AVATAR := preload("res://assets/avatar/relayghost_avatar.png")
 const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_intro.dialogue")
+## Contenu du bouton "Aide" du footer, rejouable à volonté — voir
+## ChatContact.help_dialogue_resource et _on_help_button_pressed.
+const RELAYGHOST_HELP_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_help.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
 ## Bruitage de frappe joué pendant les terminaux où le joueur "tape" des
@@ -97,10 +100,10 @@ var _clue_board_window: ClueBoardWindow = null
 var _thought_log_window: ThoughtLogWindow = null
 
 ## Même principe que _clue_board_window : une seule fenêtre OSINT réutilisée
-## d'une recherche à l'autre (jamais de doublon dans la taskbar), son contenu
-## étant entièrement remplacé à chaque recherche par OsintWindow.search().
+## d'une recherche à l'autre (jamais de doublon, se ferme au lieu de se
+## réduire — voir osint_window.gd), son contenu étant entièrement remplacé à
+## chaque recherche par OsintWindow.search().
 var _osint_window: OsintWindow = null
-var _osint_window_title: String = ""
 
 ## Même principe que _clue_board_window/_osint_window : une seule fenêtre
 ## réutilisée, déclenchée depuis MailSection (voir mail_section.gd,
@@ -130,21 +133,14 @@ func _ready() -> void:
 	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
+	_footer.help_button_pressed.connect(_on_help_button_pressed)
+	# Le bouton "Aide" n'a de sens qu'une fois l'enquête commencée : caché tant
+	# que RelayGhost n'a pas fini son briefing (voir set_help_button_visible),
+	# réévalué ici pour couvrir aussi bien une reprise de sauvegarde qu'une
+	# nouvelle partie (auquel cas le signal contact_conversation_finished,
+	# voir _build_chat_window, se chargera de le révéler en cours de session).
+	_footer.set_help_button_visible(SaveManager.is_conversation_complete("relayghost"))
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
-
-	# Debug only (voir Settings.IS_PRODUCTION) : le bouton "revenir avant la
-	# fin de Jean" du footer a chargé un instantané séparé juste avant cet
-	# appel puis rechargé cette scène — la conversation avec Jean n'y est
-	# volontairement pas marquée complète (capturée avant sa vraie fin), donc
-	# on rejoue directement le terminal plutôt que de suivre le chemin normal
-	# ci-dessous (qui rejouerait tout le dialogue de Jean depuis le début).
-	if SaveManager.consume_debug_replay_jean_terminal():
-		_chat_window = _build_chat_window()
-		_open_window(_chat_window)
-		_chat_window.hide()
-		_on_window_minimize_requested(_chat_window, tr("CHAT_WINDOW_TITLE"))
-		_play_jean_dump_terminal()
-		return
 
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
 	# doit déjà être là, sans rejouer son animation d'apparition.
@@ -211,6 +207,7 @@ func _build_chat_window() -> ChatWindow:
 		window.contacts.append(_build_jean_contact())
 	window.contact_conversation_finished.connect(func(contact_id: String) -> void:
 		if contact_id == "relayghost":
+			_footer.set_help_button_visible(true)
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
 		elif contact_id == "jean_ranoud":
@@ -226,6 +223,7 @@ func _build_relayghost_contact() -> ChatContact:
 	contact.contact_name = "RelayGhost"
 	contact.avatar = RELAYGHOST_AVATAR
 	contact.dialogue_resource = RELAYGHOST_DIALOGUE
+	contact.help_dialogue_resource = RELAYGHOST_HELP_DIALOGUE
 	return contact
 
 
@@ -389,9 +387,7 @@ func _bring_window_to_front(window: Control) -> void:
 
 
 func _on_window_minimize_requested(window: Control, window_title: String) -> void:
-	if window == _osint_window:
-		_osint_window_title = window_title
-	elif window == _hack_pc_mother_window:
+	if window == _hack_pc_mother_window:
 		_hack_pc_mother_window_title = window_title
 	elif window == _hack_pc_mother_login_console:
 		_hack_pc_mother_login_console_title = window_title
@@ -431,6 +427,20 @@ func _on_thought_log_button_pressed() -> void:
 	_thought_log_window.refresh()
 	_thought_log_window.show()
 	_bring_window_to_front(_thought_log_window)
+
+
+## "Aide" du footer : rouvre (ou remonte) la fenêtre de chat déjà existante à
+## ce stade (voir set_help_button_visible, caché avant que RelayGhost n'ait
+## fini son briefing) sur l'onglet RelayGhost, puis rejoue le titre "help" de
+## son dialogue — voir ChatWindow.trigger_help/ConversationView.trigger_help.
+func _on_help_button_pressed() -> void:
+	if not is_instance_valid(_chat_window):
+		return
+	if not _chat_window.visible:
+		_chat_window.show()
+		_footer.remove_minimized_window(tr("CHAT_WINDOW_TITLE"))
+	_bring_window_to_front(_chat_window)
+	_chat_window.trigger_help("relayghost")
 
 
 ## N'arrive qu'après confirmation du joueur (voir ClueBoardWindow.
@@ -599,17 +609,16 @@ func _build_hack_pc_mother_login_lines() -> Array[TerminalLine]:
 	return lines
 
 
-## Une recherche OSINT réutilise toujours la même fenêtre (jamais de doublon
-## dans la taskbar) : elle se rouvre si elle était réduite, et son contenu
-## précédent est systématiquement remplacé par le nouveau résultat.
+## Une recherche OSINT réutilise toujours la même fenêtre (jamais de
+## doublon) : elle se rouvre si elle était fermée, et son contenu précédent
+## est systématiquement remplacé par le nouveau résultat.
 func _on_osint_search_requested(query: String) -> void:
 	if is_instance_valid(_osint_window):
-		_footer.remove_minimized_window(_osint_window_title)
 		_osint_window.show()
 		_bring_window_to_front(_osint_window)
 	else:
 		_osint_window = OSINT_WINDOW.instantiate()
-		_open_window(_osint_window)
+		_window_layer.add_child(_osint_window)
 
 	_osint_window.search(query)
 
@@ -627,7 +636,7 @@ func _reveal_alizee_phone(animate: bool) -> void:
 	_window_layer.add_child(_alizee_phone)
 
 	if animate:
-		SfxPlayer.play(SfxPlayer.MAJOR_REVEAL_SFX)
+		SfxPlayer.play(SfxPlayer.ALIZEE_PHONE_REVEAL_SFX)
 		_animate_reveal_slide(_alizee_phone)
 
 

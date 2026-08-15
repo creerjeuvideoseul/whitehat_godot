@@ -104,7 +104,7 @@
 		  "Player_Think":"C'est l'information que je recherchais, je vais pouvoir générer le rapport à M. Ranoud.",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Salut ma puce,<br><br>comme promis voici la photo de la soirée faite par un pote !<br>C'était génial de te savoir dans la salle !<br>Vivement le prochain concert, dans 3 jours !<br><br>Je suis si content que tu te sois enfin décidée <indice id=\"M1_SOLUTION_OU\"><color=indice>à me suivre dans ma tournée</color></indice>, tu es majeure maintenant !<br><br>Ton Marek qui t'aime...<br><br>"
+		  "html_content": "Salut ma puce,<br><br>comme promis voici la photo de la soirée faite par un pote !<br>C'était génial de te savoir dans la salle !<br>Vivement le prochain concert, dans 3 jours !<br><br>Je suis si content que tu te sois enfin décidée <indice id=\"M1_SOLUTION_OU\"><color=indice>à me suivre dans ma tournée, prochain concert le 10 février à Saint-Malo</color></indice>, tu es majeure maintenant !<br><br>Ton Marek qui t'aime...<br><br>"
 		}
 	  ]
 	},
@@ -213,7 +213,7 @@
 		  "Player_Think":"This is the information I was looking for, I'll be able to generate the report for Mr. Ranoud.",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Hey sweetie,<br><br>as promised, here's the photo from the night, taken by a friend!<br>It was amazing knowing you were in the crowd!<br>Can't wait for the next concert, in 3 days!<br><br>I'm so happy you've finally decided <indice id=\"M1_SOLUTION_OU\"><color=indice>to follow me on tour</color></indice>, you're an adult now!<br><br>Your Marek, who loves you...<br><br>"
+		  "html_content": "Hey sweetie,<br><br>as promised, here's the photo from the night, taken by a friend!<br>It was amazing knowing you were in the crowd!<br>Can't wait for the next concert, in 3 days!<br><br>I'm so happy you've finally decided <indice id=\"M1_SOLUTION_OU\"><color=indice>to follow me on tour, next concert on February 10 in Saint-Malo</color></indice>, you're an adult now!<br><br>Your Marek, who loves you...<br><br>"
 		}
 	  ]
 	}

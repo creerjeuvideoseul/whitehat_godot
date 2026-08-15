@@ -10,4 +10,9 @@ class_name ChatContact
 @export var avatar: Texture2D
 @export var dialogue_resource: DialogueResource
 @export var dialogue_start_title: String = "start"
+## Contenu rejouable à volonté (voir ConversationView.trigger_help), distinct
+## de dialogue_resource ci-dessus qui ne se joue qu'une fois — vide si ce
+## contact n'a pas de contenu d'aide (ex. Jean).
+@export var help_dialogue_resource: DialogueResource
+@export var help_dialogue_start_title: String = "help"
 @export var bubble_color: Color = Palette.BUBBLE_OTHER

@@ -45,8 +45,6 @@ const LINE_COLOR := Color(Palette.BORDER_ACCENT, 0.55)
 ## category_id -> avatar Control, category_id -> Array[panel PanelContainer]
 var _avatars_by_category: Dictionary = {}
 var _panels_by_category: Dictionary = {}
-## panel Control -> clue id, pour rafraîchir son texte quand il se débloque.
-var _clue_id_by_panel: Dictionary = {}
 
 
 func _ready() -> void:
@@ -74,7 +72,6 @@ func _clear_board() -> void:
 		child.queue_free()
 	_avatars_by_category.clear()
 	_panels_by_category.clear()
-	_clue_id_by_panel.clear()
 
 
 ## Reconstruction immédiate (sans attendre de frame, contrairement à setup())
@@ -232,7 +229,6 @@ func _build_clue_panel(clue_id: String) -> PanelContainer:
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
 	panel.add_child(label)
 
-	_clue_id_by_panel[panel] = clue_id
 	_apply_panel_state(panel, label, clue_id)
 
 	panel.size = panel.get_combined_minimum_size()
@@ -271,18 +267,17 @@ func _apply_panel_state(panel: PanelContainer, label: RichTextLabel, clue_id: St
 
 
 ## Un indice qui débloque la toute première entrée d'une catégorie révèle
-## cette catégorie (voir ClueManager.get_categories_for_mission) : le tableau
-## entier doit être reconstruit pour lui faire une place (nouvel avatar,
-## nouvelle colonne), pas juste rafraîchir un panneau existant.
-func _on_clue_unlocked(clue_id: String) -> void:
-	var category_id := ClueManager.get_category_id_for_clue(clue_id)
-	if not category_id.is_empty() and not _avatars_by_category.has(category_id):
-		_rebuild_board_now()
-		return
-	for panel: PanelContainer in _clue_id_by_panel:
-		if _clue_id_by_panel[panel] != clue_id:
-			continue
-		_refresh_panel(panel, clue_id)
+## cette catégorie (nouvel avatar, nouvelle colonne) ; un indice qui débloque
+## dans une catégorie déjà affichée peut aussi faire grandir son panneau (le
+## texte verrouillé et le texte réel n'ont presque jamais la même hauteur).
+## Reconstruction complète dans les deux cas plutôt qu'un rafraîchissement
+## ciblé du seul panneau concerné : un panneau qui grandit doit repousser vers
+## le bas non seulement ses voisins de colonne mais aussi les lignes de
+## catégories suivantes (voir COLS_PER_ROW/ROW_GUTTER) — un simple décalage
+## local les laissait chevauchées, puisque leur position avait déjà été figée
+## à la construction initiale.
+func _on_clue_unlocked(_clue_id: String) -> void:
+	_rebuild_board_now()
 
 
 ## Debug-only bulk toggle (ClueManager.unlock_all()/lock_all()) : peut faire
@@ -291,36 +286,6 @@ func _on_clue_unlocked(clue_id: String) -> void:
 ## déjà là.
 func _on_all_unlocked_changed() -> void:
 	_rebuild_board_now()
-
-
-## Le texte verrouillé et le texte réel d'un indice n'ont presque jamais la
-## même longueur : le panneau doit se redimensionner pour celui qu'il affiche
-## désormais. Comme les indices d'une même colonne sont maintenant empilés
-## les uns sous les autres (au lieu d'être en étoile), un changement de
-## hauteur doit aussi pousser vers le bas tous les panneaux suivants de la
-## colonne pour ne jamais les chevaucher.
-func _refresh_panel(panel: PanelContainer, clue_id: String) -> void:
-	var label: RichTextLabel = panel.get_child(0)
-	var old_height := panel.size.y
-	_apply_panel_state(panel, label, clue_id)
-	panel.size = panel.get_combined_minimum_size()
-	var delta := panel.size.y - old_height
-	if delta != 0.0:
-		_shift_panels_below(panel, delta)
-	queue_redraw()
-
-
-## Décale vers le bas tous les panneaux empilés sous `changed_panel` dans sa
-## colonne, pour absorber la variation de hauteur `delta`.
-func _shift_panels_below(changed_panel: PanelContainer, delta: float) -> void:
-	for category_id in _panels_by_category:
-		var panels: Array = _panels_by_category[category_id]
-		var index: int = panels.find(changed_panel)
-		if index == -1:
-			continue
-		for i in range(index + 1, panels.size()):
-			panels[i].position.y += delta
-		return
 
 
 ## Un tronc vertical par catégorie, du bas de l'avatar jusqu'au dernier

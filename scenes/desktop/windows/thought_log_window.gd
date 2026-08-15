@@ -6,7 +6,9 @@ class_name ThoughtLogWindow
 ## récente. Même chrome (fond/cadre vert, barre de titre) que ClueBoardWindow —
 ## réutilisée en une seule instance par desktop.gd (voir
 ## _on_thought_log_button_pressed), jamais fermée/détruite, juste cachée (voir
-## _on_close_pressed).
+## _on_close_pressed). Déplaçable par la barre de titre, comme ChatWindow/
+## OsintWindow (contrairement à ClueBoardWindow, qui reste fixe) — sa position
+## n'est pas persistée : elle repart centrée à chaque nouvelle session.
 ##
 ## Chaque entrée prend toute la largeur disponible (retour utilisateur : pas
 ## question de rester étroit comme les bulles SMS de la colonne de gauche) —
@@ -22,12 +24,25 @@ const CARD_MARGIN_H := 18
 const CARD_MARGIN_V := 12
 
 @onready var _close_button: Button = %CloseButton
+@onready var _title_bar: PanelContainer = %TitleBar
 @onready var _messages_list: VBoxContainer = %MessagesList
+
+var _dragging: bool = false
 
 
 func _ready() -> void:
 	_close_button.pressed.connect(_on_close_pressed)
+	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	refresh()
+
+
+## Glisser par la barre de titre, comme OsintWindow._on_title_bar_gui_input.
+func _on_title_bar_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		_dragging = event.pressed
+	elif event is InputEventMouseMotion and _dragging:
+		var max_position: Vector2 = get_parent_area_size() - size
+		position = (position + event.relative).clamp(Vector2.ZERO, max_position)
 
 
 ## Reconstruit entièrement la liste à partir de SaveManager.get_thought_log() —

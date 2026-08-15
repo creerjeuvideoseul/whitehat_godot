@@ -79,16 +79,16 @@
 			  "message": "J'ai hâte que tu me dises quelle est ta chanson préférée ! Passes-nous voir à l'occasion sur scène !"
 			},
 			{
-			  "commentId": 0,
+			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océanne",
 			  "message": "Je crois que ton groupe <color=indice>LastHorizon</color> est programmé à Rennes la semaine prochaine non ?"
 			},
 			{
-			  "commentId": 0,
+			  "commentId": 2,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "C'est ça ! Et à Saint-Malot ensuite !"
+			  "message": "C'est ça ! Et à Saint-Malo ensuite !"
 			}
 		  ]
 		},
@@ -131,6 +131,18 @@
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
 			  "message": "Je t'aime ! On y arrivera..."
+			},
+			{
+			  "commentId": 1,
+			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
+			  "username": "Alizée",
+			  "message": "Merci Océanne pour la photo, elle me rappelle qu'un autre avenir est peut-être possible..."
+			},
+			{
+			  "commentId": 2,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océanne",
+			  "message": "You're welcome. Carpe diem, ma grande !"
 			}
 		  ]
 		},
@@ -226,16 +238,16 @@
 			  "message": "I can't wait to hear which song is your favorite! Come and see us on stage!"
 			},
 			{
-			  "commentId": 0,
+			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océanne",
 			  "message": "I think your band <color=indice>LastHorizon</color> is scheduled to play in Rennes next week, right?"
 			},
 			{
-			  "commentId": 0,
+			  "commentId": 2,
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
-			  "message": "That's right! And then on to Saint-Malot!"
+			  "message": "That's right! And then on to Saint-Malo!"
 			}
 		  ]
 		},
@@ -278,6 +290,18 @@
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
 			  "message": "I love you! We'll get there..."
+			},
+			{
+			  "commentId": 1,
+			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
+			  "username": "Alizée",
+			  "message": "Thank you, Océanne, for the photo; it reminds me that another future might be possible..."
+			},
+			{
+			  "commentId": 2,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océanne",
+			  "message": "You're welcome. Carpe diem, that's great! !"
 			}
 		  ]
 		},
