@@ -46,6 +46,14 @@ var _dragging: bool = false
 
 
 func _ready() -> void:
+	## Cachée jusqu'à ce que Layout (VBoxContainer) ait fini sa propre passe
+	## de mise en page — sinon la toute première frame peut afficher TitleBar
+	## avec une taille pas encore stabilisée, contrairement à Background/
+	## BorderOverlay (de simples Panel, corrects dès l'entrée dans l'arbre) :
+	## coin de la barre de titre décalé par rapport au cadre, visible jusqu'au
+	## prochain redraw de cette zone (potentiellement jamais, si rien d'autre
+	## n'y change) — voir _reveal_once_settled().
+	visible = false
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
@@ -58,6 +66,16 @@ func _ready() -> void:
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
 	_apply_mission()
+	_reveal_once_settled()
+
+
+## Deux frames d'attente : une pour que Layout termine sa passe de mise en
+## page, une seconde par marge de sécurité (le moteur peut s'y prendre à
+## plusieurs frames selon la profondeur de l'arbre de conteneurs).
+func _reveal_once_settled() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	visible = true
 
 
 func _apply_mission() -> void:
