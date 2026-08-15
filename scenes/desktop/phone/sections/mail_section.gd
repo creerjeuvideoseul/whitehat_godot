@@ -34,6 +34,10 @@ const ATTACHMENT_VIEWER := preload("res://scenes/desktop/phone/sections/attachme
 const AVATAR_SIZE := Vector2(56, 56)
 const ROW_GAP := 8
 const FIELD_GAP := 10
+## Ligne vierge avant le mail précédent cité en réponse (voir
+## _build_quoted_previous_mail) — ROW_GAP seul (8px) collait trop les deux
+## mails, retour joueur.
+const QUOTED_MAIL_BLANK_LINE_HEIGHT := Palette.SIZE_BODY
 ## Ratio 16/9 plutôt que le ratio quasi carré des vignettes de la galerie —
 ## voir _build_attachment_thumbnail.
 const ATTACHMENT_THUMB_WIDTH := 750.0
@@ -415,16 +419,21 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 
 
 ## Le mail cité en réponse (voir MailEntry.mail_previous_id), sous le corps du
-## mail courant : sa propre ligne "De/À" (_build_detail_sender_row, correcte
-## quel que soit son sens puisqu'elle ne dépend que de `previous`) puis son
-## corps préfixé de "> " ligne par ligne (voir _quote_lines), en gris plus
-## sombre pour le distinguer visuellement du mail courant — même principe
-## qu'une vraie citation de mail. Un seul niveau : même si `previous` a
-## lui-même un mail_previous_id, il n'est jamais résolu ici, pour ne pas
-## empiler des citations de citations.
+## mail courant : une ligne vierge (les deux mails étaient trop collés avec le
+## seul ROW_GAP de content_box), puis sa propre ligne "De/À"
+## (_build_detail_sender_row, correcte quel que soit son sens puisqu'elle ne
+## dépend que de `previous`) puis son corps préfixé de "> " ligne par ligne
+## (voir _quote_lines), en gris plus sombre pour le distinguer visuellement du
+## mail courant — même principe qu'une vraie citation de mail. Un seul
+## niveau : même si `previous` a lui-même un mail_previous_id, il n'est
+## jamais résolu ici, pour ne pas empiler des citations de citations.
 func _build_quoted_previous_mail(previous: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", FIELD_GAP)
+
+	var blank_line := Control.new()
+	blank_line.custom_minimum_size = Vector2(0, QUOTED_MAIL_BLANK_LINE_HEIGHT)
+	box.add_child(blank_line)
 
 	box.add_child(_build_detail_sender_row(previous))
 
