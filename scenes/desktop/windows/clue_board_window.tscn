@@ -164,7 +164,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GenerateReportButton" type="Button" parent="Layout/FooterMargin/FooterRow"]
+[node name="GenerateReportMargin" type="MarginContainer" parent="Layout/FooterMargin/FooterRow"]
+layout_mode = 2
+theme_override_constants/margin_right = 30
+
+[node name="GenerateReportButton" type="Button" parent="Layout/FooterMargin/FooterRow/GenerateReportMargin"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 56)
 layout_mode = 2

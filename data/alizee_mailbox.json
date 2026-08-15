@@ -57,7 +57,7 @@
 		  "timestamp": "2030-01-12T03:12:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "Ma fille…<br><br>Je suis désolée.<br><br>Le silence a été tellement long, dix ans sans que je puisse te parler.<br>J'ai fait tant d'erreurs dans ma vie.<br>Mais je voulais que tu saches que tu es ma plus belle réussite et que je t'aime plus que tout.<br>J'imagine que tu as de la rancœur et dieu sait ce que ton père a pu te raconter à mon sujet.<br><br>Mais je ne suis pas celle que tu crois, laisse-moi <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>une chance de renouer contact.</color></indice><br><br>Ta mère, qui t'aime."
+		  "html_content": "Ma fille…<br><br>Je suis désolée.<br><br>Le silence a été tellement long, dix ans sans que je puisse te parler.<br>J'ai fait tant d'erreurs dans ma vie.<br>Mais je voulais que tu saches que tu es ma plus belle réussite et que je t'aime plus que tout.<br>J'imagine que tu as de la rancœur et Dieu sait ce que ton père a pu te raconter à mon sujet.<br><br>Mais je ne suis pas celle que tu crois, laisse-moi <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>une chance de renouer contact.</color></indice><br><br>Ta mère, qui t'aime."
 		},
 		{
 		  "mailId": 4,
@@ -167,7 +167,7 @@
 		  "timestamp": "2030-01-12T03:12:00",
 		  "isSentBox": 0,
 		  "isCrypted": 1,
-		  "html_content": "My daughter…<br>I'm sorry.<br><br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and god knows what your father may have told you about me.<br>But I am not who you think I am, give me a chance to reconnect. <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>Would you like to meet up?</color></indice><br><br>Your mother, who loves you."
+		  "html_content": "My daughter…<br>I'm sorry.<br><br>The silence has been so long, ten years without being able to talk to you.<br>I made so many mistakes in my life.<br>But I wanted you to know you are my greatest achievement, and that I love you more than anything.<br>I imagine you carry resentment, and God knows what your father may have told you about me.<br>But I am not who you think I am, give me a chance to reconnect. <indice id=\"M1_mail_crypt_mere_contact\"><color=indice>Would you like to meet up?</color></indice><br><br>Your mother, who loves you."
 		},
 		{
 		  "mailId": 4,

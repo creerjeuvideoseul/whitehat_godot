@@ -1,7 +1,10 @@
 extends Control
 class_name MailSection
-## Section "Mail" du téléphone d'Alizée : liste des mails (envoyés/reçus) à
-## gauche, contenu du mail sélectionné à droite. Générique par conception —
+## Section "Mail" du téléphone d'Alizée : liste des mails reçus à gauche
+## (simple "Boîte de réception", plus d'onglets Reçus/Envoyés), contenu du
+## mail sélectionné à droite. Les mails envoyés restent dans le JSON
+## (isSentBox=1) mais ne sont plus listés ici — ils ne servent qu'à être cités
+## en réponse (voir MailEntry.mail_previous_id). Générique par conception —
 ## seul `data_path` est spécifique à Alizée, une mission 2+ avec une autre
 ## boîte mail n'aura qu'à dupliquer cette scène et changer ce champ dans
 ## l'inspecteur, sans toucher au script.
@@ -62,18 +65,10 @@ const MAIL_MUSIC_FADE_SECONDS := 1.0
 @export var data_path: String = "res://data/alizee_mailbox.json"
 
 @onready var _close_button: Button = %CloseButton
-@onready var _sent_button: Button = %SentButton
-@onready var _received_button: Button = %ReceivedButton
 @onready var _mail_list: VBoxContainer = %MailList
 @onready var _detail_root: VBoxContainer = %DetailRoot
 
 var _database: MailDatabase
-## Caché dès le premier clic sur ENVOYÉS (voir _select_tab) — pas de flag
-## persisté : réapparaît si le joueur ressort de l'app Mail puis y revient,
-## au cas où il l'aurait raté la première fois (choix assumé, voir
-## _build_sent_badge).
-var _sent_badge: PanelContainer
-var _showing_sent: bool = false
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
 var _reveal_tracker: IndiceRevealTracker
@@ -101,75 +96,20 @@ func _ready() -> void:
 		SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 		close_requested.emit()
 	)
-	_sent_button.pressed.connect(func() -> void: _select_tab(true))
-	_received_button.pressed.connect(func() -> void: _select_tab(false))
-	_build_sent_badge()
-	_select_tab(false)
-
-
-## Badge avec le nombre de mails envoyés, sur l'onglet ENVOYÉS — cet onglet
-## passait inaperçu (retour joueur), ce compteur signale qu'il y a du contenu
-## à consulter. Même recette que le badge du bouton "Indice" du header (voir
-## desktop_header.gd::_build_clue_badge) : nombre fixe une fois construit, pas
-## un "non lu" qui diminuerait à la lecture — rien ne suit un état lu/non lu
-## pour les mails.
-func _build_sent_badge() -> void:
-	var count := _database.get_mails(true).size()
-	if count == 0:
-		return
-
-	var badge := PanelContainer.new()
-	badge.custom_minimum_size = Vector2(26, 26)
-	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	## Ancré au coin haut-droit du bouton lui-même — même principe d'overlay
-	## que _build_clue_badge (desktop_header.gd).
-	badge.anchor_left = 1.0
-	badge.anchor_right = 1.0
-	badge.offset_left = -16.0
-	badge.offset_right = 10.0
-	badge.offset_top = -10.0
-	badge.offset_bottom = 16.0
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Palette.TEXT_ACCENT
-	style.set_corner_radius_all(13)
-	style.content_margin_left = 4
-	style.content_margin_right = 4
-	badge.add_theme_stylebox_override("panel", style)
-
-	var label := Label.new()
-	label.text = str(count)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_color", Palette.WINDOW_BG)
-	label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
-	badge.add_child(label)
-
-	_sent_button.add_child(badge)
-	_sent_badge = badge
-
-
-## Onglet actif en PrimaryButton (plein, vert), inactif en SecondaryButton —
-## remplace l'ancien dimming par modulate (alpha 50%), qui donnait l'impression
-## d'un bouton désactivé plutôt que d'un onglet simplement pas sélectionné
-## (retour joueur : "ENVOYÉS" passait inaperçu).
-func _select_tab(is_sent: bool) -> void:
-	_showing_sent = is_sent
-	_sent_button.theme_type_variation = &"PrimaryButton" if is_sent else &"SecondaryButton"
-	_received_button.theme_type_variation = &"SecondaryButton" if is_sent else &"PrimaryButton"
-	if is_sent and is_instance_valid(_sent_badge):
-		_sent_badge.hide()
-	_selected_mail_id = -1
 	_rebuild_list()
 	_show_no_selection()
 
 
+## Seuls les mails reçus sont listés/parcourables ici — les mails envoyés
+## restent dans alizee_mailbox.json (isSentBox=1) mais ne servent plus qu'à
+## être cités en réponse (voir MailEntry.mail_previous_id/
+## MailDatabase.get_mail_by_id), plus à être affichés dans une liste séparée.
 func _rebuild_list() -> void:
 	for child in _mail_list.get_children():
 		child.queue_free()
 	_mail_rows.clear()
 
-	for mail: MailEntry in _database.get_mails(_showing_sent):
+	for mail: MailEntry in _database.get_mails(false):
 		var row := _build_mail_row(mail)
 		_mail_list.add_child(row)
 		_mail_rows[mail.mail_id] = row
@@ -292,9 +232,7 @@ func _set_row_selected(mail_id: int, is_selected: bool) -> void:
 ## Partagé par _show_no_selection/_show_mail : le tracker doit toujours être
 ## disposé AVANT de libérer les Control de _detail_root (dont le ScrollContainer
 ## qu'il surveille), sinon dispose() plante sur une instance déjà libérée au
-## prochain affichage — bug constaté en changeant d'onglet (Reçus/Envoyés)
-## juste avant de sélectionner un mail : _select_tab() appelait
-## _show_no_selection() sans jamais disposer le tracker du mail précédent.
+## prochain affichage.
 func _clear_detail_root() -> void:
 	if _reveal_tracker != null:
 		_reveal_tracker.dispose()
@@ -359,9 +297,12 @@ func _show_mail(mail: MailEntry) -> void:
 		## dépli de VIEW METADATA (voir _build_metadata_section).
 		if not mail.player_think.is_empty():
 			thought_requested.emit(mail.player_think)
-
-	if not mail.meta_info.is_empty():
-		_detail_root.add_child(_build_metadata_section(mail))
+		## VIEW METADATA n'a rien à montrer tant que le mail est crypté et pas
+		## encore déverrouillé (voir _reveal_tracker ci-dessus, même garde-fou) —
+		## sinon le bouton apparaissait déjà, avant même d'avoir accès au
+		## contenu réel du mail.
+		if not mail.meta_info.is_empty():
+			_detail_root.add_child(_build_metadata_section(mail))
 
 
 func _build_detail_header(mail: MailEntry) -> Control:

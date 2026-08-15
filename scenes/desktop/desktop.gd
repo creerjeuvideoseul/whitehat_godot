@@ -85,8 +85,10 @@ const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
 const JEAN_REVEAL_DELAY_SECONDS := 1.0
 
 ## Laisse le temps au joueur de "digérer" la fin de la conversation avec Jean
-## avant que le terminal système (dump du téléphone) ne s'ouvre par-dessus.
-const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 2.0
+## (dont les 3 lignes System: finales, voir jean_intro.dialogue) avant que le
+## terminal système (dump du téléphone) ne s'ouvre par-dessus. Passé de 2 à 4s
+## (retour joueur) : 2s ne suffisait pas à lire ces dernières lignes système.
+const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 
 @onready var _window_layer: Control = %WindowLayer
 @onready var _footer: Control = %DesktopFooter

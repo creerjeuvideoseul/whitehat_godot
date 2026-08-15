@@ -126,19 +126,12 @@ theme_override_constants/margin_bottom = 16
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="ReceivedButton" type="Button" parent="Layout/TabsBar/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+[node name="InboxLabel" type="Label" parent="Layout/TabsBar/Row"]
 layout_mode = 2
-theme_type_variation = &"PrimaryButton"
-text = "MAIL_TAB_RECEIVED"
-
-[node name="SentButton" type="Button" parent="Layout/TabsBar/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_type_variation = &"PrimaryButton"
-text = "MAIL_TAB_SENT"
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 22
+text = "MAIL_INBOX_LABEL"
 
 [node name="Body" type="HBoxContainer" parent="Layout"]
 layout_mode = 2
