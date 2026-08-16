@@ -28,8 +28,21 @@ func _ready() -> void:
 	# dans le .csv, un saut de ligne réel dans une cellule CSV n'étant pas
 	# fiable à l'import (le parseur de Godot lit une ligne physique à la
 	# fois) — voir aussi options_panel.gd pour l'avertissement de sortie.
-	_new_game_confirm_dialog.dialog_text = tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("COMMON_CONTINUE_QUESTION")
+	_new_game_confirm_dialog.dialog_text = tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("NEWGAME_RESTART_CONFIRM_QUESTION")
 	DialogStyle.style_warning_dialog(_new_game_confirm_dialog)
+	# Padding + centrage propres à cette dialog précise (pas dans DialogStyle,
+	# partagé avec l'avertissement "Quitter la partie" — un changement là-bas
+	# toucherait aussi ce second appelant, non demandé ici). Label.theme_
+	# override_styles["normal"] sert de boîte à marge : bg transparent, ne
+	# fait que réserver du padding autour du texte sans dessiner de fond.
+	var new_game_label := _new_game_confirm_dialog.get_label()
+	new_game_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var new_game_label_padding := StyleBoxEmpty.new()
+	new_game_label_padding.content_margin_left = 50
+	new_game_label_padding.content_margin_top = 50
+	new_game_label_padding.content_margin_right = 50
+	new_game_label_padding.content_margin_bottom = 50
+	new_game_label.add_theme_stylebox_override("normal", new_game_label_padding)
 
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()

@@ -29,7 +29,8 @@ OPTIONS_RESOLUTION_1920,1920×1080 (redimensionnable),1920×1080 (resizable)
 OPTIONS_CLOSE,Fermer,Close
 OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
 OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées depuis %d minutes ne seront pas enregistrées.","Warning, any unsaved progress from the last %d minutes will be lost."
-NEWGAME_OVERWRITE_WARNING,"Attention, vous allez supprimer votre ancienne partie.","Warning, this will delete your current save."
+NEWGAME_OVERWRITE_WARNING,"Attention, en confirmant, vous allez supprimer votre ancienne partie et votre progression.","Warning, confirming this will delete your current save and progress."
+NEWGAME_RESTART_CONFIRM_QUESTION,Êtes-vous sûr de vouloir recommencer du début ?,Are you sure you want to start over from the beginning?
 COMMON_CONFIRM,Confirmer,Confirm
 COMMON_CANCEL,Annuler,Cancel
 COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
@@ -133,6 +134,7 @@ INTRO_MONOLOGUE_2,Je faisais partie des %s.,I was one of the %s.
 INTRO_MONOLOGUE_3,"Nous exploitons le système pour le pouvoir, l'argent et le contrôle, j'ai été de ceux-là.","We exploit the system for power, money and control — I used to be one of them."
 INTRO_MONOLOGUE_4,J'ai manqué de moralité...,I lacked morality...
 INTRO_MONOLOGUE_5,Mais un événement a tout changé.,But something happened that changed everything.
-INTRO_MONOLOGUE_6,"Aujourd'hui, j'aspire à la rédemption.","Today, I seek redemption."
-INTRO_MONOLOGUE_7,"Guidé par mon seul contact de confiance, RelayGhost, je mets mes compétences au service de ceux que la justice abandonne.","Guided by my only trusted contact, RelayGhost, I put my skills to work for those justice has abandoned."
+INTRO_MONOLOGUE_6,"Aujourd'hui, j'aspire à la %s.","Today, I seek %s."
+INTRO_MONOLOGUE_6_REDEMPTION_WORD,rédemption,redemption
+INTRO_MONOLOGUE_7,"Guidé par mon seul contact de confiance, %s, je mets mes compétences au service de ceux que la justice abandonne.","Guided by my only trusted contact, %s, I put my skills to work for those justice has abandoned."
 INTRO_MONOLOGUE_8,Je veux être un... %s.,I want to become a... %s.

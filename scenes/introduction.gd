@@ -207,13 +207,26 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 func _play_monologue() -> void:
 	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
 	var danger := "#%s" % Palette.TEXT_DANGER.to_html(false)
+	var blue := "#%s" % Palette.TEXT_BLUE_ACCENT.to_html(false)
+	var white := "#%s" % Palette.TEXT_NORMAL.to_html(false)
 	var whitehat := "[font_size=%d][b][color=%s]WHITE HAT[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, accent]
 	var black_hats := "[font_size=%d][b][color=%s]Black Hats[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, danger]
+	## Même mise en valeur que WHITE HAT (taille, gras) mais en bleu (voir
+	## Palette.TEXT_BLUE_ACCENT, déjà utilisé pour Gilles de la Touret plus tôt
+	## dans cette même cutscene) — RelayGhost est un nom propre, injecté en
+	## code comme les deux autres plutôt que codé en dur dans le texte traduit.
+	var relayghost := "[font_size=%d][b][color=%s]RelayGhost[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, blue]
+	## Même mise en valeur que WHITE HAT/RelayGhost mais en blanc (Palette.
+	## TEXT_NORMAL). Contrairement aux deux autres, "rédemption" n'est pas un
+	## nom propre : le mot lui-même reste traduit via sa propre clé ui.csv
+	## (INTRO_MONOLOGUE_6_REDEMPTION_WORD) plutôt que codé en dur, seule la
+	## mise en forme vient d'ici.
+	var redemption := "[font_size=%d][b][color=%s]%s[/color][/b][/font_size]" % [Palette.SIZE_LARGE + 5, white, tr("INTRO_MONOLOGUE_6_REDEMPTION_WORD")]
 	var text := "%s\n%s\n%s\n\n%s\n\n%s\n%s\n\n%s\n\n%s" % [
 		tr("INTRO_MONOLOGUE_1"), tr("INTRO_MONOLOGUE_2") % black_hats, tr("INTRO_MONOLOGUE_3"),
 		tr("INTRO_MONOLOGUE_4"),
-		tr("INTRO_MONOLOGUE_5"), tr("INTRO_MONOLOGUE_6"),
-		tr("INTRO_MONOLOGUE_7"),
+		tr("INTRO_MONOLOGUE_5"), tr("INTRO_MONOLOGUE_6") % redemption,
+		tr("INTRO_MONOLOGUE_7") % relayghost,
 		tr("INTRO_MONOLOGUE_8") % whitehat,
 	]
 

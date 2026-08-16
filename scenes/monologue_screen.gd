@@ -35,6 +35,12 @@ const TYPING_SOUND_FADE_SECONDS := 0.1
 ## continuer" apparaisse — laisse un instant de silence avant de rendre la
 ## main au joueur, plutôt que de l'afficher instantanément sur le dernier mot.
 const CONTINUE_HINT_DELAY_SECONDS := 0.6
+## Fondu de sortie une fois "cliquez pour continuer" cliqué (voir _finish) :
+## tout l'écran (texte + indicateur, modulate.a du nœud racine) s'efface
+## avant d'émettre `closed`, plutôt que de disparaître instantanément — pour
+## un enchaînement plus doux vers ce qui suit (ex. la fenêtre système du boot,
+## voir introduction.gd::_play_monologue).
+const FADE_OUT_SECONDS := 1.0
 
 @onready var _label: DialogueLabel = %Label
 @onready var _continue_hint: Label = %ContinueHint
@@ -91,5 +97,8 @@ func _finish() -> void:
 	_can_continue = false
 	if music != null:
 		MusicPlayer.stop(music_fade_seconds)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, FADE_OUT_SECONDS)
+	await tween.finished
 	closed.emit()
 	queue_free()

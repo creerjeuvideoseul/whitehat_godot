@@ -42,7 +42,13 @@ const ANALYSIS_EARLY_REVEAL_SECONDS := 0.7
 ## Durée/amplitude du glissement de rangement de la fenêtre de chat vers la
 ## barre des tâches (voir _minimize_window_with_slide), même esprit que
 ## PHONE_REVEAL_SECONDS/OFFSET mais en sens inverse (vers le bas).
-const CHAT_MINIMIZE_SLIDE_SECONDS := 0.5
+const CHAT_MINIMIZE_SLIDE_SECONDS := 0.65
+## Volontairement plus longue que CHAT_MINIMIZE_SLIDE_SECONDS : le fondu ne
+## doit pas se terminer pile en même temps que le glissement, sinon la
+## fenêtre semble juste "descendre un peu puis disparaître" au lieu de
+## continuer visiblement sa course vers la barre des tâches avant de
+## s'effacer (retour joueur, voir _minimize_window_with_slide).
+const CHAT_MINIMIZE_FADE_SECONDS := 0.9
 const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
 ## The mission the "Indice" button currently opens. No mission-selection UI
 ## exists yet, so this is hardcoded for now — same simplification the chat
@@ -83,6 +89,18 @@ const HACK_PC_MOTHER_TERMINAL_SIZE := Vector2(1180.0, 730.0)
 ## fenêtre de discussion n'apparaisse, plutôt que de la voir surgir
 ## immédiatement à l'arrivée sur le bureau.
 const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
+
+## Musique de fond du bureau (voir MusicPlayer.play_background) : démarrée
+## dans _ready() dès que le joueur arrive sur le bureau, que ce soit une
+## toute première connexion ou la reprise d'une sauvegarde antérieure à la
+## fin de la discussion avec Jean — coupée dans _build_chat_window() dès que
+## contact_conversation_finished signale "jean_ranoud". Piste dédiée
+## (play_background(), pas play()) : une musique au premier plan (ex. celle
+## d'un mail crypté, voir mail_section.gd) la coupe automatiquement sans
+## qu'il faille s'en occuper ici.
+const DESKTOP_MUSIC := preload("res://assets/audio/chill_background-bathroom-chill-background-music-14977.mp3")
+const DESKTOP_MUSIC_FADE_IN_SECONDS := 5.0
+const DESKTOP_MUSIC_FADE_OUT_SECONDS := 2.0
 
 ## Jean only shows up in the sidebar once RelayGhost's briefing is over, with
 ## a short pause first so the two don't blur together.
@@ -177,6 +195,12 @@ func _ready() -> void:
 		_on_window_minimize_requested(_chat_window, tr("CHAT_WINDOW_TITLE"))
 		return
 
+	# Toute arrivée sur le bureau avant la fin de la discussion avec Jean —
+	# première connexion ou reprise d'une sauvegarde antérieure (voir jean_done
+	# ci-dessus) — relance la musique de fond depuis le début plutôt que de la
+	# limiter à la toute première connexion.
+	MusicPlayer.play_background(DESKTOP_MUSIC, DESKTOP_MUSIC_FADE_IN_SECONDS)
+
 	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
 	# reste quelque chose à découvrir dans le chat (première arrivée après
 	# l'intro/login, ou reprise entre la fin de RelayGhost et celle de Jean) —
@@ -224,6 +248,7 @@ func _build_chat_window() -> ChatWindow:
 			await get_tree().create_timer(JEAN_REVEAL_DELAY_SECONDS).timeout
 			window.add_contact(_build_jean_contact())
 		elif contact_id == "jean_ranoud":
+			MusicPlayer.stop_background(DESKTOP_MUSIC_FADE_OUT_SECONDS)
 			await get_tree().create_timer(JEAN_DUMP_TERMINAL_DELAY_SECONDS).timeout
 			_play_jean_dump_terminal()
 	)
@@ -331,7 +356,7 @@ func _minimize_window_with_slide(window: Control, window_title: String) -> void:
 	tween.set_ease(Tween.EASE_IN)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(window, "position:y", origin_y + CHAT_MINIMIZE_SLIDE_OFFSET, CHAT_MINIMIZE_SLIDE_SECONDS)
-	tween.tween_property(window, "modulate:a", 0.0, CHAT_MINIMIZE_SLIDE_SECONDS)
+	tween.tween_property(window, "modulate:a", 0.0, CHAT_MINIMIZE_FADE_SECONDS)
 	await tween.finished
 
 	# Remis à l'état normal avant de cacher : la fenêtre doit réapparaître

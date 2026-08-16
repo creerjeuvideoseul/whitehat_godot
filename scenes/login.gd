@@ -4,6 +4,10 @@ extends Control
 ## the login to PlayerSession and moves on to the desktop.
 
 const INVALID_PSEUDO_CHARS := "[^A-Za-z0-9_]"
+## Joué juste après "SE CONNECTER" — propre à cet écran (un seul appelant),
+## donc préchargé ici plutôt que centralisé dans SfxPlayer (voir
+## introduction.gd::BOOT_SYSTEM_SFX pour le même principe).
+const CONNECT_SFX := preload("res://assets/audio/sound/47313572-startup-sound-variation-fast-315898.mp3")
 
 @onready var _pseudo_edit: LineEdit = %PseudoEdit
 @onready var _password_edit: LineEdit = %PasswordEdit
@@ -50,6 +54,7 @@ func _on_connect_pressed() -> void:
 	if pseudo.length() < 2:
 		_error_label.text = tr("LOGIN_PSEUDO_ERROR")
 		return
+	SfxPlayer.play(CONNECT_SFX)
 	PlayerSession.set_login(pseudo, _password_edit.text)
 	SaveManager.save_checkpoint("res://scenes/desktop/desktop.tscn")
 	get_tree().change_scene_to_file("res://scenes/desktop/desktop.tscn")
