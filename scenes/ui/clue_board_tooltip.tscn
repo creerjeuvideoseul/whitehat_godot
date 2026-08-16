@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/ui/clue_board_tooltip.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_box"]
+bg_color = Color(0.03, 0.1, 0.07, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1.0, 0.84, 0.0, 1.0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+shadow_color = Color(1.0, 0.84, 0.0, 0.55)
+shadow_size = 18
+
+[node name="ClueBoardTooltip" type="Control"]
+layout_mode = 3
+size = Vector2(800, 154)
+script = ExtResource("1_script")
+
+[node name="Box" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 54.0
+offset_right = 800.0
+offset_bottom = 154.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_box")
+
+[node name="Margin" type="MarginContainer" parent="Box"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBox" type="VBoxContainer" parent="Box/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="MessageLabel" type="Label" parent="Box/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 24
+text = "CLUEBOARD_TOOLTIP_DARKWEB_HINT"
+
+[node name="ButtonRow" type="HBoxContainer" parent="Box/Margin/VBox"]
+layout_mode = 2
+
+[node name="ButtonSpacer" type="Control" parent="Box/Margin/VBox/ButtonRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="Box/Margin/VBox/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 44)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "OPTIONS_CLOSE"

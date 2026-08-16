@@ -129,6 +129,20 @@ func get_minutes_since_checkpoint() -> int:
 	return int(elapsed_msec / 60000.0)
 
 
+## Vrai une fois la bulle d'aide "recherche darkweb" de la fenêtre Collecte
+## d'indices fermée (voir ClueBoardTooltip) — pour ne la montrer qu'une seule
+## fois par partie, jamais un simple flag de session (voir desktop.gd,
+## _maybe_show_clue_board_tooltip). Comme record_conversation/record_thought
+## ci-dessus, écrit en mémoire immédiatement mais persisté sur disque
+## seulement au prochain save_checkpoint().
+func has_seen_clue_board_tooltip() -> bool:
+	return _data.get("clue_board_tooltip_seen", false)
+
+
+func mark_clue_board_tooltip_seen() -> void:
+	_data["clue_board_tooltip_seen"] = true
+
+
 func delete_save() -> void:
 	_data = {}
 	if FileAccess.file_exists(SAVE_PATH):

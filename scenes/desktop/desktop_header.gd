@@ -243,6 +243,15 @@ func set_system_load_spike(active: bool) -> void:
 		_cpu_gauge.restore_normal_range()
 
 
+## Rectangle global de la barre de recherche OSINT — pour desktop.gd, qui doit
+## positionner la bulle d'aide "Collecte d'indices" juste en dessous (voir
+## ClueBoardTooltip.point_at). Control expose déjà get_global_rect() nativement ;
+## ce n'est qu'un raccourci pour ne pas exposer _search_field lui-même à un
+## autre script.
+func get_search_field_global_rect() -> Rect2:
+	return _search_field.get_global_rect()
+
+
 func _on_search_requested() -> void:
 	var query := _search_field.text.strip_edges()
 	if query.is_empty():

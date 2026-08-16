@@ -13,6 +13,10 @@ const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
+const CLUE_BOARD_TOOLTIP := preload("res://scenes/ui/clue_board_tooltip.tscn")
+## Délai entre l'ouverture de "Collecte d'indices" et l'apparition de la bulle
+## d'aide "recherche darkweb" (voir _maybe_show_clue_board_tooltip).
+const CLUE_BOARD_TOOLTIP_DELAY_SECONDS := 1.5
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
@@ -100,6 +104,15 @@ const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 ## window closes (×) rather than minimizes (see clue_board_window.gd), no
 ## taskbar entry to juggle like the other windows below.
 var _clue_board_window: ClueBoardWindow = null
+
+## Bulle d'aide "recherche darkweb" (voir ClueBoardTooltip et
+## _maybe_show_clue_board_tooltip) — gardée pour ne jamais en superposer une
+## seconde tant que le joueur n'a pas fermé celle déjà affichée.
+var _clue_board_tooltip: ClueBoardTooltip = null
+## Vrai pendant le délai d'apparition de _clue_board_tooltip (voir
+## CLUE_BOARD_TOOLTIP_DELAY_SECONDS) — évite qu'un second clic sur "Indice"
+## pendant ce délai ne relance une seconde attente en parallèle.
+var _clue_board_tooltip_pending: bool = false
 
 ## Même principe que _clue_board_window : une seule fenêtre "Analyse
 ## Rétrospective" réutilisée à chaque clic sur le bouton "Pensées" du footer —
@@ -406,12 +419,60 @@ func _on_clue_button_pressed() -> void:
 	if is_instance_valid(_clue_board_window):
 		_clue_board_window.show()
 		_bring_window_to_front(_clue_board_window)
+	else:
+		_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
+		_clue_board_window.mission_id = CURRENT_MISSION_ID
+		_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
+		_window_layer.add_child(_clue_board_window)
+
+	_maybe_show_clue_board_tooltip()
+
+
+## Bulle d'aide "recherche darkweb" (voir ClueBoardTooltip) : montrée une
+## seule fois par partie, à la première ouverture de "Collecte d'indices" qui
+## coïncide avec au moins un indice déjà débloqué pour la mission en cours —
+## pas forcément le tout premier clic (voir SaveManager.
+## has_seen_clue_board_tooltip()) : un joueur qui ouvre la fenêtre avant même
+## d'avoir rencontré Jean n'a encore rien à chercher, la bulle attend donc la
+## prochaine ouverture où c'est le cas plutôt que de ne plus jamais
+## apparaître. Apparaît CLUE_BOARD_TOOLTIP_DELAY_SECONDS après l'ouverture,
+## le temps que le joueur ait fini de regarder le tableau lui-même plutôt que
+## de la voir surgir en même temps.
+## _clue_board_tooltip_pending évite d'en déclencher une seconde si le joueur
+## reclique "Indice" pendant le délai d'attente ; is_instance_valid(_clue_board_tooltip)
+## fait de même une fois la bulle réellement affichée mais pas encore fermée.
+func _maybe_show_clue_board_tooltip() -> void:
+	if is_instance_valid(_clue_board_tooltip) or _clue_board_tooltip_pending:
+		return
+	if SaveManager.has_seen_clue_board_tooltip():
+		return
+	if not ClueManager.has_mission_started(CURRENT_MISSION_ID):
 		return
 
-	_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
-	_clue_board_window.mission_id = CURRENT_MISSION_ID
-	_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
-	_window_layer.add_child(_clue_board_window)
+	_clue_board_tooltip_pending = true
+	await get_tree().create_timer(CLUE_BOARD_TOOLTIP_DELAY_SECONDS).timeout
+	_clue_board_tooltip_pending = false
+
+	# Le joueur a pu refermer la fenêtre Collecte d'indices pendant le délai —
+	# pas de raison de faire surgir la bulle sur un bureau où elle ne pointe
+	# plus vers rien d'ouvert.
+	if not is_instance_valid(_clue_board_window) or not _clue_board_window.visible:
+		return
+
+	var field_rect := _header.get_search_field_global_rect()
+	_clue_board_tooltip = CLUE_BOARD_TOOLTIP.instantiate()
+	# Ajoutée directement sur la racine du bureau (pas _window_layer) : la
+	# flèche doit toucher un champ du header, donc passer devant lui, or
+	# DesktopHeader est ajouté après WindowLayer dans desktop.tscn (dessiné
+	# par-dessus). Devenir le tout dernier enfant de Desktop suffit à passer
+	# devant header ET footer, sans toucher à l'empilement des autres fenêtres.
+	add_child(_clue_board_tooltip)
+	_clue_board_tooltip.set_text("CLUEBOARD_TOOLTIP_DARKWEB_HINT")
+	_clue_board_tooltip.point_at(Vector2(field_rect.position.x + field_rect.size.x * 0.5, field_rect.position.y + field_rect.size.y))
+	_clue_board_tooltip.closed.connect(func() -> void:
+		SaveManager.mark_clue_board_tooltip_seen()
+		_clue_board_tooltip.queue_free()
+	)
 
 
 ## "Pensées" du footer, même schéma que "Indice" ci-dessus : une seule
