@@ -16,7 +16,7 @@ Gilles de la Touret: ... établie sur des serveurs [color=important]quantiques !
 do change_background("wh_show_television_homme1")
 Gilles de la Touret: C'est-à-dire qu'elle peut être partout à la fois... et en même temps, c'est comme si elle n'était pas là !
 do change_background("wh_intro_femme_tourne_oeil")
-Karine Delonay: Je n'y comprends rien Gilles !
+Karine Delonay: Je n'y comprends rien, Gilles !
 do change_background("wh_show_television_homme1")
 Gilles de la Touret: C'est normal, Karine...
 do change_background("wh_show_television_homme3")

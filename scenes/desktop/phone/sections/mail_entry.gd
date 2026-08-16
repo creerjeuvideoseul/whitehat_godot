@@ -18,7 +18,7 @@ var is_sent_box: bool
 var is_crypted: bool
 var html_content: String
 ## Dictionnaire libre clé -> valeur (ex. IP, serveur...), affiché seulement
-## si non vide via le bouton "VIEW METADATA".
+## si non vide via le bouton "MÉTADONNÉES".
 var meta_info: Dictionary
 ## Chemin res:// d'une musique à jouer en fond tant que ce mail reste ouvert
 ## (voir MailSection) — vide par défaut, la plupart des mails n'en ont pas.
@@ -28,7 +28,7 @@ var play_music: String
 var attach_image: String
 ## Pensée du joueur affichée à l'ouverture du mail (voir MailSection._show_mail) —
 ## champ de premier niveau, distinct du "Player_Think" dans meta_info (celui-ci
-## se déclenche au dépli de VIEW METADATA, pas à l'ouverture du mail). Vide par
+## se déclenche au dépli de MÉTADONNÉES, pas à l'ouverture du mail). Vide par
 ## défaut, la plupart des mails n'en ont pas.
 var player_think: String
 ## Id du mail auquel celui-ci répond (voir MailDatabase.get_mail_by_id),

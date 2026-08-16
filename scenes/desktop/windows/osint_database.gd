@@ -14,8 +14,8 @@ const DEFAULT_LOCALE := "fr"
 ## nom de clé JSON dépend de la langue, contrairement aux champs "libres" qui
 ## s'affichent tels quels, dans l'ordre du JSON.
 const NAME_KEY := {"fr": "Nom", "en": "Name"}
-const FIRST_NAME_KEY := {"fr": "Prenom", "en": "First name"}
-const AGE_KEY := {"fr": "Age", "en": "Age"}
+const FIRST_NAME_KEY := {"fr": "Prénom", "en": "First name"}
+const AGE_KEY := {"fr": "Âge", "en": "Age"}
 const BIRTHPLACE_KEY := {"fr": "Lieu de naissance", "en": "Birthplace"}
 const STATUS_KEY := {"fr": "Statut", "en": "Status"}
 const NOTE_KEY := {"fr": "Note personnelle", "en": "Personal note"}

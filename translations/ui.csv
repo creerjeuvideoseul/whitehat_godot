@@ -35,7 +35,7 @@ COMMON_CANCEL,Annuler,Cancel
 COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
 COMMON_YES,Oui,Yes
 COMMON_NO,Non,No
-DESKTOP_SEARCH_PLACEHOLDER,Recherche nom prénom,Search first and last name
+DESKTOP_SEARCH_PLACEHOLDER,Tapez un prénom nom,Search last and first name
 DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON
@@ -76,7 +76,7 @@ PHONE_ICON_SMS,SMS,SMS
 PHONE_ICON_MAIL,Mail,Mail
 PHONE_ICON_GALLERY,Galerie,Gallery
 PHONE_ICON_VAULT,Coffre-fort,Vault
-DESKTOP_SEARCH_BUTTON,Rechercher,Search
+DESKTOP_SEARCH_BUTTON,Rechercher sur le darkweb,Search the dark web
 OSINT_WINDOW_TITLE,Résultat OSINT : Profilage en ligne & fuites de données,OSINT Results: Online Profiling & Data Leaks
 OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.
 MAIL_SECTION_TITLE,Mail du téléphone d'Alizée,Alizée's phone mail
@@ -87,6 +87,7 @@ VAULT_ENCRYPTED_PLACEHOLDER,"******** Crypté ********** Merci de débloquer l'a
 MAIL_FROM_LABEL,De :,From:
 MAIL_TO_LABEL,À :,To:
 MAIL_HACK_PC_MOTHER_BUTTON,PIRATER LE PC,HACK THE PC
+MAIL_METADATA_BUTTON,MÉTADONNÉES,METADATA
 HACK_PC_MOTHER_WINDOW_TITLE,Information extraite du PC de Christine Ranoud.,Information extracted from Christine Ranoud's PC.
 SMS_SECTION_TITLE,SMS du téléphone d'Alizée,Alizée's phone SMS
 SMS_NO_SELECTION,Sélectionnez une conversation pour l'afficher.,Select a conversation to view it.
@@ -102,7 +103,7 @@ VAULT_PASSWORD_PLACEHOLDER,Mot de passe,Password
 VAULT_VALIDATE_BUTTON,VALIDER,SUBMIT
 VAULT_SUCCESS_MESSAGE,"Contenu crypté débloqué, vous pouvez maintenant accéder aux informations protégées (SMS, mails, etc.).","Encrypted content unlocked — you can now access the protected information (SMS, emails, etc.)."
 VAULT_WRONG_PASSWORD,Ce n'est pas le bon mot de passe.,This is not the right password.
-VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de logique et simple.,It has to be something logic and simple.
+VAULT_HINT_ATTEMPT_1,C'est forcément quelque chose de logique et simple.,It has to be something logical and simple.
 VAULT_HINT_ATTEMPT_2,"Quelque chose que Marek ou Alizée peut savoir, Marek a installé le coffre-fort.","Something Marek or Alizée might know — Marek installed the vault."
 VAULT_HINT_ATTEMPT_3,Peut-être que je pourrais trouver des pistes dans la recherche nom/prénom en haut ?,Maybe I could find some leads by searching by first and last name at the top?
 VAULT_HINT_ATTEMPT_4,Qu'est-ce qui est le plus important pour Marek ? Sa musique ?,What matters most to Marek? His music?

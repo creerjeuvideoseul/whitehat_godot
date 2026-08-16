@@ -13,7 +13,7 @@ RelayGhost: Que puis-je pour toi ?
 		RelayGhost: Tu as pourtant déverrouillé le coffre.
 		RelayGhost: Je doute que mon assistance te soit encore nécessaire pour cette étape.
 		RelayGhost: Prends connaissance des données décryptées et génère ton rapport.
-		RelayGhost: Une précision : garde un œil sur METADATA. Elles te permettront d'infiltrer d'autres systèmes au moment opportun.
+		RelayGhost: Une précision : garde un œil sur les métadonnées. Elles te permettront d'infiltrer d'autres systèmes au moment opportun.
 	elif not ClueManager.is_unlocked("M1_galerie_album")
 		RelayGhost: Reprends ton analyse depuis le début.
 		RelayGhost: As-tu examiné l'intégralité des éléments de sa galerie d'images ?

@@ -47,7 +47,7 @@ const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
 ## Délai avant que le bouton PIRATER LE PC et la pensée du joueur n'apparaissent
 ## après le dépli des métadonnées — laisse le temps de lire les champs plutôt
-## que de tout faire surgir d'un coup au clic sur VIEW METADATA.
+## que de tout faire surgir d'un coup au clic sur MÉTADONNÉES.
 const METADATA_REVEAL_DELAY_SECONDS := 1.0
 ## Deux clés réservées dans meta_info, gérées à part plutôt qu'affichées comme
 ## un champ générique — même esprit que les tags [#indice=xxx]/<indice id="...">
@@ -76,7 +76,7 @@ var _database: MailDatabase
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
 var _reveal_tracker: IndiceRevealTracker
-## Clignotement du bouton "VIEW METADATA" tant qu'on n'a pas cliqué dessus —
+## Clignotement du bouton "MÉTADONNÉES" tant qu'on n'a pas cliqué dessus —
 ## voir _build_metadata_section. Tué avant de libérer le bouton (voir
 ## _clear_detail_root) : même risque que le tracker ci-dessus si on laissait
 ## un Tween continuer de cibler un Control déjà libéré au mail suivant.
@@ -298,10 +298,10 @@ func _show_mail(mail: MailEntry) -> void:
 			MusicPlayer.play(load(mail.play_music), MAIL_MUSIC_FADE_SECONDS)
 		## Pensée déclenchée à l'ouverture du mail lui-même (voir MailEntry.player_think) —
 		## distincte de META_PLAYER_THINK_KEY dans meta_info, qui se déclenche au
-		## dépli de VIEW METADATA (voir _build_metadata_section).
+		## dépli de MÉTADONNÉES (voir _build_metadata_section).
 		if not mail.player_think.is_empty():
 			thought_requested.emit(mail.player_think)
-		## VIEW METADATA n'a rien à montrer tant que le mail est crypté et pas
+		## MÉTADONNÉES n'a rien à montrer tant que le mail est crypté et pas
 		## encore déverrouillé (voir _reveal_tracker ci-dessus, même garde-fou) —
 		## sinon le bouton apparaissait déjà, avant même d'avoir accès au
 		## contenu réel du mail.
@@ -501,11 +501,11 @@ func _open_attachment_viewer(mail: MailEntry) -> void:
 	viewer.show_image(mail.attach_image, tr("MAIL_ATTACHMENT_VIEWER_TITLE"))
 
 
-## Repliée par défaut, dépliée au clic sur le bouton "VIEW METADATA" (qui
+## Repliée par défaut, dépliée au clic sur le bouton "MÉTADONNÉES" (qui
 ## clignote tant qu'on n'a pas cliqué dessus, pour inciter à le faire — voir
-## BLINK_MIN_ALPHA/BLINK_SECONDS) — garde le libellé du bouton en anglais,
-## dans le jargon technique volontairement non traduit du reste de
-## l'interface (voir desktop.gd, _build_jean_dump_lines).
+## BLINK_MIN_ALPHA/BLINK_SECONDS) — libellé traduit via MAIL_METADATA_BUTTON
+## (ui.csv), cohérent avec le même mot utilisé par RelayGhost dans
+## relayghost_help.dialogue.
 ##
 ## META_PLAYER_THINK_KEY/META_HACK_PC_MOTHER_KEY sont exclues de la liste de
 ## champs générique : la première déclenche une pensée du joueur à la
@@ -515,7 +515,7 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", ROW_GAP)
 
-	## Ligne d'en-tête horizontale : VIEW METADATA + (si présent) le bouton
+	## Ligne d'en-tête horizontale : MÉTADONNÉES + (si présent) le bouton
 	## PIRATER LE PC juste à côté, séparés de 50px. Le bouton hack reste
 	## masqué tant que les métadonnées ne sont pas dépliées (voir le connect
 	## de toggle_button plus bas).
@@ -524,7 +524,7 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 	box.add_child(header_row)
 
 	var toggle_button := Button.new()
-	toggle_button.text = "VIEW METADATA"
+	toggle_button.text = tr("MAIL_METADATA_BUTTON")
 	toggle_button.theme_type_variation = &"PrimaryButton"
 	toggle_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	header_row.add_child(toggle_button)
@@ -610,7 +610,7 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 ## Laisse le joueur lire les métadonnées une seconde avant de faire surgir le
 ## bouton "important" — voir METADATA_REVEAL_DELAY_SECONDS. Vérifie que les
 ## métadonnées sont toujours dépliées à la fin de l'attente : si le joueur a
-## refermé VIEW METADATA entre-temps (ou changé de mail, qui libère hack_button),
+## refermé MÉTADONNÉES entre-temps (ou changé de mail, qui libère hack_button),
 ## la révélation est simplement annulée.
 func _reveal_hack_button_after_delay(hack_button: Button, fields_box: Control) -> void:
 	await get_tree().create_timer(METADATA_REVEAL_DELAY_SECONDS).timeout
@@ -621,7 +621,7 @@ func _reveal_hack_button_after_delay(hack_button: Button, fields_box: Control) -
 
 
 ## Clignote tant que le joueur n'a pas cliqué le bouton — même recette que
-## _metadata_blink_tween pour VIEW METADATA, tué au clic (voir le connect de
+## _metadata_blink_tween pour MÉTADONNÉES, tué au clic (voir le connect de
 ## hack_button plus haut) ou à la fermeture des métadonnées.
 func _start_hack_button_blink(hack_button: Button) -> void:
 	if is_instance_valid(_hack_button_blink_tween):
