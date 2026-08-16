@@ -3,6 +3,7 @@ extends Control
 ## "system uptime" readout in the top bar.
 
 const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty Free Music.mp3")
+const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
@@ -13,7 +14,14 @@ const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty 
 @onready var _continue_button: MenuItem = %ContinueButton
 @onready var _credits_button: Button = %CreditsButton
 @onready var _quit_button: Button = %QuitButton
-@onready var _new_game_confirm_dialog: ConfirmationDialog = %NewGameConfirmDialog
+
+## WarningDialog (voir scenes/ui/warning_dialog.gd) plutôt que
+## ConfirmationDialog : ConfirmationDialog hérite de Window, qui clippe le
+## halo diffus voulu autour de cette boîte — voir dialog_style.gd pour
+## l'historique. Instanciée en code (comme ClueBoardTooltip) plutôt que posée
+## dans la scène : elle n'a pas de position/taille fixe à éditer dans
+## l'éditeur, tout se calcule au premier affichage (voir show_centered()).
+var _new_game_confirm_dialog: WarningDialog
 
 func _ready() -> void:
 	_new_game_button.pressed.connect(_on_new_game_pressed)
@@ -22,27 +30,17 @@ func _ready() -> void:
 	_credits_button.pressed.connect(_on_credits_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 
+	_new_game_confirm_dialog = WARNING_DIALOG.instantiate()
+	add_child(_new_game_confirm_dialog)
 	_new_game_confirm_dialog.confirmed.connect(_start_new_game)
-	_new_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
 	# "Continuer ?" sur sa propre ligne : construit en code plutôt qu'en dur
 	# dans le .csv, un saut de ligne réel dans une cellule CSV n'étant pas
 	# fiable à l'import (le parseur de Godot lit une ligne physique à la
 	# fois) — voir aussi options_panel.gd pour l'avertissement de sortie.
-	_new_game_confirm_dialog.dialog_text = tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("NEWGAME_RESTART_CONFIRM_QUESTION")
-	DialogStyle.style_warning_dialog(_new_game_confirm_dialog)
-	# Padding + centrage propres à cette dialog précise (pas dans DialogStyle,
-	# partagé avec l'avertissement "Quitter la partie" — un changement là-bas
-	# toucherait aussi ce second appelant, non demandé ici). Label.theme_
-	# override_styles["normal"] sert de boîte à marge : bg transparent, ne
-	# fait que réserver du padding autour du texte sans dessiner de fond.
-	var new_game_label := _new_game_confirm_dialog.get_label()
-	new_game_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var new_game_label_padding := StyleBoxEmpty.new()
-	new_game_label_padding.content_margin_left = 50
-	new_game_label_padding.content_margin_top = 50
-	new_game_label_padding.content_margin_right = 50
-	new_game_label_padding.content_margin_bottom = 50
-	new_game_label.add_theme_stylebox_override("normal", new_game_label_padding)
+	_new_game_confirm_dialog.set_text(
+		tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("NEWGAME_RESTART_CONFIRM_QUESTION"),
+		"COMMON_CONFIRM", "COMMON_CANCEL"
+	)
 
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
@@ -61,7 +59,7 @@ func _update_uptime_label() -> void:
 func _on_new_game_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	if SaveManager.has_save():
-		_new_game_confirm_dialog.popup_centered()
+		_new_game_confirm_dialog.show_centered()
 		return
 	_start_new_game()
 

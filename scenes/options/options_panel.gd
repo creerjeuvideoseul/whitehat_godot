@@ -8,6 +8,7 @@ extends Control
 ## "abandon the current playthrough", which is meaningless while already on
 ## the main menu.
 const MAIN_MENU_SCENE := "res://main_menu.tscn"
+const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 
 ## Langues disponibles, dans l'ordre d'affichage du menu déroulant — code
 ## locale -> nom natif de la langue (jamais traduit : une langue s'affiche
@@ -35,8 +36,12 @@ const RESOLUTION_LABEL_KEYS := [
 @onready var _sfx_volume_percent_label: Label = %SfxVolumePercentLabel
 @onready var _resolution_option: OptionButton = %ResolutionOption
 @onready var _quit_game_button: Button = %QuitGameButton
-@onready var _quit_game_confirm_dialog: ConfirmationDialog = %QuitGameConfirmDialog
 @onready var _close_button: Button = %CloseButton
+
+## WarningDialog (voir scenes/ui/warning_dialog.gd), pas ConfirmationDialog —
+## même raison que main_menu.gd::_new_game_confirm_dialog (Window clippe le
+## halo diffus). Instanciée en code, pas posée dans la scène.
+var _quit_game_confirm_dialog: WarningDialog
 
 
 func _ready() -> void:
@@ -56,9 +61,9 @@ func _ready() -> void:
 
 	_quit_game_button.visible = get_tree().current_scene.scene_file_path != MAIN_MENU_SCENE
 	_quit_game_button.pressed.connect(_on_quit_game_pressed)
+	_quit_game_confirm_dialog = WARNING_DIALOG.instantiate()
+	add_child(_quit_game_confirm_dialog)
 	_quit_game_confirm_dialog.confirmed.connect(_on_quit_game_confirmed)
-	_quit_game_confirm_dialog.get_cancel_button().text = "COMMON_CANCEL"
-	DialogStyle.style_warning_dialog(_quit_game_confirm_dialog)
 
 	_close_button.pressed.connect(_on_close_pressed)
 
@@ -128,8 +133,11 @@ func _on_quit_game_pressed() -> void:
 	# "Continuer ?" sur sa propre ligne : voir main_menu.gd pour la même
 	# construction sur l'avertissement d'écrasement de partie.
 	var minutes := SaveManager.get_minutes_since_checkpoint()
-	_quit_game_confirm_dialog.dialog_text = (tr("OPTIONS_QUIT_WARNING") % minutes) + "\n" + tr("COMMON_CONTINUE_QUESTION")
-	_quit_game_confirm_dialog.popup_centered()
+	_quit_game_confirm_dialog.set_text(
+		(tr("OPTIONS_QUIT_WARNING") % minutes) + "\n" + tr("COMMON_CONTINUE_QUESTION"),
+		"COMMON_CONFIRM", "COMMON_CANCEL"
+	)
+	_quit_game_confirm_dialog.show_centered()
 
 
 func _on_quit_game_confirmed() -> void:

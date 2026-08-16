@@ -27,6 +27,7 @@ signal generate_report_requested
 ## LE RAPPORT dès qu'il devient bleu/cliquable, s'arrête au premier clic.
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
+const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 
 @export var mission_id: int = 1:
 	set(value):
@@ -39,7 +40,11 @@ const BLINK_SECONDS := 1.4
 @onready var _question_label: Label = %QuestionLabel
 @onready var _clue_board: ClueBoard = %ClueBoard
 @onready var _generate_report_button: Button = %GenerateReportButton
-@onready var _report_confirm_dialog: ConfirmationDialog = %ReportConfirmDialog
+
+## WarningDialog (voir scenes/ui/warning_dialog.gd), pas ConfirmationDialog —
+## même raison que main_menu.gd::_new_game_confirm_dialog (Window clippe le
+## halo diffus). Instanciée en code, pas posée dans la scène.
+var _report_confirm_dialog: WarningDialog
 
 var _report_button_blink_tween: Tween
 var _dragging: bool = false
@@ -57,12 +62,14 @@ func _ready() -> void:
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
-	## "Non" n'a besoin d'aucun câblage : le bouton Annuler d'un
-	## ConfirmationDialog se contente de le cacher (comportement natif
-	## d'AcceptDialog), et cette fenêtre n'a jamais été cachée derrière —
-	## on s'y retrouve donc automatiquement.
-	_report_confirm_dialog.get_cancel_button().text = "COMMON_NO"
-	DialogStyle.style_warning_dialog(_report_confirm_dialog)
+	## WarningDialog (voir scenes/ui/warning_dialog.gd), pas ConfirmationDialog
+	## — même raison que main_menu.gd::_new_game_confirm_dialog (Window clippe
+	## le halo diffus). "Non" n'a besoin d'aucun câblage : cancelled() cache
+	## déjà la boîte toute seule (voir WarningDialog._on_cancel_pressed), et
+	## cette fenêtre n'a jamais été cachée derrière — on s'y retrouve donc
+	## automatiquement.
+	_report_confirm_dialog = WARNING_DIALOG.instantiate()
+	add_child(_report_confirm_dialog)
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
 	_apply_mission()
@@ -132,10 +139,11 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 func _on_generate_report_button_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_stop_report_button_blink()
-	_report_confirm_dialog.dialog_text = "%s\n\n%s\n\n%s" % [
-		tr("REPORT_CONFIRM_INTENT"), tr("REPORT_CONFIRM_WARNING"), tr("REPORT_CONFIRM_QUESTION")
-	]
-	_report_confirm_dialog.popup_centered()
+	_report_confirm_dialog.set_text(
+		"%s\n\n%s\n\n%s" % [tr("REPORT_CONFIRM_INTENT"), tr("REPORT_CONFIRM_WARNING"), tr("REPORT_CONFIRM_QUESTION")],
+		"COMMON_YES", "COMMON_NO"
+	)
+	_report_confirm_dialog.show_centered()
 
 
 func _on_report_confirmed() -> void:

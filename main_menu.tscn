@@ -311,10 +311,3 @@ stretch_mode = 5
 [node name="UptimeTimer" type="Timer" parent="." unique_id=1879262614]
 unique_name_in_owner = true
 autostart = true
-
-[node name="NewGameConfirmDialog" type="ConfirmationDialog" parent="." unique_id=190856520]
-unique_name_in_owner = true
-title = "MENU_NEW_GAME"
-initial_position = 1
-size = Vector2i(720, 320)
-ok_button_text = "COMMON_CONFIRM"

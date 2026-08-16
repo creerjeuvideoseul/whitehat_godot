@@ -381,10 +381,3 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_close_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_close_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_close_hover")
 text = "OPTIONS_CLOSE"
-
-[node name="QuitGameConfirmDialog" type="ConfirmationDialog" parent="."]
-unique_name_in_owner = true
-title = "OPTIONS_QUIT_GAME"
-initial_position = 1
-size = Vector2i(720, 320)
-ok_button_text = "COMMON_CONFIRM"
