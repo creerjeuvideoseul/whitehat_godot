@@ -54,11 +54,14 @@ DESKTOP_CLUES_BUTTON,Collecte d'indices,Clues collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection
 CLUE_UNLOCKED_TOAST,Indice débloqué.,Clue unlocked.
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
+CLUEBOARD_REPORT_LOCKED_THOUGHT,Je dois trouver ce qui est arrivé à Alizée avant de générer le rapport.,I need to find out what happened to Alizée before generating the report.
 REPORT_GENERATION_TITLE,Génération du rapport...,Generating report...
 REPORT_CONFIRM_TITLE,Finir la mission de M. Ranoud.,Finish M. Ranoud's mission.
 REPORT_CONFIRM_INTENT,Souhaitez-vous commencer le rapport de la mission donnée par M. Ranoud ?,Do you want to start the report for the mission given by M. Ranoud?
 REPORT_CONFIRM_WARNING,Vous ne pourrez plus revenir en arrière.,You will not be able to go back.
 REPORT_CONFIRM_QUESTION,Passez à l'étape de génération du rapport ?,Proceed to the report generation step?
+REPORT_CONFIRM_YES,"Oui, finir la mission","Yes, finish the mission"
+REPORT_CONFIRM_NO,"Non, pas encore","No, not yet"
 CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."

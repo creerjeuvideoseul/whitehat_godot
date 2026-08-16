@@ -448,6 +448,7 @@ func _on_clue_button_pressed() -> void:
 		_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
 		_clue_board_window.mission_id = CURRENT_MISSION_ID
 		_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
+		_clue_board_window.thought_requested.connect(_show_player_thought)
 		_window_layer.add_child(_clue_board_window)
 
 	_maybe_show_clue_board_tooltip()

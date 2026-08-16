@@ -21,6 +21,11 @@ class_name ClueBoardWindow
 ## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
 ## son propre bouton.
 signal generate_report_requested
+## Bubbled up à desktop.gd (même schéma que MailSection/VaultSection —
+## has_signal("thought_requested"), voir desktop.gd::_on_clue_button_pressed) :
+## déclenché quand le joueur clique GÉNÉRER LE RAPPORT alors qu'il est encore
+## grisé (voir _on_generate_report_button_gui_input).
+signal thought_requested(text: String)
 
 ## Même recette de clignotement que le bouton Indice du header (voir
 ## desktop_header.gd::_start_clue_button_blink) — attire l'oeil sur GENERER
@@ -62,6 +67,20 @@ func _ready() -> void:
 	_title_bar.gui_input.connect(_on_title_bar_gui_input)
 	_close_button.pressed.connect(_on_close_pressed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
+	## gui_input plutôt que pressed pour ce second câblage : un Button désactivé
+	## n'émet jamais "pressed", mais reçoit toujours gui_input (voir
+	## _on_generate_report_button_gui_input) — c'est justement le clic pendant
+	## que le bouton est grisé qu'on veut intercepter ici.
+	_generate_report_button.gui_input.connect(_on_generate_report_button_gui_input)
+	## Un Button désactivé n'a nativement aucun retour visuel au survol (voir
+	## PrimaryButton/styles/disabled dans main_theme.tres, seule apparence
+	## appliquée quel que soit l'état de la souris) — ce couple de signaux
+	## éclaircit légèrement le bouton grisé au survol pour signaler qu'il reste
+	## cliquable (voir _on_generate_report_button_mouse_entered/exited),
+	## seulement tant qu'il est grisé (voir garde interne) : ne touche pas au
+	## clignotement bleu une fois débloqué.
+	_generate_report_button.mouse_entered.connect(_on_generate_report_button_mouse_entered)
+	_generate_report_button.mouse_exited.connect(_on_generate_report_button_mouse_exited)
 	## WarningDialog (voir scenes/ui/warning_dialog.gd), pas ConfirmationDialog
 	## — même raison que main_menu.gd::_new_game_confirm_dialog (Window clippe
 	## le halo diffus). "Non" n'a besoin d'aucun câblage : cancelled() cache
@@ -105,11 +124,27 @@ func _on_clue_unlocked(_clue_id: String) -> void:
 	_update_report_button()
 
 
-## Grisé (PrimaryButton) tant que la résolution de CETTE mission n'est pas
-## trouvée, bleu (ImportantButton, voir main_theme.tres) et cliquable une
-## fois débloquée — même condition générique que desktop_header.gd, mais
-## scopée à mission_id puisque cette fenêtre en a une propre.
+## Invisible tant qu'aucun indice de la mission en cours n'existe encore (même
+## condition que _question_label, voir _apply_mission) — pas de raison de
+## montrer "GÉNÉRER LE RAPPORT" avant même d'avoir commencé à fouiller le
+## téléphone d'Alizée. Une fois visible : grisé (PrimaryButton) tant que la
+## résolution de CETTE mission n'est pas trouvée, bleu (ImportantButton, voir
+## main_theme.tres) et cliquable une fois débloquée — même condition générique
+## que desktop_header.gd, mais scopée à mission_id puisque cette fenêtre en a
+## une propre.
 func _update_report_button() -> void:
+	# Remise à blanc systématique : si le joueur survolait encore le bouton
+	# grisé pile au moment où l'indice de résolution se débloque, l'éclaircissement
+	# du survol (RGB) resterait sinon collé par-dessus le clignotement bleu qui
+	# ne touche que l'alpha (voir _start_report_button_blink) — jamais visible
+	# autrement, cette ligne ne change rien en dehors de ce cas précis.
+	_generate_report_button.modulate = Color.WHITE
+	var mission_started := ClueManager.has_mission_started(mission_id)
+	_generate_report_button.visible = mission_started
+	if not mission_started:
+		_stop_report_button_blink()
+		return
+
 	var unlocked := ClueManager.has_unlocked_mission_solution(mission_id)
 	_generate_report_button.disabled = not unlocked
 	_generate_report_button.theme_type_variation = &"ImportantButton" if unlocked else &"PrimaryButton"
@@ -141,13 +176,38 @@ func _on_generate_report_button_pressed() -> void:
 	_stop_report_button_blink()
 	_report_confirm_dialog.set_text(
 		"%s\n\n%s\n\n%s" % [tr("REPORT_CONFIRM_INTENT"), tr("REPORT_CONFIRM_WARNING"), tr("REPORT_CONFIRM_QUESTION")],
-		"COMMON_YES", "COMMON_NO"
+		"REPORT_CONFIRM_YES", "REPORT_CONFIRM_NO"
 	)
 	_report_confirm_dialog.show_centered()
 
 
 func _on_report_confirmed() -> void:
 	generate_report_requested.emit()
+
+
+## Un Button désactivé n'émet jamais "pressed" (voir le connect de gui_input
+## plus haut) — sans cette interception, cliquer dessus pendant qu'il est
+## grisé ne faisait rien du tout, sans indiquer au joueur pourquoi il ne peut
+## pas encore générer le rapport.
+func _on_generate_report_button_gui_input(event: InputEvent) -> void:
+	if not _generate_report_button.disabled:
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		thought_requested.emit(tr("CLUEBOARD_REPORT_LOCKED_THOUGHT"))
+
+
+## Léger éclaircissement (pas une nouvelle StyleBox, juste modulate — discret,
+## et sans risque de conflit avec le style "disabled" du thème). Ne fait rien
+## une fois débloqué : le clignotement bleu existant suffit déjà à signaler
+## que le bouton est cliquable dans cet état.
+func _on_generate_report_button_mouse_entered() -> void:
+	if _generate_report_button.disabled:
+		_generate_report_button.modulate = Color(1.15, 1.15, 1.15, 1.0)
+
+
+func _on_generate_report_button_mouse_exited() -> void:
+	if _generate_report_button.disabled:
+		_generate_report_button.modulate = Color.WHITE
 
 
 ## Même recette que desktop_header.gd::_start_tor_blink/_start_clue_button_blink.
