@@ -36,7 +36,7 @@ COMMON_CANCEL,Annuler,Cancel
 COMMON_CONTINUE_QUESTION,Continuer ?,Continue?
 COMMON_YES,Oui,Yes
 COMMON_NO,Non,No
-DESKTOP_SEARCH_PLACEHOLDER,Tapez un prénom nom,Search last and first name
+DESKTOP_SEARCH_PLACEHOLDER,Tapez un prénom nom,Type a first and last name
 DESKTOP_CPU_LABEL,CPU,CPU
 DESKTOP_MEM_LABEL,MEM,MEM
 DESKTOP_VPN_STATUS,VPN ON,VPN ON

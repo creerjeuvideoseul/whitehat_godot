@@ -194,8 +194,8 @@
 		  "isCrypted": 1,
 		  "html_content": "I feel so guilty.<br>Your words hurt, my child, but I understand them. <br>Give me a chance to explain what really happened.<br>I don't legally have the right to see you before you turn 18. <br><indice id=\"M1_mail_cryp_mere_rdv\"><color=indice>We need to talk.</color></indice>",
 		  "meta_info": {
-			  "IP_Origine": "180.252.12.44",
-			  "Serveur": "mail.gomail.co.id", 
+			  "IP_Origin": "180.252.12.44",
+			  "Server": "mail.gomail.co.id", 
 			  "User_Agent": "Webmail-GOMail-v4.2 / Windows 10 (Build 19045) / Chrome 120.0.0.0", 
 			  "Location": "Jakarta, Indonesia (Telkom Indonesia)", 
 			  "OpenVPN_Tunnel": "ACTIVE (Client-IP: 10.8.0.14)",

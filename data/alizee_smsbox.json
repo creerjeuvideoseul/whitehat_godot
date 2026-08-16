@@ -120,7 +120,7 @@
 		  "colorFont": "#006633",
 		  "isCrypted": 1,
 		  "messages": [
-			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-12-28T18:45:00", "message": "Tu dois installer une application coffre-fort, je vais t'apprendre à le faire et à glisser les SMS ou photos sur lequel ton père ne devrait pas tomber." },
+			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-12-28T18:45:00", "message": "Tu dois installer une application coffre-fort, je vais t'apprendre à le faire et à glisser les SMS ou photos sur lesquels ton père ne devrait pas tomber." },
 			{ "messageId": 1, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'était génial <indice id=\"M1_sms_cryp_m_baiser\"><color=indice>le baiser</color></indice>, merci !" },
 			{ "messageId": 2, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "On ne dit pas merci pour un baiser, Alizée !\nC'était réciproque. Prends soin de toi, et pense à mettre ces SMS dans ton nouveau coffre-fort." },
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "C'est fait <3" },
@@ -158,7 +158,7 @@
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2029-11-15T10:31:00", "message": "This won't happen again." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-30T12:04:00", "message": "Call me as soon as you're out." },
 			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Dad, can I go out Saturday? My friends are having <color=indice>a party</color>." },
-			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-12-14T16:31:00", "message": "No. You have a <color=important>15 in biology</color> to make up for, it's not the time." },
+			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-12-14T16:31:00", "message": "No. You have an <color=important>82 in biology</color> to make up for, it's not the time." },
 			{ "messageId": 13, "isAnswer": 1, "timestamp": "2029-12-14T16:32:00", "message": "But dad, I need to see my friends sometimes!" },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2029-12-14T16:32:00", "message": "Once you're in med school you'll have all the time for that. Right now it's not the priority." },
 			{ "messageId": 15, "isAnswer": 1, "timestamp": "2029-12-14T16:32:00", "message": "You always say that and I never go out!" },
@@ -167,7 +167,7 @@
 			{ "messageId": 18, "isAnswer": 1, "timestamp": "2029-12-14T16:33:00", "message": "Yes. You remind me all the time, dad... Thanks for your effort." },
 			{ "messageId": 19, "isAnswer": 0, "timestamp": "2029-12-14T16:33:00", "message": "Alright. Saturday we go out together then. You wanted clothes, right?" },
 			{ "messageId": 20, "isAnswer": 1, "timestamp": "2029-12-14T16:33:00", "message": "Yes, thanks." },
-			{ "messageId": 21, "isAnswer": 0, "timestamp": "2029-12-31T20:04:00", "message": "I said ok for tonight. Don't forget your commitment. 18 average minimum this semester. That's settled." },
+			{ "messageId": 21, "isAnswer": 0, "timestamp": "2029-12-31T20:04:00", "message": "I said ok for tonight. Don't forget your commitment. A 90 average minimum this semester. That's settled." },
 			{ "messageId": 22, "isAnswer": 0, "timestamp": "2030-01-05T14:00:00", "message": "I told you. <indice id=\"M1_sms_concours_chant\"><color=indice>This singing contest</color></indice>, it's a waste of time, it leads nowhere." },
 			{ "messageId": 23, "isAnswer": 1, "timestamp": "2030-01-05T15:50:00", "message": "I'm done, it didn't go very well." },
 			{ "messageId": 24, "isAnswer": 0, "timestamp": "2030-01-05T16:00:00", "message": "I did my part, I dropped you off. I hope you understand now." },
@@ -233,7 +233,7 @@
 			{ "messageId": 3, "isAnswer": 1, "timestamp": "2029-10-17T10:10:00", "message": "My dad won't let me, it's complicated right now." },
 			{ "messageId": 4, "isAnswer": 0, "timestamp": "2029-10-17T10:11:00", "message": "<color=important>You're almost 18</color>, Alizée…" },
 			{ "messageId": 5, "isAnswer": 1, "timestamp": "2029-10-17T10:12:00", "message": "I can't do anything on my own!" },
-			{ "messageId": 6, "isAnswer": 0, "timestamp": "2029-10-17T10:13:00", "message": "Of course you can. Tell him to get lost! Damn it!" },
+			{ "messageId": 6, "isAnswer": 0, "timestamp": "2029-10-17T10:13:00", "message": "Of course you can. Tell him to piss off! Shit!" },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2029-10-17T10:15:00", "message": "<indice id=\"M1_sms_o_mere_abandon\"><color=indice>My mother Christine abandoned me</color></indice>, my dad raised me alone for 10 years. He has his flaws, but… I lack nothing. I need him. Anyway." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2029-10-17T10:16:00", "message": "That doesn't excuse everything... Anyway. Hang in there." },
 			{ "messageId": 9, "isAnswer": 1, "timestamp": "2029-11-01T20:46:00", "message": "I'm going to get killed, I got rejected from medical school, I don't know how to tell my dad." },
@@ -264,7 +264,7 @@
 			{ "messageId": 6, "isAnswer": 0, "timestamp": "2030-01-15T10:24:00", "message": "Like I told you a few days ago, you're almost 18, <color=important>you could come with me</color>, discover another life. You need to get away from your father. Can't you see he's isolating you? That he's putting psychological pressure on you? That's not a life." },
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "What you're offering seems so impossible… But I promise I'll think about it. Things are moving too fast." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
-			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a rape alarm</color></indice>, we don't know how your father might react if he finds out about us." },
+			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a personal safety alarm</color></indice>, we don't know how your father might react if he finds out about us." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<color=important>My mom asked me to meet up with her</color>, but I'm not really sure if I want to see her... Nothing can excuse abandoning someone... " }
 		  ]
 		}
