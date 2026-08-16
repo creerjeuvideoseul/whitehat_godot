@@ -21,11 +21,13 @@ class_name ClueBoardWindow
 ## veut dire (voir report_generation_screen) — cette fenêtre ne connaît que
 ## son propre bouton.
 signal generate_report_requested
-## Bubbled up à desktop.gd (même schéma que MailSection/VaultSection —
-## has_signal("thought_requested"), voir desktop.gd::_on_clue_button_pressed) :
-## déclenché quand le joueur clique GÉNÉRER LE RAPPORT alors qu'il est encore
-## grisé (voir _on_generate_report_button_gui_input).
-signal thought_requested(text: String)
+## Bubbled up à desktop.gd (même schéma que VaultSection — texte déjà
+## traduit + sa clé ui.csv, voir vault_section.gd) : déclenché quand le
+## joueur clique GÉNÉRER LE RAPPORT alors qu'il est encore grisé (voir
+## _on_generate_report_button_gui_input). La clé permet à
+## SaveManager.record_thought() de rejournaliser cette pensée dans la bonne
+## langue si le joueur change de langue en cours de partie.
+signal thought_requested(text: String, translation_key: String)
 
 ## Même recette de clignotement que le bouton Indice du header (voir
 ## desktop_header.gd::_start_clue_button_blink) — attire l'oeil sur GENERER
@@ -193,7 +195,7 @@ func _on_generate_report_button_gui_input(event: InputEvent) -> void:
 	if not _generate_report_button.disabled:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		thought_requested.emit(tr("CLUEBOARD_REPORT_LOCKED_THOUGHT"))
+		thought_requested.emit(tr("CLUEBOARD_REPORT_LOCKED_THOUGHT"), "CLUEBOARD_REPORT_LOCKED_THOUGHT")
 
 
 ## Léger éclaircissement (pas une nouvelle StyleBox, juste modulate — discret,

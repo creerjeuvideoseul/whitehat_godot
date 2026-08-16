@@ -43,6 +43,21 @@ func _ready() -> void:
 	_pad_button(_cancel_button, &"SecondaryButton")
 
 
+## ÉCHAP équivaut à Annuler, comme le faisait l'ancien ConfirmationDialog
+## (Window fermait sur ÉCHAP nativement). Sans ça, ÉCHAP traverse ce Control
+## (qui n'est pas un Window et ne consomme donc pas l'input clavier tout
+## seul) et atteint OptionsMenu, l'autoload qui écoute "ui_cancel" en global
+## — la fenêtre Options s'ouvrirait par-dessus cet avertissement non résolu.
+## Gardé par `visible` : hide() ne coupe pas _unhandled_input (contrairement
+## à _gui_input), donc sans ce garde-fou la boîte cachée intercepterait quand
+## même ÉCHAP en permanence.
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not event.is_action_pressed(&"ui_cancel"):
+		return
+	get_viewport().set_input_as_handled()
+	_on_cancel_pressed()
+
+
 ## `message` : texte déjà résolu par l'appelant (peut concaténer plusieurs
 ## clés ui.csv avec un \n, voir main_menu.gd — même besoin que l'ancien
 ## ConfirmationDialog.dialog_text). `confirm_text`/`cancel_text` : clés ui.csv
@@ -60,9 +75,12 @@ func show_centered() -> void:
 
 ## Même recette que ClueBoardTooltip._resize_to_content : la largeur seule est
 ## fixe (BOX_WIDTH), la hauteur se recalcule à partir de la taille minimale
-## réelle du contenu (texte replié + boutons) une fois qu'une frame de layout
-## s'est écoulée.
+## réelle du contenu (texte replié + boutons) une fois que le layout s'est
+## stabilisé. Deux frames d'attente, comme _reveal_once_settled dans
+## clue_board_window.gd : une pour que Layout termine sa passe de mise en
+## page, une seconde par marge de sécurité.
 func _resize_to_content() -> void:
+	await get_tree().process_frame
 	await get_tree().process_frame
 	var height: float = _margin.get_combined_minimum_size().y
 	_box.offset_top = -height * 0.5

@@ -54,9 +54,11 @@ func point_at(target_global_pos: Vector2) -> void:
 ## `_margin` a déjà sa largeur définitive (BOX_WIDTH, fixée dès la scène) dès
 ## la première frame — seule sa hauteur minimale (texte replié + bouton +
 ## padding) n'est fiable qu'une fois le nœud réellement passé par une passe
-## de layout, d'où l'attente d'une frame (même recette que ClueBoard.setup()
-## avant de lire une taille calculée).
+## de layout. Deux frames d'attente, comme _reveal_once_settled dans
+## clue_board_window.gd : une pour que Layout termine sa passe de mise en
+## page, une seconde par marge de sécurité.
 func _resize_to_content() -> void:
+	await get_tree().process_frame
 	await get_tree().process_frame
 	var box_height: float = _margin.get_combined_minimum_size().y
 	_box.position = Vector2(0.0, ARROW_HEIGHT)
