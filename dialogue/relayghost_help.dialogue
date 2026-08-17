@@ -29,7 +29,7 @@ RelayGhost: Que puis-je pour toi ?
 		RelayGhost: Tu devrais également exploiter le module de recherche de vulnérabilités OSINT disponible dans l'en-tête de ton interface.
 		
 
-- Demander comment il va.
+- Demander comment il va. [if not StoryVars.player_ask_feeling]
     set StoryVars.player_ask_feeling = 1
     Player: Comment tu vas, RelayGhost ?
 	RelayGhost: Je vais bien.
