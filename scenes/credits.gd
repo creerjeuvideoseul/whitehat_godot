@@ -1,10 +1,19 @@
 extends Control
-## Écran "Crédits" accessible depuis le menu principal. Le contenu vient d'un
-## fichier .txt brut (data/credits_<locale>.txt), pas de ui.csv : c'est un
-## long bloc de texte à mettre à jour au fil du projet (nouvel asset, nouvelle
-## source) et le contenu doit rester modifiable directement dans le fichier
-## sans repasser par l'éditeur Godot. Repli sur le français si la version
-## anglaise n'existe pas encore (voir project_whitehat_target_languages).
+class_name CreditsWindow
+## Fenêtre "Crédits" accessible depuis le menu principal, superposée au menu
+## (voir main_menu.gd::_on_credits_pressed) plutôt qu'un scene change comme
+## avant : un vrai changement de scène forçait main_menu.gd à rejouer
+## MusicPlayer.play(MENU_MUSIC) à chaque retour, ce qui coupait/relançait le
+## morceau en cours au lieu de le laisser filer. Même chrome (fond/cadre vert,
+## barre de titre) que les autres fenêtres du bureau — voir
+## thought_log_window.gd/mail_section.gd pour la même recette.
+##
+## Le contenu vient d'un fichier .txt brut (data/credits_<locale>.txt), pas de
+## ui.csv : c'est un long bloc de texte à mettre à jour au fil du projet
+## (nouvel asset, nouvelle source) et le contenu doit rester modifiable
+## directement dans le fichier sans repasser par l'éditeur Godot. Repli sur le
+## français si la version anglaise n'existe pas encore (voir
+## project_whitehat_target_languages).
 
 const CREDITS_PATH_TEMPLATE := "res://data/credits_%s.txt"
 const FALLBACK_LOCALE := "fr"
@@ -15,29 +24,32 @@ const URL_PATTERN := "https?://[^\\s]+"
 
 @onready var _credits_label: RichTextLabel = %CreditsLabel
 @onready var _back_button: Button = %BackButton
-@onready var _uptime_label: Label = %UptimeLabel
-@onready var _uptime_timer: Timer = %UptimeTimer
+@onready var _close_button: Button = %CloseButton
 
 var _url_regex := RegEx.new()
 
 
 func _ready() -> void:
-	_uptime_timer.timeout.connect(_update_uptime_label)
-	_update_uptime_label()
-
 	_url_regex.compile(URL_PATTERN)
 	_back_button.pressed.connect(_on_back_pressed)
+	_close_button.pressed.connect(_on_back_pressed)
 	_credits_label.meta_clicked.connect(_on_credits_meta_clicked)
 	# Curseur "main" seulement au survol d'un vrai lien, pas sur tout le bloc
 	# de texte — cohérent avec le CURSOR_POINTING_HAND déjà utilisé sur les
 	# lignes cliquables de SmsSection/MailSection.
 	_credits_label.meta_hover_started.connect(func(_meta) -> void: _credits_label.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND)
 	_credits_label.meta_hover_ended.connect(func(_meta) -> void: _credits_label.mouse_default_cursor_shape = Control.CURSOR_ARROW)
+	refresh()
+
+
+## Recharge le texte depuis le fichier .txt — appelé à chaque ouverture (voir
+## main_menu.gd::_on_credits_pressed), même recette que
+## thought_log_window.gd::refresh, pour rester juste si la langue a changé
+## depuis la dernière ouverture (la fenêtre n'est instanciée qu'une fois et
+## reste ensuite cachée/affichée, contrairement à l'ancien scene change qui
+## rechargeait le texte à chaque fois de facto).
+func refresh() -> void:
 	_credits_label.text = _linkify(_load_credits_text())
-
-
-func _update_uptime_label() -> void:
-	_uptime_label.text = BootUptime.format()
 
 
 func _load_credits_text() -> String:
@@ -65,7 +77,6 @@ func _on_credits_meta_clicked(meta: Variant) -> void:
 	OS.shell_open(String(meta))
 
 
-## Même comportement que login.gd : retour direct au menu, sans fondu ni
-## coupure de la musique (le morceau du menu principal continue de jouer).
 func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://main_menu.tscn")
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+	hide()

@@ -4,6 +4,7 @@ extends Control
 
 const MENU_MUSIC := preload("res://assets/audio/Autohacker Dark Console Royalty Free Music.mp3")
 const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
+const CREDITS_WINDOW := preload("res://scenes/credits.tscn")
 
 @onready var _uptime_label: Label = %UptimeLabel
 @onready var _uptime_timer: Timer = %UptimeTimer
@@ -22,6 +23,12 @@ const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 ## dans la scène : elle n'a pas de position/taille fixe à éditer dans
 ## l'éditeur, tout se calcule au premier affichage (voir show_centered()).
 var _new_game_confirm_dialog: WarningDialog
+## Instanciée à la demande (voir _on_credits_pressed), pas dans _ready comme
+## _new_game_confirm_dialog : contrairement au WarningDialog, systématiquement
+## nécessaire au moindre clic sur "Nouvelle partie", les crédits ne sont
+## consultés qu'occasionnellement — même paresse que
+## desktop.gd::_on_thought_log_button_pressed pour ThoughtLogWindow.
+var _credits_window: CreditsWindow
 
 func _ready() -> void:
 	_new_game_button.pressed.connect(_on_new_game_pressed)
@@ -80,12 +87,16 @@ func _on_options_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	OptionsMenu.open()
 
-## Pas de fondu/coupure de musique : même comportement que le bouton
-## "Continuer ?" annulé ou l'écran de connexion (login.gd), un simple aller
-## vers un autre écran du menu, pas une transition vers le gameplay.
+## Fenêtre superposée (voir CreditsWindow ci-dessus), pas de scene change : la
+## musique du menu (MENU_MUSIC) continue de jouer sans coupure ni redémarrage
+## pendant que les crédits sont consultés.
 func _on_credits_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
-	get_tree().change_scene_to_file("res://scenes/credits.tscn")
+	if not is_instance_valid(_credits_window):
+		_credits_window = CREDITS_WINDOW.instantiate()
+		add_child(_credits_window)
+	_credits_window.refresh()
+	_credits_window.show()
 
 func _on_continue_pressed() -> void:
 	if not SaveManager.has_save():
