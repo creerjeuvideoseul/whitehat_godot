@@ -36,6 +36,14 @@ const REPORT_OPEN_SFX := preload("res://assets/audio/sound/soundreality-boom-128
 ## Plus long que le défaut (voir TerminalConsole.close_fade_seconds) : un
 ## fondu plus posé avant l'arrivée de RelayGhost, pas juste un cut technique.
 const REPORT_TERMINAL_CLOSE_FADE_SECONDS := 1.0
+## Même piste et mêmes paramètres de fondu que la toute première fenêtre
+## système du jeu (voir introduction.gd::MONOLOGUE_MUSIC/MUSIC_FADE_SECONDS,
+## joué juste avant le boot terminal) — repris ici tel quel, à la demande du
+## joueur. Fondu d'entrée dans _play_report_terminal, de sortie dans
+## _open_relayghost_report_chat (voir REPORT_TERMINAL_CLOSE_FADE_SECONDS
+## ci-dessus pour le fondu visuel du terminal, distinct de celui-ci).
+const REPORT_TERMINAL_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
+const REPORT_TERMINAL_MUSIC_FADE_SECONDS := 1.0
 ## Indice débloqué en piratant le PC de Christine Ranoud (voir
 ## hack_pc_mother_window.gd) — sa présence conditionne l'apparition du second
 ## volet du rapport (informer Alizée de la vraie raison de l'absence de sa mère).
@@ -180,6 +188,8 @@ func _on_validate_pressed() -> void:
 ## RelayGhost (voir _open_relayghost_report_chat), dernier temps fort de la
 ## mission.
 func _play_report_terminal() -> void:
+	MusicPlayer.play(REPORT_TERMINAL_MUSIC, REPORT_TERMINAL_MUSIC_FADE_SECONDS)
+
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_report_terminal_lines()
 	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
@@ -263,6 +273,8 @@ func _terminal_color_hex(color: Color) -> String:
 ## indisponibles — set_investigation_controls_visible(false) posé dans _ready
 ## n'est jamais réactivé sur cet écran, la mission ne reprend pas en arrière.
 func _open_relayghost_report_chat() -> void:
+	MusicPlayer.stop(REPORT_TERMINAL_MUSIC_FADE_SECONDS)
+
 	var contact := ChatContact.new()
 	contact.contact_id = "relayghost_report_m1"
 	contact.contact_name = "RelayGhost"
