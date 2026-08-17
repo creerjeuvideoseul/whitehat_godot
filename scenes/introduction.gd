@@ -17,10 +17,6 @@ const BOOT_SYSTEM_SFX := preload("res://assets/audio/sound/juniorsoundays-motion
 ## Partage MUSIC_FADE_SECONDS (1s) ci-dessous avec la musique du JT.
 const MONOLOGUE_SCREEN := preload("res://scenes/monologue_screen.tscn")
 const MONOLOGUE_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
-## Même bruitage de frappe que le terminal de Jean (voir desktop.gd,
-## COMMAND_TYPING_SOUND) — le joueur "écrit" ce monologue, comme une commande
-## tapée dans un terminal ou un message dans ChatWindow.
-const MONOLOGUE_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 
 const MUSIC_FADE_SECONDS := 1.0
 ## Fondu au noir entre l'écran du monologue et la fenêtre système (voir
@@ -234,7 +230,7 @@ func _play_monologue() -> void:
 	monologue.text = text
 	monologue.music = MONOLOGUE_MUSIC
 	monologue.music_fade_seconds = MUSIC_FADE_SECONDS
-	monologue.typing_sound = MONOLOGUE_TYPING_SOUND
+	monologue.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
 	add_child(monologue)
 	await monologue.closed
 

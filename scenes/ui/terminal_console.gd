@@ -43,7 +43,8 @@ const AUTO_CLOSE_DELAY_SECONDS := 0.6
 ## un fondu trop long ne finissait jamais de monter avant d'être coupé par
 ## stop_ambient(), rendant le son quasi inaudible.
 const TYPING_SOUND_FADE_SECONDS := 0.1
-## Durée du fondu de fermeture, si fade_out_on_close est activé.
+## Durée par défaut du fondu de fermeture, si fade_out_on_close est activé —
+## voir close_fade_seconds ci-dessous pour l'override par appelant.
 const CLOSE_FADE_SECONDS := 0.3
 
 ## Le script à dérouler — à définir avant que la scène entre dans l'arbre
@@ -76,6 +77,11 @@ var typing_sound: AudioStream = null
 ## d'analyse plutôt que de disparaître brutalement juste avant qu'il
 ## n'apparaisse. À définir avant add_child(), comme `lines`.
 var fade_out_on_close: bool = false
+## Durée du fondu ci-dessus — valeur par défaut (CLOSE_FADE_SECONDS) inchangée
+## pour les appelants existants (dump de Jean), seul le terminal du rapport
+## final (report_generation_screen.gd) l'allonge pour un fondu plus posé
+## avant l'arrivée de RelayGhost. À définir avant add_child(), comme `lines`.
+var close_fade_seconds: float = CLOSE_FADE_SECONDS
 ## BBCode déjà formé (voir `lines` plus haut) retapé en boucle avant d'attendre
 ## un mot de passe — ex. "Password for Christine@180.252.12.44:". Laissé vide
 ## par défaut : aucun palier "mot de passe", le terminal se comporte comme
@@ -360,7 +366,7 @@ func _scroll_to_bottom() -> void:
 func _on_close_pressed() -> void:
 	if fade_out_on_close:
 		var tween := create_tween()
-		tween.tween_property(self, "modulate:a", 0.0, CLOSE_FADE_SECONDS)
+		tween.tween_property(self, "modulate:a", 0.0, close_fade_seconds)
 		await tween.finished
 	closed.emit()
 	queue_free()

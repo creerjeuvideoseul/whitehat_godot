@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://cq67rhwwtqhx2"
+path="res://.godot/imported/relayghost_report_m1.dialogue-2f1545250657f0e9622c3f0276029bba.tres"
+
+[deps]
+
+source_file="res://dialogue/relayghost_report_m1.dialogue"
+dest_files=["res://.godot/imported/relayghost_report_m1.dialogue-2f1545250657f0e9622c3f0276029bba.tres"]
+
+[params]
+
+defaults=true

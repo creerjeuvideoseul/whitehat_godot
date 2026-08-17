@@ -61,12 +61,6 @@ const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost
 const RELAYGHOST_HELP_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_help.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
-## Bruitage de frappe joué pendant les terminaux où le joueur "tape" des
-## commandes (dump du téléphone d'Alizée, voir _play_jean_dump_terminal ;
-## scan réseau + connexion RDP vers le PC de la mère, voir
-## _play_hack_pc_mother_login_terminal) — contrairement au boot système après
-## l'intro qui ne reçoit volontairement pas ce son (voir Introduction).
-const COMMAND_TYPING_SOUND := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 ## Adresse IP simulée du PC de la mère (voir _build_hack_pc_mother_login_lines) —
 ## cohérente avec le mail crypté qui déclenche ce piratage (voir mail_section.gd).
 const HACK_PC_MOTHER_IP := "180.252.12.44"
@@ -294,7 +288,7 @@ func _play_jean_dump_terminal() -> void:
 
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.lines = _build_jean_dump_lines()
-	console.typing_sound = COMMAND_TYPING_SOUND
+	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
 	console.fade_out_on_close = true
 	console.closed.connect(_on_jean_dump_terminal_closed)
 	add_child(console)
@@ -579,7 +573,7 @@ func _play_hack_pc_mother_login_terminal() -> void:
 	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
 	console.box_size = HACK_PC_MOTHER_TERMINAL_SIZE
 	console.lines = _build_hack_pc_mother_login_lines()
-	console.typing_sound = COMMAND_TYPING_SOUND
+	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
 	console.login_prompt_text = "Password for Christine@%s:" % HACK_PC_MOTHER_IP
 	console.login_expected_password = HACK_PC_MOTHER_PASSWORD
 	console.login_wrong_message = "[color=%s]%s[/color]" % [danger, tr("TERMINAL_WRONG_PASSWORD")]

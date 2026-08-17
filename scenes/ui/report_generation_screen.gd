@@ -11,15 +11,31 @@ extends Control
 ## transmettre la vérité sur Christine à Alizée). "Valider le rapport" ne
 ## devient bleu/cliquable qu'une fois toutes les questions affichées
 ## répondues, même recette que GÉNÉRER LE RAPPORT (voir clue_board_window.gd).
-## Les conséquences réelles du choix (score éthique/popularité, argent, voir
-## la bible de design) restent à câbler dans une prochaine passe — ce script
-## se contente pour l'instant de verrouiller les réponses une fois validées.
+## La validation verrouille les réponses, les persiste (StoryVars, voir
+## _on_validate_pressed), sauvegarde, puis enchaîne sur une fenêtre système
+## simulant l'envoi du rapport (voir _play_report_terminal) et se conclut sur
+## RelayGhost (voir _open_relayghost_report_chat) — fin de la mission 1, mais
+## tout l'état du joueur (indices, StoryVars, sauvegarde) reste accessible
+## pour de futures conséquences. Le score éthique/popularité agrégé (voir la
+## bible de design) reste une couche à construire plus tard par-dessus ces
+## StoryVars bruts.
 
 const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
+const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
+const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
+const RELAYGHOST_AVATAR := preload("res://assets/avatar/relayghost_avatar.png")
+## Dialogue joué après l'envoi du rapport (voir _open_relayghost_report_chat)
+## — contact_id distinct de "relayghost" (déjà marqué terminé par l'intro,
+## voir SaveManager.is_conversation_complete) pour que ce nouveau chapitre
+## compte comme une conversation à part.
+const RELAYGHOST_REPORT_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_report_m1.dialogue")
 ## Joué une fois à l'ouverture de cet écran (voir _ready) — appui dramatique
 ## sur l'arrivée du rapport final, seul appelant donc pas centralisé dans
 ## SfxPlayer (même logique que BOOT_SYSTEM_SFX dans introduction.gd).
 const REPORT_OPEN_SFX := preload("res://assets/audio/sound/soundreality-boom-128320.mp3")
+## Plus long que le défaut (voir TerminalConsole.close_fade_seconds) : un
+## fondu plus posé avant l'arrivée de RelayGhost, pas juste un cut technique.
+const REPORT_TERMINAL_CLOSE_FADE_SECONDS := 1.0
 ## Indice débloqué en piratant le PC de Christine Ranoud (voir
 ## hack_pc_mother_window.gd) — sa présence conditionne l'apparition du second
 ## volet du rapport (informer Alizée de la vraie raison de l'absence de sa mère).
@@ -136,7 +152,9 @@ func _update_validate_button() -> void:
 
 
 ## Verrouille les réponses (pas de retour en arrière, comme le reste de cette
-## étape) — les conséquences réelles du rapport restent à implémenter.
+## étape), persiste les choix (StoryVars, même bac à variables narratives que
+## les fichiers .dialogue — voir story_vars.gd), sauvegarde, puis enchaîne sur
+## la fenêtre système d'envoi du rapport.
 func _on_validate_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_stop_validate_blink()
@@ -145,6 +163,121 @@ func _on_validate_pressed() -> void:
 	_jean_no_button.disabled = true
 	_alizee_yes_button.disabled = true
 	_alizee_no_button.disabled = true
+
+	StoryVars.m1_report_jean_transmit = _jean_answer
+	# Ne compte que si le volet était affiché (voir _mere_block.visible) —
+	# _alizee_answer reste null sinon, pas de faux "non" persisté.
+	if _mere_block.visible:
+		StoryVars.m1_report_alizee_transmit = _alizee_answer
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+
+	_play_report_terminal()
+
+
+## Fenêtre système par-dessus le rapport, simulant l'envoi du rapport à Jean
+## puis — si le joueur a choisi de prévenir Alizée de la vérité sur sa mère —
+## l'envoi de la preuve à Marek (voir _build_report_terminal_lines). Ferme sur
+## RelayGhost (voir _open_relayghost_report_chat), dernier temps fort de la
+## mission.
+func _play_report_terminal() -> void:
+	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.lines = _build_report_terminal_lines()
+	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
+	console.fade_out_on_close = true
+	console.close_fade_seconds = REPORT_TERMINAL_CLOSE_FADE_SECONDS
+	console.closed.connect(_open_relayghost_report_chat)
+	add_child(console)
+
+
+## Script du terminal d'envoi — jargon technique non traduit quelle que soit
+## la langue (même choix que desktop.gd::_build_jean_dump_lines, un vrai
+## terminal ne se traduit pas), sauf les deux echo "en langage naturel" côté
+## Jean/Marek qui restent volontairement en dur ici aussi (sortie système
+## simulée, pas du texte adressé au joueur).
+func _build_report_terminal_lines() -> Array[TerminalLine]:
+	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
+	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+
+	var lines: Array[TerminalLine] = []
+	for command in [
+		"apt-get update && apt-get install -y mailutils gpg",
+		"mkdir -p /var/log/whitehat/reports",
+		"chown -R secops:secops /var/log/whitehat/reports",
+		"gpg --import /etc/ssl/certs/jean_ranoud_pubkey.asc",
+		"systemctl restart postfix",
+	]:
+		lines.append(_terminal_command_line(command, prompt, normal))
+	lines.append(TerminalLine.text_line(""))
+
+	# [ et ] échappés en [lb]/[rb] dans les sujets de mail : du BBCode littéral
+	# planterait sinon leur affichage (voir rich_text_markup.gd et
+	# desktop.gd::_build_hack_pc_mother_login_lines pour le même besoin).
+	for command in [
+		"gpg --trust-model always --encrypt -r \"jean.ranoud@cybercorp.internal\" /var/log/whitehat/reports/incident.pdf",
+		"echo \"Jean, voici le rapport d'incident.\" | mailx -s \"[lb]URGENT[rb] Rapport PDF\" -a /var/log/whitehat/reports/incident.pdf.gpg j.ranoud@cybercorp.internal",
+		"shred -u /var/log/whitehat/reports/incident.pdf.gpg",
+		"ls -l /var/log/whitehat/reports/",
+		"echo \"$(date) - Mail envoyé à Jean Ranoud\" >> /var/log/exfil.log",
+	]:
+		lines.append(_terminal_command_line(command, prompt, normal))
+	lines.append(TerminalLine.progress_line("incident.pdf.gpg", 3, "1.4MB/s", "00:02"))
+
+	# Uniquement si le joueur a choisi de transmettre la vérité sur sa mère à
+	# Alizée (voir _on_validate_pressed) — adressé à Marek, seul contact
+	# joignable d'Alizée dans les données du joueur (voir osint_characters.json).
+	if _mere_block.visible and _alizee_answer == true:
+		lines.append(TerminalLine.text_line(""))
+		for command in [
+			"mailx -s \"[lb]DATA[rb] Extrait de fichier\" marek.trodan@gomail.com < /opt/whitehat/evidence/dump_extracted.txt",
+			"echo -e \"Marek,\\n\\n$(cat /opt/whitehat/evidence/dump_extracted.txt)\" | mailx -s \"Dump TXT\" marek.trodan@gomail.com",
+			"curl --url 'smtp://mail.gomail.com:25' --mail-from 'agent@whitehat.local' --mail-rcpt 'marek.trodan@gomail.com' --upload-file /opt/whitehat/evidence/dump_extracted.txt",
+			"echo \"$(date) - Mail envoyé à Marek\" >> /var/log/exfil.log",
+		]:
+			lines.append(_terminal_command_line(command, prompt, normal))
+		lines.append(TerminalLine.progress_line("dump_extracted.txt", 1, "0.9MB/s", "00:01"))
+
+	return lines
+
+
+## "user@whitehat:~$ <commande>" — même prompt/couleurs que desktop.gd, avec
+## le son de frappe (voir TerminalConsole.typing_sound) puisque c'est le
+## joueur qui "tape" chacune de ces commandes.
+func _terminal_command_line(command: String, prompt: String, normal: String) -> TerminalLine:
+	return TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]%s[/color]" % [prompt, normal, command], true)
+
+
+## BBCode hex ("#rrggbb") d'une couleur Palette — même recette que
+## desktop.gd::_terminal_color_hex, dupliquée ici plutôt que partagée entre
+## scripts pour une seule ligne (voir sfx_player.gd::AMBIENT_SILENT_VOLUME_DB
+## pour le même choix).
+func _terminal_color_hex(color: Color) -> String:
+	return "#%s" % color.to_html(false)
+
+
+## Dernier temps fort de la mission : RelayGhost referme la boucle une fois le
+## rapport parti. Les autres actions du header (Indice/recherche) restent
+## indisponibles — set_investigation_controls_visible(false) posé dans _ready
+## n'est jamais réactivé sur cet écran, la mission ne reprend pas en arrière.
+func _open_relayghost_report_chat() -> void:
+	var contact := ChatContact.new()
+	contact.contact_id = "relayghost_report_m1"
+	contact.contact_name = "RelayGhost"
+	contact.avatar = RELAYGHOST_AVATAR
+	contact.dialogue_resource = RELAYGHOST_REPORT_DIALOGUE
+
+	var window: ChatWindow = CHAT_WINDOW.instantiate()
+	window.contacts = [contact]
+	window.minimize_requested.connect(_on_report_chat_minimize_requested)
+	add_child(window)
+
+
+## Même recette que desktop.gd::_on_window_minimize_requested (juste un
+## restore, pas de re-tri par-dessus d'autres fenêtres puisqu'il n'y en a
+## qu'une seule ici) — évite un blocage si le joueur réduit cette fenêtre.
+func _on_report_chat_minimize_requested(window: Control, window_title: String) -> void:
+	_footer.add_minimized_window(window_title, func() -> void:
+		window.show()
+	)
 
 
 ## Même principe que desktop.gd::_on_thought_log_button_pressed : une seule

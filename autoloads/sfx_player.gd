@@ -44,6 +44,16 @@ const ALIZEE_PHONE_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-
 ## appelants sans lien entre eux).
 const UI_CLICK_SFX := preload("res://assets/audio/sound/u_o8xh7gwsrj-bubble_pop_1-476367-2.mp3")
 
+## Frappe au clavier pendant les lignes "tapées par le joueur" d'un
+## TerminalConsole (voir TerminalConsole.typing_sound / TerminalLine.plays_typing_sound)
+## — dump du téléphone d'Alizée, connexion RDP du PC de la mère (desktop.gd),
+## envoi du rapport final (report_generation_screen.gd) — et du monologue de
+## rédemption de l'intro (introduction.gd, MonologueScreen.typing_sound), même
+## logique ("le joueur tape/écrit"). Centralisé ici (plutôt qu'un preload
+## dupliqué dans chaque script) une fois qu'un second script en a eu besoin,
+## même raison qu'ACCESS_DENIED_SFX.
+const TERMINAL_TYPING_SFX := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).

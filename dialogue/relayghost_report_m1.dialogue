@@ -1,0 +1,6 @@
+~ start
+
+RelayGhost: {{PlayerSession.pseudo}}, rapport reçu et transmis.
+RelayGhost: PLACEHOLDER, texte à venir (voir report_generation_screen.gd::RELAYGHOST_REPORT_DIALOGUE).
+
+=> END
