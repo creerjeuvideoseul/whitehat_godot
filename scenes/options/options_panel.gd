@@ -133,8 +133,14 @@ func _on_quit_game_pressed() -> void:
 	# "Continuer ?" sur sa propre ligne : voir main_menu.gd pour la même
 	# construction sur l'avertissement d'écrasement de partie.
 	var minutes := SaveManager.get_minutes_since_checkpoint()
+	# MessageLabel est rouge par défaut (voir warning_dialog.tscn) : ce message
+	# repasse entièrement en blanc via bbcode (voir WarningDialog.set_text),
+	# avec "depuis X minutes" qui garde sa mise en évidence <color=important>
+	# (voir OPTIONS_QUIT_WARNING, résolue par RichTextMarkup.html_to_bbcode).
+	var white_hex := "#%s" % Palette.TEXT_NORMAL.to_html(false)
+	var warning := RichTextMarkup.html_to_bbcode(tr("OPTIONS_QUIT_WARNING") % minutes)
 	_quit_game_confirm_dialog.set_text(
-		(tr("OPTIONS_QUIT_WARNING") % minutes) + "\n" + tr("COMMON_CONTINUE_QUESTION"),
+		"[color=%s]%s\n%s[/color]" % [white_hex, warning, tr("COMMON_CONTINUE_QUESTION")],
 		"COMMON_CONFIRM", "COMMON_CANCEL"
 	)
 	_quit_game_confirm_dialog.show_centered()
