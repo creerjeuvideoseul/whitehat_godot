@@ -48,6 +48,7 @@ THOUGHT_HACK_PC_MOTHER_PASSWORD,"Hum, il faut maintenant que je trouve le mot de
 THOUGHT_LOG_WINDOW_TITLE,Analyse Rétrospective,Retrospective Analysis
 THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
+CHAT_CONTACT_RELAYGHOST_ARCHIVE,Archive RelayGhost,RelayGhost Archive
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
 DESKTOP_CLUES_BUTTON,Collecte d'indices,Clues collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection

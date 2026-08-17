@@ -61,6 +61,21 @@ const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost
 const RELAYGHOST_HELP_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_help.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
+## Conversation RelayGhost de fin de mission 1 (voir
+## report_generation_screen.gd, qui bascule vers ce bureau une fois cette
+## fenêtre système d'envoi de rapport fermée) — contact_id distinct de
+## "relayghost" (déjà marqué terminé par l'intro/l'aide, voir
+## SaveManager.is_conversation_complete) pour que ce nouveau chapitre compte
+## comme une conversation à part. Voir _build_post_report_desktop.
+const RELAYGHOST_REPORT_M1_CONTACT_ID := "relayghost_report_m1"
+const RELAYGHOST_REPORT_M1_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_report_m1.dialogue")
+## Contact "Archive RelayGhost" (voir _archive_relayghost_history_if_needed) :
+## reprend tout l'historique RelayGhost d'avant le reset de fin de mission
+## (intro + demandes d'aide, contact_id "relayghost") — une conversation déjà
+## complète dès sa création, donc ConversationView se contente de rejouer le
+## journal déjà enregistré (voir conversation_view.gd::_replay_saved_log),
+## jamais de nouveau dialogue à dérouler pour ce contact.
+const RELAYGHOST_ARCHIVE_CONTACT_ID := "relayghost_archive"
 ## Adresse IP simulée du PC de la mère (voir _build_hack_pc_mother_login_lines) —
 ## cohérente avec le mail crypté qui déclenche ce piratage (voir mail_section.gd).
 const HACK_PC_MOTHER_IP := "180.252.12.44"
@@ -168,6 +183,17 @@ func _ready() -> void:
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 
+	# Positionné en mémoire par report_generation_screen.gd::_on_validate_pressed
+	# juste avant la fenêtre système d'envoi du rapport — vrai ici seulement si
+	# cette valeur a survécu jusqu'à un save_checkpoint() (celui qui suit la fin
+	# de la conversation RelayGhost ci-dessous), donc aussi bien juste après
+	# avoir validé le rapport (première arrivée) qu'en reprenant une sauvegarde
+	# postérieure à cette conversation. Vérifié avant jean_done ci-dessous : cet
+	# état "fin de mission" prime sur l'état "en pleine enquête".
+	if StoryVars.m1_report_submitted:
+		_build_post_report_desktop()
+		return
+
 	# Reprise d'une sauvegarde postérieure à l'appel de Jean : le téléphone
 	# doit déjà être là, sans rejouer son animation d'apparition.
 	var jean_done := SaveManager.is_conversation_complete("jean_ranoud")
@@ -254,6 +280,54 @@ func _build_jean_contact() -> ChatContact:
 	contact.avatar = JEAN_AVATAR
 	contact.dialogue_resource = JEAN_DIALOGUE
 	contact.bubble_color = Palette.BUBBLE_BLUE
+	return contact
+
+
+## Bureau "vide" atteint une fois le rapport de mission 1 validé et sa
+## fenêtre système d'envoi fermée (voir report_generation_screen.gd) — ni
+## téléphone d'Alizée, ni fenêtre minimisée résiduelle, ni conversation Jean
+## Ranoud : le même écran nu que juste après la connexion (voir _ready
+## ci-dessus), seule une fenêtre de chat s'y ouvre, avec une nouvelle
+## discussion RelayGhost plus son historique archivé.
+func _build_post_report_desktop() -> void:
+	_archive_relayghost_history_if_needed()
+
+	_chat_window = CHAT_WINDOW.instantiate()
+	_chat_window.contacts = [_build_relayghost_report_contact(), _build_relayghost_archive_contact()]
+	_open_window(_chat_window)
+
+
+## Recopie une bonne fois pour toutes le journal de "relayghost" (intro +
+## demandes d'aide de la mission 1) dans le contact "relayghost_archive" —
+## c'est ce qui alimente "Archive RelayGhost" (voir _build_relayghost_archive_contact).
+## Gardé par is_conversation_complete : sans cette garde, revenir sur ce
+## bureau (reprise de sauvegarde, ou simplement rouvrir la fenêtre) dupliquerait
+## l'historique à chaque fois plutôt que de le figer une seule fois au moment
+## du reset.
+func _archive_relayghost_history_if_needed() -> void:
+	if SaveManager.is_conversation_complete(RELAYGHOST_ARCHIVE_CONTACT_ID):
+		return
+	SaveManager.record_conversation(RELAYGHOST_ARCHIVE_CONTACT_ID, SaveManager.get_conversation_log("relayghost"))
+
+
+func _build_relayghost_report_contact() -> ChatContact:
+	var contact := ChatContact.new()
+	contact.contact_id = RELAYGHOST_REPORT_M1_CONTACT_ID
+	contact.contact_name = "RelayGhost"
+	contact.avatar = RELAYGHOST_AVATAR
+	contact.dialogue_resource = RELAYGHOST_REPORT_M1_DIALOGUE
+	return contact
+
+
+## Toujours déjà complète au moment où ce contact est créé (voir
+## _archive_relayghost_history_if_needed, appelé juste avant) : pas de
+## dialogue_resource à lui donner, ConversationView.setup() rejoue directement
+## le journal archivé sans jamais chercher à dérouler du dialogue en direct.
+func _build_relayghost_archive_contact() -> ChatContact:
+	var contact := ChatContact.new()
+	contact.contact_id = RELAYGHOST_ARCHIVE_CONTACT_ID
+	contact.contact_name = tr("CHAT_CONTACT_RELAYGHOST_ARCHIVE")
+	contact.avatar = RELAYGHOST_AVATAR
 	return contact
 
 

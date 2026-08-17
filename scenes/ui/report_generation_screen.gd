@@ -11,38 +11,47 @@ extends Control
 ## transmettre la vérité sur Christine à Alizée). "Valider le rapport" ne
 ## devient bleu/cliquable qu'une fois toutes les questions affichées
 ## répondues, même recette que GÉNÉRER LE RAPPORT (voir clue_board_window.gd).
-## La validation verrouille les réponses, les persiste (StoryVars, voir
-## _on_validate_pressed), sauvegarde, puis enchaîne sur une fenêtre système
-## simulant l'envoi du rapport (voir _play_report_terminal) et se conclut sur
-## RelayGhost (voir _open_relayghost_report_chat) — fin de la mission 1, mais
-## tout l'état du joueur (indices, StoryVars, sauvegarde) reste accessible
-## pour de futures conséquences. Le score éthique/popularité agrégé (voir la
-## bible de design) reste une couche à construire plus tard par-dessus ces
-## StoryVars bruts.
+## La validation verrouille les réponses, les persiste en mémoire (StoryVars,
+## voir _on_validate_pressed — pas encore sauvegardé sur disque à ce stade,
+## voir plus bas), puis enchaîne sur une fenêtre système simulant l'envoi du
+## rapport (voir _play_report_terminal). Une fois cette fenêtre fermée, la
+## scène change pour un bureau neuf et vide (voir _on_report_terminal_closed
+## et desktop.gd::_build_post_report_desktop) qui prend le relais pour la
+## conversation RelayGhost de fin de mission — cette scène-ci ne rouvre
+## jamais derrière, elle est entièrement remplacée. Tout l'état du joueur
+## (indices, StoryVars) reste accessible pour de futures conséquences ; le
+## score éthique/popularité agrégé (voir la bible de design) reste une couche
+## à construire plus tard par-dessus ces StoryVars bruts. La sauvegarde réelle
+## sur disque n'a lieu qu'une fois cette conversation RelayGhost terminée
+## (voir conversation_view.gd::_on_conversation_finished) : si le joueur
+## quitte avant, "Continuer" le ramène avant "Valider le rapport", pas au
+## milieu de cette séquence.
 
 const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
-const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
-const RELAYGHOST_AVATAR := preload("res://assets/avatar/relayghost_avatar.png")
-## Dialogue joué après l'envoi du rapport (voir _open_relayghost_report_chat)
-## — contact_id distinct de "relayghost" (déjà marqué terminé par l'intro,
-## voir SaveManager.is_conversation_complete) pour que ce nouveau chapitre
-## compte comme une conversation à part.
-const RELAYGHOST_REPORT_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_report_m1.dialogue")
+const DESKTOP_SCENE_PATH := "res://scenes/desktop/desktop.tscn"
 ## Joué une fois à l'ouverture de cet écran (voir _ready) — appui dramatique
 ## sur l'arrivée du rapport final, seul appelant donc pas centralisé dans
 ## SfxPlayer (même logique que BOOT_SYSTEM_SFX dans introduction.gd).
 const REPORT_OPEN_SFX := preload("res://assets/audio/sound/soundreality-boom-128320.mp3")
+## Musique de la fenêtre de choix du rapport, démarrée juste après
+## REPORT_OPEN_SFX (voir _ready). Fondu de sortie explicite avant d'enchaîner
+## sur la fenêtre terminal (voir _on_validate_pressed) : MusicPlayer ne joue
+## qu'une piste "premier plan" à la fois et play() coupe net l'ancienne sans
+## attendre son fondu, d'où l'await sur stop() pour laisser le fondu 1s se
+## dérouler avant que REPORT_TERMINAL_MUSIC ne démarre.
+const REPORT_CHOICE_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
+const REPORT_CHOICE_MUSIC_FADE_SECONDS := 1.0
 ## Plus long que le défaut (voir TerminalConsole.close_fade_seconds) : un
 ## fondu plus posé avant l'arrivée de RelayGhost, pas juste un cut technique.
 const REPORT_TERMINAL_CLOSE_FADE_SECONDS := 1.0
 ## Même piste et mêmes paramètres de fondu que la toute première fenêtre
 ## système du jeu (voir introduction.gd::MONOLOGUE_MUSIC/MUSIC_FADE_SECONDS,
-## joué juste avant le boot terminal) — repris ici tel quel, à la demande du
-## joueur. Fondu d'entrée dans _play_report_terminal, de sortie dans
-## _open_relayghost_report_chat (voir REPORT_TERMINAL_CLOSE_FADE_SECONDS
+## joué juste avant le boot terminal), même durée de fondu mais piste propre
+## à cet écran. Fondu d'entrée dans _play_report_terminal, de sortie dans
+## _on_report_terminal_closed (voir REPORT_TERMINAL_CLOSE_FADE_SECONDS
 ## ci-dessus pour le fondu visuel du terminal, distinct de celui-ci).
-const REPORT_TERMINAL_MUSIC := preload("res://assets/audio/soundreality-cinematic-tension-2-504666.mp3")
+const REPORT_TERMINAL_MUSIC := preload("res://assets/audio/sound/juniorsoundays-motion-amp-tansitions-02-527730.mp3")
 const REPORT_TERMINAL_MUSIC_FADE_SECONDS := 1.0
 ## Indice débloqué en piratant le PC de Christine Ranoud (voir
 ## hack_pc_mother_window.gd) — sa présence conditionne l'apparition du second
@@ -80,6 +89,7 @@ var _validate_blink_tween: Tween
 
 func _ready() -> void:
 	SfxPlayer.play(REPORT_OPEN_SFX)
+	MusicPlayer.play(REPORT_CHOICE_MUSIC, REPORT_CHOICE_MUSIC_FADE_SECONDS)
 
 	# Ces deux actions du header n'ont plus de sens une fois la mission conclue
 	# (voir set_investigation_controls_visible) — le bureau normal, qui
@@ -161,8 +171,12 @@ func _update_validate_button() -> void:
 
 ## Verrouille les réponses (pas de retour en arrière, comme le reste de cette
 ## étape), persiste les choix (StoryVars, même bac à variables narratives que
-## les fichiers .dialogue — voir story_vars.gd), sauvegarde, puis enchaîne sur
-## la fenêtre système d'envoi du rapport.
+## les fichiers .dialogue — voir story_vars.gd), puis enchaîne sur la fenêtre
+## système d'envoi du rapport. Pas de sauvegarde disque ici : StoryVars ne
+## vit qu'en mémoire tant qu'aucun SaveManager.save_checkpoint() n'a eu lieu
+## (voir doc de classe ci-dessus) — le prochain aura lieu naturellement à la
+## fin de la conversation RelayGhost sur le nouveau bureau (voir
+## conversation_view.gd::_on_conversation_finished), pas avant.
 func _on_validate_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_stop_validate_blink()
@@ -172,21 +186,30 @@ func _on_validate_pressed() -> void:
 	_alizee_yes_button.disabled = true
 	_alizee_no_button.disabled = true
 
+	# Lu par desktop.gd::_build_post_report_desktop à l'arrivée sur le nouveau
+	# bureau — vrai seulement si cette valeur a survécu jusqu'à un
+	# save_checkpoint() (donc jamais avant la fin de la conversation
+	# RelayGhost qui suit), ce qui distingue "on vient tout juste de valider"
+	# d'une reprise de sauvegarde antérieure à ce clic.
+	StoryVars.m1_report_submitted = true
 	StoryVars.m1_report_jean_transmit = _jean_answer
 	# Ne compte que si le volet était affiché (voir _mere_block.visible) —
 	# _alizee_answer reste null sinon, pas de faux "non" persisté.
 	if _mere_block.visible:
 		StoryVars.m1_report_alizee_transmit = _alizee_answer
-	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
+	# MusicPlayer.stop() ne renvoie rien (voir main_menu.gd::_on_quit_pressed
+	# pour la même recette) : on attend la durée du fondu via un timer plutôt
+	# que d'essayer d'attendre un signal sur le Tween interne.
+	MusicPlayer.stop(REPORT_CHOICE_MUSIC_FADE_SECONDS)
+	await get_tree().create_timer(REPORT_CHOICE_MUSIC_FADE_SECONDS).timeout
 	_play_report_terminal()
 
 
 ## Fenêtre système par-dessus le rapport, simulant l'envoi du rapport à Jean
 ## puis — si le joueur a choisi de prévenir Alizée de la vérité sur sa mère —
 ## l'envoi de la preuve à Marek (voir _build_report_terminal_lines). Ferme sur
-## RelayGhost (voir _open_relayghost_report_chat), dernier temps fort de la
-## mission.
+## _on_report_terminal_closed, qui bascule vers un bureau neuf.
 func _play_report_terminal() -> void:
 	MusicPlayer.play(REPORT_TERMINAL_MUSIC, REPORT_TERMINAL_MUSIC_FADE_SECONDS)
 
@@ -195,7 +218,7 @@ func _play_report_terminal() -> void:
 	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
 	console.fade_out_on_close = true
 	console.close_fade_seconds = REPORT_TERMINAL_CLOSE_FADE_SECONDS
-	console.closed.connect(_open_relayghost_report_chat)
+	console.closed.connect(_on_report_terminal_closed)
 	add_child(console)
 
 
@@ -270,32 +293,18 @@ func _terminal_color_hex(color: Color) -> String:
 	return "#%s" % color.to_html(false)
 
 
-## Dernier temps fort de la mission : RelayGhost referme la boucle une fois le
-## rapport parti. Les autres actions du header (Indice/recherche) restent
-## indisponibles — set_investigation_controls_visible(false) posé dans _ready
-## n'est jamais réactivé sur cet écran, la mission ne reprend pas en arrière.
-func _open_relayghost_report_chat() -> void:
+## Ferme cette page (avec ses images/contenu de rapport) et bascule vers un
+## bureau neuf et vide — même fondu (SceneTransition) que les autres
+## changements de scène du jeu (voir introduction.gd/main_menu.gd). Le
+## nouveau bureau prend le relais pour le dernier temps fort de la mission :
+## RelayGhost referme la boucle (voir desktop.gd::_build_post_report_desktop),
+## dans un état sans conversation Jean Ranoud ni fenêtres résiduelles de
+## celle-ci — cette scène ne rouvre jamais derrière.
+func _on_report_terminal_closed() -> void:
 	MusicPlayer.stop(REPORT_TERMINAL_MUSIC_FADE_SECONDS)
-
-	var contact := ChatContact.new()
-	contact.contact_id = "relayghost_report_m1"
-	contact.contact_name = "RelayGhost"
-	contact.avatar = RELAYGHOST_AVATAR
-	contact.dialogue_resource = RELAYGHOST_REPORT_DIALOGUE
-
-	var window: ChatWindow = CHAT_WINDOW.instantiate()
-	window.contacts = [contact]
-	window.minimize_requested.connect(_on_report_chat_minimize_requested)
-	add_child(window)
-
-
-## Même recette que desktop.gd::_on_window_minimize_requested (juste un
-## restore, pas de re-tri par-dessus d'autres fenêtres puisqu'il n'y en a
-## qu'une seule ici) — évite un blocage si le joueur réduit cette fenêtre.
-func _on_report_chat_minimize_requested(window: Control, window_title: String) -> void:
-	_footer.add_minimized_window(window_title, func() -> void:
-		window.show()
-	)
+	await SceneTransition.fade_out()
+	get_tree().change_scene_to_file(DESKTOP_SCENE_PATH)
+	SceneTransition.fade_in()
 
 
 ## Même principe que desktop.gd::_on_thought_log_button_pressed : une seule
