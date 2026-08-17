@@ -406,8 +406,9 @@ layout_mode = 2
 
 [node name="ValidateButton" type="Button" parent="ContentLayer/ReportWindow/Layout/ValidateMargin/ValidateCenter"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 54)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+theme_override_font_sizes/font_size = 29
 disabled = true
 theme_type_variation = &"PrimaryButton"
 text = "REPORT_M1_VALIDATE_BUTTON"
