@@ -29,6 +29,12 @@ const SHAKE_STEPS := 6
 ## pour rester cohérent visuellement.
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
+## Halo discret autour de la ligne tant qu'elle clignote (voir _start_row_blink)
+## — même recette que warning_dialog.tscn (StyleBoxFlat.shadow_color/shadow_size),
+## mais plus léger : une ligne de sidebar n'a pas besoin d'un halo aussi marqué
+## qu'une boîte de dialogue centrale.
+const BLINK_HALO_SIZE := 10
+const BLINK_HALO_ALPHA := 0.35
 
 @export var contacts: Array[ChatContact] = []
 
@@ -218,10 +224,21 @@ func _shake() -> void:
 
 ## Fait clignoter la ligne d'un contact (alpha, comme le TOR du header) tant
 ## qu'on n'a pas cliqué dessus — voir _stop_row_blink dans _select_contact.
+## Halo vert posé en même temps (voir BLINK_HALO_SIZE/ALPHA) : contrairement
+## au clignotement d'alpha, il ne bouge pas, juste présent tant que la ligne
+## clignote, retiré dans _stop_row_blink.
 func _start_row_blink(contact_id: String) -> void:
 	var row: PanelContainer = _contact_rows.get(contact_id)
 	if row == null:
 		return
+
+	var halo_style := StyleBoxFlat.new()
+	halo_style.bg_color = Color(0, 0, 0, 0)
+	halo_style.shadow_color = Color(accent_color.r, accent_color.g, accent_color.b, BLINK_HALO_ALPHA)
+	halo_style.shadow_size = BLINK_HALO_SIZE
+	halo_style.set_corner_radius_all(6)
+	row.add_theme_stylebox_override("panel", halo_style)
+
 	var tween := create_tween()
 	tween.set_loops()
 	tween.set_trans(Tween.TRANS_SINE)
@@ -240,6 +257,7 @@ func _stop_row_blink(contact_id: String) -> void:
 	var row: PanelContainer = _contact_rows.get(contact_id)
 	if row != null:
 		row.modulate.a = 1.0
+		row.remove_theme_stylebox_override("panel")
 
 
 func _on_contact_row_gui_input(event: InputEvent, contact_id: String) -> void:
