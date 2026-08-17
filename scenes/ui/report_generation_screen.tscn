@@ -41,12 +41,16 @@ color = Color(0.25, 0.55, 0.95, 0.5)
 thickness = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_photo_frame"]
-bg_color = Color(1, 1, 1, 1)
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.22, 0.87, 0.45, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
-anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border_overlay"]
 bg_color = Color(0, 0, 0, 0)
@@ -110,14 +114,14 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("5_photo_chante")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="BackgroundPhotoBanc" type="PanelContainer" parent="ContentLayer"]
 layout_mode = 1
 anchors_preset = 0
-offset_left = 40.0
+offset_left = -30.0
 offset_top = 420.0
-offset_right = 640.0
+offset_right = 570.0
 offset_bottom = 757.5
 pivot_offset = Vector2(300, 168.75)
 rotation = 0.2443
@@ -130,7 +134,7 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("6_photo_banc")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="BackgroundPhotoConcert" type="PanelContainer" parent="ContentLayer"]
 layout_mode = 1
@@ -150,14 +154,14 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("7_photo_concert")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="BackgroundPhotoFete" type="PanelContainer" parent="ContentLayer"]
 layout_mode = 1
 anchors_preset = 0
-offset_left = 1840.0
+offset_left = 1910.0
 offset_top = 760.0
-offset_right = 2440.0
+offset_right = 2510.0
 offset_bottom = 1097.5
 pivot_offset = Vector2(300, 168.75)
 rotation = 0.3491
@@ -170,7 +174,7 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("8_photo_fete")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="BackgroundPhotoChezElle" type="PanelContainer" parent="ContentLayer"]
 layout_mode = 1
@@ -190,7 +194,7 @@ layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("9_photo_chez_elle")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="ReportWindow" type="Control" parent="ContentLayer"]
 layout_mode = 1

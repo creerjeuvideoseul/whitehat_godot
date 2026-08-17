@@ -68,4 +68,6 @@ locale/include_text_server_data=true
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+anti_aliasing/quality/msaa_2d=1
 environment/defaults/default_clear_color=Color(0.016, 0.043, 0.031, 1)
+anti_aliasing/quality/screen_space_aa=1
