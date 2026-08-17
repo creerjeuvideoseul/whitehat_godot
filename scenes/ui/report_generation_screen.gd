@@ -102,7 +102,7 @@ func _on_jean_answer(is_yes: bool) -> void:
 	# N'apparaît qu'une fois choisi (voir doc de classe) : caché par défaut dans
 	# la scène, seul le texte correspondant au choix effectivement fait a un
 	# sens à montrer.
-	_jean_explanation_label.text = tr("REPORT_M1_JEAN_EXPLANATION_YES" if is_yes else "REPORT_M1_JEAN_EXPLANATION_NO")
+	_jean_explanation_label.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_JEAN_EXPLANATION_YES" if is_yes else "REPORT_M1_JEAN_EXPLANATION_NO"))
 	_jean_explanation_label.visible = true
 	_update_validate_button()
 
