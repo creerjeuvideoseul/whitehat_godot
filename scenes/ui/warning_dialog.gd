@@ -26,7 +26,7 @@ signal cancelled
 
 @onready var _box: Panel = %Box
 @onready var _margin: MarginContainer = %Margin
-@onready var _message_label: Label = %MessageLabel
+@onready var _message_label: RichTextLabel = %MessageLabel
 @onready var _confirm_button: Button = %ConfirmButton
 @onready var _cancel_button: Button = %CancelButton
 
@@ -60,8 +60,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## `message` : texte déjà résolu par l'appelant (peut concaténer plusieurs
 ## clés ui.csv avec un \n, voir main_menu.gd — même besoin que l'ancien
-## ConfirmationDialog.dialog_text). `confirm_text`/`cancel_text` : clés ui.csv
-## des boutons.
+## ConfirmationDialog.dialog_text). Rouge par défaut sur tout le message
+## (MessageLabel, voir warning_dialog.tscn) ; l'appelant peut passer du bbcode
+## (ex. [color=#xxxxxx]...[/color]) pour repasser un passage en blanc — voir
+## clue_board_window.gd::_on_generate_report_button_pressed, seule ligne
+## d'avertissement pure ("pas de retour en arrière") gardée en rouge.
+## `confirm_text`/`cancel_text` : clés ui.csv des boutons.
 func set_text(message: String, confirm_text: String, cancel_text: String) -> void:
 	_message_label.text = message
 	_confirm_button.text = tr(confirm_text)

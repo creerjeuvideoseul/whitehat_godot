@@ -176,8 +176,16 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 func _on_generate_report_button_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_stop_report_button_blink()
+	# MessageLabel est rouge par défaut (voir warning_dialog.tscn) : seule
+	# REPORT_CONFIRM_WARNING ("pas de retour en arrière") doit rester rouge,
+	# le reste repasse en blanc via bbcode (voir WarningDialog.set_text).
+	var white_hex := "#%s" % Palette.TEXT_NORMAL.to_html(false)
 	_report_confirm_dialog.set_text(
-		"%s\n\n%s\n\n%s" % [tr("REPORT_CONFIRM_INTENT"), tr("REPORT_CONFIRM_WARNING"), tr("REPORT_CONFIRM_QUESTION")],
+		"[color=%s]%s[/color]\n\n%s\n\n[color=%s]%s[/color]" % [
+			white_hex, tr("REPORT_CONFIRM_INTENT"),
+			tr("REPORT_CONFIRM_WARNING"),
+			white_hex, tr("REPORT_CONFIRM_QUESTION"),
+		],
 		"REPORT_CONFIRM_YES", "REPORT_CONFIRM_NO"
 	)
 	_report_confirm_dialog.show_centered()

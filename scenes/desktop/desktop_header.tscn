@@ -96,6 +96,7 @@ theme_type_variation = &"PrimaryButton"
 text = "DESKTOP_CLUES_BUTTON"
 
 [node name="ClueSearchGap" type="Control" parent="Margin/Row/LeftGroup"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 

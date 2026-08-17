@@ -1,9 +1,14 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/report_generation_screen.gd" id="1_script"]
 [ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_header.tscn" id="3_header"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_footer.tscn" id="4_footer"]
+[ext_resource type="Texture2D" uid="uid://dbj3r7i0bm5hx" path="res://assets/images_mission1/alizee_chante_1.webp" id="5_photo_chante"]
+[ext_resource type="Texture2D" uid="uid://c0f3ggislrv3r" path="res://assets/images_mission1/banc_marek_alizee_1b.webp" id="6_photo_banc"]
+[ext_resource type="Texture2D" uid="uid://ceqo2557g7ltc" path="res://assets/images_mission1/wh_concert_fin.webp" id="7_photo_concert"]
+[ext_resource type="Texture2D" uid="uid://b6wmhivpygs8w" path="res://assets/images_mission1/wh_alizee_fete_2.webp" id="8_photo_fete"]
+[ext_resource type="Texture2D" uid="uid://jfh6by3dlpfm" path="res://assets/images_mission1/wh_alizee_chez_elle_2.webp" id="9_photo_chez_elle"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("2_shader")
@@ -11,6 +16,49 @@ shader_parameter/bg_color = Color(0.016, 0.043, 0.031, 1)
 shader_parameter/line_color = Color(0.11, 0.32, 0.22, 0.35)
 shader_parameter/cell_size = 48.0
 shader_parameter/line_width = 1.2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window_bg"]
+bg_color = Color(0.09, 0.16, 0.28, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.55, 0.95, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_titlebar"]
+bg_color = Color(0.13, 0.24, 0.4, 1)
+border_width_bottom = 2
+border_color = Color(0.25, 0.55, 0.95, 0.5)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_divider"]
+color = Color(0.25, 0.55, 0.95, 0.5)
+thickness = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_photo_frame"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border_overlay"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.25, 0.55, 0.95, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
 
 [node name="ReportGenerationScreen" type="Control"]
 layout_mode = 3
@@ -43,6 +91,308 @@ offset_bottom = -80.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="BackgroundPhotoChante" type="PanelContainer" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 140.0
+offset_top = -20.0
+offset_right = 740.0
+offset_bottom = 317.5
+pivot_offset = Vector2(300, 168.75)
+rotation = -0.384
+mouse_filter = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_photo_frame")
+
+[node name="TextureRect" type="TextureRect" parent="ContentLayer/BackgroundPhotoChante"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_photo_chante")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackgroundPhotoBanc" type="PanelContainer" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 40.0
+offset_top = 420.0
+offset_right = 640.0
+offset_bottom = 757.5
+pivot_offset = Vector2(300, 168.75)
+rotation = 0.2443
+mouse_filter = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_photo_frame")
+
+[node name="TextureRect" type="TextureRect" parent="ContentLayer/BackgroundPhotoBanc"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_photo_banc")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackgroundPhotoConcert" type="PanelContainer" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 1860.0
+offset_top = 90.0
+offset_right = 2460.0
+offset_bottom = 427.5
+pivot_offset = Vector2(300, 168.75)
+rotation = -0.4887
+mouse_filter = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_photo_frame")
+
+[node name="TextureRect" type="TextureRect" parent="ContentLayer/BackgroundPhotoConcert"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_photo_concert")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackgroundPhotoFete" type="PanelContainer" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 1840.0
+offset_top = 760.0
+offset_right = 2440.0
+offset_bottom = 1097.5
+pivot_offset = Vector2(300, 168.75)
+rotation = 0.3491
+mouse_filter = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_photo_frame")
+
+[node name="TextureRect" type="TextureRect" parent="ContentLayer/BackgroundPhotoFete"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_photo_fete")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BackgroundPhotoChezElle" type="PanelContainer" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = -20.0
+offset_top = 882.5
+offset_right = 580.0
+offset_bottom = 1220.0
+pivot_offset = Vector2(300, 168.75)
+rotation = -0.2618
+mouse_filter = 2
+clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_photo_frame")
+
+[node name="TextureRect" type="TextureRect" parent="ContentLayer/BackgroundPhotoChezElle"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("9_photo_chez_elle")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ReportWindow" type="Control" parent="ContentLayer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -825.0
+offset_top = -525.0
+offset_right = 825.0
+offset_bottom = 525.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="Panel" parent="ContentLayer/ReportWindow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_window_bg")
+
+[node name="Layout" type="VBoxContainer" parent="ContentLayer/ReportWindow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="TitleBar" type="PanelContainer" parent="ContentLayer/ReportWindow/Layout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_titlebar")
+
+[node name="Margin" type="MarginContainer" parent="ContentLayer/ReportWindow/Layout/TitleBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 20
+
+[node name="Row" type="HBoxContainer" parent="ContentLayer/ReportWindow/Layout/TitleBar/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ContentLayer/ReportWindow/Layout/TitleBar/Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/font_size = 26
+text = "REPORT_GENERATION_TITLE"
+
+[node name="BodyMargin" type="MarginContainer" parent="ContentLayer/ReportWindow/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 10
+
+[node name="Scroll" type="ScrollContainer" parent="ContentLayer/ReportWindow/Layout/BodyMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="ReportBody" type="VBoxContainer" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 28
+
+[node name="IntroText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="JeanQuestionLabel" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.24, 1, 0.5, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="JeanButtonsRow" type="HBoxContainer" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 60
+
+[node name="JeanYesButton" type="Button" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/JeanButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "REPORT_M1_YES_BUTTON"
+
+[node name="JeanNoButton" type="Button" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/JeanButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "REPORT_M1_NO_BUTTON"
+
+[node name="JeanExplanationText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="MereBlock" type="VBoxContainer" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 28
+
+[node name="MereSeparator" type="HSeparator" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_divider")
+
+[node name="MereText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="AlizeeQuestionLabel" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.24, 1, 0.5, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+
+[node name="AlizeeButtonsRow" type="HBoxContainer" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 60
+
+[node name="AlizeeYesButton" type="Button" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock/AlizeeButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "REPORT_M1_YES_BUTTON"
+
+[node name="AlizeeNoButton" type="Button" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock/AlizeeButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+text = "REPORT_M1_NO_BUTTON"
+
+[node name="ValidateMargin" type="MarginContainer" parent="ContentLayer/ReportWindow/Layout"]
+layout_mode = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 30
+
+[node name="ValidateCenter" type="CenterContainer" parent="ContentLayer/ReportWindow/Layout/ValidateMargin"]
+layout_mode = 2
+
+[node name="ValidateButton" type="Button" parent="ContentLayer/ReportWindow/Layout/ValidateMargin/ValidateCenter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+disabled = true
+theme_type_variation = &"PrimaryButton"
+text = "REPORT_M1_VALIDATE_BUTTON"
+
+[node name="BorderOverlay" type="Panel" parent="ContentLayer/ReportWindow"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border_overlay")
 
 [node name="DesktopHeader" parent="." instance=ExtResource("3_header")]
 unique_name_in_owner = true

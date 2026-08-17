@@ -38,6 +38,7 @@ signal osint_search_requested(query: String)
 @onready var _tor_icon: TextureRect = %TorIcon
 @onready var _pseudo_label: Label = %PseudoLabel
 @onready var _clue_button: Button = %ClueButton
+@onready var _clue_search_gap: Control = %ClueSearchGap
 @onready var _search_field: LineEdit = %SearchField
 @onready var _search_button: Button = %SearchButton
 @onready var _cpu_gauge: UsageGauge = %CpuGauge
@@ -241,6 +242,18 @@ func set_system_load_spike(active: bool) -> void:
 		_cpu_gauge.set_spike_range(CPU_SPIKE_MIN_PERCENT, CPU_SPIKE_MAX_PERCENT)
 	else:
 		_cpu_gauge.restore_normal_range()
+
+
+## Masque temporairement "COLLECTE D'INDICE" et la recherche darkweb (champ +
+## bouton) — pour l'écran de génération du rapport (report_generation_screen.gd),
+## qui réutilise ce même header mais où ces actions n'ont plus de sens une fois
+## la mission conclue. `should_show` plutôt qu'un simple hide() : ce header est
+## partagé avec le bureau normal, où ces contrôles doivent rester visibles.
+func set_investigation_controls_visible(should_show: bool) -> void:
+	_clue_button.visible = should_show
+	_clue_search_gap.visible = should_show
+	_search_field.visible = should_show
+	_search_button.visible = should_show
 
 
 ## Rectangle global de la barre de recherche OSINT — pour desktop.gd, qui doit
