@@ -16,6 +16,10 @@ extends Control
 ## se contente pour l'instant de verrouiller les réponses une fois validées.
 
 const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
+## Joué une fois à l'ouverture de cet écran (voir _ready) — appui dramatique
+## sur l'arrivée du rapport final, seul appelant donc pas centralisé dans
+## SfxPlayer (même logique que BOOT_SYSTEM_SFX dans introduction.gd).
+const REPORT_OPEN_SFX := preload("res://assets/audio/sound/soundreality-boom-128320.mp3")
 ## Indice débloqué en piratant le PC de Christine Ranoud (voir
 ## hack_pc_mother_window.gd) — sa présence conditionne l'apparition du second
 ## volet du rapport (informer Alizée de la vraie raison de l'absence de sa mère).
@@ -51,6 +55,8 @@ var _validate_blink_tween: Tween
 
 
 func _ready() -> void:
+	SfxPlayer.play(REPORT_OPEN_SFX)
+
 	# Ces deux actions du header n'ont plus de sens une fois la mission conclue
 	# (voir set_investigation_controls_visible) — le bureau normal, qui
 	# instancie son propre header séparé, n'est pas affecté.
