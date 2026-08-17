@@ -62,21 +62,19 @@ REPORT_CONFIRM_WARNING,Vous ne pourrez plus revenir en arrière.,You will not be
 REPORT_CONFIRM_QUESTION,Passez à l'étape de génération du rapport ?,Proceed to the report generation step?
 REPORT_CONFIRM_YES,"Oui, finir la mission","Yes, finish the mission"
 REPORT_CONFIRM_NO,"Non, pas encore","No, not yet"
-REPORT_M1_INTRO_TEXT,"Jean Ranoud élève seul sa fille, Alizée, depuis ses huit ans.
+REPORT_M1_INTRO_TEXT,"Jean Ranoud élève seul sa fille, Alizée, depuis 10 ans.
 
-Le jour de ses 18 ans, Alizée a décidé de quitter son père et de tenter sa chance avec Marek, guitariste d'un groupe de rock indépendant.
+Le jour de ses 18 ans, Alizée a décidé de quitter son père et de tenter sa chance avec <color=indice>Marek</color>, guitariste d'un groupe de rock indépendant.
+Elle sera le <color=indice>10 février à la salle de concert de Saint-Malo</color> avec le groupe LastHorizon.","Jean Ranoud has raised his daughter Alizée alone since she was eight.
 
-Parallèlement, après dix années d'absence, sa mère, Christine Ranoud, a refait surface et cherche à reprendre contact avec elle. Alizée, qui considère avoir été abandonnée par sa mère, n'a pour l'instant pas donné suite à ses tentatives de contact.","Jean Ranoud has raised his daughter Alizée alone since she was eight.
-
-On the day she turned 18, Alizée decided to leave her father and try her luck with Marek, guitarist of an independent rock band.
-
-At the same time, after ten years of absence, her mother, Christine Ranoud, has resurfaced and is trying to get back in touch with her. Alizée, who considers herself abandoned by her mother, has so far not responded to her attempts at contact."
+On the day she turned 18, Alizée decided to leave her father and try her luck with <color=indice>Marek</color>, guitarist of an independent rock band.
+She will be performing on <color=indice>February 10 at the Saint-Malo concert hall</color> with the band LastHorizon."
 REPORT_M1_JEAN_QUESTION,Souhaitez-vous transmettre les informations à Jean Ranoud ?,Do you want to pass this information on to Jean Ranoud?
 REPORT_M1_JEAN_EXPLANATION_YES,"Si vous transmettez ces informations, Jean pourra tenter de retrouver sa fille. Malgré son comportement parfois maladroit et possessif, il reste son père et pourrait avoir l'occasion de renouer le dialogue avec elle.","If you pass this information on, Jean will be able to try to find his daughter. Despite his sometimes clumsy and possessive behavior, he remains her father and might get a chance to reconnect with her."
 REPORT_M1_JEAN_EXPLANATION_NO,"Si vous ne transmettez pas ces informations, Jean ne pourra probablement pas retrouver sa fille. Vous estimez que Marek saura prendre soin d'elle. Dans ce cas, votre mission ne sera pas rémunérée.","If you don't pass this information on, Jean probably won't be able to find his daughter. You judge that Marek will take good care of her. In that case, your mission will not be paid."
-REPORT_M1_MERE_TEXT,"Grâce à l'accès au PC de Christine Ranoud, nous avons découvert la véritable raison de son absence pendant ces dix dernières années.
-Les éléments retrouvés indiquent que Christine n'aurait pas abandonné Alizée par choix et qu'elle aurait été contrainte de rester éloignée de sa fille.","Thanks to access to Christine Ranoud's computer, we discovered the real reason for her absence over the past ten years.
-The evidence found indicates that Christine did not abandon Alizée by choice, and that she was forced to stay away from her daughter."
+REPORT_M1_MERE_INTRO_TEXT,"Parallèlement, après dix années d'absence, sa mère, Christine Ranoud, a refait surface et cherche à reprendre contact avec elle. Alizée, qui considère avoir été abandonnée par sa mère, n'a pour l'instant <color=indice>pas donné suite à ses tentatives de contact.</color>","At the same time, after ten years of absence, her mother, Christine Ranoud, has resurfaced and is trying to get back in touch with her. Alizée, who considers herself abandoned by her mother, <color=indice>has so far not responded to her attempts at contact.</color>"
+REPORT_M1_MERE_ELSE_TEXT,"Vous n'avez pas pu obtenir plus d'informations à ce sujet.","You were unable to obtain any further information on this."
+REPORT_M1_MERE_TEXT,"Grâce au PC de Christine Ranoud, vous avez découvert qu'elle n'a pas abandonné Alizée par choix, mais a été contrainte de rester éloignée d'elle durant dix ans.","Thanks to Christine Ranoud's computer, you discovered that she didn't abandon Alizée by choice, but was forced to stay away from her for ten years."
 REPORT_M1_ALIZEE_QUESTION,Souhaitez-vous transmettre ces informations à Alizée ?,Do you want to pass this information on to Alizée?
 REPORT_M1_YES_BUTTON,Transmettre,Transmit
 REPORT_M1_NO_BUTTON,Ne pas transmettre,Don't transmit

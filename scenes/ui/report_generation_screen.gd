@@ -32,8 +32,10 @@ const BLINK_SECONDS := 1.4
 @onready var _jean_yes_button: Button = %JeanYesButton
 @onready var _jean_no_button: Button = %JeanNoButton
 @onready var _jean_explanation_label: RichTextLabel = %JeanExplanationText
+@onready var _mere_intro_text: RichTextLabel = %MereIntroText
 @onready var _mere_block: VBoxContainer = %MereBlock
 @onready var _mere_text: RichTextLabel = %MereText
+@onready var _mere_else_text: RichTextLabel = %MereElseText
 @onready var _alizee_question_label: RichTextLabel = %AlizeeQuestionLabel
 @onready var _alizee_yes_button: Button = %AlizeeYesButton
 @onready var _alizee_no_button: Button = %AlizeeNoButton
@@ -60,12 +62,23 @@ func _ready() -> void:
 	# RichTextLabel ne s'auto-traduit pas comme Label, d'où l'assignation ici
 	# plutôt que "text = clé" dans la scène (voir credits.tscn/login.tscn pour
 	# le même choix ailleurs dans le projet).
-	_intro_text.text = tr("REPORT_M1_INTRO_TEXT")
-	_jean_question_label.text = tr("REPORT_M1_JEAN_QUESTION")
-	_mere_text.text = tr("REPORT_M1_MERE_TEXT")
-	_alizee_question_label.text = tr("REPORT_M1_ALIZEE_QUESTION")
+	# Les textes du rapport utilisent le pseudo-HTML <color=indice>/<color=important>
+	# (voir rich_text_markup.gd) : conversion en BBCode natif nécessaire avant
+	# affichage, sinon le RichTextLabel affiche les balises telles quelles.
+	_intro_text.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_INTRO_TEXT"))
+	_jean_question_label.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_JEAN_QUESTION"))
+	# Toujours affiché sous le trait, contrairement à MereText/AlizeeQuestionLabel
+	# ci-dessous qui restent conditionnés au hack du PC de Christine.
+	_mere_intro_text.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_MERE_INTRO_TEXT"))
+	_mere_text.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_MERE_TEXT"))
+	_alizee_question_label.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_ALIZEE_QUESTION"))
+	_mere_else_text.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_MERE_ELSE_TEXT"))
 
-	_mere_block.visible = ClueManager.is_unlocked(MERE_CLUE_ID)
+	# IF le hack a été fait : questionnaire complet (MereBlock) ; ELSE : simple
+	# constat qu'aucune information supplémentaire n'a été obtenue.
+	var mere_unlocked := ClueManager.is_unlocked(MERE_CLUE_ID)
+	_mere_block.visible = mere_unlocked
+	_mere_else_text.visible = not mere_unlocked
 
 	_apply_blue_scrollbar()
 
