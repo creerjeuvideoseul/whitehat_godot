@@ -195,21 +195,6 @@ func _ready() -> void:
 	# limiter à la toute première connexion.
 	MusicPlayer.play_background(DESKTOP_MUSIC, DESKTOP_MUSIC_FADE_IN_SECONDS)
 
-	# L'ouverture automatique après un délai ne doit surprendre que tant qu'il
-	# reste quelque chose à découvrir dans le chat (première arrivée après
-	# l'intro/login, ou reprise entre la fin de RelayGhost et celle de Jean) —
-	# pas une reprise après coup, où tout a déjà été lu et où seul le
-	# téléphone d'Alizée reste à l'écran. Pas de is_conversation_complete("relayghost")
-	# ici : ça stranderait le joueur qui reprend juste après RelayGhost, sans
-	# autre moyen de rouvrir le chat pour parler à Jean (pas d'icône/taskbar
-	# pour ça pour l'instant).
-	# Immédiat, sans attendre le délai d'ouverture du chat ci-dessous —
-	# seulement le tout premier contact, pas la reprise "entre RelayGhost et
-	# Jean" couverte par cette même branche (voir commentaire ci-dessus), où
-	# RelayGhost a déjà été rencontré lors d'une session précédente.
-	if not SaveManager.is_conversation_complete("relayghost"):
-		_show_player_thought(tr("THOUGHT_RELAYGHOST_CONTACT"), "THOUGHT_RELAYGHOST_CONTACT")
-
 	await get_tree().create_timer(DESKTOP_ENTRY_DELAY_SECONDS).timeout
 	_chat_window = _build_chat_window()
 	_open_window(_chat_window)
