@@ -37,8 +37,12 @@ func _ready() -> void:
 	# dans le .csv, un saut de ligne réel dans une cellule CSV n'étant pas
 	# fiable à l'import (le parseur de Godot lit une ligne physique à la
 	# fois) — voir aussi options_panel.gd pour l'avertissement de sortie.
+	# MessageLabel est rouge par défaut (voir warning_dialog.tscn) : seule la
+	# question de confirmation reste rouge, l'avertissement lui-même repasse en
+	# blanc via bbcode (même recette que clue_board_window.gd::_on_generate_report_button_pressed).
+	var white_hex := "#%s" % Palette.TEXT_NORMAL.to_html(false)
 	_new_game_confirm_dialog.set_text(
-		tr("NEWGAME_OVERWRITE_WARNING") + "\n" + tr("NEWGAME_RESTART_CONFIRM_QUESTION"),
+		"[color=%s]%s[/color]\n%s" % [white_hex, tr("NEWGAME_OVERWRITE_WARNING"), tr("NEWGAME_RESTART_CONFIRM_QUESTION")],
 		"COMMON_CONFIRM", "COMMON_CANCEL"
 	)
 
