@@ -110,6 +110,12 @@ func _replay_saved_log() -> void:
 			label.visible_ratio = 1.0
 		else:
 			_add_bubble(line, entry.character == PLAYER_CHARACTER)
+		# Sans ça, _log restait vide après un rejeu : un trigger_help() lancé
+		# plus tard sur cette même vue (voir _on_help_finished) écrasait alors
+		# tout le journal sauvegardé avec seulement l'échange d'aide, effaçant
+		# l'historique déjà rejoué (bug constaté sur "relayghost" : le journal
+		# persisté ne contenait plus que la dernière demande d'aide).
+		_log.append({ "character": entry.character, "text": entry.text })
 	_scroll_to_bottom()
 
 
