@@ -199,13 +199,13 @@ func _play_report_terminal() -> void:
 	add_child(console)
 
 
-## Script du terminal d'envoi — jargon technique non traduit quelle que soit
-## la langue (même choix que desktop.gd::_build_jean_dump_lines, un vrai
-## terminal ne se traduit pas). Chaque commande est suivie d'une vraie sortie
-## système ([SYS]/[SUCCESS], voir desktop.gd::_build_jean_dump_lines pour la
-## même recette) plutôt qu'un enchaînement sec de commandes sans retour — les
-## deux confirmations d'envoi sont en accent (voir _terminal_success_line) à
-## la demande explicite du joueur.
+## Script du terminal d'envoi. Les commandes elles-mêmes (syntaxe shell,
+## chemins, flags) restent en dur quelle que soit la langue, même choix que
+## desktop.gd::_build_jean_dump_lines : un vrai terminal ne se traduit pas.
+## En revanche les lignes [SYS]/[SUCCESS] et le corps/sujet du mail à Jean
+## sont du texte adressé au joueur, donc traduits via ui.csv — même
+## distinction que TERMINAL_JEAN_DUMP_SUCCESS/LOADING dans desktop.gd (les
+## deux seules phrases "en langage naturel" de ce script-là).
 func _build_report_terminal_lines() -> Array[TerminalLine]:
 	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
 	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
@@ -214,19 +214,21 @@ func _build_report_terminal_lines() -> Array[TerminalLine]:
 
 	var lines: Array[TerminalLine] = []
 	lines.append(_terminal_command_line("apt-get update && apt-get install -y mailutils gpg", prompt, normal))
-	lines.append(_terminal_sys_line("mailutils/gpg installés.", muted))
+	lines.append(_terminal_sys_line(tr("TERMINAL_REPORT_M1_MAIL_INSTALLED"), muted))
 	lines.append(_terminal_command_line("gpg --import /etc/ssl/certs/jean_ranoud_pubkey.asc", prompt, normal))
-	lines.append(_terminal_sys_line("Clé publique importée (jean.ranoud@cybercorp.internal).", muted))
+	lines.append(_terminal_sys_line(tr("TERMINAL_REPORT_M1_KEY_IMPORTED"), muted))
 	lines.append(TerminalLine.text_line(""))
 
 	# [ et ] échappés en [lb]/[rb] dans le sujet de mail : du BBCode littéral
 	# planterait sinon leur affichage (voir rich_text_markup.gd et
 	# desktop.gd::_build_hack_pc_mother_login_lines pour le même besoin).
+	# "URGENT" reste en dur (comme [SYS]/[SUCCESS]) : un tag de log, pas une
+	# phrase à traduire — seuls le corps et le sujet du mail le sont.
 	lines.append(_terminal_command_line("gpg --trust-model always --encrypt -r \"jean.ranoud@cybercorp.internal\" /var/log/whitehat/reports/incident.pdf", prompt, normal))
-	lines.append(_terminal_sys_line("Rapport chiffré : incident.pdf.gpg", muted))
-	lines.append(_terminal_command_line("echo \"Jean, voici le rapport d'incident.\" | mailx -s \"[lb]URGENT[rb] Rapport PDF\" -a /var/log/whitehat/reports/incident.pdf.gpg j.ranoud@cybercorp.internal", prompt, normal))
+	lines.append(_terminal_sys_line(tr("TERMINAL_REPORT_M1_ENCRYPTED"), muted))
+	lines.append(_terminal_command_line("echo \"%s\" | mailx -s \"[lb]URGENT[rb] %s\" -a /var/log/whitehat/reports/incident.pdf.gpg j.ranoud@cybercorp.internal" % [tr("TERMINAL_REPORT_M1_MAIL_BODY_JEAN"), tr("TERMINAL_REPORT_M1_MAIL_SUBJECT_JEAN")], prompt, normal))
 	lines.append(TerminalLine.progress_line("incident.pdf.gpg", 3, "1.4MB/s", "00:02"))
-	lines.append(_terminal_success_line("Mail envoyé à Jean Ranoud", accent))
+	lines.append(_terminal_success_line(tr("TERMINAL_REPORT_M1_SUCCESS_JEAN"), accent))
 
 	# Uniquement si le joueur a choisi de transmettre la vérité sur sa mère à
 	# Alizée (voir _on_validate_pressed) — adressé à Marek, seul contact
@@ -235,7 +237,7 @@ func _build_report_terminal_lines() -> Array[TerminalLine]:
 		lines.append(TerminalLine.text_line(""))
 		lines.append(_terminal_command_line("curl --url 'smtp://mail.gomail.com:25' --mail-from 'agent@whitehat.local' --mail-rcpt 'marek.trodan@gomail.com' --upload-file /opt/whitehat/evidence/dump_extracted.txt", prompt, normal))
 		lines.append(TerminalLine.progress_line("dump_extracted.txt", 1, "0.9MB/s", "00:01"))
-		lines.append(_terminal_success_line("Mail envoyé à Marek Trodan", accent))
+		lines.append(_terminal_success_line(tr("TERMINAL_REPORT_M1_SUCCESS_MAREK"), accent))
 
 	return lines
 

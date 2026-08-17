@@ -79,6 +79,13 @@ REPORT_M1_ALIZEE_QUESTION,Souhaitez-vous transmettre ces informations à Alizée
 REPORT_M1_YES_BUTTON,Transmettre,Transmit
 REPORT_M1_NO_BUTTON,Ne pas transmettre,Don't transmit
 REPORT_M1_VALIDATE_BUTTON,Valider le rapport,Validate the report
+TERMINAL_REPORT_M1_MAIL_INSTALLED,mailutils/gpg installés.,mailutils/gpg installed.
+TERMINAL_REPORT_M1_KEY_IMPORTED,Clé publique importée (jean.ranoud@cybercorp.internal).,Public key imported (jean.ranoud@cybercorp.internal).
+TERMINAL_REPORT_M1_ENCRYPTED,Rapport chiffré : incident.pdf.gpg,Report encrypted: incident.pdf.gpg
+TERMINAL_REPORT_M1_MAIL_BODY_JEAN,"Jean, voici le rapport d'incident.","Jean, here is the incident report."
+TERMINAL_REPORT_M1_MAIL_SUBJECT_JEAN,Rapport PDF,PDF Report
+TERMINAL_REPORT_M1_SUCCESS_JEAN,Mail envoyé à Jean Ranoud,Mail sent to Jean Ranoud
+TERMINAL_REPORT_M1_SUCCESS_MAREK,Mail envoyé à Marek Trodan,Mail sent to Marek Trodan
 CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
