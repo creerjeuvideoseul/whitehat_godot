@@ -191,52 +191,56 @@ func _play_report_terminal() -> void:
 
 ## Script du terminal d'envoi — jargon technique non traduit quelle que soit
 ## la langue (même choix que desktop.gd::_build_jean_dump_lines, un vrai
-## terminal ne se traduit pas), sauf les deux echo "en langage naturel" côté
-## Jean/Marek qui restent volontairement en dur ici aussi (sortie système
-## simulée, pas du texte adressé au joueur).
+## terminal ne se traduit pas). Chaque commande est suivie d'une vraie sortie
+## système ([SYS]/[SUCCESS], voir desktop.gd::_build_jean_dump_lines pour la
+## même recette) plutôt qu'un enchaînement sec de commandes sans retour — les
+## deux confirmations d'envoi sont en accent (voir _terminal_success_line) à
+## la demande explicite du joueur.
 func _build_report_terminal_lines() -> Array[TerminalLine]:
 	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
 	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+	var muted := _terminal_color_hex(Palette.CONSOLE_TEXT)
+	var accent := _terminal_color_hex(Palette.TEXT_ACCENT)
 
 	var lines: Array[TerminalLine] = []
-	for command in [
-		"apt-get update && apt-get install -y mailutils gpg",
-		"mkdir -p /var/log/whitehat/reports",
-		"chown -R secops:secops /var/log/whitehat/reports",
-		"gpg --import /etc/ssl/certs/jean_ranoud_pubkey.asc",
-		"systemctl restart postfix",
-	]:
-		lines.append(_terminal_command_line(command, prompt, normal))
+	lines.append(_terminal_command_line("apt-get update && apt-get install -y mailutils gpg", prompt, normal))
+	lines.append(_terminal_sys_line("mailutils/gpg installés.", muted))
+	lines.append(_terminal_command_line("gpg --import /etc/ssl/certs/jean_ranoud_pubkey.asc", prompt, normal))
+	lines.append(_terminal_sys_line("Clé publique importée (jean.ranoud@cybercorp.internal).", muted))
 	lines.append(TerminalLine.text_line(""))
 
-	# [ et ] échappés en [lb]/[rb] dans les sujets de mail : du BBCode littéral
+	# [ et ] échappés en [lb]/[rb] dans le sujet de mail : du BBCode littéral
 	# planterait sinon leur affichage (voir rich_text_markup.gd et
 	# desktop.gd::_build_hack_pc_mother_login_lines pour le même besoin).
-	for command in [
-		"gpg --trust-model always --encrypt -r \"jean.ranoud@cybercorp.internal\" /var/log/whitehat/reports/incident.pdf",
-		"echo \"Jean, voici le rapport d'incident.\" | mailx -s \"[lb]URGENT[rb] Rapport PDF\" -a /var/log/whitehat/reports/incident.pdf.gpg j.ranoud@cybercorp.internal",
-		"shred -u /var/log/whitehat/reports/incident.pdf.gpg",
-		"ls -l /var/log/whitehat/reports/",
-		"echo \"$(date) - Mail envoyé à Jean Ranoud\" >> /var/log/exfil.log",
-	]:
-		lines.append(_terminal_command_line(command, prompt, normal))
+	lines.append(_terminal_command_line("gpg --trust-model always --encrypt -r \"jean.ranoud@cybercorp.internal\" /var/log/whitehat/reports/incident.pdf", prompt, normal))
+	lines.append(_terminal_sys_line("Rapport chiffré : incident.pdf.gpg", muted))
+	lines.append(_terminal_command_line("echo \"Jean, voici le rapport d'incident.\" | mailx -s \"[lb]URGENT[rb] Rapport PDF\" -a /var/log/whitehat/reports/incident.pdf.gpg j.ranoud@cybercorp.internal", prompt, normal))
 	lines.append(TerminalLine.progress_line("incident.pdf.gpg", 3, "1.4MB/s", "00:02"))
+	lines.append(_terminal_success_line("Mail envoyé à Jean Ranoud", accent))
 
 	# Uniquement si le joueur a choisi de transmettre la vérité sur sa mère à
 	# Alizée (voir _on_validate_pressed) — adressé à Marek, seul contact
 	# joignable d'Alizée dans les données du joueur (voir osint_characters.json).
 	if _mere_block.visible and _alizee_answer == true:
 		lines.append(TerminalLine.text_line(""))
-		for command in [
-			"mailx -s \"[lb]DATA[rb] Extrait de fichier\" marek.trodan@gomail.com < /opt/whitehat/evidence/dump_extracted.txt",
-			"echo -e \"Marek,\\n\\n$(cat /opt/whitehat/evidence/dump_extracted.txt)\" | mailx -s \"Dump TXT\" marek.trodan@gomail.com",
-			"curl --url 'smtp://mail.gomail.com:25' --mail-from 'agent@whitehat.local' --mail-rcpt 'marek.trodan@gomail.com' --upload-file /opt/whitehat/evidence/dump_extracted.txt",
-			"echo \"$(date) - Mail envoyé à Marek\" >> /var/log/exfil.log",
-		]:
-			lines.append(_terminal_command_line(command, prompt, normal))
+		lines.append(_terminal_command_line("curl --url 'smtp://mail.gomail.com:25' --mail-from 'agent@whitehat.local' --mail-rcpt 'marek.trodan@gomail.com' --upload-file /opt/whitehat/evidence/dump_extracted.txt", prompt, normal))
 		lines.append(TerminalLine.progress_line("dump_extracted.txt", 1, "0.9MB/s", "00:01"))
+		lines.append(_terminal_success_line("Mail envoyé à Marek Trodan", accent))
 
 	return lines
+
+
+## "[SYS] <message>" en couleur muette — confirmation neutre entre deux
+## commandes, même recette que desktop.gd::_build_jean_dump_lines.
+func _terminal_sys_line(message: String, muted: String) -> TerminalLine:
+	return TerminalLine.text_line("[color=%s][lb]SYS[rb] %s[/color]" % [muted, message])
+
+
+## "[SUCCESS] <message>" entièrement en accent — les deux seuls passages que
+## le joueur a explicitement demandé de mettre en évidence (envoi à Jean,
+## envoi à Marek).
+func _terminal_success_line(message: String, accent: String) -> TerminalLine:
+	return TerminalLine.text_line("[color=%s][lb]SUCCESS[rb] %s[/color]" % [accent, message])
 
 
 ## "user@whitehat:~$ <commande>" — même prompt/couleurs que desktop.gd, avec
