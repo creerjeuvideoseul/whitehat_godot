@@ -89,6 +89,12 @@
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
 			  "message": "C'est ça ! Et à Saint-Malo ensuite !"
+			},
+			{
+			  "commentId": 3,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océane",
+			  "message": "D'ailleurs Marek, tu penses à ma commande ?"
 			}
 		  ]
 		},
@@ -248,6 +254,12 @@
 			  "avatar": "res://assets/avatar/portrait_marek.webp",
 			  "username": "Marek",
 			  "message": "That's right! And then on to Saint-Malo!"
+			},
+			{
+			  "commentId": 3,
+			  "avatar": "res://assets/avatar/portrait_oceane.webp",
+			  "username": "Océane",
+			  "message": "By the way, Marek, have you thought about my order?"
 			}
 		  ]
 		},
