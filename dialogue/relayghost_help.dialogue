@@ -29,8 +29,9 @@ RelayGhost: Que puis-je pour toi ?
 			RelayGhost: Essaye le nom du groupe de Marek ? Et pour le chiffre, cherche sur le darkweb d'éventuelles fuites de données.
 			RelayGhost: Tu me déçois un peu.
 
-	if not StoryVars.phone_vault_unlocked 
-		RelayGhost: Tu devrais également exploiter le module de recherche de vulnérabilités OSINT disponible dans l'en-tête de ton interface.
+	if not StoryVars.phone_vault_unlocked
+		if StoryVars.player_ask_help < 2
+			RelayGhost: Tu devrais également exploiter le module de recherche de vulnérabilités OSINT disponible dans l'en-tête de ton interface.
 		
 
 - Demander comment il va. [if not StoryVars.player_ask_feeling]
