@@ -42,7 +42,7 @@ func _ready() -> void:
 	# blanc via bbcode (même recette que clue_board_window.gd::_on_generate_report_button_pressed).
 	var white_hex := "#%s" % Palette.TEXT_NORMAL.to_html(false)
 	_new_game_confirm_dialog.set_text(
-		"[color=%s]%s[/color]\n%s" % [white_hex, tr("NEWGAME_OVERWRITE_WARNING"), tr("NEWGAME_RESTART_CONFIRM_QUESTION")],
+		"[color=%s]%s[/color]\n\n%s" % [white_hex, tr("NEWGAME_OVERWRITE_WARNING"), tr("NEWGAME_RESTART_CONFIRM_QUESTION")],
 		"COMMON_CONFIRM", "COMMON_CANCEL"
 	)
 
