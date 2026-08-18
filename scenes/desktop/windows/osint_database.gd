@@ -39,6 +39,17 @@ const _ACCENT_MAP := {
 	"ç": "c", "ñ": "n", "ÿ": "y", "œ": "oe", "æ": "ae",
 }
 
+## Fautes d'orthographe connues, tolérées mot par mot uniquement côté requête
+## (voir search) — pas une tolérance générale aux fautes de frappe, juste ces
+## variantes précises signalées par des joueurs ("Alyzée"/"Alysée" au lieu
+## d'"Alizée"). Les données elles-mêmes (data/osint_characters.json) restent
+## correctement orthographiées, seule la requête tapée par le joueur est
+## corrigée avant comparaison.
+const _QUERY_TYPO_ALIASES := {
+	"alyzee": "alizee",
+	"alysee": "alizee",
+}
+
 ## languageCode -> Array[Dictionary] (une entrée par personnage).
 var _characters_by_locale: Dictionary = {}
 
@@ -49,7 +60,8 @@ func _init() -> void:
 
 ## Cherche un personnage correspondant à `query`, dans la langue actuelle
 ## (Settings.locale). Insensible à la casse/aux accents, tolère nom et
-## prénom inversés, et matche aussi un pseudo connu. Cas particulier : si
+## prénom inversés, matche aussi un pseudo connu, et corrige quelques fautes
+## d'orthographe connues (voir _QUERY_TYPO_ALIASES). Cas particulier : si
 ## `query` correspond au pseudo du joueur, renvoie toujours sa propre fiche
 ## (characterId 0). Renvoie un dictionnaire vide si rien ne correspond.
 func search(query: String) -> Dictionary:
@@ -65,6 +77,8 @@ func search(query: String) -> Dictionary:
 	var query_tokens: PackedStringArray = normalized_query.split(" ", false)
 	if query_tokens.is_empty():
 		return {}
+	for i in query_tokens.size():
+		query_tokens[i] = _QUERY_TYPO_ALIASES.get(query_tokens[i], query_tokens[i])
 
 	for character: Dictionary in characters:
 		var haystack := _normalize(
