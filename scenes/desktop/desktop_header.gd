@@ -28,6 +28,13 @@ const TOAST_HOLD_SECONDS := 3.0
 const CPU_SPIKE_MIN_PERCENT := 80.0
 const CPU_SPIKE_MAX_PERCENT := 100.0
 
+## En dessous de cette longueur, la recherche par sous-chaîne de
+## OsintDatabase.search() matche trop large ("a" ou "al" ressort déjà
+## n'importe quel personnage dont le nom/prénom/alias contient ces lettres,
+## voir osint_database.gd) — mieux vaut ne rien chercher du tout plutôt que de
+## renvoyer un résultat non pertinent (voir _on_search_requested).
+const MIN_SEARCH_QUERY_LENGTH := 3
+
 ## Bubbled up so the owning scene (desktop.gd) decides what opening "Indice"
 ## actually means (which mission, which window) — this header doesn't know.
 signal clue_button_pressed
@@ -267,7 +274,7 @@ func get_search_field_global_rect() -> Rect2:
 
 func _on_search_requested() -> void:
 	var query := _search_field.text.strip_edges()
-	if query.is_empty():
+	if query.length() < MIN_SEARCH_QUERY_LENGTH:
 		return
 	osint_search_requested.emit(query)
 
