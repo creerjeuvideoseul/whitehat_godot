@@ -103,6 +103,18 @@ func lock_all() -> void:
 	all_unlocked_changed.emit()
 
 
+## Remet la progression à zéro (voir main_menu.gd::_start_new_game) —
+## distinct de lock_all() ci-dessus, qui est un outil de debug avec sa propre
+## sémantique de signal (rafraîchir une fenêtre déjà ouverte). Ici on quitte
+## le menu vers une toute nouvelle partie, rien n'écoute encore
+## all_unlocked_changed. Un autoload survit aux changements de scène pour
+## toute la durée du processus : sans cet appel explicite, "Nouvelle partie"
+## repartait avec tous les indices débloqués de la partie précédente encore
+## en mémoire.
+func reset() -> void:
+	_unlocked_ids.clear()
+
+
 func get_category(category_id: String) -> ClueCategory:
 	return _categories.get(category_id)
 

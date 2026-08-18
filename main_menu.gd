@@ -76,6 +76,14 @@ func _on_new_game_pressed() -> void:
 
 func _start_new_game() -> void:
 	SaveManager.delete_save()
+	# SaveManager.delete_save() ne vide que sa propre copie sur disque/en
+	# mémoire (_data) : StoryVars et ClueManager sont des autoloads distincts,
+	# qui survivent aux changements de scène pour toute la durée du
+	# processus — sans ces deux appels, une "Nouvelle partie" repartait avec
+	# les variables narratives et les indices débloqués de la partie
+	# précédente encore actifs (voir StoryVars.reset/ClueManager.reset).
+	StoryVars.reset()
+	ClueManager.reset()
 	GameClock.reset_to_story_start()
 	GameClock.start_ticking()
 	MusicPlayer.stop()

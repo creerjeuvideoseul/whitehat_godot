@@ -50,3 +50,13 @@ func get_all() -> Dictionary:
 
 func load_all(values: Dictionary) -> void:
 	_values = values.duplicate()
+
+
+## Remet ce bac à zéro (voir main_menu.gd::_start_new_game) — un autoload
+## survit aux changements de scène pour toute la durée du processus, donc
+## sans cet appel explicite, "Nouvelle partie" repartait avec les variables
+## narratives de la partie précédente encore en mémoire (ex.
+## m1_report_submitted resté vrai, faisant atterrir une toute nouvelle partie
+## directement sur le bureau "post-rapport" de la mission 1).
+func reset() -> void:
+	_values.clear()
