@@ -19,6 +19,13 @@ signal help_button_pressed
 ## everything unlocked", it just remembers which action it last took.
 var _debug_indices_unlocked: bool = false
 
+## Caché pour l'instant : inutile tant qu'une seule mission existe (tout
+## débloquer d'un coup n'a plus grand intérêt une fois la mission 1 avancée).
+## Le code de bascule (_on_debug_clue_button_pressed, ClueManager.unlock_all/
+## lock_all) reste en place tel quel, prêt à resservir pour tester la
+## mission 2+ — repasser à true le moment venu, ne pas supprimer le code.
+const DEBUG_CLUE_BUTTON_ENABLED := false
+
 
 func _ready() -> void:
 	_update_clock_label()
@@ -26,10 +33,18 @@ func _ready() -> void:
 	_thought_log_button.pressed.connect(func() -> void: thought_log_button_pressed.emit())
 	_help_button.pressed.connect(func() -> void: help_button_pressed.emit())
 
+	# IMPORTANT, à ne pas oublier avant la sortie finale du jeu : retirer ICI
+	# ET PARTOUT ailleurs tous les boutons/outils "debug" (voir
+	# Settings.IS_PRODUCTION, qui doit alors rester à true en permanence — ce
+	# garde-fou seul suffit déjà à ne rien exposer en prod, mais un passage de
+	# nettoyage explicite reste plus sûr qu'un flag qu'on pourrait oublier de
+	# vérifier).
 	if Settings.IS_PRODUCTION:
 		_debug_clue_button.queue_free()
-	else:
+	elif DEBUG_CLUE_BUTTON_ENABLED:
 		_debug_clue_button.pressed.connect(_on_debug_clue_button_pressed)
+	else:
+		_debug_clue_button.hide()
 
 
 func _update_clock_label() -> void:
