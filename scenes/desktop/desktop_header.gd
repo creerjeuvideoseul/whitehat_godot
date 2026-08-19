@@ -272,10 +272,19 @@ func get_search_field_global_rect() -> Rect2:
 	return _search_field.get_global_rect()
 
 
+## OsintDatabase.search() matche mot par mot (chaque terme séparé par un
+## espace doit apparaître dans la fiche, voir osint_database.gd) : vérifier
+## seulement la longueur totale ne suffit pas, une requête comme "a b" (3
+## caractères) passerait le garde-fou tout en gardant un terme d'une seule
+## lettre qui matche trop large. Chaque terme doit donc individuellement
+## atteindre MIN_SEARCH_QUERY_LENGTH.
 func _on_search_requested() -> void:
 	var query := _search_field.text.strip_edges()
-	if query.length() < MIN_SEARCH_QUERY_LENGTH:
+	if query.is_empty():
 		return
+	for token in query.split(" ", false):
+		if token.length() < MIN_SEARCH_QUERY_LENGTH:
+			return
 	osint_search_requested.emit(query)
 
 

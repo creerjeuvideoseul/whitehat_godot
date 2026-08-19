@@ -260,11 +260,20 @@ func _build_chat_window() -> ChatWindow:
 	return window
 
 
-func _build_relayghost_contact() -> ChatContact:
+## Base commune aux trois contacts RelayGhost (intro, rapport de fin de
+## mission, archive — voir _build_relayghost_contact/_report_contact/
+## _archive_contact) : même avatar partout, seuls l'id/le nom/le dialogue
+## varient d'un contact à l'autre.
+func _build_relayghost_contact_base(contact_id: String, contact_name: String) -> ChatContact:
 	var contact := ChatContact.new()
-	contact.contact_id = "relayghost"
-	contact.contact_name = "RelayGhost"
+	contact.contact_id = contact_id
+	contact.contact_name = contact_name
 	contact.avatar = RELAYGHOST_AVATAR
+	return contact
+
+
+func _build_relayghost_contact() -> ChatContact:
+	var contact := _build_relayghost_contact_base("relayghost", "RelayGhost")
 	contact.dialogue_resource = RELAYGHOST_DIALOGUE
 	contact.help_dialogue_resource = RELAYGHOST_HELP_DIALOGUE
 	return contact
@@ -311,10 +320,7 @@ func _archive_relayghost_history_if_needed() -> void:
 
 
 func _build_relayghost_report_contact() -> ChatContact:
-	var contact := ChatContact.new()
-	contact.contact_id = RELAYGHOST_REPORT_M1_CONTACT_ID
-	contact.contact_name = "RelayGhost"
-	contact.avatar = RELAYGHOST_AVATAR
+	var contact := _build_relayghost_contact_base(RELAYGHOST_REPORT_M1_CONTACT_ID, "RelayGhost")
 	contact.dialogue_resource = RELAYGHOST_REPORT_M1_DIALOGUE
 	return contact
 
@@ -324,11 +330,7 @@ func _build_relayghost_report_contact() -> ChatContact:
 ## dialogue_resource à lui donner, ConversationView.setup() rejoue directement
 ## le journal archivé sans jamais chercher à dérouler du dialogue en direct.
 func _build_relayghost_archive_contact() -> ChatContact:
-	var contact := ChatContact.new()
-	contact.contact_id = RELAYGHOST_ARCHIVE_CONTACT_ID
-	contact.contact_name = tr("CHAT_CONTACT_RELAYGHOST_ARCHIVE")
-	contact.avatar = RELAYGHOST_AVATAR
-	return contact
+	return _build_relayghost_contact_base(RELAYGHOST_ARCHIVE_CONTACT_ID, tr("CHAT_CONTACT_RELAYGHOST_ARCHIVE"))
 
 
 ## Once Jean's call ends, simulate the phone-dump-and-analysis sequence as a

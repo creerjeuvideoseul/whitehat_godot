@@ -143,8 +143,19 @@ func mark_clue_board_tooltip_seen() -> void:
 	_data["clue_board_tooltip_seen"] = true
 
 
+## Efface la sauvegarde ET l'état en mémoire des autres autoloads que
+## SaveManager coordonne déjà à la restauration (voir restore_story_vars/
+## restore_unlocked_indices) — un autoload survit aux changements de scène
+## pour toute la durée du processus, donc sans ça une "Nouvelle partie"
+## repartirait avec les variables narratives et indices débloqués de la
+## partie précédente encore actifs. Centralisé ici plutôt que laissé à
+## chaque appelant de s'en souvenir séparément (main_menu.gd est le seul
+## appelant actuel, mais un futur second point d'entrée "nouvelle partie"
+## n'aurait sinon aucune raison de deviner qu'il faut aussi ces deux appels).
 func delete_save() -> void:
 	_data = {}
+	StoryVars.reset()
+	ClueManager.reset()
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
 
