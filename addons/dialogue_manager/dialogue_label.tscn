@@ -14,6 +14,12 @@ shortcut_keys_enabled = false
 meta_underlined = false
 hint_underlined = false
 deselect_on_focus_loss_enabled = false
-visible_characters_behavior = 1
+# Passé de 1 (Characters After Shaping) à 0 (Characters Before Shaping) pour
+# tester si ça atténue le mot qui "saute" à la ligne suivante en cours de
+# frappe (visible_characters) — bug/quirk connu de RichTextLabel sous Godot 4
+# avec l'autowrap, pas propre à ce projet. A vérifier visuellement en jeu ;
+# si le souci persiste, la solution plus fiable est de révéler le texte mot
+# par mot plutôt que caractère par caractère (voir dialogue_label.gd::type_out).
+visible_characters_behavior = 0
 script = ExtResource("1_cital")
 skip_pause_at_abbreviations = PackedStringArray("Mr", "Mrs", "Ms", "Dr", "etc", "eg", "ex")
