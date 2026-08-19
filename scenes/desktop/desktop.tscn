@@ -4,6 +4,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_header.tscn" id="3_header"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_footer.tscn" id="4_footer"]
+[ext_resource type="PackedScene" path="res://scenes/desktop/desktop_clue_panel.tscn" id="5_clue_panel"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("2_shader")
@@ -65,5 +66,9 @@ unique_name_in_owner = true
 layout_mode = 1
 
 [node name="DesktopFooter" parent="." instance=ExtResource("4_footer")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="DesktopCluePanel" parent="." instance=ExtResource("5_clue_panel")]
 unique_name_in_owner = true
 layout_mode = 1
