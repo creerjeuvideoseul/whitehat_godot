@@ -25,6 +25,12 @@ const SLIDE_SECONDS := 0.4
 @onready var _background: Panel = %Background
 @onready var _retract_button: Button = %RetractButton
 @onready var _content_list: VBoxContainer = %ContentList
+@onready var _title_label: Label = %TitleLabel
+## Remplace _title_label une fois rétracté (voir _set_collapsed) : le titre
+## complet n'a plus la place de s'afficher correctement dans les
+## COLLAPSED_VISIBLE_WIDTH px encore visibles, une flèche seule reste lisible
+## et signale clairement qu'un clic rouvre le panneau.
+@onready var _collapsed_arrow_label: Label = %CollapsedArrowLabel
 
 var _collapsed: bool = false
 var _slide_tween: Tween
@@ -67,6 +73,12 @@ func _on_background_gui_input(event: InputEvent) -> void:
 ## rester visuellement cohérent avec les autres glissements du bureau.
 func _set_collapsed(collapsed: bool) -> void:
 	_collapsed = collapsed
+	_title_label.visible = not collapsed
+	_collapsed_arrow_label.visible = collapsed
+	# Main seulement quand le fond est réellement cliquable (replié, voir
+	# _on_background_gui_input) — flèche curseur normale une fois déployé, le
+	# fond n'ayant alors plus d'action propre.
+	_background.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if collapsed else Control.CURSOR_ARROW
 	if is_instance_valid(_slide_tween):
 		_slide_tween.kill()
 	var target_x := _expanded_position_x + (SLIDE_OFFSET if collapsed else 0.0)
