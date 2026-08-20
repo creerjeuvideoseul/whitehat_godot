@@ -30,7 +30,10 @@ IDMission;IDunique;IdCategUnique;ClueDate
 1;M1_tel_vide_marek;MAREK;2030-01-30
 1;M1_tel_vide_solution;MAREK;2030-01-30
 1;M1_sms_marek_decouverte;MAREK;2030-01-30
-1;M1_sms_marek_19jan;ALIZEE;2030-01-19
+1;M1_sms_marek_19jan;ALIZ;2030-01-19
 1;M1_osint_jean_pw;JEAN;2029-11-19
 1;M1_osint_alizee_pwpere;JEAN;2029-11-01
 1;M1_mail_crypt_marek_rdv;MERE;2030-01-30
+1;M1_sms_fac_medecine_ask;JEAN;2029-11-02
+1;M1_mail_secte_mystere;ALIZ;2030-01-19
+1;M1_sms_marek_rate_audition;ALIZ;2030-01-05
