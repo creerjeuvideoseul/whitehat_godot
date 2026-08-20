@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scenes/desktop/desktop_clue_panel.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/desktop/windows/clue_board.gd" id="2_board_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.03, 0.1, 0.07, 0.98)
@@ -74,6 +75,17 @@ theme_override_constants/margin_right = 20
 [node name="Row" type="HBoxContainer" parent="Layout/TitleBar/Margin"]
 layout_mode = 2
 mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="ExpandButton" type="Button" parent="Layout/TitleBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 44)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_type_variation = &"PrimaryButton"
+theme_override_font_sizes/font_size = 28
+text = "←"
 
 [node name="TitleLabel" type="Label" parent="Layout/TitleBar/Margin/Row"]
 unique_name_in_owner = true
@@ -102,6 +114,7 @@ theme_override_font_sizes/font_size = 28
 text = "→"
 
 [node name="Body" type="ScrollContainer" parent="Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
@@ -119,6 +132,54 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 16
+
+[node name="FullBody" type="MarginContainer" parent="Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="FullVBox" type="VBoxContainer" parent="Layout/FullBody"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="QuestionLabel" type="Label" parent="Layout/FullBody/FullVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.24, 1.0, 0.5, 1)
+theme_override_font_sizes/font_size = 24
+text = "CLUEBOARD_TITLE_M1"
+
+[node name="BoardScroll" type="ScrollContainer" parent="Layout/FullBody/FullVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="ClueBoard" type="Control" parent="Layout/FullBody/FullVBox/BoardScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_board_script")
+
+[node name="ReportRow" type="HBoxContainer" parent="Layout/FullBody/FullVBox"]
+layout_mode = 2
+
+[node name="ReportSpacer" type="Control" parent="Layout/FullBody/FullVBox/ReportRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GenerateReportButton" type="Button" parent="Layout/FullBody/FullVBox/ReportRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 56)
+layout_mode = 2
+disabled = true
+theme_type_variation = &"PrimaryButton"
+text = "CLUEBOARD_GENERATE_REPORT_BUTTON"
 
 [node name="CollapsedArrowLabel" type="Label" parent="."]
 unique_name_in_owner = true

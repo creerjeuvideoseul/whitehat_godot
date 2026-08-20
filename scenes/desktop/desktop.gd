@@ -190,6 +190,11 @@ func _ready() -> void:
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 	_clue_panel.setup(CURRENT_MISSION_ID)
+	## Même contrat que _clue_board_window ci-dessous (voir _on_clue_button_pressed) —
+	## ce panneau est un nœud permanent du bureau, pas instancié à la demande,
+	## donc câblé une bonne fois pour toutes ici plutôt qu'au premier clic.
+	_clue_panel.generate_report_requested.connect(_on_generate_report_requested)
+	_clue_panel.thought_requested.connect(_show_player_thought)
 
 	## Ajoutée comme le tout dernier enfant de Desktop (même raison que
 	## _clue_board_tooltip, voir _maybe_show_clue_board_tooltip) pour passer

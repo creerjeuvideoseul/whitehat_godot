@@ -85,6 +85,15 @@ func _rebuild_board_now() -> void:
 	_build_board()
 
 
+## A appeler après un redimensionnement externe du conteneur (ex. le panneau
+## Collecte d'indices qui passe de sa largeur étroite à sa largeur pleine,
+## voir desktop_clue_panel.gd) — setup() seul ne suffit pas ici : son
+## garde-fou "même mission déjà construite" (voir ci-dessus) empêcherait de
+## relire la nouvelle largeur disponible via _get_available_width().
+func refresh_layout() -> void:
+	_rebuild_board_now()
+
+
 func _build_board() -> void:
 	var categories := ClueManager.get_categories_for_mission(mission_id)
 	if categories.is_empty():
