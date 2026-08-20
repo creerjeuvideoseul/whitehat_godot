@@ -186,6 +186,26 @@
 		  "Téléphone": "+33 6 82 15 xx xx",
 		  "Fuites connues": "UnivNantes_Database_Leak",
 		  "Mots de passe": "IloveZidane#2026, IloveMelenchon"
+		},
+		{
+		  "characterId": 10,
+		  "Photo": "res://assets/avatar/portrait_maria.webp",
+		  "Nom": "Carré",
+		  "Prénom": "Maria",
+		  "Pseudonymes connus": "MariahC, AllIWant4U",
+		  "Lieu de naissance": "Paris",
+		  "Âge": "19",
+		  "Études": "École de musique..",
+		  "Statut": "Célibataire.",
+		  "Casier judiciaire": "Plusieurs plaintes pour nuisances sonores.",
+		  "Profession": "Étudiante en musique. Chanteuse dans un petit groupe pop.",
+		  "Adresse connue": "15 avenue de NewYork, 75008 Paris, depuis 2020",
+		  "Loisirs": "Chant, karaoké, collection de décorations de Noël.",
+		  "IP": "Française",
+		  "Email": "maria.carre@gomail.com",
+		  "Téléphone": "+33 1 12 12 xx xx",
+		  "Fuites connues": "Ditzer.",
+		  "Mots de passe": "AllIWant4U, 123456, JoyeuxNoel"
 		}
 	  ]
 	},
@@ -375,6 +395,26 @@
 		  "Phone": "+33 6 82 15 xx xx",
 		  "Known leaks": "UnivNantes_Database_Leak",
 		  "Passwords": "IloveZidane#2026, IloveMelenchon"
+		},
+		{
+		  "characterId": 10,
+		  "Photo": "res://assets/avatar/portrait_maria.webp",
+		  "Name": "Carré",
+		  "First name": "Maria",
+		  "Known alias(es)": "MariahC, Mimi2000, AllIWant4U",
+		  "Birthplace": "New York",
+		  "Age": "19",
+		  "Studies": "Music school. Specializing in vocal performance.",
+		  "Status": "Daughter of a famous local karaoke champion.",
+		  "Criminal Record": "None. Except for several noise complaints.",
+		  "Occupation": "Music student. Singer in a small pop band.",
+		  "Known address": "15 way Carey, New york, since 2020",
+		  "Hobbies": "Singing, karaoke, collecting Christmas decorations.",
+		  "IP": "USA",
+		  "Email": "maria.carre@gomail.com",
+		  "Phone": "+33 1 12 12 xx xx",
+		  "Known leaks": "Spotifie (playlist metadata).",
+		  "Passwords": "AllIWant4U, 123456"
 		}
 	  ]
 	}

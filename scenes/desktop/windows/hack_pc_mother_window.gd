@@ -25,7 +25,6 @@ var _database: ChristineDocumentDatabase
 ## sans reconstruire toute la liste — même principe que MailSection._mail_rows.
 var _document_rows: Dictionary = {}
 var _selected_document_id: int = -1
-var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
@@ -123,12 +122,6 @@ func _set_row_selected(document_id: int, is_selected: bool) -> void:
 
 
 func _show_document(document: ChristineDocumentEntry) -> void:
-	## Le tracker doit être disposé AVANT de libérer les Control de
-	## _detail_root (dont le ScrollContainer qu'il surveille) — même garde-fou
-	## que MailSection._clear_detail_root.
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-		_reveal_tracker = null
 	for child in _detail_root.get_children():
 		child.queue_free()
 
@@ -140,17 +133,11 @@ func _show_document(document: ChristineDocumentEntry) -> void:
 	_detail_root.add_child(title_label)
 
 	_detail_root.add_child(_build_content_frame(document))
-	## Une fois le cadre attaché à l'arbre (pas avant : ses Control n'ont pas
-	## de position globale valide tant qu'ils sont détachés) — voir
-	## IndiceRevealTracker.start().
-	if _reveal_tracker != null:
-		_reveal_tracker.start()
-		## Même précédent que MailSection._show_mail : ClueManager.unlock() (via
-		## le tracker ci-dessus) n'écrit rien sur disque tout seul, seul un
-		## checkpoint explicite le fait — sans ça, lire le document qui débloque
-		## M1_SOLUTION_MERE puis quitter avant tout autre point de sauvegarde
-		## perdrait l'indice.
-		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+	## ClueManager.unlock() n'écrit rien sur disque tout seul (déclenché par un
+	## clic sur le texte, voir _build_body_label) — un checkpoint explicite à
+	## l'ouverture du document reste nécessaire pour ne pas perdre la
+	## progression si le joueur quitte juste après.
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 
 ## Cadre bordé + scrollbar verticale si le contenu dépasse — même recette que
@@ -179,11 +166,8 @@ func _build_content_frame(document: ChristineDocumentEntry) -> Control:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(body)
 
-	_reveal_tracker = IndiceRevealTracker.new(scroll)
-	var body_label := _build_body_label(RichTextMarkup.strip_indice_tags(document.content))
+	var body_label := _build_body_label(document.content)
 	body.add_child(body_label)
-	for clue_id in RichTextMarkup.extract_indice_ids(document.content):
-		_reveal_tracker.watch(body_label, clue_id)
 
 	## Certificat scanné joint au document (voir ChristineDocumentEntry.image) —
 	## affiché sous le texte, en vignette bordée façon pièce jointe plutôt
@@ -224,5 +208,9 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	label.text = RichTextMarkup.html_to_bbcode(raw_text)
+	var rebuild := func(hovered_id: String) -> void:
+		label.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(raw_text, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+	rebuild.call("")
+	if raw_text.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(label, rebuild)
 	return label

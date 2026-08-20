@@ -9,9 +9,9 @@ extends Node
 ## toujours par tr() sur label_key / l'IDunique lui-même (voir
 ## translations/indices.csv), exactement comme ui.csv pour le reste de l'UI.
 ##
-## Un indice se débloque via le tag [#indice=xxx] d'une ligne de dialogue
-## (dialogue_manager), quel que soit l'écran qui l'affiche (balloon
-## narratif, chat, futur mail/sms) — voir unlock_from_tags().
+## Un indice se débloque au clic sur son passage color=indice, quel que soit
+## l'écran qui l'affiche (balloon narratif, chat, mail/SMS, fiche OSINT...) —
+## voir mark_clicked() et RichTextMarkup.wire_indice_interactions().
 
 ## Extension .txt (pas .csv) volontairement : un .csv est automatiquement pris
 ## en charge par l'importeur "CSV Translation" natif de Godot, qui ne conserve
@@ -40,6 +40,12 @@ const SOLUTION_CATEGORY_ID := "FIN"
 ## utile plus tard pour une notification/toast "nouvel indice".
 signal clue_unlocked(clue_id: String)
 
+## Emis à chaque clic sur un passage color=indice, y compris sur un indice
+## déjà débloqué — contrairement à clue_unlocked (gelé après le premier
+## déclenchement), c'est ce signal qui rejoue l'encart central (voir
+## ClueSpotlight) et redéploie le panneau latéral (voir desktop.gd).
+signal clue_clicked(clue_id: String)
+
 ## Emis par unlock_all()/lock_all() (outil de debug) : contrairement à
 ## clue_unlocked, pas d'id précis puisque tout change d'un coup — les écrans
 ## affichant des indices doivent se rafraîchir entièrement sur ce signal.
@@ -64,12 +70,14 @@ func unlock(clue_id: String) -> void:
 	clue_unlocked.emit(clue_id)
 
 
-## A appeler sur chaque ligne de dialogue affichée (balloon, chat...) :
-## débloque l'indice si la ligne porte un tag [#indice=xxx], ne fait rien
-## sinon. Sûr d'appeler systématiquement, la plupart des lignes n'ont pas ce tag.
-func unlock_from_tags(line: DialogueLine) -> void:
-	if line.has_tag("indice"):
-		unlock(line.get_tag_value("indice"))
+## A appeler quand le joueur clique un passage color=indice (voir
+## RichTextMarkup.wire_indice_interactions) — remplace l'ancien déblocage
+## automatique "à la simple apparition à l'écran" (IndiceRevealTracker,
+## supprimé). unlock() reste idempotent (effets de découverte joués une seule
+## fois) ; clue_clicked, lui, se rejoue à chaque clic.
+func mark_clicked(clue_id: String) -> void:
+	unlock(clue_id)
+	clue_clicked.emit(clue_id)
 
 
 func is_unlocked(clue_id: String) -> bool:
@@ -229,4 +237,5 @@ func _load_clues() -> void:
 		clue.mission_id = int(row[0])
 		clue.id = row[1]
 		clue.category_id = row[2]
+		clue.date = row[3] if row.size() > 3 else ""
 		_clues.append(clue)

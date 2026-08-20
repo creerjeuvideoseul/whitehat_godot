@@ -129,16 +129,30 @@ func _advance(next_id: String) -> void:
 
 func _display_line(line: DialogueLine) -> void:
 	_clear_connecting_line()
-	ClueManager.unlock_from_tags(line)
-	line.text = RichTextMarkup.resolve_dialogue_colors(line.text)
+	## L'indice éventuel de cette ligne (tag [#indice=xxx]) ne se débloque plus
+	## à l'affichage mais au clic sur le passage color=indice correspondant
+	## (voir resolve_dialogue_colors/wire_indice_interactions) — même
+	## changement que dialogue_balloon.gd.
+	var clue_id := line.get_tag_value("indice") if line.has_tag("indice") else ""
+	var raw_text := line.text
+	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id)
 
+	var label: DialogueLabel
 	if line.character == SYSTEM_CHARACTER:
-		await _type_out(_add_console_line(line))
+		label = _add_console_line(line)
+		await _type_out(label)
 	else:
 		var is_player: bool = line.character == PLAYER_CHARACTER
 		if not is_player:
 			await _show_typing_indicator()
-		await _type_out(_add_bubble(line, is_player))
+		label = _add_bubble(line, is_player)
+		await _type_out(label)
+
+	if not clue_id.is_empty():
+		var rebuild := func(hovered_id: String) -> void:
+			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
+			label.dialogue_line = line
+		RichTextMarkup.wire_indice_interactions(label, rebuild)
 
 	_log.append({ "character": line.character, "text": line.text })
 

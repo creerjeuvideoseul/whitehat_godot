@@ -53,10 +53,6 @@ const MESSAGE_TOP_MARGIN := 20
 var _database: SmsDatabase
 var _selected_conversation_id: int = -1
 var _conversation_rows: Dictionary = {}
-## Recréé à chaque conversation affichée — voir IndiceRevealTracker : un
-## indice au milieu de l'historique ne se débloque que quand son message
-## est scrollé jusqu'à devenir visible, pas dès que la conversation s'ouvre.
-var _reveal_tracker: IndiceRevealTracker
 
 ## Conversation actuellement affichée — voir _maybe_save_read_checkpoint(),
 ## qui a besoin de savoir si elle est cryptée pour ne jamais sauvegarder sur
@@ -235,9 +231,6 @@ func _show_conversation(conv: SmsConversation) -> void:
 	_read_checkpoint_saved = false
 	for child in _messages_list.get_children():
 		child.queue_free()
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-	_reveal_tracker = IndiceRevealTracker.new(_messages_scroll)
 
 	if conv.is_crypted and not PhoneVault.is_unlocked():
 		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
@@ -255,12 +248,7 @@ func _show_conversation(conv: SmsConversation) -> void:
 			_messages_list.add_child(_build_message_row(entry, conv))
 			previous_entry = entry
 
-	## Attend que _scroll_to_top() ait fini (mise en page des nouvelles bulles
-	## + scroll casé tout en haut), puis démarre la surveillance (voir
-	## IndiceRevealTracker.start() : ne pas connecter ses signaux avant que le
-	## contenu soit stable, sinon ils se déclenchent pendant la construction).
 	await _scroll_to_top()
-	_reveal_tracker.start()
 	## Une conversation assez courte pour tenir sans scroll est déjà "lue en
 	## entier" dès l'ouverture — sans ce rattrapage, elle ne déclencherait
 	## jamais _on_messages_scroll_changed (aucun événement de scroll à
@@ -375,19 +363,18 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message.add_theme_color_override("default_color", font_color)
 	message.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	var resolved := RichTextMarkup.strip_indice_tags(entry.message)
 	var is_light_bg := Palette.is_light(bg_color)
 	var highlight_color := Palette.TEXT_HIGHLIGHT_ON_LIGHT if is_light_bg else Palette.TEXT_HIGHLIGHT
 	var important_color := Palette.TEXT_IMPORTANT_ON_LIGHT if is_light_bg else Palette.TEXT_IMPORTANT
-	var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color, important_color)
-	message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
+	var clicked_color := Palette.TEXT_CLUE_CLICKED_ON_LIGHT if is_light_bg else Palette.TEXT_CLUE_CLICKED
+	var rebuild := func(hovered_id: String) -> void:
+		var resolved := RichTextMarkup.resolve_indice_tags(entry.message, highlight_color, clicked_color, hovered_id)
+		var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color, important_color)
+		message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
+	rebuild.call("")
+	if entry.message.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(message, rebuild)
 	bubble.add_child(message)
-
-	## La bulle elle-même est l'unité "visible" surveillée — un message ne
-	## porte jamais qu'un seul indice dans les données actuelles, pas besoin
-	## d'une granularité plus fine qu'une bulle entière.
-	for clue_id in RichTextMarkup.extract_indice_ids(entry.message):
-		_reveal_tracker.watch(bubble, clue_id)
 
 	return bubble
 
@@ -395,12 +382,11 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 ## Deux frames, pas une : même cause que ConversationView._scroll_to_bottom
 ## (voir ce fichier) — les bulles fraîchement construites (RichTextLabel en
 ## fit_content) ne finissent leur propre redimensionnement qu'au tri différé
-## du frame suivant. Avec une seule frame d'attente, les positions lues juste
-## après par IndiceRevealTracker.check_visible étaient encore basées sur une
-## mise en page provisoire. scroll_vertical = 0 n'a lui-même besoin d'aucune
-## mise en page (toujours valide), mais on attend quand même ces deux frames
-## ici pour que check_visible(), appelé juste après par l'appelant, lise des
-## positions fiables.
+## du frame suivant. scroll_vertical = 0 n'a lui-même besoin d'aucune mise en
+## page (toujours valide), mais on attend quand même ces deux frames ici pour
+## que _maybe_save_read_checkpoint(), appelé juste après par l'appelant, lise
+## une position de scroll (max_value/page) fiable plutôt qu'une valeur encore
+## provisoire.
 func _scroll_to_top() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame

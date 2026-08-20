@@ -23,13 +23,9 @@ const LABEL_COLUMN_WIDTH := 280.0
 @onready var _title_bar: PanelContainer = %TitleBar
 @onready var _close_button: Button = %CloseButton
 @onready var _content_root: VBoxContainer = %ContentRoot
-@onready var _scroll: ScrollContainer = %Body
 
 var _dragging: bool = false
 var _database: OsintDatabase = OsintDatabase.new()
-## Recréé à chaque recherche — voir IndiceRevealTracker : une fiche plus
-## haute que la fenêtre peut porter un indice qui déborde du cadre visible.
-var _reveal_tracker: IndiceRevealTracker
 
 
 func _ready() -> void:
@@ -42,9 +38,6 @@ func _ready() -> void:
 func search(query: String) -> void:
 	for child in _content_root.get_children():
 		child.queue_free()
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-	_reveal_tracker = IndiceRevealTracker.new(_scroll)
 
 	var character := _database.search(query)
 	if character.is_empty():
@@ -56,15 +49,6 @@ func search(query: String) -> void:
 		## simple ainsi et une fiche vaut la peine d'être retenue même sans
 		## indice caché dedans (recherche du bon pseudo, par exemple).
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
-
-	## Attend que la mise en page des lignes fraîchement construites soit
-	## stable, puis démarre la surveillance (voir IndiceRevealTracker.start() :
-	## ne pas connecter ses signaux avant que le contenu soit stable, sinon ils
-	## se déclenchent pendant la construction elle-même — cause réelle d'un
-	## déblocage prématuré, voir sms_section.gd pour le détail).
-	await get_tree().process_frame
-	await get_tree().process_frame
-	_reveal_tracker.start()
 
 
 ## Comme ChatWindow.nudge_position : décale la fenêtre sans jamais la sortir
@@ -183,8 +167,6 @@ func _build_identity_block(character: Dictionary, keys: Dictionary) -> Control:
 ## ligne — pour que toutes les valeurs d'une fiche démarrent alignées sur la
 ## même colonne, quelle que soit la longueur du libellé.
 func _build_field_row(label: String, raw_value: String) -> Control:
-	var value := RichTextMarkup.html_to_bbcode(RichTextMarkup.strip_indice_tags(raw_value))
-
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
 
@@ -206,14 +188,12 @@ func _build_field_row(label: String, raw_value: String) -> Control:
 	value_rich.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	value_rich.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	value_rich.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	value_rich.text = value
+	var rebuild := func(hovered_id: String) -> void:
+		value_rich.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(raw_value, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+	rebuild.call("")
+	if raw_value.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(value_rich, rebuild)
 	row.add_child(value_rich)
-
-	## La ligne entière (clé + valeur) est l'unité surveillée — un champ peut
-	## porter plusieurs indices à la fois (ex. les mots de passe), tous
-	## débloqués ensemble puisqu'ils sont physiquement côte à côte.
-	for clue_id in RichTextMarkup.extract_indice_ids(raw_value):
-		_reveal_tracker.watch(row, clue_id)
 
 	return row
 
@@ -234,8 +214,6 @@ func _build_note_section(raw_note: String) -> Control:
 
 
 func _build_note(raw_note: String) -> RichTextLabel:
-	var note := RichTextMarkup.html_to_bbcode(RichTextMarkup.strip_indice_tags(raw_note))
-
 	var rich := RichTextLabel.new()
 	rich.bbcode_enabled = true
 	rich.selection_enabled = true
@@ -244,7 +222,10 @@ func _build_note(raw_note: String) -> RichTextLabel:
 	rich.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rich.add_theme_color_override("default_color", Palette.CONSOLE_TEXT)
 	rich.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	rich.text = "[i]%s[/i]" % note
-	for clue_id in RichTextMarkup.extract_indice_ids(raw_note):
-		_reveal_tracker.watch(rich, clue_id)
+	var rebuild := func(hovered_id: String) -> void:
+		var note := RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(raw_note, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+		rich.text = "[i]%s[/i]" % note
+	rebuild.call("")
+	if raw_note.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(rich, rebuild)
 	return rich

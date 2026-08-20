@@ -17,6 +17,7 @@ const CLUE_BOARD_TOOLTIP := preload("res://scenes/ui/clue_board_tooltip.tscn")
 ## Délai entre l'ouverture de "Collecte d'indices" et l'apparition de la bulle
 ## d'aide "recherche darkweb" (voir _maybe_show_clue_board_tooltip).
 const CLUE_BOARD_TOOLTIP_DELAY_SECONDS := 1.5
+const CLUE_SPOTLIGHT := preload("res://scenes/ui/clue_spotlight.tscn")
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
@@ -125,6 +126,7 @@ const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 @onready var _footer: Control = %DesktopFooter
 @onready var _header: DesktopHeader = %DesktopHeader
 @onready var _phone_section_host: Control = %PhoneSectionHost
+@onready var _clue_panel: DesktopCluePanel = %DesktopCluePanel
 
 ## Kept so pressing "Indice" a second time re-shows the same window (and its
 ## already-unlocked state) instead of rebuilding it from scratch — this
@@ -140,6 +142,11 @@ var _clue_board_tooltip: ClueBoardTooltip = null
 ## CLUE_BOARD_TOOLTIP_DELAY_SECONDS) — évite qu'un second clic sur "Indice"
 ## pendant ce délai ne relance une seconde attente en parallèle.
 var _clue_board_tooltip_pending: bool = false
+
+## Encart central affiché au clic sur un passage color=indice (voir
+## _on_clue_clicked) — instance unique réutilisée (voir clue_spotlight.gd),
+## contrairement à _clue_board_tooltip qui se recrée à chaque fois.
+var _clue_spotlight: ClueSpotlight = null
 
 ## Même principe que _clue_board_window : une seule fenêtre "Analyse
 ## Rétrospective" réutilisée à chaque clic sur le bouton "Pensées" du footer —
@@ -182,6 +189,14 @@ func _ready() -> void:
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
 	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
+	_clue_panel.setup(CURRENT_MISSION_ID)
+
+	## Ajoutée comme le tout dernier enfant de Desktop (même raison que
+	## _clue_board_tooltip, voir _maybe_show_clue_board_tooltip) pour passer
+	## devant toutes les fenêtres, header et footer compris.
+	_clue_spotlight = CLUE_SPOTLIGHT.instantiate()
+	add_child(_clue_spotlight)
+	ClueManager.clue_clicked.connect(_on_clue_clicked)
 
 	# Positionné en mémoire par report_generation_screen.gd::_on_validate_pressed
 	# juste avant la fenêtre système d'envoi du rapport — vrai ici seulement si
@@ -507,6 +522,15 @@ func _on_clue_button_pressed() -> void:
 		_window_layer.add_child(_clue_board_window)
 
 	_maybe_show_clue_board_tooltip()
+
+
+## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
+## OSINT, document piraté...) affiche son texte complet au centre de l'écran
+## et déploie le panneau latéral Collecte d'indices — voir ClueSpotlight et
+## DesktopCluePanel.expand().
+func _on_clue_clicked(clue_id: String) -> void:
+	_clue_spotlight.show_clue(clue_id)
+	_clue_panel.expand()
 
 
 ## Bulle d'aide "recherche darkweb" (voir ClueBoardTooltip) : montrée une

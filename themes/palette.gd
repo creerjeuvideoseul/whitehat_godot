@@ -103,6 +103,16 @@ const TEXT_IMPORTANT := Color(1.0, 0.401, 0.295, 1.0)
 ## besoin de cette variante — voir html_to_bbcode() pour <color=important>.
 const TEXT_IMPORTANT_ON_LIGHT := Color(0.644, 0.081, 0.158, 1.0)
 
+## Couleur d'un passage <color=indice> une fois son indice débloqué (clic, voir
+## RichTextMarkup.resolve_indice_tags/resolve_dialogue_colors) — copie exacte
+## de TEXT_IMPORTANT "pour le moment" (demande utilisateur) : un rôle
+## sémantique distinct malgré la même valeur, à faire diverger plus tard si
+## besoin sans toucher aux appelants.
+const TEXT_CLUE_CLICKED := Color(1.0, 0.401, 0.295, 1.0)
+
+## Variante fond clair de TEXT_CLUE_CLICKED, même recette que TEXT_IMPORTANT_ON_LIGHT.
+const TEXT_CLUE_CLICKED_ON_LIGHT := Color(0.644, 0.081, 0.158, 1.0)
+
 ## Bordure des panneaux d'indices "de résolution" (catégories FIN/FINSECONDAIRE
 ## du tableau d'enquête, voir ClueBoard._apply_panel_state) une fois débloqués —
 ## même bleu que ImportantButton (voir themes/main_theme.tres), pour rappeler

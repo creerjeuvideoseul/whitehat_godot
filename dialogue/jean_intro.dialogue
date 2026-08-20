@@ -13,7 +13,7 @@ Player: C'est White Hat.
 	Player: Que puis-je pour vous ?
 	Jean: Bon... enfin quelqu'un qui va servir à quelque chose.
 
-Jean: Ma fille Alizée a disparu [color=important]le jour de ses dix-huit ans.[/color] [#indice=M1_sms_o_18_ans]
+Jean: Ma fille Alizée a disparu [color=indice]le jour de ses dix-huit ans.[/color] [#indice=M1_sms_o_18_ans]
 Jean: Je lui avais préparé un gâteau.
 Jean: Deux jours plus tard, toujours rien ! Et la police refuse de bouger sous prétexte qu'elle est majeure.
 Jean: C'est une honte.
@@ -54,7 +54,7 @@ Jean: Évidemment ! C'est pas un inconnu d'ailleurs, je lui ai déjà acheté un
 	Player: Impressionnant, vous êtes un vrai hacker !
 	Jean: Merci. Mais j'attends une ristourne, vu que j'ai fait le plus gros.
 	
-Jean: Par contre, le [color=important]téléphone est étonnamment vide[/color], peu de sms, mail, ou images.
+Jean: Par contre, le [color=indice]téléphone est étonnamment vide[/color], peu de sms, mail, ou images. [#indice=M1_jean_tel_vide]
 Jean: Et y'a un truc [color=important]crypté[/color] que j'ai pas réussi à lire.
 Jean: Bref, à vous de jouer.
 

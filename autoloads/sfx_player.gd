@@ -10,9 +10,9 @@ const SFX_BUS := "SFX"
 ## ClueManager.clue_unlocked (qui ne s'émet qu'une fois par indice, jamais en
 ## rejouant un indice déjà connu) couvre toutes les sources à la fois :
 ## dialogue, chat en direct, SMS, mail, galerie, OSINT n'ont donc rien de
-## spécifique à faire pour ce son, il suffit qu'ils appellent
-## ClueManager.unlock() au bon moment (voir IndiceRevealTracker pour les
-## écrans scrollables).
+## spécifique à faire pour ce son — il se déclenche tout seul dès que le
+## joueur clique le passage color=indice correspondant (voir
+## ClueManager.mark_clicked()).
 const CLUE_REVEAL_SFX := preload("res://assets/audio/sound/tithuh-level-up-02-528919.mp3")
 ## Laisse un instant au joueur avant de signaler la découverte — un son
 ## littéralement au pixel près où l'indice devient visible arrivait trop tôt,

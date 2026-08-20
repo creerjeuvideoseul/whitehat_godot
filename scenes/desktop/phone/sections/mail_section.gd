@@ -75,11 +75,10 @@ const MAIL_MUSIC_FADE_SECONDS := 1.0
 var _database: MailDatabase
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
-var _reveal_tracker: IndiceRevealTracker
 ## Clignotement du bouton "MÉTADONNÉES" tant qu'on n'a pas cliqué dessus —
 ## voir _build_metadata_section. Tué avant de libérer le bouton (voir
-## _clear_detail_root) : même risque que le tracker ci-dessus si on laissait
-## un Tween continuer de cibler un Control déjà libéré au mail suivant.
+## _clear_detail_root) : sinon un Tween continuerait de cibler un Control déjà
+## libéré au mail suivant.
 var _metadata_blink_tween: Tween
 ## Même rôle que _metadata_blink_tween, pour le bouton PIRATER LE PC une fois
 ## révélé (voir _start_hack_button_blink) — un Tween séparé, les deux boutons
@@ -141,6 +140,13 @@ func _build_mail_row(mail: MailEntry) -> Control:
 
 	var name_label := Label.new()
 	name_label.text = mail.correspondent_name
+	## Tronqué avec ellipse, même traitement que SmsSection._build_conversation_row
+	## pour son name_label — sinon un nom d'expéditeur un peu long forçait toute
+	## la colonne ListPanel à s'élargir au-delà de sa largeur fixe (398.8px,
+	## voir mail_section.tscn), désynchronisant sa largeur réelle de celle de
+	## la colonne SMS malgré une valeur identique dans les deux scènes.
+	name_label.clip_text = true
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	name_label.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
 	name_label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 	info_box.add_child(name_label)
@@ -233,14 +239,7 @@ func _set_row_selected(mail_id: int, is_selected: bool) -> void:
 		row.remove_theme_stylebox_override("panel")
 
 
-## Partagé par _show_no_selection/_show_mail : le tracker doit toujours être
-## disposé AVANT de libérer les Control de _detail_root (dont le ScrollContainer
-## qu'il surveille), sinon dispose() plante sur une instance déjà libérée au
-## prochain affichage.
 func _clear_detail_root() -> void:
-	if _reveal_tracker != null:
-		_reveal_tracker.dispose()
-		_reveal_tracker = null
 	if is_instance_valid(_metadata_blink_tween):
 		_metadata_blink_tween.kill()
 		_metadata_blink_tween = null
@@ -279,17 +278,10 @@ func _show_mail(mail: MailEntry) -> void:
 	_detail_root.add_child(_build_detail_header(mail))
 	_detail_root.add_child(_build_detail_sender_row(mail))
 	_detail_root.add_child(_build_content_frame(mail))
-	## Une fois le cadre attaché à l'arbre (pas avant : ses Control n'ont pas
-	## de position globale valide tant qu'ils sont détachés) — démarre la
-	## surveillance (voir IndiceRevealTracker.start() : ne pas connecter ses
-	## signaux avant que le contenu soit stable, sinon ils se déclenchent
-	## pendant la construction elle-même).
-	if _reveal_tracker != null:
-		_reveal_tracker.start()
+	if not _is_mail_locked(mail):
 		## Point de sauvegarde à l'ouverture d'un mail réel (envoyé ou reçu) —
-		## _reveal_tracker n'existe que pour du vrai contenu, jamais pour le
-		## texte de substitution d'un mail crypté encore verrouillé (voir
-		## _build_content_frame).
+		## jamais pour le texte de substitution d'un mail crypté encore
+		## verrouillé (voir _build_content_frame).
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 		## Musique de fond du mail (voir MailEntry.play_music) — même garde-fou
 		## que le point de sauvegarde ci-dessus : jamais sur un mail encore
@@ -302,11 +294,15 @@ func _show_mail(mail: MailEntry) -> void:
 		if not mail.player_think.is_empty():
 			thought_requested.emit(mail.player_think)
 		## MÉTADONNÉES n'a rien à montrer tant que le mail est crypté et pas
-		## encore déverrouillé (voir _reveal_tracker ci-dessus, même garde-fou) —
-		## sinon le bouton apparaissait déjà, avant même d'avoir accès au
-		## contenu réel du mail.
+		## encore déverrouillé (voir _is_mail_locked, même garde-fou) — sinon le
+		## bouton apparaissait déjà, avant même d'avoir accès au contenu réel du
+		## mail.
 		if not mail.meta_info.is_empty():
 			_detail_root.add_child(_build_metadata_section(mail))
+
+
+func _is_mail_locked(mail: MailEntry) -> bool:
+	return mail.is_crypted and not PhoneVault.is_unlocked()
 
 
 func _build_detail_header(mail: MailEntry) -> Control:
@@ -361,7 +357,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	frame.add_child(scroll)
 
-	if mail.is_crypted and not PhoneVault.is_unlocked():
+	if _is_mail_locked(mail):
 		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
 		var locked_label := _build_body_label(tr("VAULT_ENCRYPTED_PLACEHOLDER"))
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
@@ -380,18 +376,10 @@ func _build_content_frame(mail: MailEntry) -> Control:
 		content_box.add_theme_constant_override("separation", ROW_GAP)
 		scroll.add_child(content_box)
 
-		## Un seul RichTextLabel pour tout le corps : le découper en segments
-		## autour de <indice> (un Control par segment, pour que
-		## IndiceRevealTracker sache lequel est visible) forçait un saut de
-		## ligne à chaque frontière de balise, même en plein milieu d'une
-		## phrase. L'indice se débloque donc dès que le corps entier est
-		## visible, pas seulement le passage surligné — même grain que pour
-		## une bulle SMS (voir sms_section.gd), pas une régression.
-		_reveal_tracker = IndiceRevealTracker.new(scroll)
-		var body_label := _build_body_label(RichTextMarkup.strip_indice_tags(mail.html_content))
+		## Un seul RichTextLabel pour tout le corps — _build_body_label résout
+		## et câble lui-même les éventuels <indice id> (voir plus bas).
+		var body_label := _build_body_label(mail.html_content)
 		content_box.add_child(body_label)
-		for clue_id in RichTextMarkup.extract_indice_ids(mail.html_content):
-			_reveal_tracker.watch(body_label, clue_id)
 
 		if not mail.attach_image.is_empty():
 			content_box.add_child(_build_attachment_thumbnail(mail))
@@ -404,6 +392,10 @@ func _build_content_frame(mail: MailEntry) -> Control:
 	return frame
 
 
+## `raw_text` peut porter des <indice id> (corps de mail réel, citation) ou
+## non (texte de substitution "verrouillé") — resolve_indice_tags n'a d'effet
+## que sur les balises réellement présentes, donc un seul chemin pour les deux
+## cas plutôt qu'un appelant qui pré-résout à la main.
 func _build_body_label(raw_text: String) -> RichTextLabel:
 	var label := RichTextLabel.new()
 	label.bbcode_enabled = true
@@ -414,7 +406,11 @@ func _build_body_label(raw_text: String) -> RichTextLabel:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	label.text = RichTextMarkup.html_to_bbcode(raw_text)
+	var rebuild := func(hovered_id: String) -> void:
+		label.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(raw_text, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+	rebuild.call("")
+	if raw_text.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(label, rebuild)
 	return label
 
 
@@ -437,7 +433,7 @@ func _build_quoted_previous_mail(previous: MailEntry) -> Control:
 
 	box.add_child(_build_detail_sender_row(previous))
 
-	var quoted_html := _quote_lines(RichTextMarkup.strip_indice_tags(previous.html_content))
+	var quoted_html := _quote_lines(previous.html_content)
 	var quoted_label := _build_body_label(quoted_html)
 	quoted_label.add_theme_color_override("default_color", Palette.CONSOLE_TEXT)
 	box.add_child(quoted_label)

@@ -45,18 +45,11 @@ func _ready() -> void:
 	)
 
 
-## L'indice éventuel de la publication se débloque à l'ouverture du détail —
-## comme un tag [#indice=xxx] de dialogue, voir ClueManager.unlock() — mais
-## jamais tant que la publication reste chiffrée et le coffre verrouillé.
 func show_post(post: GalleryPost) -> void:
 	var locked := post.is_crypted and not PhoneVault.is_unlocked()
 
 	_title_label.text = tr("MAIL_ENCRYPTED_TITLE") if locked else post.title
 	_date_label.text = "" if locked else PhoneTime.format_timestamp(post.timestamp)
-
-	if not locked and not post.indice.is_empty():
-		ClueManager.unlock(post.indice)
-		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 	for child in _detail_root.get_children():
 		child.queue_free()
@@ -111,10 +104,11 @@ func _build_description(post: GalleryPost) -> Control:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
-	for clue_id in RichTextMarkup.extract_indice_ids(post.description):
-		ClueManager.unlock(clue_id)
-	var resolved := RichTextMarkup.strip_indice_tags(post.description)
-	label.text = RichTextMarkup.html_to_bbcode(resolved)
+	var rebuild := func(hovered_id: String) -> void:
+		label.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(post.description, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+	rebuild.call("")
+	if post.description.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(label, rebuild)
 	return label
 
 
@@ -145,7 +139,11 @@ func _build_comment_row(comment: GalleryComment) -> Control:
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	message_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
-	message_label.text = RichTextMarkup.html_to_bbcode(comment.message)
+	var rebuild := func(hovered_id: String) -> void:
+		message_label.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(comment.message, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
+	rebuild.call("")
+	if comment.message.contains("<indice id="):
+		RichTextMarkup.wire_indice_interactions(message_label, rebuild)
 	box.add_child(message_label)
 
 	return box

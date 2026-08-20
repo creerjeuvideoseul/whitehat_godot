@@ -1,0 +1,2 @@
+IDMission;IDClue;IDClue2;IDClueSolution
+1;M1_tel_vide_jean;M1_tel_vide_marek;M1_tel_vide_solution

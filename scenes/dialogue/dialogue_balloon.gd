@@ -88,8 +88,18 @@ func start(with_dialogue_resource: DialogueResource = null, title: String = "", 
 func apply_dialogue_line() -> void:
 	mutation_cooldown.stop()
 
-	ClueManager.unlock_from_tags(dialogue_line)
-	dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(dialogue_line.text)
+	## L'indice éventuel de cette ligne (tag [#indice=xxx]) ne se débloque plus
+	## tout seul à l'affichage — il faut désormais cliquer le passage
+	## color=indice correspondant (voir resolve_dialogue_colors, qui le rend
+	## cliquable, et wire_indice_interactions plus bas).
+	var clue_id := dialogue_line.get_tag_value("indice") if dialogue_line.has_tag("indice") else ""
+	var raw_text := dialogue_line.text
+	var rebuild_dialogue_colors := func(hovered_id: String) -> void:
+		dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
+		dialogue_label.dialogue_line = dialogue_line
+	rebuild_dialogue_colors.call("")
+	if not clue_id.is_empty():
+		RichTextMarkup.wire_indice_interactions(dialogue_label, rebuild_dialogue_colors)
 
 	progress_label.hide()
 	is_waiting_for_input = false
