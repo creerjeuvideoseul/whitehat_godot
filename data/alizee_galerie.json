@@ -10,7 +10,6 @@
 		  "timestamp": "2030-01-22T11:14:02",
 		  "nbLike": 7,
 		  "isCrypted": 0,
-		  "indice": "",
 		  "description": "Maria carré ! <color=important>Ma chanson favorite.</color>",
 		  "comments": [
 			{
@@ -34,7 +33,6 @@
 		  "timestamp": "2029-12-31T23:58:02",
 		  "nbLike": 15,
 		  "isCrypted": 0,
-		  "indice": "",
 		  "description": "Arrête de me prendre en photo quand je suis comme ça !",
 		  "comments": [
 			{
@@ -58,7 +56,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "On n'est jamais trop prudent de nos jours !<br>Tu as bien fait.<br>#selfdefense."
+			  "message": "On n'est jamais trop prudent de nos jours !<br>Tu as bien fait. <indice=\"M1_galerie_bomb\"><color=indice>C'est important de savoir se défendre #selfdefense</color></indice>.<br>"
 			}
 		  ]
 		},
@@ -223,7 +221,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "You can never be too careful these days!<br>You did the right thing.<br>#selfdefense."
+			  "message": "You can never be too careful these days!<br>You did the right thing.<indice=\"M1_galerie_bomb\"><color=indice>It's important to know how to defend yourself #selfdefense</color></indice>."
 			}
 		  ]
 		},

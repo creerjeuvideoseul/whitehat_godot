@@ -12,7 +12,7 @@
 		  "timestamp": "2029-11-01T09:14:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Bonjour Mademoiselle Ranoud,<br><br>Après étude de votre dossier pour le PASS 2030 à l'Université de Nantes, nous regrettons de vous informer que <indice id=\"M1_Alizee_candidature_non\"><color=indice>votre candidature n'a pas été retenue.</color></indice><br><br>En raison d'un nombre élevé de demandes, nous ne pouvons satisfaire tous les candidats. <br>Nous vous souhaitons une pleine réussite pour la suite.<br><br>Cordialement,<br>Claire Moreau<br>Chargée des admissions – Université de Nantes",
+		  "html_content": "Bonjour Mademoiselle Ranoud,<br><br>Après étude de votre dossier pour le PASS 2030 à l'Université de Nantes, nous regrettons de vous informer que <indice id=\"M1_mail_fac_medecine_refus\"><color=indice>votre candidature n'a pas été retenue.</color></indice><br><br>En raison d'un nombre élevé de demandes, nous ne pouvons satisfaire tous les candidats. <br>Nous vous souhaitons une pleine réussite pour la suite.<br><br>Cordialement,<br>Claire Moreau<br>Chargée des admissions – Université de Nantes",
 		  "meta_info": {
 			"Serveur": "mail-relay.univ-nantes.fr",
 			"Authentification": "SPF: pass, DKIM: pass",
@@ -122,7 +122,7 @@
 		  "timestamp": "2029-11-01T09:14:00",
 		  "isSentBox": 0,
 		  "isCrypted": 0,
-		  "html_content": "Hello Ms. Ranoud,<br><br>After reviewing your application for the PASS 2030 program at the University of Nantes, we regret to inform you that <index id=\"M1_Alizee_candidature_non\"><color=index>your application has not been accepted.</color></index><br><br>Due to the high number of applications, we are unable to accept all candidates. <br>We wish you every success in the future.<br><br>Sincerely,<br>Claire Moreau<br>Admissions Officer – University of Nantes",
+		  "html_content": "Hello Ms. Ranoud,<br><br>After reviewing your application for the PASS 2030 program at the University of Nantes, we regret to inform you that <index id=\"M1_mail_fac_medecine_refus\"><color=index>your application has not been accepted.</color></index><br><br>Due to the high number of applications, we are unable to accept all candidates. <br>We wish you every success in the future.<br><br>Sincerely,<br>Claire Moreau<br>Admissions Officer – University of Nantes",
 		  "meta_info": {
 			"Server": "mail-relay.univ-nantes.fr",
 			"Authentication": "SPF: pass, DKIM: pass",

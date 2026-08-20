@@ -3,11 +3,10 @@
 [ext_resource type="Script" uid="uid://b2prxovtwjx0l" path="res://main_menu.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://cao0vwmxi5662" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
 [ext_resource type="PackedScene" uid="uid://c8k3m0qgqx7yf" path="res://scenes/ui/menu_item.tscn" id="3_menuitem"]
-[ext_resource type="Texture2D" uid="uid://5n46s0khu1la" path="res://assets/UI/logo5_whitehat.png" id="4_qe12f"]
 [ext_resource type="Texture2D" uid="uid://bmqy6dkwc7j58" path="res://assets/UI/logo_whitehat.svg" id="5_logo_corner"]
 [ext_resource type="Shader" uid="uid://bcjganmguqihc" path="res://assets/shaders/logo_fade.gdshader" id="6_fade_shader"]
 [ext_resource type="Texture2D" uid="uid://bjgskf4w02knq" path="res://assets/UI/logo_sentinelle.png" id="7_8qtwp"]
-[ext_resource type="Texture2D" path="res://assets/video/logo_animate.tres" id="8_logo_video"]
+[ext_resource type="Texture2D" uid="uid://bqleoyoh215kx" path="res://assets/video/logo_animate.tres" id="8_logo_video"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_bg"]
 shader = ExtResource("2_shader")
