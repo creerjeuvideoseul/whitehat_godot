@@ -29,11 +29,11 @@ M1_sms_o_mere_abandon,La mère d'Alizée l'a abandonnée à ses 8 ans. Pourquoi 
 M1_pw_mere,Mot de passe utilisé par la mère <color=indice>Putriku_tersayang</color>.,Password used by the mother <color=indice>Putriku_tersayang</color>.
 M1_osint_marek_trafic,Marek a déjà été arrêté pour trafic de cannabis.,Marek has previously been arrested for trafficking cannabis.
 
-M1_sms_fac_medecine_ask,Son père demande si Alizée a reçu une réponse de la FAC de médecine.,Her father asks if Alizée has received a response from the medical school.
+M1_sms_fac_medecine_ask,Son père demande si Alizée a reçu une réponse de la fac de médecine.,Her father asks if Alizée has received a response from the medical school.
 M1_mail_fac_medecine_refus,Alizée a reçu un refus de sa fac de médecine.,Alizée was rejected by her medical school.
 
-M1_tel_vide_jean,Le téléphone d'Alizée est étonnamment vide. Pourquoi ?,Alizée's phone is surprisingly empty. Why ?
-M1_tel_vide_marek,"Marek a demandé à Alizée de nettoyer son portable, au cas où.","Marek asked Alizée to clean his cell phone, just in case."
+M1_tel_vide_jean,Le téléphone d'Alizée est étonnamment vide. Pourquoi ?,Alizée's phone is surprisingly empty. Why?
+M1_tel_vide_marek,"Marek a demandé à Alizée de nettoyer son portable, au cas où.","Marek asked Alizée to clean her phone, just in case."
 M1_tel_vide_solution,"Le téléphone d'Alizée est vide, car Marek lui a conseillé de le faire pour éviter les représailles de son père.","Alizée's phone is empty because Marek advised her to clear it to avoid her father's retaliation."
 
 M1_mail_secte_mystere,"Alizée a écrit à un site particulier. Pourquoi ? Lequel ?","Alizée wrote to a specific website. Why? Which one?"
@@ -52,7 +52,7 @@ M1_sms_cryp_m_disparue,"Après le mail de sa mère le 19 janvier, Alizée est pa
 M1_sms_marek_19jan,"Alizée a fait quelque chose de grave le 19 janvier. Qu'a-t-elle fait ?","Alizée did something serious on January 19. What did she do?"
 
 M1_mail_crypt_marek_rdv,"Alizée a refusé de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
-M1_osint_jean_pw,Le père impose un mot de passe EliteShot$83$ à sa fille pour certaines applications.,The father imposes a password EliteShot$83$ on his daughter for certain apps.
+M1_osint_jean_pw,Le père impose le mot de passe EliteShot$83$ à sa fille pour certaines applications.,The father imposes the password EliteShot$83$ on his daughter for certain apps.
 
-M1_galerie_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de quelqu'un.","Alizée bought a <color=index>stun grenade</color> to defend herself against someone."
-M1_sms_cryp_m_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de son père.","Alizée bought a <color=index>stun gun</color> to defend herself against her father."
+M1_galerie_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de quelqu'un.","Alizée bought a <color=indice>personal alarm</color> to defend herself against someone."
+M1_sms_cryp_m_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de son père.","Alizée bought a <color=indice>personal alarm</color> to defend herself against her father."
