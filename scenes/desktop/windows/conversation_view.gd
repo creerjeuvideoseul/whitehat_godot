@@ -124,8 +124,7 @@ func _replay_saved_log() -> void:
 		## de la reprise — bug reporté par le joueur.
 		var raw_text: String = entry.text
 		var clue_id: String = entry.get("clue_id", "")
-		var base_font_size: int = Palette.SIZE_SMALL if entry.character == SYSTEM_CHARACTER else Palette.SIZE_BODY
-		line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, "", base_font_size)
+		line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id)
 
 		var label: DialogueLabel
 		if entry.character == SYSTEM_CHARACTER:
@@ -140,7 +139,7 @@ func _replay_saved_log() -> void:
 		## une reprise de sauvegarde.
 		if not clue_id.is_empty():
 			var rebuild := func(hovered_id: String) -> void:
-				line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id, base_font_size)
+				line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
 				label.text = line.text
 			RichTextMarkup.wire_indice_interactions(label, rebuild)
 
@@ -170,11 +169,7 @@ func _display_line(line: DialogueLine) -> void:
 	var clue_id := line.get_tag_value("indice") if line.has_tag("indice") else ""
 	var hint_id := line.get_tag_value("hint") if line.has_tag("hint") else ""
 	var raw_text := line.text
-	## Taille réelle du label qui va afficher cette ligne (voir
-	## _add_console_line/_add_bubble ci-dessous) — nécessaire ici pour que
-	## resolve_dialogue_colors sache de combien agrandir [color=important].
-	var base_font_size: int = Palette.SIZE_SMALL if line.character == SYSTEM_CHARACTER else Palette.SIZE_BODY
-	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, "", base_font_size)
+	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id)
 
 	var label: DialogueLabel
 	if line.character == SYSTEM_CHARACTER:
@@ -189,7 +184,7 @@ func _display_line(line: DialogueLine) -> void:
 
 	if not clue_id.is_empty():
 		var rebuild := func(hovered_id: String) -> void:
-			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id, base_font_size)
+			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
 			# `label.dialogue_line = line` ne suffit pas ici : `line` est déjà
 			# la même référence que `label.dialogue_line` (assignée une
 			# première fois dans _add_bubble/_add_console_line), et son setter

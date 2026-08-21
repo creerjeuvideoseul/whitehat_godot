@@ -103,7 +103,7 @@ PHONE_ICON_MAIL,Mail,Mail
 PHONE_ICON_GALLERY,Galerie,Gallery
 PHONE_ICON_VAULT,Coffre-fort,Vault
 DESKTOP_SEARCH_BUTTON,Rechercher sur le darkweb,Search the dark web
-CLUEBOARD_TOOLTIP_DARKWEB_HINT,Essayez d'écrire "Jean Ranoud" dans le moteur de recherche du darkweb. Pensez à le faire pour chaque personnage.,Try typing "Jean Ranoud" into the dark web search engine.  Be sure to do this for each character.
+CLUEBOARD_TOOLTIP_DARKWEB_HINT,Essayez d'écrire <color=important>Jean Ranoud</color> dans le moteur de recherche du darkweb. Pensez à le faire pour chaque personnage.,Try typing "Jean Ranoud" into the dark web search engine.  Be sure to do this for each character.
 TOOLTIP_CLUE_HINT,"Les mots soulignés en ""orange"" sont des indices. Cliquez dessus pour les débloquer.","Words highlighted in orange are clues. Click them to unlock them."
 CLUEBOARD_PANEL_HINT,Retrouvez ici tous les indices de votre mission. Vous pouvez rétracter cette fenêtre avec ← et →,Find all your mission's clues here. You can collapse this window with ← and →.
 OSINT_WINDOW_TITLE,Résultat OSINT : Profilage en ligne & fuites de données,OSINT Results: Online Profiling & Data Leaks

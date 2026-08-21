@@ -27,7 +27,7 @@ signal closed
 
 @onready var _box: Panel = %Box
 @onready var _margin: MarginContainer = %Margin
-@onready var _message_label: Label = %MessageLabel
+@onready var _message_label: RichTextLabel = %MessageLabel
 @onready var _close_button: Button = %CloseButton
 
 ## Position locale (en x) de la pointe de la flèche — normalement
@@ -49,7 +49,11 @@ func _ready() -> void:
 ## Clé ui.csv du message à afficher — à appeler avant point_at(), qui a
 ## besoin du texte déjà en place pour calculer la hauteur du contenu.
 func set_text(translation_key: String) -> void:
-	_message_label.text = tr(translation_key)
+	## html_to_bbcode : même pseudo-HTML que les données mail/SMS/OSINT (voir
+	## rich_text_markup.gd) pour <color=important> — ce texte vient de ui.csv,
+	## pas d'un fichier .dialogue, donc pas de resolve_dialogue_colors ici
+	## (pas de clue_id, rien à rendre cliquable).
+	_message_label.text = RichTextMarkup.html_to_bbcode(tr(translation_key))
 
 
 ## Recalcule la hauteur puis positionne la bulle pour que la pointe de la

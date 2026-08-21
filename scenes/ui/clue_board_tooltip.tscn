@@ -46,12 +46,15 @@ theme_override_constants/margin_bottom = 15
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="MessageLabel" type="Label" parent="Box/Margin/VBox"]
+[node name="MessageLabel" type="RichTextLabel" parent="Box/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 autowrap_mode = 3
-theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_font_sizes/normal_font_size = 24
 text = "CLUEBOARD_TOOLTIP_DARKWEB_HINT"
 
 [node name="ButtonRow" type="HBoxContainer" parent="Box/Margin/VBox"]

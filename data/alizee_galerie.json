@@ -56,7 +56,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "On n'est jamais trop prudent de nos jours !<br>Tu as bien fait. <indice=\"M1_galerie_bomb\"><color=indice>C'est important de savoir se défendre #selfdefense</color></indice>.<br>"
+			  "message": "On n'est jamais trop prudent de nos jours !<br>Tu as bien fait. <indice id=\"M1_galerie_bomb\"><color=indice>C'est important de savoir se défendre #selfdefense</color></indice>.<br>"
 			}
 		  ]
 		},
@@ -221,7 +221,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "You can never be too careful these days!<br>You did the right thing.<indice=\"M1_galerie_bomb\"><color=indice>It's important to know how to defend yourself #selfdefense</color></indice>."
+			  "message": "You can never be too careful these days!<br>You did the right thing.<indice id=\"M1_galerie_bomb\"><color=indice>It's important to know how to defend yourself #selfdefense</color></indice>."
 			}
 		  ]
 		},
