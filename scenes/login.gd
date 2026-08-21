@@ -24,6 +24,10 @@ func _ready() -> void:
 
 	_pseudo_edit.text_changed.connect(_on_pseudo_text_changed)
 	_connect_button.pressed.connect(_on_connect_pressed)
+	## ENTER valide le formulaire depuis l'un ou l'autre champ, comme un clic
+	## sur SE CONNECTER (même recette que desktop_header.gd::_search_field).
+	_pseudo_edit.text_submitted.connect(func(_text: String) -> void: _on_connect_pressed())
+	_password_edit.text_submitted.connect(func(_text: String) -> void: _on_connect_pressed())
 	_uptime_timer.timeout.connect(_update_uptime_label)
 	_update_uptime_label()
 	## BBCode : ne peut pas compter sur l'auto-traduction d'un RichTextLabel

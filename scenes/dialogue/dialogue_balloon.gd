@@ -96,7 +96,14 @@ func apply_dialogue_line() -> void:
 	var raw_text := dialogue_line.text
 	var rebuild_dialogue_colors := func(hovered_id: String) -> void:
 		dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
-		dialogue_label.dialogue_line = dialogue_line
+		# `dialogue_label.dialogue_line = dialogue_line` ne suffit pas après le
+		# tout premier appel : dialogue_label.dialogue_line est alors déjà la
+		# même référence que `dialogue_line`, et son setter personnalisé (voir
+		# dialogue_label.gd) ignore une réassignation de la même instance — un
+		# survol/clic ultérieur ne recolorait donc jamais le texte. .text
+		# directement fait le même travail que ce setter (_update_text() ne
+		# fait que ça) sans dépendre de sa comparaison.
+		dialogue_label.text = dialogue_line.text
 	rebuild_dialogue_colors.call("")
 	if not clue_id.is_empty():
 		RichTextMarkup.wire_indice_interactions(dialogue_label, rebuild_dialogue_colors)

@@ -13,6 +13,7 @@ const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
 const CLUE_SPOTLIGHT := preload("res://scenes/ui/clue_spotlight.tscn")
+const HELP_BUBBLE := preload("res://scenes/ui/help_bubble.tscn")
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
@@ -126,6 +127,11 @@ const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 ## Encart central affiché au clic sur un passage color=indice (voir
 ## _on_clue_clicked) — instance unique réutilisée (voir clue_spotlight.gd).
 var _clue_spotlight: ClueSpotlight = null
+
+## Bulle d'aide "les mots orange sont des indices" (voir
+## _on_chat_clue_line_shown) — gardée pour ne jamais en superposer une
+## seconde si le signal se redéclenchait (ex. conversation relancée).
+var _relay_clue_hint_bubble: HelpBubble = null
 
 ## Une seule fenêtre "Analyse Rétrospective" réutilisée à chaque clic sur le
 ## bouton "Pensées" du footer — voir _on_thought_log_button_pressed.
@@ -251,7 +257,30 @@ func _build_chat_window() -> ChatWindow:
 			await get_tree().create_timer(JEAN_DUMP_TERMINAL_DELAY_SECONDS).timeout
 			_play_jean_dump_terminal()
 	)
+	window.clue_line_shown.connect(_on_chat_clue_line_shown)
 	return window
+
+
+## Bulle d'aide "les mots orange sont des indices" (voir HelpBubble) — ne se
+## déclenche que sur le tout premier indice jamais montré au joueur
+## (intro_relay_perseverant, voir relayghost_intro.dialogue ligne "rares"),
+## pas sur clue_line_shown en général : les indices suivants n'ont plus
+## besoin de l'explication. Positionnée à GAUCHE de la fenêtre de chat (flèche
+## à droite, voir HelpBubble.point_at(..., false)), verticalement centrée
+## dessus — pas de suivi en direct si le joueur déplace la fenêtre ensuite,
+## même limite que ClueBoardTooltip.
+func _on_chat_clue_line_shown(clue_id: String) -> void:
+	if clue_id != "intro_relay_perseverant" or is_instance_valid(_relay_clue_hint_bubble):
+		return
+	var window_rect := _chat_window.get_global_rect()
+	var target := Vector2(window_rect.position.x, window_rect.position.y + window_rect.size.y * 0.5)
+	_relay_clue_hint_bubble = HELP_BUBBLE.instantiate()
+	add_child(_relay_clue_hint_bubble)
+	_relay_clue_hint_bubble.set_text("TOOLTIP_CLUE_HINT")
+	_relay_clue_hint_bubble.point_at(target, false)
+	_relay_clue_hint_bubble.closed.connect(func() -> void:
+		_relay_clue_hint_bubble.queue_free()
+	)
 
 
 ## Base commune aux trois contacts RelayGhost (intro, rapport de fin de

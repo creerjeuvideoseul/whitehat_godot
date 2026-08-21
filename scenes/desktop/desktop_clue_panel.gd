@@ -4,6 +4,14 @@ class_name DesktopCluePanel
 ## distinct des fenêtres de WindowLayer (ChatWindow, OsintWindow...) :
 ## jamais réduit dans la barre des tâches, seulement rétractable/déployable
 ## sur lui-même, sur 3 niveaux :
+##
+## Nœud placé APRÈS WindowLayer dans desktop.tscn : l'ordre des enfants d'un
+## Control pilote l'empilement visuel (dernier enfant = premier plan, voir
+## desktop.gd::_bring_window_to_front), donc ce panneau doit rester devant le
+## téléphone d'Alizée et les autres fenêtres du bureau une fois déployé
+## (NARROW/FULL) — sauf devant les terminaux "système" (TerminalConsole
+## ajoutés directement en enfant de Desktop, ex. dump de données après Jean),
+## qui restent au-dessus puisqu'ils s'ajoutent encore plus tard à l'arbre.
 ## - COLLAPSED : collé au bord droit, seuls COLLAPSED_VISIBLE_WIDTH px visibles.
 ## - NARROW : largeur EXPANDED_WIDTH, liste d'indices débloqués (bulles).
 ## - FULL : FULL_WIDTH_RATIO de l'écran, affiche la question de mission +
@@ -135,6 +143,16 @@ func setup(new_mission_id: int) -> void:
 	_rebuild_content()
 	_update_report_button()
 
+	## Bureau vierge (aucun indice de cette mission encore débloqué, ex.
+	## tout juste après "SE CONNECTER" sur une nouvelle partie) : rien à
+	## montrer, le panneau démarre donc rétracté (niveau 0) plutôt que
+	## NARROW par défaut — instant (voir _apply_state) pour ne pas montrer
+	## de glissement à peine le bureau affiché. Sans effet sur une
+	## sauvegarde reprise en cours d'enquête : le panneau garde alors son
+	## état NARROW par défaut pour montrer les indices déjà trouvés.
+	if not ClueManager.has_mission_started(mission_id):
+		_apply_state(PanelState.COLLAPSED, true)
+
 
 ## A appeler quand un indice est cliqué ailleurs sur le bureau (voir
 ## desktop.gd, ClueManager.clue_clicked) — déploie le panneau en NARROW s'il
@@ -248,7 +266,10 @@ func _on_background_gui_input(event: InputEvent) -> void:
 ## en un seul mouvement (voir _animate_box) — glissement simple choisi pour
 ## rester cohérent avec le repli existant, juste appliqué à `size` en plus de
 ## `position` pour les transitions qui changent réellement de largeur.
-func _apply_state(new_state: PanelState) -> void:
+## `instant` (voir setup()) applique directement position/size finales sans
+## glissement ni fondu — pour poser l'état de départ (COLLAPSED sur un bureau
+## vierge) sans faire "voir" l'animation au joueur dès l'arrivée sur l'écran.
+func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 	if new_state == _state:
 		return
 	var previous_state := _state
@@ -259,11 +280,6 @@ func _apply_state(new_state: PanelState) -> void:
 	_expand_button.visible = new_state == PanelState.NARROW
 	_background.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if new_state == PanelState.COLLAPSED else Control.CURSOR_ARROW
 
-	if new_state == PanelState.FULL:
-		_cross_fade(_narrow_body, _full_body)
-	elif previous_state == PanelState.FULL:
-		_cross_fade(_full_body, _narrow_body)
-
 	var target_width := EXPANDED_WIDTH
 	var target_x := _narrow_position_x
 	if new_state == PanelState.COLLAPSED:
@@ -271,6 +287,19 @@ func _apply_state(new_state: PanelState) -> void:
 	elif new_state == PanelState.FULL:
 		target_width = get_viewport_rect().size.x * FULL_WIDTH_RATIO
 		target_x = _narrow_position_x + EXPANDED_WIDTH - target_width
+
+	if instant:
+		position.x = target_x
+		size.x = target_width
+		_narrow_body.visible = new_state != PanelState.FULL
+		_full_body.visible = new_state == PanelState.FULL
+		return
+
+	if new_state == PanelState.FULL:
+		_cross_fade(_narrow_body, _full_body)
+	elif previous_state == PanelState.FULL:
+		_cross_fade(_full_body, _narrow_body)
+
 	var tween := _animate_box(target_width, target_x)
 	if new_state == PanelState.FULL:
 		## ClueBoard a été construit une seule fois (voir setup(), appelé au

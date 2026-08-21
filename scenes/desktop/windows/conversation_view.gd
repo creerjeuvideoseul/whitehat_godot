@@ -8,6 +8,11 @@ class_name ConversationView
 
 signal choice_shown
 signal conversation_finished
+## Bubbled up une fois la ligne finie de s'écrire (voir _display_line),
+## quand elle porte un indice ([#indice=xxx]) — l'appelant (desktop.gd, via
+## ChatWindow) décide seul si ce clue_id précis mérite une bulle d'aide,
+## cette vue ne connaît rien de ces déclencheurs narratifs.
+signal clue_line_shown(clue_id: String)
 
 const CHAT_BUBBLE := preload("res://scenes/desktop/windows/chat_bubble.tscn")
 const PLAYER_CHARACTER := "Player"
@@ -151,8 +156,16 @@ func _display_line(line: DialogueLine) -> void:
 	if not clue_id.is_empty():
 		var rebuild := func(hovered_id: String) -> void:
 			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
-			label.dialogue_line = line
+			# `label.dialogue_line = line` ne suffit pas ici : `line` est déjà
+			# la même référence que `label.dialogue_line` (assignée une
+			# première fois dans _add_bubble/_add_console_line), et son setter
+			# personnalisé (voir dialogue_label.gd) ignore une réassignation
+			# de la même instance — le texte recoloré ne s'affichait jamais.
+			# .text directement fait le même travail que ce setter
+			# (_update_text() ne fait que ça) sans dépendre de sa comparaison.
+			label.text = line.text
 		RichTextMarkup.wire_indice_interactions(label, rebuild)
+		clue_line_shown.emit(clue_id)
 
 	_log.append({ "character": line.character, "text": line.text })
 

@@ -78,7 +78,7 @@ text = "Karine Delonay"
 [node name="DialogueLabel" type="RichTextLabel" parent="Balloon/TextBoxAnchor/TextBox/Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-mouse_filter = 2
+mouse_filter = 1
 custom_minimum_size = Vector2(0, 130)
 size_flags_vertical = 3
 theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
