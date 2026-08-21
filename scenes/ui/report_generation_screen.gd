@@ -1,7 +1,7 @@
 extends Control
 ## Écran "rapport de mission" : même chrome tête/pied (header/footer, voir
 ## desktop.tscn) que le bureau — atteint en remplaçant la scène desktop une
-## fois la confirmation validée (voir clue_board_window.gd::ReportConfirmDialog
+## fois la confirmation validée (voir desktop_clue_panel.gd::_report_confirm_dialog
 ## et desktop.gd::_on_generate_report_requested), sans retour en arrière
 ## possible.
 ##
@@ -10,7 +10,7 @@ extends Control
 ## Jean Ranoud, puis — si l'indice MERE_CLUE_ID a été trouvé pendant l'enquête —
 ## transmettre la vérité sur Christine à Alizée). "Valider le rapport" ne
 ## devient bleu/cliquable qu'une fois toutes les questions affichées
-## répondues, même recette que GÉNÉRER LE RAPPORT (voir clue_board_window.gd).
+## répondues, même recette que GÉNÉRER LE RAPPORT (voir desktop_clue_panel.gd).
 ## La validation verrouille les réponses, les persiste en mémoire (StoryVars,
 ## voir _on_validate_pressed — pas encore sauvegardé sur disque à ce stade,
 ## voir plus bas), puis enchaîne sur une fenêtre système simulant l'envoi du

@@ -6,17 +6,12 @@ extends Control
 ## (desktop_header.gd, desktop_footer.gd).
 
 const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
-const CLUE_BOARD_WINDOW := preload("res://scenes/desktop/windows/clue_board_window.tscn")
 const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
 const OSINT_WINDOW := preload("res://scenes/desktop/windows/osint_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
-const CLUE_BOARD_TOOLTIP := preload("res://scenes/ui/clue_board_tooltip.tscn")
-## Délai entre l'ouverture de "Collecte d'indices" et l'apparition de la bulle
-## d'aide "recherche darkweb" (voir _maybe_show_clue_board_tooltip).
-const CLUE_BOARD_TOOLTIP_DELAY_SECONDS := 1.5
 const CLUE_SPOTLIGHT := preload("res://scenes/ui/clue_spotlight.tscn")
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
@@ -128,38 +123,21 @@ const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 @onready var _phone_section_host: Control = %PhoneSectionHost
 @onready var _clue_panel: DesktopCluePanel = %DesktopCluePanel
 
-## Kept so pressing "Indice" a second time re-shows the same window (and its
-## already-unlocked state) instead of rebuilding it from scratch — this
-## window closes (×) rather than minimizes (see clue_board_window.gd), no
-## taskbar entry to juggle like the other windows below.
-var _clue_board_window: ClueBoardWindow = null
-
-## Bulle d'aide "recherche darkweb" (voir ClueBoardTooltip et
-## _maybe_show_clue_board_tooltip) — gardée pour ne jamais en superposer une
-## seconde tant que le joueur n'a pas fermé celle déjà affichée.
-var _clue_board_tooltip: ClueBoardTooltip = null
-## Vrai pendant le délai d'apparition de _clue_board_tooltip (voir
-## CLUE_BOARD_TOOLTIP_DELAY_SECONDS) — évite qu'un second clic sur "Indice"
-## pendant ce délai ne relance une seconde attente en parallèle.
-var _clue_board_tooltip_pending: bool = false
-
 ## Encart central affiché au clic sur un passage color=indice (voir
-## _on_clue_clicked) — instance unique réutilisée (voir clue_spotlight.gd),
-## contrairement à _clue_board_tooltip qui se recrée à chaque fois.
+## _on_clue_clicked) — instance unique réutilisée (voir clue_spotlight.gd).
 var _clue_spotlight: ClueSpotlight = null
 
-## Même principe que _clue_board_window : une seule fenêtre "Analyse
-## Rétrospective" réutilisée à chaque clic sur le bouton "Pensées" du footer —
-## voir _on_thought_log_button_pressed.
+## Une seule fenêtre "Analyse Rétrospective" réutilisée à chaque clic sur le
+## bouton "Pensées" du footer — voir _on_thought_log_button_pressed.
 var _thought_log_window: ThoughtLogWindow = null
 
-## Même principe que _clue_board_window : une seule fenêtre OSINT réutilisée
+## Même principe que _thought_log_window : une seule fenêtre OSINT réutilisée
 ## d'une recherche à l'autre (jamais de doublon, se ferme au lieu de se
 ## réduire — voir osint_window.gd), son contenu étant entièrement remplacé à
 ## chaque recherche par OsintWindow.search().
 var _osint_window: OsintWindow = null
 
-## Même principe que _clue_board_window/_osint_window : une seule fenêtre
+## Même principe que _osint_window : une seule fenêtre
 ## réutilisée, déclenchée depuis MailSection (voir mail_section.gd,
 ## hack_pc_mother_requested) tant que le mail crypté de la mère porte ce
 ## déclencheur dans meta_info.
@@ -184,21 +162,17 @@ var _chat_window: ChatWindow = null
 
 
 func _ready() -> void:
-	_header.clue_button_pressed.connect(_on_clue_button_pressed)
 	_header.osint_search_requested.connect(_on_osint_search_requested)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
-	_header.apply_resumed_clue_state(ClueManager.has_unlocked_mission_solution(CURRENT_MISSION_ID))
 	_clue_panel.setup(CURRENT_MISSION_ID)
-	## Même contrat que _clue_board_window ci-dessous (voir _on_clue_button_pressed) —
-	## ce panneau est un nœud permanent du bureau, pas instancié à la demande,
+	## Ce panneau est un nœud permanent du bureau, pas instancié à la demande,
 	## donc câblé une bonne fois pour toutes ici plutôt qu'au premier clic.
 	_clue_panel.generate_report_requested.connect(_on_generate_report_requested)
 	_clue_panel.thought_requested.connect(_show_player_thought)
 
-	## Ajoutée comme le tout dernier enfant de Desktop (même raison que
-	## _clue_board_tooltip, voir _maybe_show_clue_board_tooltip) pour passer
-	## devant toutes les fenêtres, header et footer compris.
+	## Ajoutée comme le tout dernier enfant de Desktop pour passer devant
+	## toutes les fenêtres, header et footer compris.
 	_clue_spotlight = CLUE_SPOTLIGHT.instantiate()
 	add_child(_clue_spotlight)
 	ClueManager.clue_clicked.connect(_on_clue_clicked)
@@ -480,10 +454,10 @@ func _build_jean_dump_lines() -> Array[TerminalLine]:
 	return lines
 
 
-## Untyped on purpose: ChatWindow and ClueBoardWindow both expose the same
-## minimize_requested(window, window_title) signal by convention, but don't
-## share a base class — a Control-typed parameter would make the static
-## checker reject a signal it can't see on Control itself.
+## Untyped on purpose: ChatWindow and the other reusable windows below all
+## expose the same minimize_requested(window, window_title) signal by
+## convention, but don't share a base class — a Control-typed parameter would
+## make the static checker reject a signal it can't see on Control itself.
 func _open_window(window) -> void:
 	window.minimize_requested.connect(_on_window_minimize_requested)
 	_window_layer.add_child(window)
@@ -510,25 +484,6 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 	)
 
 
-## "Indice" always reopens the same board so its layout/unlocked state isn't
-## rebuilt from scratch every click — only the first press instantiates it.
-## Pas de passage par _open_window()/la barre des tâches : cette fenêtre se
-## ferme (×) plutôt que se réduit, le bouton "Indice" du header (toujours
-## visible) suffit à la retrouver — voir clue_board_window.gd.
-func _on_clue_button_pressed() -> void:
-	if is_instance_valid(_clue_board_window):
-		_clue_board_window.show()
-		_bring_window_to_front(_clue_board_window)
-	else:
-		_clue_board_window = CLUE_BOARD_WINDOW.instantiate()
-		_clue_board_window.mission_id = CURRENT_MISSION_ID
-		_clue_board_window.generate_report_requested.connect(_on_generate_report_requested)
-		_clue_board_window.thought_requested.connect(_show_player_thought)
-		_window_layer.add_child(_clue_board_window)
-
-	_maybe_show_clue_board_tooltip()
-
-
 ## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
 ## OSINT, document piraté...) affiche son texte complet au centre de l'écran
 ## et déploie le panneau latéral Collecte d'indices — voir ClueSpotlight et
@@ -538,59 +493,11 @@ func _on_clue_clicked(clue_id: String) -> void:
 	_clue_panel.expand()
 
 
-## Bulle d'aide "recherche darkweb" (voir ClueBoardTooltip) : montrée une
-## seule fois par partie, à la première ouverture de "Collecte d'indices" qui
-## coïncide avec au moins un indice déjà débloqué pour la mission en cours —
-## pas forcément le tout premier clic (voir SaveManager.
-## has_seen_clue_board_tooltip()) : un joueur qui ouvre la fenêtre avant même
-## d'avoir rencontré Jean n'a encore rien à chercher, la bulle attend donc la
-## prochaine ouverture où c'est le cas plutôt que de ne plus jamais
-## apparaître. Apparaît CLUE_BOARD_TOOLTIP_DELAY_SECONDS après l'ouverture,
-## le temps que le joueur ait fini de regarder le tableau lui-même plutôt que
-## de la voir surgir en même temps.
-## _clue_board_tooltip_pending évite d'en déclencher une seconde si le joueur
-## reclique "Indice" pendant le délai d'attente ; is_instance_valid(_clue_board_tooltip)
-## fait de même une fois la bulle réellement affichée mais pas encore fermée.
-func _maybe_show_clue_board_tooltip() -> void:
-	if is_instance_valid(_clue_board_tooltip) or _clue_board_tooltip_pending:
-		return
-	if SaveManager.has_seen_clue_board_tooltip():
-		return
-	if not ClueManager.has_mission_started(CURRENT_MISSION_ID):
-		return
-
-	_clue_board_tooltip_pending = true
-	await get_tree().create_timer(CLUE_BOARD_TOOLTIP_DELAY_SECONDS).timeout
-	_clue_board_tooltip_pending = false
-
-	# Le joueur a pu refermer la fenêtre Collecte d'indices pendant le délai —
-	# pas de raison de faire surgir la bulle sur un bureau où elle ne pointe
-	# plus vers rien d'ouvert.
-	if not is_instance_valid(_clue_board_window) or not _clue_board_window.visible:
-		return
-
-	var field_rect := _header.get_search_field_global_rect()
-	_clue_board_tooltip = CLUE_BOARD_TOOLTIP.instantiate()
-	# Ajoutée directement sur la racine du bureau (pas _window_layer) : la
-	# flèche doit toucher un champ du header, donc passer devant lui, or
-	# DesktopHeader est ajouté après WindowLayer dans desktop.tscn (dessiné
-	# par-dessus). Devenir le tout dernier enfant de Desktop suffit à passer
-	# devant header ET footer, sans toucher à l'empilement des autres fenêtres.
-	add_child(_clue_board_tooltip)
-	_clue_board_tooltip.set_text("CLUEBOARD_TOOLTIP_DARKWEB_HINT")
-	_clue_board_tooltip.point_at(Vector2(field_rect.position.x + field_rect.size.x * 0.5, field_rect.position.y + field_rect.size.y))
-	_clue_board_tooltip.closed.connect(func() -> void:
-		SaveManager.mark_clue_board_tooltip_seen()
-		_clue_board_tooltip.queue_free()
-	)
-
-
-## "Pensées" du footer, même schéma que "Indice" ci-dessus : une seule
-## instance réutilisée, jamais fermée/détruite. refresh() est appelé à chaque
-## clic (pas seulement à la création) pour refléter les pensées ajoutées
-## depuis la dernière ouverture — contrairement à ClueBoardWindow, cette
-## fenêtre n'écoute aucun signal pour se mettre à jour toute seule pendant
-## qu'elle reste ouverte, ce n'est pas nécessaire ici.
+## "Pensées" du footer : une seule instance réutilisée, jamais fermée/détruite.
+## refresh() est appelé à chaque clic (pas seulement à la création) pour
+## refléter les pensées ajoutées depuis la dernière ouverture — cette fenêtre
+## n'écoute aucun signal pour se mettre à jour toute seule pendant qu'elle
+## reste ouverte, ce n'est pas nécessaire ici.
 func _on_thought_log_button_pressed() -> void:
 	if not is_instance_valid(_thought_log_window):
 		_thought_log_window = THOUGHT_LOG_WINDOW.instantiate()
@@ -614,21 +521,22 @@ func _on_help_button_pressed() -> void:
 	_chat_window.trigger_help("relayghost")
 
 
-## N'arrive qu'après confirmation du joueur (voir ClueBoardWindow.
-## ReportConfirmDialog, "pas de retour en arrière possible") : un vrai
-## changement de scène plutôt qu'une fenêtre par-dessus le bureau, puisque
-## ClueBoardWindow ne rouvrira plus derrière — même fondu (SceneTransition)
-## que les autres changements de scène du jeu (voir introduction.gd). Contenu
-## du rapport lui-même (report_generation_screen.gd) à venir dans une
-## prochaine passe ; pour l'instant l'écran n'a que son propre header/footer.
+## N'arrive qu'après confirmation du joueur (voir DesktopCluePanel.
+## _report_confirm_dialog, "pas de retour en arrière possible") : un vrai
+## changement de scène plutôt qu'une fenêtre par-dessus le bureau, puisque le
+## panneau Collecte d'indices ne rouvrira plus derrière — même fondu
+## (SceneTransition) que les autres changements de scène du jeu (voir
+## introduction.gd). Contenu du rapport lui-même (report_generation_screen.gd)
+## à venir dans une prochaine passe ; pour l'instant l'écran n'a que son
+## propre header/footer.
 func _on_generate_report_requested() -> void:
 	await SceneTransition.fade_out()
 	get_tree().change_scene_to_packed(REPORT_GENERATION_SCREEN)
 	SceneTransition.fade_in()
 
 
-## Même principe que _on_clue_button_pressed/_on_osint_search_requested :
-## une seule instance réutilisée, jamais de doublon dans la taskbar. La toute
+## Même principe que _on_osint_search_requested : une seule instance
+## réutilisée, jamais de doublon dans la taskbar. La toute
 ## première fois, la fenêtre n'apparaît qu'après le terminal de connexion RDP
 ## (voir _play_hack_pc_mother_login_terminal) — pas de persistance d'une
 ## sauvegarde à l'autre, comme _hack_pc_mother_window lui-même.

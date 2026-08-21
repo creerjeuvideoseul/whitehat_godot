@@ -50,9 +50,7 @@ THOUGHT_LOG_EMPTY,Aucune pensée pour l'instant.,No thoughts yet.
 CHAT_CONTACTS_LABEL,Contacts,Contacts
 CHAT_CONTACT_RELAYGHOST_ARCHIVE,Archive RelayGhost,RelayGhost Archive
 CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted communication...
-DESKTOP_CLUES_BUTTON,Collecte d'indices,Clues collection
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection
-CLUE_UNLOCKED_TOAST,Indice débloqué.,Clue unlocked.
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
 CLUEBOARD_REPORT_LOCKED_THOUGHT,Je dois trouver ce qui est arrivé à Alizée avant de générer le rapport.,I need to find out what happened to Alizée before generating the report.
 REPORT_GENERATION_TITLE,Génération du rapport final,Final report generation

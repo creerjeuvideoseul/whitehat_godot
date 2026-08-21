@@ -87,19 +87,6 @@ texture = ExtResource("2_whos_logo")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ClueButton" type="Button" parent="Margin/Row/LeftGroup"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"PrimaryButton"
-text = "DESKTOP_CLUES_BUTTON"
-
-[node name="ClueSearchGap" type="Control" parent="Margin/Row/LeftGroup"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 0)
-layout_mode = 2
-
 [node name="SearchField" type="LineEdit" parent="Margin/Row/LeftGroup"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 44)

@@ -52,7 +52,7 @@ func _ready() -> void:
 	ClueManager.all_unlocked_changed.connect(_on_all_unlocked_changed)
 
 
-## A appeler une fois par l'écran parent (ex. ClueBoardWindow) pour choisir
+## A appeler une fois par l'écran parent (ex. DesktopCluePanel) pour choisir
 ## la mission à afficher et construire le tableau. Idempotent tant que la
 ## mission ne change pas ; change de mission = reconstruction complète.
 func setup(new_mission_id: int) -> void:

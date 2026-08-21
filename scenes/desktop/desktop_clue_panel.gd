@@ -1,17 +1,16 @@
 extends Control
 class_name DesktopCluePanel
 ## Panneau permanent ancré au bord droit de l'écran (voir desktop.tscn) —
-## distinct des fenêtres de WindowLayer (ChatWindow, ClueBoardWindow...) :
+## distinct des fenêtres de WindowLayer (ChatWindow, OsintWindow...) :
 ## jamais réduit dans la barre des tâches, seulement rétractable/déployable
 ## sur lui-même, sur 3 niveaux :
 ## - COLLAPSED : collé au bord droit, seuls COLLAPSED_VISIBLE_WIDTH px visibles.
 ## - NARROW : largeur EXPANDED_WIDTH, liste d'indices débloqués (bulles).
-## - FULL : FULL_WIDTH_RATIO de l'écran, reprend l'affichage de l'ancienne
-##   fenêtre ClueBoardWindow (question de mission + tableau d'enquête par
-##   catégorie + bouton Générer le rapport) — prévu pour remplacer entièrement
-##   cette fenêtre à terme (voir clue_board_window.gd, logique dupliquée ici
-##   volontairement le temps de la transition plutôt que factorisée tout de
-##   suite, cette ancienne fenêtre étant vouée à disparaître).
+## - FULL : FULL_WIDTH_RATIO de l'écran, affiche la question de mission +
+##   le tableau d'enquête par catégorie (ClueBoard) + le bouton Générer le
+##   rapport — seul point d'entrée vers la collecte d'indices désormais,
+##   l'ancienne fenêtre dédiée (ClueBoardWindow, ouverte depuis le bouton
+##   "Indice" du header) a été retirée une fois ce panneau en place.
 ##
 ## Bordure/coins droits volontairement absents (voir StyleBoxFlat_bg/
 ## StyleBoxFlat_border_overlay dans la scène, border_width_right = 0 et
@@ -57,9 +56,9 @@ const BLINK_SECONDS := 1.4
 const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 
 ## Bubbled up à desktop.gd, qui décide ce qu'ouvrir "générer le rapport" veut
-## dire — même contrat que ClueBoardWindow.generate_report_requested.
+## dire.
 signal generate_report_requested
-## Bubbled up à desktop.gd — même contrat que ClueBoardWindow.thought_requested.
+## Bubbled up à desktop.gd.
 signal thought_requested(text: String, translation_key: String)
 
 @export var mission_id: int = 1
@@ -112,8 +111,7 @@ func _ready() -> void:
 	## Sur la racine du bureau (Desktop, plein écran), pas sur `self` : ce
 	## panneau est collé au bord droit et bien plus étroit que l'écran — un
 	## enfant direct s'y centrerait par rapport à SA largeur à lui, pas celle
-	## de l'écran (contrairement à ClueBoardWindow, déjà centrée et large,
-	## voir clue_board_window.gd pour la même boîte).
+	## de l'écran.
 	get_tree().current_scene.add_child(_report_confirm_dialog)
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
@@ -125,7 +123,7 @@ func _ready() -> void:
 
 
 ## A appeler une fois par desktop.gd pour choisir la mission à afficher (même
-## contrat que ClueBoard.setup/ClueBoardWindow.mission_id) — reconstruit
+## contrat que ClueBoard.setup) — reconstruit
 ## toujours liste et graph, y compris pour reprendre une sauvegarde où des
 ## indices sont déjà débloqués avant que ce panneau n'ait jamais reçu
 ## clue_unlocked.
@@ -316,11 +314,8 @@ func _cross_fade(hide_control: Control, show_control: Control) -> void:
 
 
 ## --- Bouton "Générer le rapport" (panneau FULL) ---------------------------
-## Portée quasi telle quelle de clue_board_window.gd : même comportement
-## (question de mission, blink une fois la résolution débloquée, confirmation
-## avant de vraiment déclencher le rapport) tant que cette ancienne fenêtre
-## existe encore en parallèle — voir le commentaire de classe en haut de ce
-## fichier.
+## Question de mission, blink une fois la résolution débloquée, confirmation
+## avant de vraiment déclencher le rapport.
 
 func _update_report_button() -> void:
 	_generate_report_button.modulate = Color.WHITE
