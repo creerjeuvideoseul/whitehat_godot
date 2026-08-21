@@ -104,6 +104,19 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
+[sub_resource type="SystemFont" id="SystemFont_body_bold"]
+font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "Fira Code", "Courier New")
+font_weight = 700
+
+[sub_resource type="SystemFont" id="SystemFont_body_bold_italics"]
+font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "Fira Code", "Courier New")
+font_italic = true
+font_weight = 700
+
+[sub_resource type="SystemFont" id="SystemFont_body_italics"]
+font_names = PackedStringArray("Cascadia Code", "Consolas", "JetBrains Mono", "Fira Code", "Courier New")
+font_italic = true
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_secondary_button"]
 content_margin_left = 18.0
 content_margin_top = 8.0
@@ -172,6 +185,9 @@ PrimaryButton/styles/focus = SubResource("StyleBoxFlat_primary_button")
 PrimaryButton/styles/hover = SubResource("StyleBoxFlat_primary_button_hover")
 PrimaryButton/styles/normal = SubResource("StyleBoxFlat_primary_button")
 PrimaryButton/styles/pressed = SubResource("StyleBoxFlat_primary_button_hover")
+RichTextLabel/fonts/bold_font = SubResource("SystemFont_body_bold")
+RichTextLabel/fonts/bold_italics_font = SubResource("SystemFont_body_bold_italics")
+RichTextLabel/fonts/italics_font = SubResource("SystemFont_body_italics")
 SecondaryButton/base_type = &"Button"
 SecondaryButton/colors/font_color = Color(0, 0, 0, 1)
 SecondaryButton/colors/font_disabled_color = Color(0.3, 0.3, 0.3, 1)

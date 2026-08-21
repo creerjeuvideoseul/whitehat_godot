@@ -74,6 +74,7 @@ signal thought_requested(text: String, translation_key: String)
 @onready var _background: Panel = %Background
 @onready var _expand_button: Button = %ExpandButton
 @onready var _retract_button: Button = %RetractButton
+@onready var _title_bar: PanelContainer = %TitleBar
 @onready var _title_label: Label = %TitleLabel
 ## Remplace _title_label une fois COLLAPSED (voir _apply_state) : le titre
 ## complet n'a plus la place de s'afficher correctement dans les
@@ -187,6 +188,7 @@ func _rebuild_content() -> void:
 		clues.sort_custom(func(a: ClueDefinition, b: ClueDefinition) -> bool: return a.date < b.date)
 		for clue: ClueDefinition in clues:
 			_content_list.add_child(_build_clue_bubble(clue))
+	_content_list.add_child(_build_footer_hint())
 
 
 func _build_category_header(categ: ClueCategory) -> Control:
@@ -195,6 +197,19 @@ func _build_category_header(categ: ClueCategory) -> Control:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("font_color", Palette.TEXT_ACCENT)
 	label.add_theme_font_size_override("font_size", Palette.SIZE_SUBTITLE)
+	return label
+
+
+## Rappel discret toujours en bas de la liste NARROW (voir _rebuild_content,
+## qui le rajoute après chaque reconstruction) — texte muet (TEXT_LOCKED),
+## même recette que la ligne "Communication cryptée..." de ConversationView,
+## pour ne pas rivaliser visuellement avec les bulles d'indices au-dessus.
+func _build_footer_hint() -> Control:
+	var label := Label.new()
+	label.text = tr("CLUEBOARD_PANEL_HINT")
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", Palette.TEXT_LOCKED)
+	label.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
 	return label
 
 
@@ -278,6 +293,12 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 	_title_label.visible = new_state != PanelState.COLLAPSED
 	_collapsed_arrow_label.visible = new_state == PanelState.COLLAPSED
 	_expand_button.visible = new_state == PanelState.NARROW
+	## Sans ça, RetractButton (seul enfant visible restant de Row une fois
+	## TitleLabel/ExpandButton cachés ci-dessus) se retrouve repositionné par
+	## le HBoxContainer tout au DÉBUT de la barre — pile là où
+	## CollapsedArrowLabel est fixée — et son fond vert se superpose à la
+	## flèche nue.
+	_retract_button.visible = new_state != PanelState.COLLAPSED
 	_background.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if new_state == PanelState.COLLAPSED else Control.CURSOR_ARROW
 
 	var target_width := EXPANDED_WIDTH
@@ -300,7 +321,19 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 	elif previous_state == PanelState.FULL:
 		_cross_fade(_full_body, _narrow_body)
 
+	## TitleBar est un enfant du VBoxContainer Layout : son repositionnement/
+	## redimensionnement interne (sort_children, différé par Godot à la fin de
+	## la frame) accuse un léger retard sur Background, lui repositionné/
+	## redimensionné directement par ancrage plein cadre dès que `size`/
+	## `position` changent — pendant le glissement, la barre de titre reste
+	## donc visible un instant à son ancienne largeur/position pendant que le
+	## fond du panneau a déjà atteint la nouvelle, ce qui donne l'impression
+	## qu'elle "ne suit pas" le cadre. Toute la barre (pas seulement le texte,
+	## insuffisant : c'est son propre cadre qui accuse le retard) est cachée
+	## le temps du glissement, réaffichée une fois celui-ci stabilisé.
+	_title_bar.hide()
 	var tween := _animate_box(target_width, target_x)
+	tween.chain().tween_callback(_title_bar.show)
 	if new_state == PanelState.FULL:
 		## ClueBoard a été construit une seule fois (voir setup(), appelé au
 		## démarrage pendant que le panneau est encore NARROW) — sans ce
@@ -312,6 +345,7 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 
 
 func _animate_box(target_width: float, target_x: float) -> Tween:
+	SfxPlayer.play(SfxPlayer.UI_SLIDE_SFX)
 	if is_instance_valid(_box_tween):
 		_box_tween.kill()
 	_box_tween = create_tween()

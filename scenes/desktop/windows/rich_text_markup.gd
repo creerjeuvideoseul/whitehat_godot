@@ -108,8 +108,23 @@ static func wire_indice_interactions(label: RichTextLabel, rebuild: Callable) ->
 ## clue_id (ligne sans tag [#indice=...]), un eventuel [color=indice] reste
 ## resolu simplement, non cliquable, ne devrait pas arriver avec les donnees
 ## actuelles, garde defensive.
-static func resolve_dialogue_colors(text: String, clue_id: String = "", hovered_id: String = "") -> String:
-	var result := text.replace("[color=important]", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
+## `base_font_size` : taille normale du label appelant (voir chat_bubble.tscn/
+## dialogue_balloon.tscn, différente selon le contexte) — le passage important
+## s'affiche 3px plus grand que ce texte environnant, pas à une taille fixe,
+## pour rester proportionné quel que soit l'écran.
+static func resolve_dialogue_colors(text: String, clue_id: String = "", hovered_id: String = "", base_font_size: int = Palette.SIZE_BODY) -> String:
+	## Test en cours (voir échange avec l'utilisateur) : [color=important] se
+	## résout en gras+italique plutôt qu'en rouge (Palette.TEXT_IMPORTANT) dans
+	## les dialogues/chat — à annuler en remplaçant ce bloc par
+	## text.replace("[color=important]", "[color=#%s]" % Palette.TEXT_IMPORTANT.to_html(false))
+	## si le rendu ne convient pas. Regex (pas un simple replace de la balise
+	## ouvrante, contrairement à avant) : il faut aussi remplacer LA bonne
+	## fermeture [/color] par [/font_size][/i][/b], pas les [/color] d'un
+	## éventuel [color=indice] plus loin dans le même texte.
+	var important_regex := RegEx.new()
+	important_regex.compile("\\[color=important\\](.*?)\\[/color\\]")
+	var important_replacement := "[b][i][font_size=%d]$1[/font_size][/i][/b]" % (base_font_size + 3)
+	var result := important_regex.sub(text, important_replacement, true)
 	if clue_id.is_empty():
 		result = result.replace("[color=indice]", "[color=#%s]" % Palette.TEXT_HIGHLIGHT.to_html(false))
 	else:

@@ -39,7 +39,7 @@ RelayGhost: Je parle de [color=important]l'éthique[/color], {{PlayerSession.pse
 RelayGhost: Dans cette affaire, j'observerai tes décisions afin d'établir ton indice d'éthique.
 RelayGhost: Ce n'est ni un jugement ni une note.
 RelayGhost: Je cherche simplement à comprendre qui tu es lorsque personne ne te dit quoi faire.
-RelayGhost: Ton premier client s'appelle [color=important]Jean Ranoud[/color], sa fille a disparu.
+RelayGhost: Ton premier client s'appelle [color=important]Jean Ranoud[/color], sa fille a disparu. [#hint=osint]
 RelayGhost: Retrouve-la, {{PlayerSession.pseudo}}, je te mets en contact.
 RelayGhost: N'obéis pas. Comprends. Juge. Agis.
 

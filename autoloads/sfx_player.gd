@@ -44,6 +44,20 @@ const ALIZEE_PHONE_REVEAL_SFX := preload("res://assets/audio/sound/soundreality-
 ## appelants sans lien entre eux).
 const UI_CLICK_SFX := preload("res://assets/audio/sound/u_o8xh7gwsrj-bubble_pop_1-476367-2.mp3")
 
+## Glissement du panneau latéral Collecte d'indices (DesktopCluePanel) entre
+## ses 3 niveaux — distinct d'UI_CLICK_SFX ci-dessus (déjà joué au clic sur le
+## bouton qui déclenche ce glissement) : ce second son accompagne le
+## mouvement du cadre lui-même, pas le clic qui le lance.
+const UI_SLIDE_SFX := preload("res://assets/audio/sound/ui_slide.ogg")
+
+## Joué à chaque clic sur un passage color=indice (voir
+## RichTextMarkup.wire_indice_interactions), qu'il débloque ou non un nouvel
+## indice — contrairement à CLUE_REVEAL_SFX ci-dessus (un seul point d'écoute
+## sur ClueManager.clue_unlocked, jamais rejoué), celui-ci écoute
+## ClueManager.clue_clicked, qui se déclenche à chaque clic y compris sur un
+## indice déjà connu (voir clue_manager.gd).
+const CLUE_CLICK_SFX := preload("res://assets/audio/sound/soundshelfstudio-deep-ui-chime-585839.mp3")
+
 ## Frappe au clavier pendant les lignes "tapées par le joueur" d'un
 ## TerminalConsole (voir TerminalConsole.typing_sound / TerminalLine.plays_typing_sound)
 ## — dump du téléphone d'Alizée, connexion RDP du PC de la mère (desktop.gd),
@@ -73,11 +87,16 @@ func _ready() -> void:
 	add_child(_player)
 	add_child(_ambient_player)
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked)
+	ClueManager.clue_clicked.connect(_on_clue_clicked)
 
 
 func _on_clue_unlocked(_clue_id: String) -> void:
 	await get_tree().create_timer(CLUE_REVEAL_DELAY_SECONDS).timeout
 	play(CLUE_REVEAL_SFX)
+
+
+func _on_clue_clicked(_clue_id: String) -> void:
+	play(CLUE_CLICK_SFX)
 
 
 func play(stream: AudioStream) -> void:

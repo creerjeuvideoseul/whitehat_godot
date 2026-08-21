@@ -13,6 +13,11 @@ signal conversation_finished
 ## ChatWindow) décide seul si ce clue_id précis mérite une bulle d'aide,
 ## cette vue ne connaît rien de ces déclencheurs narratifs.
 signal clue_line_shown(clue_id: String)
+## Bubbled up une fois la ligne finie de s'écrire (voir _display_line), quand
+## elle porte une balise d'aide générique ([#hint=xxx]) — même principe que
+## clue_line_shown, mais pour un conseil narratif qui n'est pas un indice
+## (ex. penser à utiliser l'OSINT, voir relayghost_intro.dialogue).
+signal hint_line_shown(hint_id: String)
 
 const CHAT_BUBBLE := preload("res://scenes/desktop/windows/chat_bubble.tscn")
 const PLAYER_CHARACTER := "Player"
@@ -109,18 +114,42 @@ func _replay_saved_log() -> void:
 	for entry in SaveManager.get_conversation_log(_contact.contact_id):
 		var line := DialogueLine.new()
 		line.character = entry.character
-		line.text = entry.text
+		## entry.text est le texte BRUT (voir _display_line, qui stocke
+		## désormais raw_text plutôt que le texte déjà résolu) : sans ça, un
+		## indice cliqué entre l'enregistrement du log et la reprise de la
+		## sauvegarde restait figé dans la couleur qu'il avait au moment
+		## exact de son affichage initial (highlight_color, quasiment
+		## toujours "pas encore cliqué" puisque le clic vient après), ne
+		## reflétant jamais l'état réel d'un indice déjà débloqué au moment
+		## de la reprise — bug reporté par le joueur.
+		var raw_text: String = entry.text
+		var clue_id: String = entry.get("clue_id", "")
+		var base_font_size: int = Palette.SIZE_SMALL if entry.character == SYSTEM_CHARACTER else Palette.SIZE_BODY
+		line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, "", base_font_size)
+
+		var label: DialogueLabel
 		if entry.character == SYSTEM_CHARACTER:
-			var label := _add_console_line(line)
+			label = _add_console_line(line)
 			label.visible_ratio = 1.0
 		else:
-			_add_bubble(line, entry.character == PLAYER_CHARACTER)
+			label = _add_bubble(line, entry.character == PLAYER_CHARACTER)
+
+		## Même câblage que _display_line : sans lui, un indice déjà
+		## débloqué se réafficherait certes dans la bonne couleur, mais
+		## resterait cliquable pour rien (aucun survol/clic recoloré) après
+		## une reprise de sauvegarde.
+		if not clue_id.is_empty():
+			var rebuild := func(hovered_id: String) -> void:
+				line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id, base_font_size)
+				label.text = line.text
+			RichTextMarkup.wire_indice_interactions(label, rebuild)
+
 		# Sans ça, _log restait vide après un rejeu : un trigger_help() lancé
 		# plus tard sur cette même vue (voir _on_help_finished) écrasait alors
 		# tout le journal sauvegardé avec seulement l'échange d'aide, effaçant
 		# l'historique déjà rejoué (bug constaté sur "relayghost" : le journal
 		# persisté ne contenait plus que la dernière demande d'aide).
-		_log.append({ "character": entry.character, "text": entry.text })
+		_log.append({ "character": entry.character, "text": raw_text, "clue_id": clue_id })
 	_scroll_to_bottom()
 
 
@@ -139,8 +168,13 @@ func _display_line(line: DialogueLine) -> void:
 	## (voir resolve_dialogue_colors/wire_indice_interactions) — même
 	## changement que dialogue_balloon.gd.
 	var clue_id := line.get_tag_value("indice") if line.has_tag("indice") else ""
+	var hint_id := line.get_tag_value("hint") if line.has_tag("hint") else ""
 	var raw_text := line.text
-	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id)
+	## Taille réelle du label qui va afficher cette ligne (voir
+	## _add_console_line/_add_bubble ci-dessous) — nécessaire ici pour que
+	## resolve_dialogue_colors sache de combien agrandir [color=important].
+	var base_font_size: int = Palette.SIZE_SMALL if line.character == SYSTEM_CHARACTER else Palette.SIZE_BODY
+	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, "", base_font_size)
 
 	var label: DialogueLabel
 	if line.character == SYSTEM_CHARACTER:
@@ -155,7 +189,7 @@ func _display_line(line: DialogueLine) -> void:
 
 	if not clue_id.is_empty():
 		var rebuild := func(hovered_id: String) -> void:
-			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
+			line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id, base_font_size)
 			# `label.dialogue_line = line` ne suffit pas ici : `line` est déjà
 			# la même référence que `label.dialogue_line` (assignée une
 			# première fois dans _add_bubble/_add_console_line), et son setter
@@ -167,7 +201,14 @@ func _display_line(line: DialogueLine) -> void:
 		RichTextMarkup.wire_indice_interactions(label, rebuild)
 		clue_line_shown.emit(clue_id)
 
-	_log.append({ "character": line.character, "text": line.text })
+	if not hint_id.is_empty():
+		hint_line_shown.emit(hint_id)
+
+	## raw_text (pas line.text, déjà résolu/coloré à cet instant précis) :
+	## voir _replay_saved_log, qui re-résout la couleur depuis l'état actuel
+	## de ClueManager à chaque reprise plutôt que de rejouer une couleur
+	## figée au moment de ce tout premier affichage.
+	_log.append({ "character": line.character, "text": raw_text, "clue_id": clue_id })
 
 	if line.responses.size() > 0:
 		_responses_menu.responses = line.responses

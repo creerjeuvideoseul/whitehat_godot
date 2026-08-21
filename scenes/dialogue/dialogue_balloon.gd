@@ -95,7 +95,9 @@ func apply_dialogue_line() -> void:
 	var clue_id := dialogue_line.get_tag_value("indice") if dialogue_line.has_tag("indice") else ""
 	var raw_text := dialogue_line.text
 	var rebuild_dialogue_colors := func(hovered_id: String) -> void:
-		dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
+		## Palette.SIZE_LARGE : taille réelle de DialogueLabel dans cette
+		## scène (voir dialogue_balloon.tscn, normal_font_size = 30).
+		dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id, Palette.SIZE_LARGE)
 		# `dialogue_label.dialogue_line = dialogue_line` ne suffit pas après le
 		# tout premier appel : dialogue_label.dialogue_line est alors déjà la
 		# même référence que `dialogue_line`, et son setter personnalisé (voir

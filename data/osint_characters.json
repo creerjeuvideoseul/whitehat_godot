@@ -54,7 +54,7 @@
 		  "Mail": "jean.ranoud@protonmail.com",
 		  "Téléphone": "+33 6 15 45 xx xx",
 		  "Fuites connues": "Sécurité sociale, KFC, club sportif.",
-		  "Mots de passe": "<indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
+		  "Mots de passe": "<indice id=\"M1_osint_jean_pw\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 3,
@@ -91,7 +91,7 @@
 		  "Mail": "alizee.ranoud@gomail.com",
 		  "Téléphone": "+33 7 33 01 xx xx",
 		  "Fuites connues": "Crous, Éducation nationale.",
-		  "Mots de passe": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwa\"><color=indice>EliteShot$83$</color></indice>"
+		  "Mots de passe": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,
@@ -263,7 +263,7 @@
 		  "Email": "jean.ranoud@protonmail.com",
 		  "Phone": "+33 6 15 45 xx xx",
 		  "Known leaks": "Social security, KFC, sports club.",
-		  "Passwords": "<indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
+		  "Passwords": "<indice id=\"M1_osint_jean_pw\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 3,
@@ -300,7 +300,7 @@
 		  "Email": "alizee.ranoud@gomail.com",
 		  "Phone": "+33 7 33 01 xx xx",
 		  "Known leaks": "Crous, national education.",
-		  "Passwords": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwa\"><color=indice>EliteShot$83$</color></indice>"
+		  "Passwords": "ILoveDance<indice id=\"M1_osint_alizee_pwa\"><color=indice>11</color></indice>, ILoveSing<color=indice>11</color>, <indice id=\"M1_osint_alizee_pwpere\"><color=indice>EliteShot$83$</color></indice>"
 		},
 		{
 		  "characterId": 5,

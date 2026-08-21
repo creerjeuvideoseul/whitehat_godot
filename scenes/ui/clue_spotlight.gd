@@ -20,6 +20,11 @@ const FLASH_SECONDS := 0.15
 const FLY_SECONDS := 0.5
 const FLASH_MODULATE := Color(1.5, 1.5, 1.3, 1.0)
 const FLY_SCALE := Vector2(0.3, 0.3)
+## Durée totale de la séquence show_clue (apparition + palier + flash + envol)
+## — exposée pour que desktop.gd puisse retarder l'ouverture du panneau
+## latéral Collecte d'indices jusqu'à ce que l'indice ait fini de "s'envoler"
+## vers lui, plutôt que les deux animations se chevauchent.
+const TOTAL_SEQUENCE_SECONDS := FADE_IN_SECONDS + HOLD_SECONDS + FLASH_SECONDS + FLY_SECONDS
 
 @onready var _box: PanelContainer = %Box
 @onready var _label: RichTextLabel = %Label

@@ -14,6 +14,7 @@ const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
 const CLUE_SPOTLIGHT := preload("res://scenes/ui/clue_spotlight.tscn")
 const HELP_BUBBLE := preload("res://scenes/ui/help_bubble.tscn")
+const CLUE_BOARD_TOOLTIP := preload("res://scenes/ui/clue_board_tooltip.tscn")
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
 const ALIZEE_PHONE := preload("res://scenes/desktop/phone/alizee_phone.tscn")
 ## Une scène par icône du téléphone — voir AlizeePhone.icon_pressed. Volontairement
@@ -132,6 +133,13 @@ var _clue_spotlight: ClueSpotlight = null
 ## _on_chat_clue_line_shown) — gardée pour ne jamais en superposer une
 ## seconde si le signal se redéclenchait (ex. conversation relancée).
 var _relay_clue_hint_bubble: HelpBubble = null
+
+## Bulle d'aide "pense à utiliser le moteur de recherche darkweb" (voir
+## _on_chat_hint_line_shown) — même rôle que _relay_clue_hint_bubble, mais
+## ClueBoardTooltip (flèche verticale) plutôt que HelpBubble : cette bulle
+## pointe vers le champ de recherche OSINT du header, au-dessus d'elle, pas
+## vers un élément à sa gauche/droite.
+var _clue_board_tooltip: ClueBoardTooltip = null
 
 ## Une seule fenêtre "Analyse Rétrospective" réutilisée à chaque clic sur le
 ## bouton "Pensées" du footer — voir _on_thought_log_button_pressed.
@@ -258,6 +266,7 @@ func _build_chat_window() -> ChatWindow:
 			_play_jean_dump_terminal()
 	)
 	window.clue_line_shown.connect(_on_chat_clue_line_shown)
+	window.hint_line_shown.connect(_on_chat_hint_line_shown)
 	return window
 
 
@@ -280,6 +289,40 @@ func _on_chat_clue_line_shown(clue_id: String) -> void:
 	_relay_clue_hint_bubble.point_at(target, false)
 	_relay_clue_hint_bubble.closed.connect(func() -> void:
 		_relay_clue_hint_bubble.queue_free()
+	)
+
+
+## Bulle d'aide "pense à utiliser le moteur de recherche darkweb" — texte
+## d'origine (voir CLUEBOARD_TOOLTIP_DARKWEB_HINT dans ui.csv) et
+## positionnement d'origine (sous le champ de recherche OSINT du header,
+## flèche verticale — voir l'ancien _maybe_show_clue_board_tooltip, retiré
+## avec le bouton "Indice" du header mais jamais réellement abandonné,
+## seulement en attente d'un nouveau déclencheur). Nouveau déclencheur : le
+## tout premier mention de Jean Ranoud en chat (voir relayghost_intro.dialogue
+## ligne "[#hint=osint]") plutôt que l'ouverture de l'ancienne fenêtre
+## Collecte d'indices — le joueur vient de recevoir un nom de personne à
+## enquêter, moment logique pour suggérer l'OSINT.
+## `has_seen_clue_board_tooltip`/`mark_clue_board_tooltip_seen` (SaveManager) :
+## ne se montre qu'une seule fois par sauvegarde ; marqué vu à la FERMETURE de
+## la bulle (pas à son apparition, même choix que l'implémentation d'origine)
+## pour qu'un joueur qui quitte avant de l'avoir lue la revoie à la prochaine
+## occasion plutôt que de la perdre définitivement.
+## Ajoutée directement sur la racine du bureau (pas _window_layer) : la
+## flèche doit passer devant le header, or DesktopHeader est ajouté après
+## WindowLayer dans desktop.tscn (dessiné par-dessus) — devenir le tout
+## dernier enfant de Desktop suffit à passer devant, sans toucher à
+## l'empilement des fenêtres.
+func _on_chat_hint_line_shown(hint_id: String) -> void:
+	if hint_id != "osint" or SaveManager.has_seen_clue_board_tooltip() or is_instance_valid(_clue_board_tooltip):
+		return
+	var field_rect := _header.get_search_field_global_rect()
+	_clue_board_tooltip = CLUE_BOARD_TOOLTIP.instantiate()
+	add_child(_clue_board_tooltip)
+	_clue_board_tooltip.set_text("CLUEBOARD_TOOLTIP_DARKWEB_HINT")
+	_clue_board_tooltip.point_at(Vector2(field_rect.position.x + field_rect.size.x * 0.5, field_rect.position.y + field_rect.size.y))
+	_clue_board_tooltip.closed.connect(func() -> void:
+		SaveManager.mark_clue_board_tooltip_seen()
+		_clue_board_tooltip.queue_free()
 	)
 
 
@@ -515,10 +558,14 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 
 ## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
 ## OSINT, document piraté...) affiche son texte complet au centre de l'écran
-## et déploie le panneau latéral Collecte d'indices — voir ClueSpotlight et
-## DesktopCluePanel.expand().
+## puis, une fois cet encart envolé vers la droite, déploie le panneau
+## latéral Collecte d'indices — voir ClueSpotlight et DesktopCluePanel.expand().
+## Le délai (durée totale de show_clue) évite que le panneau ne se déploie
+## alors que l'encart central est encore visible, ce qui aurait cassé
+## l'impression que l'indice "part" vers le panneau.
 func _on_clue_clicked(clue_id: String) -> void:
 	_clue_spotlight.show_clue(clue_id)
+	await get_tree().create_timer(ClueSpotlight.TOTAL_SEQUENCE_SECONDS).timeout
 	_clue_panel.expand()
 
 

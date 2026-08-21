@@ -21,6 +21,9 @@ signal contact_conversation_finished(contact_id: String)
 ## Bubbled up from whichever ConversationView just displayed a clue line —
 ## même principe que contact_conversation_finished, voir ConversationView.
 signal clue_line_shown(clue_id: String)
+## Bubbled up from whichever ConversationView just displayed a hint line —
+## même principe que clue_line_shown ci-dessus.
+signal hint_line_shown(hint_id: String)
 
 const CONVERSATION_VIEW := preload("res://scenes/desktop/windows/conversation_view.tscn")
 const CHOICE_SOUND := preload("res://assets/audio/sound/mixkit-correct-answer-notification-947.mp3")
@@ -206,6 +209,7 @@ func _build_conversation_view(contact: ChatContact) -> void:
 	view.choice_shown.connect(func() -> void: SfxPlayer.play(CHOICE_SOUND))
 	view.conversation_finished.connect(func() -> void: contact_conversation_finished.emit(contact.contact_id))
 	view.clue_line_shown.connect(func(clue_id: String) -> void: clue_line_shown.emit(clue_id))
+	view.hint_line_shown.connect(func(hint_id: String) -> void: hint_line_shown.emit(hint_id))
 	_conversation_host.add_child(view)
 	_conversation_views[contact.contact_id] = view
 

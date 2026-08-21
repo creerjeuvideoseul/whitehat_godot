@@ -18,6 +18,10 @@ const BOX_WIDTH := 800.0
 const ARROW_HEIGHT := 54.0
 const ARROW_HALF_WIDTH := 14.0
 const FADE_IN_SECONDS := 0.3
+## Distance minimale entre le bord gauche de l'écran et celui de la boîte —
+## un point_at() proche du bord gauche (ex. champ de recherche du header)
+## centrerait sinon la boîte au point de la flèche à en dépasser hors écran.
+const MIN_LEFT_MARGIN := 20.0
 
 signal closed
 
@@ -25,6 +29,12 @@ signal closed
 @onready var _margin: MarginContainer = %Margin
 @onready var _message_label: Label = %MessageLabel
 @onready var _close_button: Button = %CloseButton
+
+## Position locale (en x) de la pointe de la flèche — normalement
+## BOX_WIDTH * 0.5 (boîte centrée sur la flèche), mais décalée si point_at()
+## a dû recaler la boîte contre MIN_LEFT_MARGIN : la flèche, elle, reste
+## exactement sur target_global_pos, seule la boîte se déplace.
+var _arrow_local_x: float = BOX_WIDTH * 0.5
 
 
 func _ready() -> void:
@@ -44,10 +54,16 @@ func set_text(translation_key: String) -> void:
 
 ## Recalcule la hauteur puis positionne la bulle pour que la pointe de la
 ## flèche touche exactement `target_global_pos` — la boîte se centre
-## horizontalement sous ce point. Termine par un fondu d'apparition.
+## horizontalement sous ce point, sauf si ça la ferait déborder à gauche de
+## l'écran (voir MIN_LEFT_MARGIN) : elle est alors recalée contre cette marge,
+## la flèche restant elle sur `target_global_pos` (voir _arrow_local_x/_draw).
+## Termine par un fondu d'apparition.
 func point_at(target_global_pos: Vector2) -> void:
 	await _resize_to_content()
-	global_position = Vector2(target_global_pos.x - BOX_WIDTH * 0.5, target_global_pos.y)
+	var box_x := maxf(target_global_pos.x - BOX_WIDTH * 0.5, MIN_LEFT_MARGIN)
+	global_position = Vector2(box_x, target_global_pos.y)
+	_arrow_local_x = target_global_pos.x - box_x
+	queue_redraw()
 	_fade_in()
 
 
@@ -83,10 +99,9 @@ func _on_close_pressed() -> void:
 ## point_at) — même technique de dessin à la main que ClueBoard._draw() pour
 ## ses traits de connexion, plutôt qu'un asset dédié.
 func _draw() -> void:
-	var center_x := BOX_WIDTH * 0.5
 	var points := PackedVector2Array([
-		Vector2(center_x - ARROW_HALF_WIDTH, ARROW_HEIGHT),
-		Vector2(center_x + ARROW_HALF_WIDTH, ARROW_HEIGHT),
-		Vector2(center_x, 0.0),
+		Vector2(_arrow_local_x - ARROW_HALF_WIDTH, ARROW_HEIGHT),
+		Vector2(_arrow_local_x + ARROW_HALF_WIDTH, ARROW_HEIGHT),
+		Vector2(_arrow_local_x, 0.0),
 	])
 	draw_colored_polygon(points, Palette.ALERT_YELLOW)
