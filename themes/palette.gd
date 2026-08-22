@@ -85,39 +85,25 @@ const TEXT_HIGHLIGHT := Color(1.0, 0.596, 0.0, 1.0)
 ## is_light() pour savoir laquelle des deux utiliser selon le fond).
 const TEXT_HIGHLIGHT_ON_LIGHT := Color(0.879, 0.393, 0.038, 1.0)
 
-## Mise en évidence des mots "importants" dans les données brutes (mail/SMS/
-## galerie) — la balise <color=important> de ces données JSON (voir
-## RichTextMarkup.html_to_bbcode) pointe ici plutôt que sur un hex écrit en
-## dur dans chaque fichier, pour ne changer la teinte qu'à un seul endroit.
-## Sans rapport avec TEXT_HIGHLIGHT (indices) ni TEXT_DANGER (rouge pâle
-## réservé au texte d'avertissement) : un rouge vif, dédié. Les dialogues
-## (intro, chat) traitent ce même mot-clé différemment, voir
-## DIALOGUE_IMPORTANT_OUTLINE ci-dessous.
-const TEXT_IMPORTANT := Color(1.0, 0.401, 0.295, 1.0)
+## Liseré du mot-clé sémantique "important" — [color=important] des fichiers
+## .dialogue (voir RichTextMarkup.resolve_dialogue_colors) et <color=important>
+## des données JSON mail/SMS/galerie (voir RichTextMarkup.html_to_bbcode)
+## pointent tous les deux ici plutôt que sur un hex écrit en dur : un seul
+## rendu partout (voir RichTextMarkup._outline_important). Le texte garde sa
+## couleur/police normales, seul un outline_color/outline_size BBCode
+## l'entoure — bleu foncé, choix retenu après plusieurs essais (gras, italique,
+## rouge plein, variante bleu clair pour fond sombre — revenu en arrière,
+## pire partout).
+const IMPORTANT_OUTLINE := Color(0.05, 0.1, 0.4, 1.0)
 
-## Variante de TEXT_IMPORTANT pour un fond clair (bulles SMS pastel de
+## Couleur d'un passage <color=indice> une fois son indice débloqué (clic, voir
+## RichTextMarkup.resolve_indice_tags/resolve_dialogue_colors).
+const TEXT_CLUE_CLICKED := Color(0.347, 0.514, 1.0, 1.0)
+
+## Variante de TEXT_CLUE_CLICKED pour un fond clair (bulles SMS pastel de
 ## certains contacts, voir SmsConversation.color_background) — même teinte,
 ## assombrie sans désaturer, même recette que TEXT_HIGHLIGHT_ON_LIGHT (voir
 ## is_light() pour savoir laquelle des deux utiliser selon le fond).
-const TEXT_IMPORTANT_ON_LIGHT := Color(0.644, 0.081, 0.158, 1.0)
-
-## Liseré de [color=important] dans les dialogues/chat (voir
-## RichTextMarkup.resolve_dialogue_colors) — le texte lui-même garde sa
-## couleur/police normales, seul un outline_color/outline_size BBCode l'entoure.
-## Bleu foncé, volontairement distinct de TEXT_IMPORTANT (rouge) : ce dernier
-## reste réservé au remplissage plein utilisé par html_to_bbcode (mail/SMS/
-## galerie), un traitement visuel différent pour le même mot-clé sémantique
-## selon le contexte.
-const DIALOGUE_IMPORTANT_OUTLINE := Color(0.05, 0.1, 0.4, 1.0)
-
-## Couleur d'un passage <color=indice> une fois son indice débloqué (clic, voir
-## RichTextMarkup.resolve_indice_tags/resolve_dialogue_colors) — copie exacte
-## de TEXT_IMPORTANT "pour le moment" (demande utilisateur) : un rôle
-## sémantique distinct malgré la même valeur, à faire diverger plus tard si
-## besoin sans toucher aux appelants.
-const TEXT_CLUE_CLICKED := Color(0.347, 0.514, 1.0, 1.0)
-
-## Variante fond clair de TEXT_CLUE_CLICKED, même recette que TEXT_IMPORTANT_ON_LIGHT.
 const TEXT_CLUE_CLICKED_ON_LIGHT := Color(0.109, 0.0, 0.956, 1.0)
 
 ## Bordure des panneaux d'indices "de résolution" (catégories FIN/FINSECONDAIRE

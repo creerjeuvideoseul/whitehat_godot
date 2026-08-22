@@ -365,11 +365,17 @@ func _build_bubble(entry: SmsEntry, conv: SmsConversation, font_color: Color) ->
 	message.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	var is_light_bg := Palette.is_light(bg_color)
 	var highlight_color := Palette.TEXT_HIGHLIGHT_ON_LIGHT if is_light_bg else Palette.TEXT_HIGHLIGHT
-	var important_color := Palette.TEXT_IMPORTANT_ON_LIGHT if is_light_bg else Palette.TEXT_IMPORTANT
 	var clicked_color := Palette.TEXT_CLUE_CLICKED_ON_LIGHT if is_light_bg else Palette.TEXT_CLUE_CLICKED
+	## Même couleur de liseré (Palette.IMPORTANT_OUTLINE) que sur fond sombre,
+	## mais liseré plus épais sur fond clair (IMPORTANT_OUTLINE_SIZE_SMS_LIGHT)
+	## et écriture forcée en blanc (Palette.TEXT_NORMAL) au lieu du texte
+	## sombre hérité de la bulle pastel (Color.TRANSPARENT = pas de forçage,
+	## voir _outline_important) — rendu validé après plusieurs essais.
+	var important_outline_size := RichTextMarkup.IMPORTANT_OUTLINE_SIZE_SMS_LIGHT if is_light_bg else RichTextMarkup.IMPORTANT_OUTLINE_SIZE
+	var important_text_color := Palette.TEXT_NORMAL if is_light_bg else Color.TRANSPARENT
 	var rebuild := func(hovered_id: String) -> void:
 		var resolved := RichTextMarkup.resolve_indice_tags(entry.message, highlight_color, clicked_color, hovered_id)
-		var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color, important_color)
+		var bbcode := RichTextMarkup.html_to_bbcode(resolved, highlight_color, important_outline_size, important_text_color)
 		message.text = "[right]%s[/right]" % bbcode if entry.is_answer else bbcode
 	rebuild.call("")
 	if entry.message.contains("<indice id="):

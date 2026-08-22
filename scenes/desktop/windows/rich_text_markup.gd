@@ -96,8 +96,8 @@ static func wire_indice_interactions(label: RichTextLabel, rebuild: Callable) ->
 ## indice mis en évidence"), pas des noms de couleur BBCode valides (sans
 ## résolution, un RichTextLabel les ignore silencieusement et affiche le texte
 ## en blanc par défaut — bug constaté sur relayghost_intro.dialogue), à
-## résoudre vers Palette.TEXT_IMPORTANT/TEXT_HIGHLIGHT avant affichage pour ne
-## changer chaque teinte qu'à un seul endroit (voir palette.gd).
+## résoudre avant affichage (voir _outline_important/Palette.TEXT_HIGHLIGHT)
+## pour ne changer chaque teinte qu'à un seul endroit (voir palette.gd).
 ##
 ## clue_id est l'id porte par le tag [#indice=xxx] de LA ligne de dialogue
 ## (recupere par l'appelant via DialogueLine.get_tag_value, une ligne ne
@@ -108,22 +108,41 @@ static func wire_indice_interactions(label: RichTextLabel, rebuild: Callable) ->
 ## clue_id (ligne sans tag [#indice=...]), un eventuel [color=indice] reste
 ## resolu simplement, non cliquable, ne devrait pas arriver avec les donnees
 ## actuelles, garde defensive.
-## Épaisseur du liseré autour d'un passage [color=important] — voir
-## résolution ci-dessous.
+## Épaisseur du liseré autour d'un passage "important" — voir
+## _outline_important ci-dessous. Valeur par défaut (tous les écrans à fond
+## sombre, et les SMS à bulle sombre).
 const IMPORTANT_OUTLINE_SIZE := 16
+## SMS à bulle CLAIRE (pastel) uniquement — voir sms_section.gd. Même
+## couleur/écriture que le reste (Palette.IMPORTANT_OUTLINE, écriture forcée
+## en blanc), seule la taille du liseré diffère.
+const IMPORTANT_OUTLINE_SIZE_SMS_LIGHT := 12
+
+## "important" (dialogues [color=important] comme données JSON
+## <color=important>, voir resolve_dialogue_colors/html_to_bbcode ci-dessous)
+## se résout en texte normal cerné d'un liseré (Palette.IMPORTANT_OUTLINE),
+## pas en rouge plein ni en gras/italique/taille — choix validé après essais
+## successifs, appliqué partout où ce mot-clé apparaît (voir palette.gd).
+## `pattern` capture le texte intérieur en groupe 1 ; regex (pas un simple
+## replace de la balise ouvrante) car il faut aussi remplacer LA bonne
+## fermeture par [/outline_size][/outline_color], jamais une fermeture
+## appartenant à un [color=indice]/<color=indice> voisin dans le même texte.
+## `text_color` : Color.TRANSPARENT (défaut) laisse le texte dans sa couleur
+## héritée — voir html_to_bbcode pour le cas SMS fond clair, où les couleurs
+## s'inversent (écriture blanche forcée, plutôt que le texte sombre hérité de
+## la bulle pastel) en plus du liseré fin. `outline_color` : Palette.IMPORTANT_OUTLINE
+## par défaut, mais un appelant peut passer une autre couleur (ex. la couleur
+## d'écriture propre à sa cellule, voir sms_section.gd) plutôt que la teinte
+## fixe.
+static func _outline_important(text: String, pattern: String, outline_size: int = IMPORTANT_OUTLINE_SIZE, text_color: Color = Color.TRANSPARENT, outline_color: Color = Palette.IMPORTANT_OUTLINE) -> String:
+	var regex := RegEx.new()
+	regex.compile(pattern)
+	var inner := "[color=#%s]$1[/color]" % text_color.to_html(false) if text_color.a > 0.0 else "$1"
+	var replacement := "[outline_color=#%s][outline_size=%d]%s[/outline_size][/outline_color]" % [outline_color.to_html(false), outline_size, inner]
+	return regex.sub(text, replacement, true)
+
 
 static func resolve_dialogue_colors(text: String, clue_id: String = "", hovered_id: String = "") -> String:
-	## [color=important] se résout en texte normal cerné d'un liseré
-	## (Palette.DIALOGUE_IMPORTANT_OUTLINE), pas en rouge plein ni en gras/
-	## italique/taille — choix validé après essais successifs (voir
-	## palette.gd). Regex (pas un simple replace de la balise ouvrante) : il
-	## faut aussi remplacer LA bonne fermeture [/color] par
-	## [/outline_size][/outline_color], pas les [/color] d'un éventuel
-	## [color=indice] plus loin dans le même texte.
-	var important_regex := RegEx.new()
-	important_regex.compile("\\[color=important\\](.*?)\\[/color\\]")
-	var important_replacement := "[outline_color=#%s][outline_size=%d]$1[/outline_size][/outline_color]" % [Palette.DIALOGUE_IMPORTANT_OUTLINE.to_html(false), IMPORTANT_OUTLINE_SIZE]
-	var result := important_regex.sub(text, important_replacement, true)
+	var result := _outline_important(text, "\\[color=important\\](.*?)\\[/color\\]")
 	if clue_id.is_empty():
 		result = result.replace("[color=indice]", "[color=#%s]" % Palette.TEXT_HIGHLIGHT.to_html(false))
 	else:
@@ -140,20 +159,24 @@ static func resolve_dialogue_colors(text: String, clue_id: String = "", hovered_
 ## — ce n'est pas un parseur HTML général, juste ce que les fiches du jeu
 ## utilisent réellement.
 ##
-## "indice" et "important" dans les données sont des mots-clés sémantiques
-## ("passage indice mis en évidence" / "mot à souligner"), pas des noms de
-## couleur à garder tels quels — ils pointent sur `highlight_color`/
-## `important_color` pour ne changer chaque teinte qu'à un seul endroit (voir
+## "indice" dans les données est un mot-clé sémantique ("passage indice mis
+## en évidence"), pas un nom de couleur à garder tel quel — il pointe sur
+## `highlight_color` pour ne changer cette teinte qu'à un seul endroit (voir
 ## palette.gd) plutôt que dans chaque fichier de données. Par défaut
-## Palette.TEXT_HIGHLIGHT/TEXT_IMPORTANT (fond sombre, le cas courant — mail,
-## galerie) ; un appelant sur fond clair (bulles SMS pastel) passe la variante
-## _ON_LIGHT de chacune à la place (voir Palette.is_light()).
-static func html_to_bbcode(text: String, highlight_color: Color = Palette.TEXT_HIGHLIGHT, important_color: Color = Palette.TEXT_IMPORTANT) -> String:
+## Palette.TEXT_HIGHLIGHT (fond sombre, le cas courant — mail, galerie) ; un
+## appelant sur fond clair (bulles SMS pastel) passe TEXT_HIGHLIGHT_ON_LIGHT à
+## la place (voir Palette.is_light()). "important" se résout dans le même
+## liseré (taille + couleur, Palette.IMPORTANT_OUTLINE) partout, y compris sur
+## fond clair ; `important_outline_size`/`important_outline_color` restent
+## disponibles si un futur écran en a besoin, mais `important_text_color` est
+## le seul écart actuellement utilisé (SMS fond clair, voir sms_section.gd) :
+## force l'écriture en blanc au lieu du texte sombre hérité de la bulle pastel.
+static func html_to_bbcode(text: String, highlight_color: Color = Palette.TEXT_HIGHLIGHT, important_outline_size: int = IMPORTANT_OUTLINE_SIZE, important_text_color: Color = Color.TRANSPARENT, important_outline_color: Color = Palette.IMPORTANT_OUTLINE) -> String:
 	var result := text.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
 	result = result.replace("<b>", "[b]").replace("</b>", "[/b]")
 	result = result.replace("<i>", "[i]").replace("</i>", "[/i]")
 	result = result.replace("<color=indice>", "[color=#%s]" % highlight_color.to_html(false))
-	result = result.replace("<color=important>", "[color=#%s]" % important_color.to_html(false))
+	result = _outline_important(result, "<color=important>(.*?)</color>", important_outline_size, important_text_color, important_outline_color)
 	var color_regex := RegEx.new()
 	color_regex.compile("<color=([^>]+)>")
 	result = color_regex.sub(result, "[color=$1]", true)
