@@ -69,11 +69,11 @@
 			{ "messageId": 11, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "Appelle-moi plutôt." },
 			{ "messageId": 12, "isAnswer": 1, "timestamp": "2030-01-05T15:30:00", "message": "J'en peux plus j'ai <indice id=\"M1_sms_marek_rate_audition\"><color=indice>tout raté</color></indice> comme d'habitude." },
 			{ "messageId": 13, "isAnswer": 0, "timestamp": "2030-01-05T15:31:00", "message": "Tu sais très bien que c'est faux. J'arrive." },
-			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "<indice id=\"M1_sms_marek_19jan\"><color=indice>Ce qui est arrivé hier</color></indice>, ne doit pas se reproduire !" },
-			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "C'est compliqué, tu le sais. Désolée." },
-			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Non. <color=important>Ma proposition</color> tient toujours." },
-			{ "messageId": 17, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "C'est de la folie. Ne t'en mêle pas." },
-			{ "messageId": 18, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Mouais." },
+			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "<indice id=\"M1_sms_marek_09jan\"><color=indice>Ce qui est arrivé hier</color></indice>, ne doit pas se reproduire !" },
+			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-09T09:46:00", "message": "C'est compliqué, tu le sais. Désolée." },
+			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "Non. <color=important>Ma proposition</color> tient toujours." },
+			{ "messageId": 17, "isAnswer": 1, "timestamp": "2030-01-09T09:46:00", "message": "C'est de la folie. Ne t'en mêle pas." },
+			{ "messageId": 18, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "Mouais." },
 			{ "messageId": 19, "isAnswer": 1, "timestamp": "2030-01-19T11:01:00", "message": "J'ai <indice id=\"M1_mail_secte_mystere\"><color=indice>écrit hier soir au site</color></indice> dont je t'avais parlé. Enfin j'ai essayé." },
 			{ "messageId": 20, "isAnswer": 0, "timestamp": "2030-01-19T09:46:00", "message": "Méfie-toi quand même." },
 			{ "messageId": 21, "isAnswer": 1, "timestamp": "2030-01-19T11:01:00", "message": "Tu vas pas t'y mettre toi aussi !" },
@@ -130,7 +130,7 @@
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "Ce que tu me proposes me semble tellement impossible… Mais je te promets d'y réfléchir. Les choses vont trop vite." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "Je ne te promets pas le luxe, ma vie d'artiste est difficile, mais je prendrai soin de toi." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
-			{ "messageId": 10, "isAnswer": 1, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_mail_crypt_marek_rdv\"><color=indice>Ma mère m'a demandé un RDV</color></indice>, je refuse de la voir... Rien ne peut excuser un abandon...  " }
+			{ "messageId": 10, "isAnswer": 1, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_sms_mere_refus\"><color=indice>Ma mère m'a demandé un RDV</color></indice>, je refuse de la voir... Rien ne peut excuser un abandon...  " }
 		  ]
 		}
 	  ]
@@ -157,7 +157,7 @@
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2029-11-15T10:30:00", "message": "Where there's a will there's a way. Leave earlier next time. We'll talk tonight." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2029-11-15T10:31:00", "message": "This won't happen again." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2029-11-30T12:04:00", "message": "Call me as soon as you're out." },
-			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Dad, can I go out Saturday? My friends are having <color=indice>a party</color>." },
+			{ "messageId": 11, "isAnswer": 1, "timestamp": "2029-12-14T16:31:00", "message": "Dad, can I go out Saturday? My friends are having <color=important>a party</color>." },
 			{ "messageId": 12, "isAnswer": 0, "timestamp": "2029-12-14T16:31:00", "message": "No. You have an <color=important>82 in biology</color> to make up for, it's not the time." },
 			{ "messageId": 13, "isAnswer": 1, "timestamp": "2029-12-14T16:32:00", "message": "But dad, I need to see my friends sometimes!" },
 			{ "messageId": 14, "isAnswer": 0, "timestamp": "2029-12-14T16:32:00", "message": "Once you're in med school you'll have all the time for that. Right now it's not the priority." },
@@ -191,12 +191,12 @@
 		  "isCrypted": 0,
 		  "messages": [
 			{ "messageId": 0, "isAnswer": 1, "timestamp": "2029-10-13T09:46:00", "message": "I'm happy I met you. Well, I mean… it's weird to say it like that..." },
-			{ "messageId": 1, "isAnswer": 0, "timestamp": "2029-10-13T09:49:00", "message": "<color=indice>You're taking risks</color>. Did you listen to what I told you yesterday?" },
+			{ "messageId": 1, "isAnswer": 0, "timestamp": "2029-10-13T09:49:00", "message": "<color=important>You're taking risks</color>. Did you listen to what I told you yesterday?" },
 			{ "messageId": 2, "isAnswer": 1, "timestamp": "2029-10-13T09:49:00", "message": "Don't be so hard on me… I do what I can." },
 			{ "messageId": 3, "isAnswer": 0, "timestamp": "2029-10-13T09:50:00", "message": "It's not about being hard on you." },
 			{ "messageId": 4, "isAnswer": 1, "timestamp": "2029-12-31T19:46:00", "message": "Tonight, I'm coming to the party, I got permission!" },
 			{ "messageId": 5, "isAnswer": 0, "timestamp": "2029-12-31T19:46:00", "message": "Ok! Good news! See you tonight." },
-			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Thanks for yesterday. It was crazy, <color=indice>what you showed me</color>." },
+			{ "messageId": 6, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "Thanks for yesterday. It was crazy, <indice id=\"M1_sms_marek_decouverte\"><color=indice>what you showed me</color></indice>." },
 			{ "messageId": 7, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "You shouldn't text me, you know why." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "I'm going to install <indice id=\"M1_sms_marek_application\"><color=indice>an app</color></indice> on your phone that will help you." },
 			{ "messageId": 9, "isAnswer": 1, "timestamp": "2030-01-01T09:46:00", "message": "..." },
@@ -204,11 +204,11 @@
 			{ "messageId": 11, "isAnswer": 0, "timestamp": "2030-01-01T09:46:00", "message": "Call me instead." },
 			{ "messageId": 12, "isAnswer": 1, "timestamp": "2030-01-05T15:30:00", "message": "I can't take it anymore, I <indice id=\"M1_sms_marek_rate_audition\"><color=indice>failed everything</color></indice>, as usual." },
 			{ "messageId": 13, "isAnswer": 0, "timestamp": "2030-01-05T15:31:00", "message": "You know very well that's not true. I'm coming." },
-			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "<indice id=\"M1_sms_marek_19jan\"><color=indice>What happened yesterday</color></indice> can't happen again!" },
-			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "It's complicated, you know it. Sorry." },
-			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "No. <color=important>My offer</color> still stands." },
-			{ "messageId": 17, "isAnswer": 1, "timestamp": "2030-01-08T09:46:00", "message": "That's crazy. Stay out of it." },
-			{ "messageId": 18, "isAnswer": 0, "timestamp": "2030-01-08T09:46:00", "message": "Yeah, right." },
+			{ "messageId": 14, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "<indice id=\"M1_sms_marek_09jan\"><color=indice>What happened yesterday</color></indice> can't happen again!" },
+			{ "messageId": 15, "isAnswer": 1, "timestamp": "2030-01-09T09:46:00", "message": "It's complicated, you know it. Sorry." },
+			{ "messageId": 16, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "No. <color=important>My offer</color> still stands." },
+			{ "messageId": 17, "isAnswer": 1, "timestamp": "2030-01-09T09:46:00", "message": "That's crazy. Stay out of it." },
+			{ "messageId": 18, "isAnswer": 0, "timestamp": "2030-01-09T09:46:00", "message": "Yeah, right." },
 			{ "messageId": 19, "isAnswer": 1, "timestamp": "2030-01-19T11:01:00", "message": "I <indice id=\"M1_mail_secte_mystere\"><color=indice>wrote to the site</color></indice> last night, the one I told you about. Well, I tried." },
 			{ "messageId": 20, "isAnswer": 0, "timestamp": "2030-01-19T09:46:00", "message": "Be careful anyway." },
 			{ "messageId": 21, "isAnswer": 1, "timestamp": "2030-01-19T11:01:00", "message": "Don't you start too!" },
@@ -265,7 +265,7 @@
 			{ "messageId": 7, "isAnswer": 1, "timestamp": "2030-01-15T10:24:00", "message": "What you're offering seems so impossible… But I promise I'll think about it. Things are moving too fast." },
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a personal safety alarm</color></indice>, we don't know how your father might react if he finds out about us." },
-			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_mail_crypt_marek_rdv\"><color=indice>My mom asked me to meet with her</color></indice>, but I refuse to see her... Nothing can excuse abandoning someone... "}
+			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_sms_mere_refus\"><color=indice>My mom asked me to meet with her</color></indice>, but I refuse to see her... Nothing can excuse abandoning someone... "}
 		  ]
 		}
 	  ]

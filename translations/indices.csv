@@ -48,10 +48,10 @@ M1_sms_cryp_m_baiser,"Marek a embrassé Alizée le 31 décembre. C'était sa pre
 M1_sms_concours_chant,"Le 5 janvier, Alizée a participé et raté un concours de chant.","On January 5th, Alizée entered and failed a singing contest."
 M1_sms_marek_rate_audition,"Alizée a raté quelque chose le 5 janvier 2030. Laquelle ?","Alizée missed something on January 5, 2030. What was it?"
 
-M1_sms_cryp_m_disparue,"Après le mail de sa mère le 19 janvier, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on January 19th, Alizée wandered the streets for hours. Alone and sad."
-M1_sms_marek_19jan,"Alizée a fait quelque chose de grave le 19 janvier. Qu'a-t-elle fait ?","Alizée did something serious on January 19. What did she do?"
+M1_sms_cryp_m_disparue,"Après le mail de sa mère le 08 janvier, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on January 08th, Alizée wandered the streets for hours. Alone and sad."
+M1_sms_marek_09jan,"Alizée a fait quelque chose de grave le 08 janvier. Qu'a-t-elle fait ?","Alizée did something serious on January 08. What did she do?"
 
-M1_mail_crypt_marek_rdv,"Alizée a refusé de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
+M1_sms_mere_refus,"Alizée a refusé de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
 M1_osint_jean_pw,Le père a EliteShot$83$ comme mot de passe.,The father's password is EliteShot$83$.
 
 M1_galerie_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de quelqu'un.","Alizée bought a <color=indice>personal alarm</color> to defend herself against someone."
