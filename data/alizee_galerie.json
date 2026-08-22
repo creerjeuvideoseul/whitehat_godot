@@ -80,7 +80,7 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "Je crois que ton groupe <color=indice>LastHorizon</color> est programmé à Rennes la semaine prochaine non ?"
+			  "message": "Je crois que ton groupe <indice id=\"M1_galerie_album\"><color=indice>LastHorizon</color></indice> est programmé à Rennes la semaine prochaine non ?"
 			},
 			{
 			  "commentId": 2,
@@ -110,7 +110,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
 			  "username": "Alizée",
-			  "message": "Mon doudou <color=indice>Bugsy</color> !"
+			  "message": "Mon doudou <indice id=\"M1_img_bugsy\"><color=indice>Bugsy</color></indice> !"
 			},
 			{
 			  "commentId": 1,
@@ -245,7 +245,7 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "I think your band <color=indice>LastHorizon</color> is scheduled to play in Rennes next week, right?"
+			  "message": "I think your band <indice id=\"M1_galerie_album\"><color=indice>LastHorizon</color></indice> is scheduled to play in Rennes next week, right?"
 			},
 			{
 			  "commentId": 2,
@@ -275,7 +275,7 @@
 			  "commentId": 0,
 			  "avatar": "res://assets/avatar/portrait_alizee_rond.webp",
 			  "username": "Alizée",
-			  "message": "My stuffed animal <color=indice>Bugsy</color>!"
+			  "message": "My stuffed animal <indice id=\"M1_img_bugsy\"><color=indice>Bugsy</color></indice>!"
 			},
 			{
 			  "commentId": 1,
