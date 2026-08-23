@@ -3,4 +3,21 @@
 RelayGhost: {{PlayerSession.pseudo}}, rapport reçu et transmis.
 RelayGhost: PLACEHOLDER, texte à venir (voir report_generation_screen.gd::RELAYGHOST_REPORT_DIALOGUE).
 
+- Demander comment il peut être au courant pour Marek ou les outils.
+    set StoryVars.player_ask_source = 1
+    Player: Comment tu sais qui est Marek ou quels outils j'utilise ? Tu as piraté mon système ?
+    RelayGhost: « Piraté » est un terme un peu imprécis.
+	RelayGhost: J'ai accès aux informations nécessaires au suivi de ton travail. 
+	Player: Donc tu m'observes ? 
+	RelayGhost: [color=indice]J'observe les résultats. [/color] [#indice=intro_relay_observe]
+	RelayGhost: La distinction est importante. 
+	Player: Et tu vois tout ce que je fais ? 
+	RelayGhost: Ce qui est nécessaire à l'évaluation de ta progression. 
+	RelayGhost: Le reste ne m'intéresse pas. 
+	Player: Tu sais donc exactement ce que je suis capable de faire ? 
+	RelayGhost: J'ai une estimation de tes capacités. 
+	RelayGhost: Elle évolue à chaque mission. 
+	RelayGhost: Pour l'instant, concentre-toi sur Jean Ranoud.
+
+
 => END

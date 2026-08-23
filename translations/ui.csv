@@ -53,6 +53,7 @@ CHAT_CONNECTING_LINE,Communication cryptée en réception...,Receiving encrypted
 CLUEBOARD_WINDOW_TITLE,Collecte d'indices,Clues collection
 CLUEBOARD_GENERATE_REPORT_BUTTON,GÉNÉRER LE RAPPORT,GENERATE REPORT
 CLUEBOARD_REPORT_LOCKED_THOUGHT,Je dois trouver ce qui est arrivé à Alizée avant de générer le rapport.,I need to find out what happened to Alizée before generating the report.
+THOUGHT_ALL_CLUES_FOUND,"Je pense que j'ai tous les éléments, je suis prêt à générer le rapport.","I think I have everything, I'm ready to generate the report."
 REPORT_GENERATION_TITLE,Génération du rapport final,Final report generation
 REPORT_CONFIRM_TITLE,Finir la mission de M. Ranoud.,Finish M. Ranoud's mission.
 REPORT_CONFIRM_INTENT,Souhaitez-vous commencer le rapport de la mission donnée par M. Ranoud ?,Do you want to start the report for the mission given by M. Ranoud?

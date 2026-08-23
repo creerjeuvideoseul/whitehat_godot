@@ -220,6 +220,18 @@ func has_unlocked_mission_solution(mission_id: int) -> bool:
 	return false
 
 
+## Vrai si TOUS les indices propres à cette mission (mission_id exact, comme
+## has_unlocked_mission_solution ci-dessus — pas les indices "hors mission"
+## mission_id == 0, ex. RelayGhost) sont débloqués, y compris ceux d'une
+## catégorie non affichée (IsDisplay=0) — pour DesktopCluePanel, qui célèbre
+## ce moment par une pensée dédiée (voir THOUGHT_ALL_CLUES_FOUND).
+func has_unlocked_all_clues(mission_id: int) -> bool:
+	for clue in _clues:
+		if clue.mission_id == mission_id and not is_unlocked(clue.id):
+			return false
+	return true
+
+
 func get_clues_for_category(mission_id: int, category_id: String) -> Array[ClueDefinition]:
 	var result: Array[ClueDefinition] = []
 	for clue in _clues:
