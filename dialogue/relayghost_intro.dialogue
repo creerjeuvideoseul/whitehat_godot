@@ -36,7 +36,7 @@ RelayGhost: As-tu deviné de quoi je parle ?
 	RelayGhost: Admettre une absence de données est le premier pas vers une analyse rigoureuse. C'est le début de la sagesse.
 
 RelayGhost: Je parle de [color=important]l'éthique[/color], {{PlayerSession.pseudo}}.
-RelayGhost: Dans cette affaire, j'observerai tes décisions afin d'établir ton indice d'éthique.
+RelayGhost: Dans cette affaire, [color=indice]j'observerai tes décisions[/color] afin d'établir ton indice d'éthique. [#indice=intro_relay_observe]
 RelayGhost: Ce n'est ni un jugement ni une note.
 RelayGhost: Je cherche simplement à comprendre qui tu es lorsque personne ne te dit quoi faire.
 RelayGhost: Ton premier client s'appelle [color=important]Jean Ranoud[/color], sa fille a disparu. [#hint=osint]

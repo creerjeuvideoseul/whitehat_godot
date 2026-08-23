@@ -11,16 +11,15 @@ intro_relay_observe,RelayGhost m'a dit qu'il m'observe... Aurait-il accès à mo
 
 M1_sms_o_18_ans,Alizée a eu <color=indice>18 ans</color> le 29 janvier 2030.,Alizée turned <color=indice>18</color> on January 29th 2030.
 
-M1_mail_cryp_mere_rdv,"La mère d'Alizée lui a donné rendez-vous le 31 janvier. Serait-elle partie avec elle ?","Alizée's mother arranged to meet her on January 31st. Did she leave with her?"
-M1_sms_marek_application,"Marek a installé une application de <color=important>coffre-fort</color> le 1er janvier 2030 sur le téléphone d'Alizée.","Marek installed a <color=important>vault app</color> on Alizée's phone on January 1st 2030."
+M1_mail_cryp_mere_rdv,"La mère d'Alizée lui a donné rendez-vous le <color=indice>31 janvier</color>. Serait-elle partie avec elle ?","Alizée's mother arranged to meet her on <color=indice>January 31st</color>. Did she leave with her?"
+M1_sms_marek_application,"Marek a installé une application de <color=indice>coffre-fort</color> le 1er janvier 2030 sur le téléphone d'Alizée.","Marek installed a <color=indice>vault app</color> on Alizée's phone on January 1st 2030."
 M1_sms_Marek_parking,"Marek a donné rendez-vous à Alizée <color=indice>le 1er février 2030 à 20h30</color> sur un parking. Pourquoi ?","Marek arranged to meet Alizée on <color=indice>February 1st 2030 at 8:30pm</color> in a parking lot. Why?"
-M1_sms_pere_sacrifice,"Bien qu'Alizée soit une bonne élève, son père semble l'isoler et ne cesse de lui rappeler ses sacrifices.","Even though Alizée is a good student, her father seems to isolate her and keeps reminding her of his sacrifices."
+M1_sms_pere_sacrifice,"Son père dit qu'il fait beaucoup de sacrifice pour l'élever.","His father says he makes a lot of sacrifices to raise him."
 M1_galerie_nom_groupe,"Le groupe de rock de Marek s'appelle <color=indice>LastHorizon</color>.","Marek's rock group is called <color=indice>LastHorizon</color>."
 
 M1_img_bugsy,Le doudou d'Alizée s'appelle <color=indice>Bugsy</color>.,Alizée's stuffed toy is named <color=indice>Bugsy</color>.
 
-M1_SOLUTION_OU,Alizée est partie avec Marek le lendemain de ses 18 ans. Elle le suit en tournée.,Alizée left with Marek the day after her 18th birthday. She's following him on tour.
-
+M1_SOLUTION_OU,Alizée est partie définitivement avec Marek. Elle le suit en tournée.,Alizée has left for good with Marek. She's joining him on tour.
 
 M1_pw_mere,Mot de passe utilisé par la mère <color=indice>Putriku_tersayang</color>.,Password used by the mother <color=indice>Putriku_tersayang</color>.
 M1_osint_marek_trafic,Marek a déjà été arrêté pour trafic de cannabis.,Marek has previously been arrested for trafficking cannabis.
@@ -32,14 +31,14 @@ M1_SOLUTION_MERE,Sa mère l'a abandonnée à ses 8 ans car Jean Ranoud était ab
 
 M1_sms_fac_medecine_ask,Son père demande si Alizée a reçu une réponse de la fac de médecine.,Her father asks if Alizée has received a response from the medical school.
 M1_mail_fac_medecine_refus,Alizée a reçu un refus de sa fac de médecine.,Alizée was rejected by her medical school.
-M1_mail_fac_medecine_solution,Alizée a menti à son père à propos de la fac de médecine. Elle a été refusée.,Alizée lied to her father about medical school. She was rejected.
+M1_mail_fac_medecine_solution,Alizée a <color=indice>menti</color> à son père à propos de la fac de médecine. Elle a été refusée.,Alizée <color=indice>lied</color> to her father about medical school. She was rejected.
 
 M1_tel_vide_jean,Le téléphone d'Alizée est étonnamment vide. Pourquoi ?,Alizée's phone is surprisingly empty. Why?
 M1_tel_vide_marek,"Marek a demandé à Alizée de nettoyer son portable, au cas où.","Marek asked Alizée to clean her phone, just in case."
 M1_tel_vide_solution,"Le téléphone d'Alizée est vide, car Marek lui a conseillé de le faire pour éviter les représailles de son père.","Alizée's phone is empty because Marek advised her to clear it to avoid her father's retaliation."
 
 M1_mail_secte_mystere,"Alizée a écrit à un site particulier. Pourquoi ? Lequel ?","Alizée wrote to a specific website. Why? Which one?"
-M1_mail_secte_write,"Dans un soir de désespoir, Alizée s'est tournée vers un site de secte, sans donner suite.","One evening, in a moment of despair, Alizée visited a cult website, but didn't follow through."
+M1_mail_secte_write,"Dans un soir de désespoir, Alizée s'est tournée vers un site de <color=indice>secte</color>, sans donner suite.","One evening, in a moment of despair, Alizée visited a <color=indice>cult</color> website, but didn't follow through."
 
 M1_osint_alizee_pwa,Alizée semble aimer le chiffre <color=indice>11</color>.,Alizée seems to like the number <color=indice>11</color>.
 
@@ -53,15 +52,15 @@ M1_sms_cryp_m_baiser,"Marek a embrassé Alizée le 31 décembre. C'était sa pre
 M1_sms_marek_rate_audition,"Alizée a raté quelque chose le 5 janvier 2030. Laquelle ?","Alizée missed something on January 5, 2030. What was it?"
 M1_sms_concours_chant,"Le 5 janvier, Alizée a participé et raté un concours de chant.","On January 5th, Alizée entered and failed a singing contest."
 
-M1_sms_ton_agressif,Alizée a eu un ton agressif envers son père le 8 janvier. Pourquoi ?,Alizée spoke aggressively to her father on January 8. Why?
-M1_mail_crypt_mere_contact,La mère d'Alizée a repris contact le 8 janvier par mail.,Alizée's mother got back in touch by email on January 8.
+M1_sms_ton_agressif,Alizée a eu un ton agressif envers son père le <color=indice>8 janvier</color>. Pourquoi ?,Alizée spoke aggressively to her father on <color=indice>January 8</color>. Why?
+M1_mail_crypt_mere_contact,La mère d'Alizée a repris contact le <color=indice>8 janvier</color> par mail.,Alizée's mother got back in touch by email on <color=indice>January 8</color>.
 M1_aliz_colere_solution,"Alizée ne comprend pas pourquoi sa mère a repris contact, alors qu'elle l'avait a priori abandonnée d'après son père.","Alizée doesn't understand why her mother got back in touch, since, according to her father, she had apparently abandoned her."
 
-M1_sms_marek_09jan,"Alizée a fait quelque chose de grave le 08 janvier. Qu'a-t-elle fait ?","Alizée did something serious on January 08. What did she do?"
-M1_sms_cryp_m_disparue,"Après le mail de sa mère le 08 janvier, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on January 08th, Alizée wandered the streets for hours. Alone and sad."
+M1_sms_marek_09jan,"Alizée a fait quelque chose de grave le <color=indice>08 janvier</color>. Qu'a-t-elle fait ?","Alizée did something serious on <color=indice>January 08</color>. What did she do?"
+M1_sms_cryp_m_disparue,"Après le mail de sa mère le <color=indice>08 janvier</color>, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on <color=indice>January 08th</color>, Alizée wandered the streets for hours. Alone and sad."
 
 
-M1_sms_mere_refus,"Alizée a refusé de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
+M1_sms_mere_refus,"Alizée a <color=indice>refusé</color> de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
 
 M1_galerie_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de quelqu'un.","Alizée bought a <color=indice>personal alarm</color> to defend herself against someone."
-M1_sms_cryp_m_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de son père.","Alizée bought a <color=indice>personal alarm</color> to defend herself against her father."
+M1_sms_cryp_m_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de <color=indice>son père</color>.","Alizée bought a <color=indice>personal alarm</color> to defend herself against <color=indice>her father</color>."
