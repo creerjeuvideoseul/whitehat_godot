@@ -2,14 +2,14 @@ extends Control
 class_name ClueFusion
 ## Encart de "fusion" de deux (ou trois) indices liés (voir clues_link.txt et
 ## ClueManager.completes_link/desktop.gd) : joué quand le joueur trouve la
-## réponse à une question déjà connue (ou l'inverse) — la question s'envole
-## depuis la droite (effet inversé de ClueSpotlight, qui s'y envole EN
-## sortie) et vient se poser en haut, la réponse apparaît en dessous, un "+"
-## ou un "=" jaune lumineux les relie (voir show_fusion), l'ensemble reste
-## affiché un instant, un son gratifiant se joue, puis tout glisse vers la
-## droite en direction du panneau latéral Collecte d'indices — même sens de
-## sortie que ClueSpotlight, pour rester cohérent avec "un indice part vers
-## le panneau".
+## réponse à une question déjà connue (ou l'inverse). Chaque élément (carte
+## IDClue1, symbole, carte IDClue2, etc.) reste invisible jusqu'à son tour
+## puis "tombe" depuis au-dessus de sa position finale et atterrit avec une
+## légère secousse — effet de pavé qui s'écrase, plus percutant qu'un simple
+## fondu/envol (voir _drop_group) — avant qu'un son gratifiant ne se joue et
+## que l'ensemble ne glisse vers la droite en direction du panneau latéral
+## Collecte d'indices, même sens de sortie que ClueSpotlight, pour rester
+## cohérent avec "un indice part vers le panneau".
 ##
 ## Deux formats, selon que la paire révèle une vraie 3e "solution" distincte
 ## de la réponse (colonne IDClueSolution de clues_link.txt, voir
@@ -26,18 +26,28 @@ class_name ClueFusion
 ## Positionnement manuel (pas de VBoxContainer) : cartes/symboles sont
 ## empilés à la main une fois leur taille minimale connue (voir
 ## _resize_to_content, même recette d'attente de deux frames que
-## ClueBoardTooltip/ClueSpotlight), pour pouvoir animer la position de
-## QuestionCard indépendamment du reste sans qu'un Container ne la
-## réécrase au prochain tri.
+## ClueBoardTooltip/ClueSpotlight) — chaque élément tombe ensuite depuis
+## cette position finale déjà connue jusqu'à elle-même (voir _drop_group),
+## un Container réécraserait la position pendant l'animation.
 
 const CARD_WIDTH := 900.0
 const CARD_GAP := 24.0
-const ENTRANCE_SECONDS := 0.5
-## Distance (en x) d'où QuestionCard part avant de glisser jusqu'à sa
-## position finale — assez grand pour venir clairement de hors-écran à
-## droite quel que soit l'endroit où l'encart se retrouve centré.
-const ENTRANCE_OFFSET := 500.0
-const REVEAL_SECONDS := 0.3
+## Distance (en y) au-dessus de sa position finale d'où un élément part avant
+## de "tomber" — assez grand pour lire clairement une chute, pas au point de
+## ralentir la cascade (voir DROP_STAGGER_SECONDS).
+const DROP_DISTANCE := 320.0
+## Chute rapide et accélérée (EASE_IN, voir _drop_group) façon gravité —
+## volontairement court pour rester percutant.
+const FALL_SECONDS := 0.22
+## Décalage entre le début de la chute d'un élément et celui du suivant —
+## augmenté à 0.6s (l'ancienne valeur de 0.12s faisait trop se chevaucher
+## les chutes) pour bien distinguer l'ordre question / symbole / réponse / ...
+const DROP_STAGGER_SECONDS := 0.6
+## Secousse horizontale à l'atterrissage : quelques allers-retours
+## d'amplitude décroissante (dernier palier à 0 = retour au repos), voir
+## _drop_group.
+const SHAKE_STEP_SECONDS := 0.045
+const SHAKE_OFFSETS: Array[float] = [10.0, -6.0, 3.0, -1.5, 0.0]
 const HOLD_SECONDS := 3.0
 ## Avec 3 cartes (question+réponse+solution), une seconde de plus que
 ## HOLD_SECONDS : plus de texte à lire avant l'envol vers le panneau.
@@ -65,7 +75,12 @@ signal finished
 @onready var _solution_card: PanelContainer = %SolutionCard
 @onready var _solution_label: RichTextLabel = %SolutionLabel
 
-var _tween: Tween
+## Tous les Tweens en vol (un par groupe qui tombe, plus celui du
+## palier/envol final) — suivis dans un tableau plutôt qu'une seule variable
+## depuis que la cascade en lance plusieurs en parallèle, pour pouvoir tous
+## les tuer d'un coup si une nouvelle fusion redémarre pendant que l'ancienne
+## joue encore (voir _kill_tweens).
+var _tweens: Array[Tween] = []
 ## Vrai si cette fusion a une 3e carte (solution distincte de la réponse) —
 ## voir show_fusion. Relu par _resize_to_content pour savoir si
 ## EqualsLabel/SolutionCard participent à l'empilement.
@@ -76,17 +91,22 @@ func _ready() -> void:
 	hide()
 
 
-## Joue la séquence complète (entrée de la question, apparition de la
-## réponse et du symbole, palier, son, envol vers la droite) puis émet
-## `finished`. `question_id`/`answer_id` : voir ClueManager.get_link_partner/
-## is_link_question pour déterminer lequel est lequel avant d'appeler ceci —
-## cet encart ne connaît rien à la sémantique question/réponse, juste où
-## poser chaque texte. `solution_id` : voir ClueManager.get_link_solution —
-## égal à `answer_id` pour le format à deux cartes ("="), différent pour le
-## format à trois cartes ("+" puis "=").
+func _kill_tweens() -> void:
+	for t in _tweens:
+		if is_instance_valid(t):
+			t.kill()
+	_tweens.clear()
+
+
+## Joue la séquence complète (cascade de chutes, palier, son, envol vers la
+## droite) puis émet `finished`. `question_id`/`answer_id` : voir
+## ClueManager.get_link_partner/is_link_question pour déterminer lequel est
+## lequel avant d'appeler ceci — cet encart ne connaît rien à la sémantique
+## question/réponse, juste où poser chaque texte. `solution_id` : voir
+## ClueManager.get_link_solution — égal à `answer_id` pour le format à deux
+## cartes ("="), différent pour le format à trois cartes ("+" puis "=").
 func show_fusion(question_id: String, answer_id: String, solution_id: String) -> void:
-	if is_instance_valid(_tween):
-		_tween.kill()
+	_kill_tweens()
 
 	_has_solution_card = solution_id != answer_id
 
@@ -102,62 +122,87 @@ func show_fusion(question_id: String, answer_id: String, solution_id: String) ->
 	position = Vector2.ZERO
 	scale = Vector2.ONE
 	modulate = Color.WHITE
-	_question_backdrop.modulate.a = 0.0
-	_question_card.modulate.a = 0.0
-	_answer_backdrop.modulate.a = 0.0
-	_answer_card.modulate.a = 0.0
-	_plus_label.modulate.a = 0.0
-	_equals_label.modulate.a = 0.0
-	_solution_backdrop.modulate.a = 0.0
-	_solution_card.modulate.a = 0.0
+	for n: CanvasItem in [_question_backdrop, _question_card, _plus_label, _answer_backdrop, _answer_card, _equals_label, _solution_backdrop, _solution_card]:
+		n.modulate.a = 0.0
 	show()
 
 	await _resize_to_content()
 
-	## QuestionBackdrop suit QuestionCard pendant son envol d'entrée (même
-	## décalage, même tween) — sinon son fond serait déjà visible, immobile,
-	## pendant que la carte vole encore vers lui depuis la droite.
-	var question_final_x: float = _question_card.position.x
-	var question_backdrop_final_x: float = _question_backdrop.position.x
-	_question_card.position.x = question_final_x + ENTRANCE_OFFSET
-	_question_backdrop.position.x = question_backdrop_final_x + ENTRANCE_OFFSET
-	_tween = create_tween()
-	_tween.set_ease(Tween.EASE_OUT)
-	_tween.set_trans(Tween.TRANS_CUBIC)
-	_tween.tween_property(_question_card, "position:x", question_final_x, ENTRANCE_SECONDS)
-	_tween.parallel().tween_property(_question_backdrop, "position:x", question_backdrop_final_x, ENTRANCE_SECONDS)
-	_tween.parallel().tween_property(_question_card, "modulate:a", 1.0, ENTRANCE_SECONDS)
-	_tween.parallel().tween_property(_question_backdrop, "modulate:a", 1.0, ENTRANCE_SECONDS)
-
-	_tween.tween_property(_answer_card, "modulate:a", 1.0, REVEAL_SECONDS)
-	_tween.parallel().tween_property(_answer_backdrop, "modulate:a", 1.0, REVEAL_SECONDS)
-	_tween.parallel().tween_property(_plus_label, "modulate:a", 1.0, REVEAL_SECONDS)
-
+	## Cascade "pavé qui tombe" : chaque groupe (une carte + son fond, ou un
+	## symbole seul) reste invisible jusqu'à son tour puis tombe et atterrit
+	## en tremblant, avec un léger décalage avant que le suivant ne parte —
+	## voir _drop_group.
+	var drop_groups: Array = [
+		[_question_card, _question_backdrop],
+		[_plus_label],
+		[_answer_card, _answer_backdrop],
+	]
 	if _has_solution_card:
-		_tween.tween_property(_solution_card, "modulate:a", 1.0, REVEAL_SECONDS)
-		_tween.parallel().tween_property(_solution_backdrop, "modulate:a", 1.0, REVEAL_SECONDS)
-		_tween.parallel().tween_property(_equals_label, "modulate:a", 1.0, REVEAL_SECONDS)
+		drop_groups.append([_equals_label])
+		drop_groups.append([_solution_card, _solution_backdrop])
 
-	_tween.tween_interval(HOLD_SECONDS_WITH_SOLUTION if _has_solution_card else HOLD_SECONDS)
-	_tween.tween_callback(func() -> void: SfxPlayer.play(SfxPlayer.CLUE_FUSION_SFX))
+	var last_tween: Tween
+	for i in drop_groups.size():
+		last_tween = _drop_group(drop_groups[i])
+		_tweens.append(last_tween)
+		if i < drop_groups.size() - 1:
+			await get_tree().create_timer(DROP_STAGGER_SECONDS).timeout
+	await last_tween.finished
 
-	## Revient aux réglages par défaut du Tween (linéaire) pour l'envol final :
-	## EASE_OUT/TRANS_CUBIC ci-dessus n'était voulu que pour l'entrée de
-	## QuestionCard, pas pour la sortie — même style neutre que l'envol de
-	## ClueSpotlight, qui ne personnalise pas non plus sa courbe de sortie.
-	_tween.set_ease(Tween.EASE_IN_OUT)
-	_tween.set_trans(Tween.TRANS_LINEAR)
-	_tween.set_parallel(true)
+	var hold_tween := create_tween()
+	_tweens.append(hold_tween)
+	hold_tween.tween_interval(HOLD_SECONDS_WITH_SOLUTION if _has_solution_card else HOLD_SECONDS)
+	hold_tween.tween_callback(func() -> void: SfxPlayer.play(SfxPlayer.CLUE_FUSION_SFX))
+
+	hold_tween.set_ease(Tween.EASE_IN_OUT)
+	hold_tween.set_trans(Tween.TRANS_LINEAR)
+	hold_tween.set_parallel(true)
 	## Cible absolue (pas relative à la position actuelle, déjà centrée) —
 	## même calcul que ClueSpotlight._tween pour l'envol de sortie.
 	var exit_target_x: float = get_viewport_rect().size.x + size.x
-	_tween.tween_property(self, "position:x", exit_target_x, EXIT_SECONDS)
-	_tween.tween_property(self, "modulate:a", 0.0, EXIT_SECONDS)
-	_tween.tween_property(self, "scale", EXIT_SCALE, EXIT_SECONDS)
-	_tween.chain().tween_callback(func() -> void:
+	hold_tween.tween_property(self, "position:x", exit_target_x, EXIT_SECONDS)
+	hold_tween.tween_property(self, "modulate:a", 0.0, EXIT_SECONDS)
+	hold_tween.tween_property(self, "scale", EXIT_SCALE, EXIT_SECONDS)
+	hold_tween.chain().tween_callback(func() -> void:
 		hide()
 		finished.emit()
 	)
+
+
+## Fait "tomber" un groupe d'un ou deux nœuds (une carte + son fond, ou un
+## symbole seul) depuis DROP_DISTANCE au-dessus de sa position finale
+## (déjà posée par _resize_to_content, lue AVANT de la décaler vers le haut)
+## jusqu'à cette position, avec une légère secousse horizontale à
+## l'atterrissage. Retourne le Tween pour que l'appelant puisse attendre la
+## fin du dernier groupe de la cascade (voir show_fusion) ou le suivre pour
+## un kill (_kill_tweens).
+func _drop_group(nodes: Array) -> Tween:
+	var final_positions: Array[Vector2] = []
+	for n: Control in nodes:
+		final_positions.append(n.position)
+		n.position.y -= DROP_DISTANCE
+		n.modulate.a = 1.0
+
+	var t := create_tween()
+	t.set_parallel(true)
+	for i in nodes.size():
+		t.tween_property(nodes[i], "position:y", final_positions[i].y, FALL_SECONDS) \
+			.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+
+	## Secousse : allers-retours horizontaux à amplitude décroissante,
+	## chaînés après la chute (chain() quitte le mode parallèle en cours) puis
+	## repassés en parallèle à chaque palier pour garder la carte et son fond
+	## synchronisés entre eux. Le son d'impact se joue à cet instant précis
+	## (atterrissage), pas au début de la chute.
+	t.chain()
+	t.tween_callback(func() -> void: SfxPlayer.play(SfxPlayer.CLUE_DROP_SFX))
+	for offset in SHAKE_OFFSETS:
+		t.set_parallel(true)
+		for i in nodes.size():
+			t.tween_property(nodes[i], "position:x", final_positions[i].x + offset, SHAKE_STEP_SECONDS)
+		t.chain()
+
+	return t
 
 
 ## Mesure la taille réelle de chaque carte/symbole présent (texte fraîchement

@@ -74,6 +74,11 @@ const TERMINAL_TYPING_SFX := preload("res://assets/audio/sound/virtual_vibes-fas
 ## une question grâce à une réponse trouvée ailleurs (voir clues_link.txt).
 const CLUE_FUSION_SFX := preload("res://assets/audio/sound/aviana_phoenix-soft-transition-338894.mp3")
 
+## Impact "boîte qui s'écrase" — joué à l'atterrissage de chaque élément
+## (carte ou symbole) pendant la cascade de chutes de ClueFusion (voir
+## ClueFusion._drop_group), pour vendre l'effet "pavé qui tombe".
+const CLUE_DROP_SFX := preload("res://assets/audio/sound/freesound_community-box-crash-106687.ogg")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).
