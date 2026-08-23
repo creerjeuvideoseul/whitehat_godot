@@ -4,7 +4,7 @@ IDMission;IDClue1;IDClue2;IDClueSolution;
 1;M1_sms_fac_medecine_ask;M1_mail_fac_medecine_refus;M1_mail_fac_medecine_solution;		# Alizée a reçu un refus de sa fac de médecine.
 1;M1_osint_jean_pw;M1_osint_alizee_pwpere;M1_osint_pw_solution;							# Le père impose un mot de passe à sa fille pour certaines 
 1;M1_mail_secte_mystere;M1_mail_secte_write;M1_mail_secte_write;						# Alizée a écrit à une secte un soir de désespoire.
-1;M1_sms_marek_rate_audition;M1_sms_concours_chant;M1_sms_concours_chant;				# Le 5 janvier, Alizée a raté un concours de chant."
+1;M1_sms_marek_rate_audition;M1_sms_concours_chant;M1_sms_concours_chant;				# Le 5 janvier, Alizée a raté un concours de chant.
 1;M1_sms_marek_09jan;M1_sms_cryp_m_disparue;M1_sms_cryp_m_disparue;						# Alizée disparu le 8 janvier.
 1;M1_sms_o_mere_abandon;M1_SOLUTION_MERE;M1_SOLUTION_MERE;								# Christine a abandonné son père à cause d'une action de son père y'a longtemps.
 1;M1_sms_vieille_sorciere;M1_SOLUTION_MERE;M1_SOLUTION_MERE;							# Jean l'a traité de vieille sorcière car ils ont un différent.

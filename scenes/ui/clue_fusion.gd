@@ -39,6 +39,9 @@ const ENTRANCE_SECONDS := 0.5
 const ENTRANCE_OFFSET := 500.0
 const REVEAL_SECONDS := 0.3
 const HOLD_SECONDS := 3.0
+## Avec 3 cartes (question+réponse+solution), une seconde de plus que
+## HOLD_SECONDS : plus de texte à lire avant l'envol vers le panneau.
+const HOLD_SECONDS_WITH_SOLUTION := 4.0
 const EXIT_SECONDS := 0.5
 const EXIT_SCALE := Vector2(0.3, 0.3)
 
@@ -135,7 +138,7 @@ func show_fusion(question_id: String, answer_id: String, solution_id: String) ->
 		_tween.parallel().tween_property(_solution_backdrop, "modulate:a", 1.0, REVEAL_SECONDS)
 		_tween.parallel().tween_property(_equals_label, "modulate:a", 1.0, REVEAL_SECONDS)
 
-	_tween.tween_interval(HOLD_SECONDS)
+	_tween.tween_interval(HOLD_SECONDS_WITH_SOLUTION if _has_solution_card else HOLD_SECONDS)
 	_tween.tween_callback(func() -> void: SfxPlayer.play(SfxPlayer.CLUE_FUSION_SFX))
 
 	## Revient aux réglages par défaut du Tween (linéaire) pour l'envol final :
