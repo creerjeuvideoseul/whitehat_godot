@@ -15,22 +15,24 @@ M1_mail_cryp_mere_rdv,"La mère d'Alizée lui a donné rendez-vous le 31 janvier
 M1_sms_marek_application,"Marek a installé une application de <color=important>coffre-fort</color> le 1er janvier 2030 sur le téléphone d'Alizée.","Marek installed a <color=important>vault app</color> on Alizée's phone on January 1st 2030."
 M1_sms_Marek_parking,"Marek a donné rendez-vous à Alizée <color=indice>le 1er février 2030 à 20h30</color> sur un parking. Pourquoi ?","Marek arranged to meet Alizée on <color=indice>February 1st 2030 at 8:30pm</color> in a parking lot. Why?"
 M1_sms_pere_sacrifice,"Bien qu'Alizée soit une bonne élève, son père semble l'isoler et ne cesse de lui rappeler ses sacrifices.","Even though Alizée is a good student, her father seems to isolate her and keeps reminding her of his sacrifices."
-M1_galerie_album,"Le groupe de rock de Marek s'appelle <color=indice>LastHorizon</color>.","Marek's rock group is called <color=indice>LastHorizon</color>."
+M1_galerie_nom_groupe,"Le groupe de rock de Marek s'appelle <color=indice>LastHorizon</color>.","Marek's rock group is called <color=indice>LastHorizon</color>."
 
 M1_img_bugsy,Le doudou d'Alizée s'appelle <color=indice>Bugsy</color>.,Alizée's stuffed toy is named <color=indice>Bugsy</color>.
 
 M1_SOLUTION_OU,Alizée est partie avec Marek le lendemain de ses 18 ans. Elle le suit en tournée.,Alizée left with Marek the day after her 18th birthday. She's following him on tour.
-M1_SOLUTION_MERE,Sa mère l'a abandonnée à ses 8 ans car Jean Ranoud était abominable. Elle n'a pas eu le choix.,Her mother abandoned her at age 8 because Jean Ranoud was abusive. She had no choice.
 
-M1_mail_crypt_mere_contact,La mère d'Alizée a repris contact le 8 janvier par mail.,Alizée's mother got back in touch by email on January 8.
-M1_sms_ton_agressif,Alizée a eu un ton agressif envers son père le 8 janvier. Pourquoi ?,Alizée spoke aggressively to her father on January 8. Why?
-M1_sms_vieille_sorciere,Jean Ranoud compare la mère d'Alizée à une vieille sorcière. Pourquoi ?,Jean Ranoud compares Alizée's mother to an old witch. Why?
-M1_sms_o_mere_abandon,La mère d'Alizée l'a abandonnée à ses 8 ans. Pourquoi ?,Alizée's mother abandoned her when she was eight years old. Why?
+
 M1_pw_mere,Mot de passe utilisé par la mère <color=indice>Putriku_tersayang</color>.,Password used by the mother <color=indice>Putriku_tersayang</color>.
 M1_osint_marek_trafic,Marek a déjà été arrêté pour trafic de cannabis.,Marek has previously been arrested for trafficking cannabis.
 
+M1_sms_vieille_sorciere,Jean Ranoud compare la mère d'Alizée à une vieille sorcière. Pourquoi ?,Jean Ranoud compares Alizée's mother to an old witch. Why?
+M1_sms_o_mere_abandon,La mère d'Alizée l'a abandonnée à ses 8 ans. Pourquoi ?,Alizée's mother abandoned her when she was eight years old. Why?
+M1_SOLUTION_MERE,Sa mère l'a abandonnée à ses 8 ans car Jean Ranoud était abominable. Elle n'a pas eu le choix.,Her mother abandoned her at age 8 because Jean Ranoud was abusive. She had no choice.
+
+
 M1_sms_fac_medecine_ask,Son père demande si Alizée a reçu une réponse de la fac de médecine.,Her father asks if Alizée has received a response from the medical school.
 M1_mail_fac_medecine_refus,Alizée a reçu un refus de sa fac de médecine.,Alizée was rejected by her medical school.
+M1_mail_fac_medecine_solution,Alizée a menti à son père à propos de la fac de médecine. Elle a été refusée.,Alizée lied to her father about medical school. She was rejected.
 
 M1_tel_vide_jean,Le téléphone d'Alizée est étonnamment vide. Pourquoi ?,Alizée's phone is surprisingly empty. Why?
 M1_tel_vide_marek,"Marek a demandé à Alizée de nettoyer son portable, au cas où.","Marek asked Alizée to clean her phone, just in case."
@@ -40,19 +42,26 @@ M1_mail_secte_mystere,"Alizée a écrit à un site particulier. Pourquoi ? Leque
 M1_mail_secte_write,"Dans un soir de désespoir, Alizée s'est tournée vers un site de secte, sans donner suite.","One evening, in a moment of despair, Alizée visited a cult website, but didn't follow through."
 
 M1_osint_alizee_pwa,Alizée semble aimer le chiffre <color=indice>11</color>.,Alizée seems to like the number <color=indice>11</color>.
+
 M1_osint_alizee_pwpere,Alizée a EliteShot$83$ comme mot de passe.,Alizée's password is EliteShot$83$.
+M1_osint_jean_pw,Le père a EliteShot$83$ comme mot de passe.,The father's password is EliteShot$83$.
+M1_osint_pw_solution,Le père impose son mot de passe EliteShot$83$ à sa fille pour certaines applications.,The father requires his daughter to use his password EliteShot$83$ for certain apps.
 
 M1_sms_marek_decouverte,"Alizée a fait une découverte le 31 décembre 2029 avec Marek.","Alizée made a discovery on December 31, 2029, with Marek."
 M1_sms_cryp_m_baiser,"Marek a embrassé Alizée le 31 décembre. C'était sa première fois.","Marek kissed Alizée on December 31st. It was her first time."
 
-M1_sms_concours_chant,"Le 5 janvier, Alizée a participé et raté un concours de chant.","On January 5th, Alizée entered and failed a singing contest."
 M1_sms_marek_rate_audition,"Alizée a raté quelque chose le 5 janvier 2030. Laquelle ?","Alizée missed something on January 5, 2030. What was it?"
+M1_sms_concours_chant,"Le 5 janvier, Alizée a participé et raté un concours de chant.","On January 5th, Alizée entered and failed a singing contest."
 
-M1_sms_cryp_m_disparue,"Après le mail de sa mère le 08 janvier, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on January 08th, Alizée wandered the streets for hours. Alone and sad."
+M1_sms_ton_agressif,Alizée a eu un ton agressif envers son père le 8 janvier. Pourquoi ?,Alizée spoke aggressively to her father on January 8. Why?
+M1_mail_crypt_mere_contact,La mère d'Alizée a repris contact le 8 janvier par mail.,Alizée's mother got back in touch by email on January 8.
+M1_aliz_colere_solution,"Alizée ne comprend pas pourquoi sa mère a repris contact, alors qu'elle l'avait a priori abandonnée d'après son père.","Alizée doesn't understand why her mother got back in touch, since, according to her father, she had apparently abandoned her."
+
 M1_sms_marek_09jan,"Alizée a fait quelque chose de grave le 08 janvier. Qu'a-t-elle fait ?","Alizée did something serious on January 08. What did she do?"
+M1_sms_cryp_m_disparue,"Après le mail de sa mère le 08 janvier, Alizée est partie errer dans la rue pendant de longues heures. Seule et triste.","After her mother's email on January 08th, Alizée wandered the streets for hours. Alone and sad."
+
 
 M1_sms_mere_refus,"Alizée a refusé de voir sa mère. Rien ne peut excuser un abandon.","Alizée refused to see her mother. Nothing can excuse abandonment."
-M1_osint_jean_pw,Le père a EliteShot$83$ comme mot de passe.,The father's password is EliteShot$83$.
 
 M1_galerie_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de quelqu'un.","Alizée bought a <color=indice>personal alarm</color> to defend herself against someone."
 M1_sms_cryp_m_bomb,"Alizée a acheté une <color=indice>bombe sonore</color> pour se défendre de son père.","Alizée bought a <color=indice>personal alarm</color> to defend herself against her father."

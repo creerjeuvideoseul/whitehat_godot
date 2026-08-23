@@ -67,7 +67,6 @@
 		  "timestamp": "2030-01-02T14:08:02",
 		  "nbLike": 9,
 		  "isCrypted": 0,
-		  "indice": "M1_galerie_album",
 		  "description": "Merci pour ton album Marek, je l'adore !",
 		  "comments": [
 			{
@@ -80,7 +79,7 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "Je crois que ton groupe <indice id=\"M1_galerie_album\"><color=indice>LastHorizon</color></indice> est programmé à Rennes la semaine prochaine non ?"
+			  "message": "Je crois que ton groupe <indice id=\"M1_galerie_nom_groupe\"><color=indice>LastHorizon</color></indice> est programmé à Rennes la semaine prochaine non ?"
 			},
 			{
 			  "commentId": 2,
@@ -232,7 +231,6 @@
 		  "timestamp": "2030-01-02T14:08:02",
 		  "nbLike": 9,
 		  "isCrypted": 0,
-		  "indice": "M1_galerie_album",
 		  "description": "Thanks for your album Marek, I love it!",
 		  "comments": [
 			{
@@ -245,7 +243,7 @@
 			  "commentId": 1,
 			  "avatar": "res://assets/avatar/portrait_oceane.webp",
 			  "username": "Océane",
-			  "message": "I think your band <indice id=\"M1_galerie_album\"><color=indice>LastHorizon</color></indice> is scheduled to play in Rennes next week, right?"
+			  "message": "I think your band <indice id=\"M1_galerie_nom_groupe\"><color=indice>LastHorizon</color></indice> is scheduled to play in Rennes next week, right?"
 			},
 			{
 			  "commentId": 2,

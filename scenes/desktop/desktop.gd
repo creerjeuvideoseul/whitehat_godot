@@ -13,6 +13,7 @@ const PLAYER_THOUGHT := preload("res://scenes/ui/player_thought.tscn")
 const ANALYSIS_TRANSITION := preload("res://scenes/ui/analysis_transition.tscn")
 const REPORT_GENERATION_SCREEN := preload("res://scenes/ui/report_generation_screen.tscn")
 const CLUE_SPOTLIGHT := preload("res://scenes/ui/clue_spotlight.tscn")
+const CLUE_FUSION := preload("res://scenes/ui/clue_fusion.tscn")
 const HELP_BUBBLE := preload("res://scenes/ui/help_bubble.tscn")
 const CLUE_BOARD_TOOLTIP := preload("res://scenes/ui/clue_board_tooltip.tscn")
 const HACK_PC_MOTHER_WINDOW := preload("res://scenes/desktop/windows/hack_pc_mother_window.tscn")
@@ -129,6 +130,23 @@ const JEAN_DUMP_TERMINAL_DELAY_SECONDS := 4.0
 ## _on_clue_clicked) — instance unique réutilisée (voir clue_spotlight.gd).
 var _clue_spotlight: ClueSpotlight = null
 
+## Encart de fusion joué à la place de _clue_spotlight quand l'indice cliqué
+## complète une paire liée (voir clues_link.txt, ClueManager.completes_link,
+## _on_clue_unlocked_for_link) — instance unique réutilisée, même principe
+## que _clue_spotlight.
+var _clue_fusion: ClueFusion = null
+
+## Id de la paire clues_link.txt dont l'indice vient tout juste de compléter
+## la fusion (voir _on_clue_unlocked_for_link) — vide sinon. mark_clicked()
+## émet toujours clue_unlocked AVANT clue_clicked pour un même indice (voir
+## clue_manager.gd), donc cette valeur est déjà à jour quand
+## _on_clue_clicked se déclenche juste après pour ce même id — c'est ce qui
+## permet de savoir, sans state supplémentaire, si CE clic précis vient de
+## compléter une paire (auquel cas ClueFusion remplace ClueSpotlight) plutôt
+## qu'un simple re-clic sur un indice dont la paire était déjà complète
+## depuis un moment (qui ne doit jamais rejouer la fusion).
+var _pending_fusion_clue_id: String = ""
+
 ## Bulle d'aide "les mots orange sont des indices" (voir
 ## _on_chat_clue_line_shown) — gardée pour ne jamais en superposer une
 ## seconde si le signal se redéclenchait (ex. conversation relancée).
@@ -189,6 +207,13 @@ func _ready() -> void:
 	## toutes les fenêtres, header et footer compris.
 	_clue_spotlight = CLUE_SPOTLIGHT.instantiate()
 	add_child(_clue_spotlight)
+	_clue_fusion = CLUE_FUSION.instantiate()
+	add_child(_clue_fusion)
+	## mark_clicked() émet toujours clue_unlocked avant clue_clicked pour un
+	## même indice (voir clue_manager.gd) — _on_clue_unlocked_for_link a donc
+	## déjà mis à jour _pending_fusion_clue_id quand _on_clue_clicked
+	## s'exécute juste après pour ce même id (voir sa doc).
+	ClueManager.clue_unlocked.connect(_on_clue_unlocked_for_link)
 	ClueManager.clue_clicked.connect(_on_clue_clicked)
 
 	# Positionné en mémoire par report_generation_screen.gd::_on_validate_pressed
@@ -556,6 +581,17 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 	)
 
 
+## Repère si CE déblocage précis vient de compléter une paire liée (voir
+## clues_link.txt, ClueManager.completes_link) — _on_clue_clicked, qui suit
+## toujours dans la foulée pour le même id (voir clue_manager.gd), s'en sert
+## pour choisir entre le spotlight simple et l'encart de fusion, une seule
+## fois par paire (jamais rejoué sur un simple re-clic ultérieur, puisque
+## clue_unlocked lui-même ne se rejoue jamais pour un id déjà connu).
+func _on_clue_unlocked_for_link(clue_id: String) -> void:
+	if ClueManager.completes_link(clue_id):
+		_pending_fusion_clue_id = clue_id
+
+
 ## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
 ## OSINT, document piraté...) affiche son texte complet au centre de l'écran
 ## puis, une fois cet encart envolé vers la droite, déploie le panneau
@@ -563,7 +599,29 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 ## Le délai (durée totale de show_clue) évite que le panneau ne se déploie
 ## alors que l'encart central est encore visible, ce qui aurait cassé
 ## l'impression que l'indice "part" vers le panneau.
+##
+## Exception : si ce clic vient de compléter une paire liée (voir
+## _on_clue_unlocked_for_link), l'encart de fusion (ClueFusion) remplace
+## entièrement le spotlight simple — la question et la réponse s'affichent
+## ensemble avant de glisser vers le panneau, au lieu d'un indice seul.
+## Si la paire a une vraie solution distincte de la réponse (colonne
+## IDClueSolution de clues_link.txt), elle est débloquée à cet instant précis
+## (jamais trouvée par elle-même ailleurs) et rejoint l'encart comme 3e
+## indice ; sinon la solution EST la réponse, ClueFusion affiche alors
+## seulement les deux avec "=" au lieu de "+" (voir ClueFusion.show_fusion).
 func _on_clue_clicked(clue_id: String) -> void:
+	if clue_id == _pending_fusion_clue_id:
+		_pending_fusion_clue_id = ""
+		var question_id: String = clue_id if ClueManager.is_link_question(clue_id) else ClueManager.get_link_partner(clue_id)
+		var answer_id: String = ClueManager.get_link_partner(question_id)
+		var solution_id: String = ClueManager.get_link_solution(question_id)
+		if solution_id != answer_id:
+			ClueManager.unlock(solution_id)
+		_clue_fusion.show_fusion(question_id, answer_id, solution_id)
+		await _clue_fusion.finished
+		_clue_panel.expand()
+		return
+
 	_clue_spotlight.show_clue(clue_id)
 	await get_tree().create_timer(ClueSpotlight.TOTAL_SEQUENCE_SECONDS).timeout
 	_clue_panel.expand()

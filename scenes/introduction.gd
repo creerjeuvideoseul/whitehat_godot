@@ -6,12 +6,11 @@ extends Control
 
 const INTRO_DIALOGUE: DialogueResource = preload("res://dialogue/intro.dialogue")
 const DIALOGUE_BALLOON := "res://scenes/dialogue/dialogue_balloon.tscn"
-const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const INTRO_MUSIC := preload("res://assets/audio/shadowsandechoes-breaking-news-trailer-intro-orchester-news-318936.mp3")
-## Joué à l'ouverture de la toute première fenêtre système du jeu (le boot
-## OS juste après cette cutscene, voir _play_boot_terminal) — un seul coup,
-## pas une ambiance, pour marquer la bascule "cinématique -> interface système".
-const BOOT_SYSTEM_SFX := preload("res://assets/audio/sound/juniorsoundays-motion-amp-tansitions-02-527730.mp3")
+## Boot OS plein écran juste après cette cutscene, avant l'écran de connexion
+## — voir _play_boot_terminal et system_boot_screen.gd (scène à part plutôt
+## qu'ici : rejouable plus tard dans la partie, ex. un "reboot" du système).
+const SYSTEM_BOOT_SCREEN := preload("res://scenes/ui/system_boot_screen.tscn")
 ## Monologue de rédemption ("Je veux être un... WHITE HAT"), joué écran noir
 ## juste après le JT et avant le boot du système — voir _play_monologue().
 ## Partage MUSIC_FADE_SECONDS (1s) ci-dessous avec la musique du JT.
@@ -235,42 +234,10 @@ func _play_monologue() -> void:
 	await monologue.closed
 
 
-## Simule le démarrage du système d'exploitation avant la page de connexion,
-## dans la même fenêtre-terminal réutilisable que pour Jean Ranoud (voir
-## desktop.gd) — ici sans bouton "Fermer" : un écran de boot se regarde, il
-## ne se ferme pas manuellement.
+## Simule le démarrage du système d'exploitation avant la page de connexion —
+## voir system_boot_screen.gd pour le détail (plein écran, script des lignes,
+## SFX).
 func _play_boot_terminal() -> void:
-	SfxPlayer.play(BOOT_SYSTEM_SFX)
-	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
-	console.title = "TERMINAL_BOOT_TITLE"
-	console.show_close_button = false
-	console.lines = _build_boot_lines()
-	add_child(console)
-	await console.closed
-
-
-func _build_boot_lines() -> Array[TerminalLine]:
-	var prompt := "#%s" % Palette.BORDER_ACCENT.to_html(false)
-	var accent := "#%s" % Palette.TEXT_ACCENT.to_html(false)
-	var muted := "#%s" % Palette.CONSOLE_TEXT.to_html(false)
-
-	var lines: Array[TerminalLine] = []
-	lines.append(_wh_line(prompt, accent, muted, "W_HAT_OS Kernel 6.8.4 initialized successfully."))
-	lines.append(_wh_line(prompt, accent, muted, "Connecting to proxy standard secure gateways on port 3000..."))
-	lines.append(_wh_line(prompt, accent, muted, "Loading virtual environment: RESOLUTION=2560x1440, MULTI_VIEW_SPA=ON."))
-	lines.append(_wh_line(prompt, accent, muted, "Bypassing Sentinelle Quantique active detection nodes..."))
-	lines.append(_wh_line(prompt, accent, muted, "ESTABLISHING METADATA DISPATCHER [OK]"))
-	lines.append(_wh_line(prompt, accent, muted, "Boot sequence completed. Launching White Hat OS command center..."))
-	lines.append(_boot_line(prompt, accent, muted, "SYSTEM:", "Translation..."))
-	lines.append(TerminalLine.text_line("[color=%s]>>[/color] [color=%s]%s[/color]" % [prompt, muted, tr("TERMINAL_BOOT_STARTING_SESSION")]))
-	return lines
-
-
-func _boot_line(prompt: String, tag_color: String, text_color: String, tag: String, message: String) -> TerminalLine:
-	return TerminalLine.text_line("[color=%s]>>[/color] [color=%s]%s[/color][color=%s] %s[/color]" % [prompt, tag_color, tag, text_color, message])
-
-
-## Même form que _boot_line mais avec le préfixe "W_HAT >" utilisé par le
-## nouveau log de boot, sans tag ":" intermédiaire.
-func _wh_line(prompt: String, tag_color: String, text_color: String, message: String) -> TerminalLine:
-	return TerminalLine.text_line("[color=%s]W_HAT[/color] [color=%s]>[/color] [color=%s]%s[/color]" % [tag_color, prompt, text_color, message])
+	var boot_screen: SystemBootScreen = SYSTEM_BOOT_SCREEN.instantiate()
+	add_child(boot_screen)
+	await boot_screen.closed

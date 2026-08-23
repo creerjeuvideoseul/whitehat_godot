@@ -24,6 +24,12 @@ extends Node
 ## ne change pas.
 const CATEGORIES_CSV_PATH := "res://data/clue_categories.txt"
 const CLUES_CSV_PATH := "res://data/clues.txt"
+## Paires d'indices liés "question -> réponse" (voir _load_links) : trouver
+## la réponse gratifie le joueur d'une fusion visuelle (voir desktop.gd,
+## ClueFusion) et fait disparaître la question de la liste NARROW du panneau
+## Collecte d'indices (voir DesktopCluePanel._rebuild_content), la réponse
+## répondant déjà à sa place.
+const LINKS_CSV_PATH := "res://data/clues_link.txt"
 const CSV_DELIMITER := ";"
 
 ## Catégorie de l'indice de résolution principal d'une mission (ex.
@@ -55,11 +61,26 @@ signal all_unlocked_changed
 var _categories: Dictionary = {}
 var _clues: Array[ClueDefinition] = []
 var _unlocked_ids: Dictionary = {}
+## clue_id "question" (IDClue1 dans clues_link.txt) -> clue_id "réponse"
+## (IDClue2) — voir _load_links(). Une question n'a jamais qu'une seule
+## réponse dans les données actuelles, donc une Dictionary simple suffit.
+var _link_answer_of_question: Dictionary = {}
+## Sens inverse de _link_answer_of_question, pour une recherche O(1) depuis
+## la réponse plutôt que de reparcourir la table à l'envers à chaque appel.
+var _link_question_of_answer: Dictionary = {}
+## clue_id "question" -> clue_id "solution" (colonne IDClueSolution de
+## clues_link.txt) — égal à la réponse elle-même (voir _link_answer_of_question)
+## quand la paire n'a pas de 3e indice propre (cas le plus courant : "trouver
+## la réponse répond déjà à la question"), différent quand la fusion des deux
+## révèle un 3e indice à part entière, débloqué automatiquement à ce
+## moment-là (voir desktop.gd::_on_clue_clicked).
+var _link_solution_of_question: Dictionary = {}
 
 
 func _ready() -> void:
 	_load_categories()
 	_load_clues()
+	_load_links()
 
 
 ## Débloque un indice par son id. Sans effet s'il l'est déjà (idempotent).
@@ -239,3 +260,91 @@ func _load_clues() -> void:
 		clue.category_id = row[2]
 		clue.date = row[3] if row.size() > 3 else ""
 		_clues.append(clue)
+
+
+func _load_links() -> void:
+	var file := FileAccess.open(LINKS_CSV_PATH, FileAccess.READ)
+	if file == null:
+		return
+	file.get_csv_line(CSV_DELIMITER)
+	while not file.eof_reached():
+		var row := file.get_csv_line(CSV_DELIMITER)
+		if row.size() < 3 or row[1].is_empty() or row[2].is_empty():
+			continue
+		_link_answer_of_question[row[1]] = row[2]
+		_link_question_of_answer[row[2]] = row[1]
+		## Colonne IDClueSolution optionnelle (rétrocompatible avec un
+		## clues_link.txt à seulement 3 colonnes) : sans elle, la solution
+		## EST la réponse elle-même (voir _link_solution_of_question).
+		_link_solution_of_question[row[1]] = row[3] if row.size() > 3 and not row[3].is_empty() else row[2]
+
+
+## Le partenaire lié de `clue_id` dans clues_link.txt (question -> réponse ou
+## l'inverse), ou une chaîne vide s'il n'appartient à aucune paire — pour
+## desktop.gd, qui doit savoir si l'indice qui vient de se débloquer complète
+## une paire déjà à moitié connue (voir completes_link ci-dessous).
+func get_link_partner(clue_id: String) -> String:
+	if _link_answer_of_question.has(clue_id):
+		return _link_answer_of_question[clue_id]
+	return _link_question_of_answer.get(clue_id, "")
+
+
+## Vrai si `clue_id` est le côté "question" (IDClue1) d'une paire liée — pour
+## savoir, une fois qu'on sait qu'une paire est complète, quel côté est la
+## question (à faire disparaître de la liste NARROW, voir
+## is_superseded_by_link) et lequel est la réponse.
+func is_link_question(clue_id: String) -> bool:
+	return _link_answer_of_question.has(clue_id)
+
+
+## Vrai si `clue_id` a un partenaire dans clues_link.txt et que ce partenaire
+## est déjà débloqué, peu importe le sens (question comme réponse) — le
+## déblocage de `clue_id` vient donc de "compléter" une paire liée. Voir
+## desktop.gd::_on_clue_unlocked_for_link, qui l'utilise pour savoir si
+## l'animation de fusion (ClueFusion) doit remplacer le spotlight simple.
+func completes_link(clue_id: String) -> bool:
+	var partner_id := get_link_partner(clue_id)
+	return not partner_id.is_empty() and is_unlocked(partner_id)
+
+
+## La "solution" de la paire dont `question_id` est le côté question (colonne
+## IDClueSolution de clues_link.txt) — égale à la réponse elle-même si la
+## paire n'a pas de 3e indice propre (voir _load_links). Chaîne vide si
+## `question_id` n'est pas une question liée.
+func get_link_solution(question_id: String) -> String:
+	return _link_solution_of_question.get(question_id, "")
+
+
+## Vrai si `clue_id` (question OU réponse d'une paire liée) doit disparaître
+## de la liste NARROW une fois la fusion complète — pour DesktopCluePanel :
+## - une question disparaît dès que sa réponse est débloquée, la réponse
+##   répondant déjà à sa place (voir clues_link.txt) ;
+## - la réponse, elle, ne disparaît QUE si la paire révèle une vraie solution
+##   distincte (get_link_solution != la réponse elle-même) et que celle-ci
+##   est débloquée — c'est alors la solution qui prend sa place, pas la
+##   réponse. Sans solution distincte, la réponse reste affichée (comportement
+##   d'origine).
+## Le tableau d'enquête FULL (ClueBoard), lui, continue de tout montrer.
+func is_superseded_by_link(clue_id: String) -> bool:
+	if _link_answer_of_question.has(clue_id):
+		return is_unlocked(_link_answer_of_question[clue_id])
+	var question_id: String = _link_question_of_answer.get(clue_id, "")
+	if question_id.is_empty():
+		return false
+	var solution_id := get_link_solution(question_id)
+	return solution_id != clue_id and is_unlocked(solution_id)
+
+
+## Vrai si `clue_id` est la solution d'une paire liée (CAS 1 : sa colonne
+## IDClueSolution propre ; CAS 2 : la réponse elle-même, voir
+## get_link_solution) dont la question ET la réponse sont TOUTES LES DEUX
+## débloquées — la fusion a donc réellement eu lieu, pas seulement "clue_id
+## se trouve être une réponse dont la question n'a pas encore été trouvée"
+## (voir CAS 3, aucune fusion). Pour DesktopCluePanel, qui distingue
+## visuellement ces bulles (fond différent, voir _build_clue_bubble) une fois
+## qu'elles représentent effectivement une fusion résolue.
+func is_link_solution(clue_id: String) -> bool:
+	for question_id in _link_solution_of_question:
+		if _link_solution_of_question[question_id] == clue_id and is_unlocked(question_id) and is_unlocked(clue_id):
+			return true
+	return false

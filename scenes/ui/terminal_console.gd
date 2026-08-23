@@ -115,6 +115,13 @@ var window_title: String = ""
 ## connexion RDP du PC de la mère, voir desktop.gd) sans agrandir les autres
 ## usages (boot système de l'intro, dump de Jean) qui partagent cette même scène.
 var box_size: Vector2 = Vector2(1100.0, 680.0)
+## Ajouté à la taille de police par défaut du titre et de chaque ligne (voir
+## _add_label/_add_login_line_edit), sans toucher aux couleurs — laissé à 0
+## par défaut (comportement inchangé pour les usages existants : dump de
+## Jean, connexion RDP...). À définir avant add_child(), comme `lines`, pour
+## un appelant qui a besoin d'un texte plus grand (ex. le boot système plein
+## écran, voir system_boot_screen.gd) sans agrandir les autres usages.
+var font_size_boost: int = 0
 
 @onready var _backdrop: ColorRect = $Backdrop
 @onready var _box: Control = $Box
@@ -133,6 +140,8 @@ func _ready() -> void:
 	_box.offset_bottom = box_size.y * 0.5
 	_title_label.visible = not title.is_empty()
 	_title_label.text = title
+	if font_size_boost != 0:
+		_title_label.add_theme_font_size_override("font_size", _title_label.get_theme_font_size("font_size") + font_size_boost)
 	_close_button.hide()
 	_close_button.pressed.connect(_on_close_pressed)
 	gui_input.connect(_on_gui_input)
@@ -317,7 +326,7 @@ func _add_login_line_edit() -> LineEdit:
 	line_edit.secret = true
 	line_edit.caret_blink = true
 	line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	line_edit.add_theme_font_size_override("font_size", Palette.SIZE_SMALL)
+	line_edit.add_theme_font_size_override("font_size", Palette.SIZE_SMALL + font_size_boost)
 	line_edit.add_theme_color_override("font_color", Palette.TEXT_NORMAL)
 	line_edit.add_theme_color_override("caret_color", Palette.BORDER_ACCENT)
 	# Curseur "bloc" façon terminal plutôt que la fine barre par défaut — bien
@@ -351,7 +360,7 @@ func _add_label() -> DialogueLabel:
 	label.seconds_per_step = TYPING_SECONDS_PER_STEP
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
-	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
+	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL + font_size_boost)
 
 	_lines_list.add_child(label)
 	_scroll_to_bottom()

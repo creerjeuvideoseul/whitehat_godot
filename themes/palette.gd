@@ -48,6 +48,18 @@ const BUBBLE_PLAYER := Color(0.086, 0.302, 0.176, 0.9)
 ## vs. RelayGhost's default BUBBLE_OTHER green-neutral).
 const BUBBLE_BLUE := Color(0.1, 0.15, 0.28, 1.0)
 
+## Fond des bulles "solution" d'une fusion résolue dans la liste NARROW du
+## panneau Collecte d'indices (voir ClueManager.is_link_solution,
+## desktop_clue_panel.gd::_build_clue_bubble) — jaune pâle, pour qu'elles
+## ressortent clairement des bulles vert sombre neutre (BUBBLE_OTHER)
+## alentour. Fond clair, donc texte assombri en conséquence, voir
+## BUBBLE_SOLUTION_TEXT ci-dessous.
+const BUBBLE_SOLUTION := Color(0.976, 0.925, 0.702, 1.0)
+
+## Couleur de texte à utiliser sur BUBBLE_SOLUTION (fond clair) — le texte
+## clair par défaut (TEXT_NORMAL) n'y serait plus lisible.
+const BUBBLE_SOLUTION_TEXT := Color(0.25, 0.19, 0.02, 1.0)
+
 ## Plain "system/console" text — connection status, terminal-style asides —
 ## as opposed to an actual chat bubble from a contact.
 const CONSOLE_TEXT := Color(0.55, 0.63, 0.58, 1.0)

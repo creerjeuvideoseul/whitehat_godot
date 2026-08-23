@@ -68,6 +68,12 @@ const CLUE_CLICK_SFX := preload("res://assets/audio/sound/soundshelfstudio-deep-
 ## même raison qu'ACCESS_DENIED_SFX.
 const TERMINAL_TYPING_SFX := preload("res://assets/audio/sound/virtual_vibes-fast-keyboard-typing-423436.mp3")
 
+## Joué à la fin de l'animation de fusion de deux indices liés (voir
+## ClueFusion, desktop.gd) — juste avant que l'ensemble ne glisse vers le
+## panneau Collecte d'indices, pour marquer que le joueur vient de résoudre
+## une question grâce à une réponse trouvée ailleurs (voir clues_link.txt).
+const CLUE_FUSION_SFX := preload("res://assets/audio/sound/aviana_phoenix-soft-transition-338894.mp3")
+
 ## Volume de départ/arrivée d'un fondu d'ambiance (même valeur que
 ## MusicPlayer.SILENT_VOLUME_DB, dupliquée volontairement pour ne pas coupler
 ## les deux autoloads pour une seule constante).

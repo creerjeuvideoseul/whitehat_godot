@@ -16,10 +16,25 @@ corner_radius_bottom_right = 10
 shadow_color = Color(0.22, 0.87, 0.45, 0.45)
 shadow_size = 16
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_backdrop"]
+bg_color = Color(0, 0, 0, 0.6)
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 300
+
 [node name="ClueSpotlight" type="Control"]
 layout_mode = 3
 mouse_filter = 2
 script = ExtResource("1_script")
+
+[node name="Backdrop" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
 
 [node name="Box" type="PanelContainer" parent="."]
 unique_name_in_owner = true

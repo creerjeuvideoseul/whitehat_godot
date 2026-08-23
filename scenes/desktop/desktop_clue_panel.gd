@@ -181,10 +181,20 @@ func _rebuild_content() -> void:
 	for child in _content_list.get_children():
 		child.queue_free()
 	for categ in ClueManager.get_categories_for_mission(mission_id):
-		_content_list.add_child(_build_category_header(categ))
+		## is_superseded_by_link : une question (voir clues_link.txt) dont la
+		## réponse est déjà connue n'a plus sa place ici, la réponse répondant
+		## déjà à sa place (voir ClueManager.is_superseded_by_link) — seul le
+		## tableau d'enquête FULL (ClueBoard) continue de tout montrer. Si ça
+		## vide entièrement une catégorie, son en-tête n'est pas affiché non
+		## plus (voir `continue` ci-dessous), pour ne pas laisser un titre sans
+		## aucune bulle en dessous.
 		var clues: Array = ClueManager.get_clues_for_category(mission_id, categ.id).filter(
-			func(clue: ClueDefinition) -> bool: return ClueManager.is_unlocked(clue.id)
+			func(clue: ClueDefinition) -> bool:
+				return ClueManager.is_unlocked(clue.id) and not ClueManager.is_superseded_by_link(clue.id)
 		)
+		if clues.is_empty():
+			continue
+		_content_list.add_child(_build_category_header(categ))
 		clues.sort_custom(func(a: ClueDefinition, b: ClueDefinition) -> bool: return a.date < b.date)
 		for clue: ClueDefinition in clues:
 			_content_list.add_child(_build_clue_bubble(clue))
@@ -219,12 +229,21 @@ func _build_footer_hint() -> Control:
 ## DialogueLine ici, un texte déjà traduit (translations/indices.csv) suffit,
 ## sans effet de frappe ni logique "bulle joueur à droite" (aucune notion de
 ## joueur/interlocuteur pour un indice collecté).
+##
+## Fond distinct (Palette.BUBBLE_SOLUTION, jaune pâle) quand ce clue est la
+## solution d'une fusion déjà résolue (voir ClueManager.is_link_solution) —
+## que ce soit une vraie 3e carte ou la réponse elle-même faisant office de
+## solution (voir clue_fusion.gd) : dans les deux cas, IDClue1/IDClue2
+## d'origine ont déjà disparu de cette liste (voir _rebuild_content), seule
+## cette bulle représente la paire résolue, elle mérite de ressortir.
 func _build_clue_bubble(clue: ClueDefinition) -> Control:
+	var is_solution := ClueManager.is_link_solution(clue.id)
+
 	var bubble := PanelContainer.new()
 	bubble.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var style := StyleBoxFlat.new()
-	style.bg_color = Palette.BUBBLE_OTHER
+	style.bg_color = Palette.BUBBLE_SOLUTION if is_solution else Palette.BUBBLE_OTHER
 	style.set_corner_radius_all(14)
 	style.content_margin_left = 18
 	style.content_margin_right = 18
@@ -238,7 +257,7 @@ func _build_clue_bubble(clue: ClueDefinition) -> Control:
 	label.fit_content = true
 	label.scroll_active = false
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
+	label.add_theme_color_override("default_color", Palette.BUBBLE_SOLUTION_TEXT if is_solution else Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	label.text = RichTextMarkup.html_to_bbcode(tr(clue.id))
 	bubble.add_child(label)
