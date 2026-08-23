@@ -132,6 +132,20 @@
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Achète une bombe sonore</color></indice>, on ne sait pas comment ton père peut réagir s'il apprend pour nous deux." },
 			{ "messageId": 10, "isAnswer": 1, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_sms_mere_refus\"><color=indice>Ma mère m'a demandé un RDV</color></indice>, je refuse de la voir... Rien ne peut excuser un abandon...  " }
 		  ]
+		},
+		{
+		  "conversationId": 4,
+		  "contactName": "Océane",
+		  "avatar": "res://assets/avatar/portrait_oceane.webp",
+		  "colorBackground": "#ffe8ff",
+		  "colorFont": "#9900cc",
+		  "isCrypted": 1,
+		  "messages": [
+			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-10-17T09:46:00", "message": "Marek m'a dit ce que tu étais prête à faire !" },
+			{ "messageId": 1, "isAnswer": 0, "timestamp": "2029-10-17T10:00:00", "message": "C'est dingue ! Mais je pense que c'est mieux pour toi." },
+			{ "messageId": 2, "isAnswer": 1, "timestamp": "2029-10-17T10:01:00", "message": "Je suis terrifiée, mais je vais le faire !" },
+			{ "messageId": 3, "isAnswer": 0, "timestamp": "2029-10-17T10:10:00", "message": "Pense à <indice id=\"M1_tel_vide_marek\"><color=indice>nettoyer ton téléphone</color></indice>, au cas où." }
+		  ]
 		}
 	  ]
 	},
@@ -266,6 +280,20 @@
 			{ "messageId": 8, "isAnswer": 0, "timestamp": "2030-01-15T11:01:00", "message": "I can't promise you luxury, an artist's life is hard, but I'll take care of you." },
 			{ "messageId": 9, "isAnswer": 0, "timestamp": "2030-01-22T12:24:00", "message": "<indice id=\"M1_sms_cryp_m_bomb\"><color=indice>Buy a personal safety alarm</color></indice>, we don't know how your father might react if he finds out about us." },
 			{ "messageId": 10, "isAnswer": 0, "timestamp": "2030-01-31T05:01:00", "message": "<indice id=\"M1_sms_mere_refus\"><color=indice>My mom asked me to meet with her</color></indice>, but I refuse to see her... Nothing can excuse abandoning someone... "}
+		  ]
+		},
+		{
+		  "conversationId": 4,
+		  "contactName": "Océane",
+		  "avatar": "res://assets/avatar/portrait_oceane.webp",
+		  "colorBackground": "#ffe8ff",
+		  "colorFont": "#9900cc",
+		  "isCrypted": 1,
+		  "messages": [
+			{ "messageId": 0, "isAnswer": 0, "timestamp": "2029-10-17T09:46:00", "message": "Marek told me what you're ready to do!" },
+			{ "messageId": 1, "isAnswer": 0, "timestamp": "2029-10-17T10:00:00", "message": "That's crazy! But I think it's better for you." },
+			{ "messageId": 2, "isAnswer": 1, "timestamp": "2029-10-17T10:01:00", "message": "I'm terrified, but I'm going to do it!" },
+			{ "messageId": 3, "isAnswer": 0, "timestamp": "2029-10-17T10:10:00", "message": "Remember to <indice id=\"M1_tel_vide_marek\"><color=indice>clean up your phone</color></indice>, just in case." }
 		  ]
 		}
 	  ]

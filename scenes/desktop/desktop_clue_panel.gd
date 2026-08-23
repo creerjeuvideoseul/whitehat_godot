@@ -50,8 +50,19 @@ const COLLAPSED_VISIBLE_WIDTH := 30.0
 const SLIDE_OFFSET := EXPANDED_WIDTH - COLLAPSED_VISIBLE_WIDTH
 const SLIDE_SECONDS := 0.4
 ## Largeur du panneau FULL — recouvre la majorité de l'écran (fenêtres
-## SMS/Mail/Galerie/Coffre comprises) sans le masquer entièrement.
-const FULL_WIDTH_RATIO := 0.9
+## SMS/Mail/Galerie/Coffre comprises) sans le masquer entièrement. Augmenté
+## de 0.9 à 0.97 (le tableau d'enquête à 3 colonnes, voir ClueBoard.COLS_PER_ROW,
+## avait besoin de plus de place : à 0.9 le bouton "Générer le rapport" et le
+## bord droit du tableau se retrouvaient tronqués). La formule de target_x
+## dans _apply_state garde le bord DROIT du panneau fixe quel que soit ce
+## ratio — augmenter FULL_WIDTH_RATIO agrandit donc uniquement vers la
+## gauche, jamais vers la droite.
+const FULL_WIDTH_RATIO := 0.97
+## Marge conservée entre le bord droit du panneau FULL et le bord réel de
+## l'écran — sans elle, le panneau finissait pile sur le bord de l'écran
+## (aucune tolérance), ce qui suffisait à tronquer les éléments collés à
+## droite (bouton Générer le rapport, ascenseur vertical du tableau, bouton →).
+const FULL_RIGHT_MARGIN := 16.0
 ## Fondu du contenu (liste <-> graph) lors d'un passage NARROW<->FULL — voir
 ## _cross_fade. Volontairement plus court que SLIDE_SECONDS : le contenu
 ## sortant s'efface vite en début de glissement, le contenu entrant apparaît
@@ -99,6 +110,13 @@ var _content_fade_tween: Tween
 ## de ce script) faisait sauter le panneau vers la gauche de l'écran au lieu
 ## de le glisser légèrement vers la droite.
 var _narrow_position_x: float
+
+## Garde-fou pour ne déclencher qu'une fois la pensée THOUGHT_ALL_CLUES_FOUND
+## (voir _on_clue_unlocked) : sans lui, une fois tous les indices de cette
+## mission trouvés, chaque indice débloqué d'une AUTRE mission plus tard
+## repasserait par ce même test (toujours vrai, plus rien à débloquer ici) et
+## la rejouerait indéfiniment.
+var _all_clues_found_thought_shown: bool = false
 
 var _report_confirm_dialog: WarningDialog
 var _report_button_blink_tween: Tween
@@ -169,6 +187,10 @@ func _on_clue_unlocked(_clue_id: String) -> void:
 	if not _question_label.visible:
 		_question_label.visible = ClueManager.has_mission_started(mission_id)
 	_update_report_button()
+
+	if not _all_clues_found_thought_shown and ClueManager.has_unlocked_all_clues(mission_id):
+		_all_clues_found_thought_shown = true
+		thought_requested.emit(tr("THOUGHT_ALL_CLUES_FOUND"), "THOUGHT_ALL_CLUES_FOUND")
 
 
 ## Un indice par bulle (voir _build_clue_bubble), regroupés sous un en-tête
@@ -327,7 +349,10 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 		target_x = _narrow_position_x + SLIDE_OFFSET
 	elif new_state == PanelState.FULL:
 		target_width = get_viewport_rect().size.x * FULL_WIDTH_RATIO
-		target_x = _narrow_position_x + EXPANDED_WIDTH - target_width
+		## - FULL_RIGHT_MARGIN : décale tout le panneau (donc son bord droit
+		## aussi) légèrement vers la gauche, pour ne jamais toucher pile le
+		## bord de l'écran (voir FULL_RIGHT_MARGIN).
+		target_x = _narrow_position_x + EXPANDED_WIDTH - target_width - FULL_RIGHT_MARGIN
 
 	if instant:
 		position.x = target_x
