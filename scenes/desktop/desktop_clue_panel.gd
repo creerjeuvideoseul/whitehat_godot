@@ -230,12 +230,13 @@ func _build_footer_hint() -> Control:
 ## sans effet de frappe ni logique "bulle joueur à droite" (aucune notion de
 ## joueur/interlocuteur pour un indice collecté).
 ##
-## Fond distinct (Palette.BUBBLE_SOLUTION, jaune pâle) quand ce clue est la
-## solution d'une fusion déjà résolue (voir ClueManager.is_link_solution) —
-## que ce soit une vraie 3e carte ou la réponse elle-même faisant office de
-## solution (voir clue_fusion.gd) : dans les deux cas, IDClue1/IDClue2
-## d'origine ont déjà disparu de cette liste (voir _rebuild_content), seule
-## cette bulle représente la paire résolue, elle mérite de ressortir.
+## Fond distinct (Palette.BUBBLE_PLAYER, même vert foncé que les SMS
+## d'Alizée) quand ce clue est la solution d'une fusion déjà résolue (voir
+## ClueManager.is_link_solution) — que ce soit une vraie 3e carte ou la
+## réponse elle-même faisant office de solution (voir clue_fusion.gd) : dans
+## les deux cas, IDClue1/IDClue2 d'origine ont déjà disparu de cette liste
+## (voir _rebuild_content), seule cette bulle représente la paire résolue,
+## elle mérite de ressortir.
 func _build_clue_bubble(clue: ClueDefinition) -> Control:
 	var is_solution := ClueManager.is_link_solution(clue.id)
 
@@ -243,7 +244,7 @@ func _build_clue_bubble(clue: ClueDefinition) -> Control:
 	bubble.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var style := StyleBoxFlat.new()
-	style.bg_color = Palette.BUBBLE_SOLUTION if is_solution else Palette.BUBBLE_OTHER
+	style.bg_color = Palette.BUBBLE_PLAYER if is_solution else Palette.BUBBLE_OTHER
 	style.set_corner_radius_all(14)
 	style.content_margin_left = 18
 	style.content_margin_right = 18
@@ -257,7 +258,7 @@ func _build_clue_bubble(clue: ClueDefinition) -> Control:
 	label.fit_content = true
 	label.scroll_active = false
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_color_override("default_color", Palette.BUBBLE_SOLUTION_TEXT if is_solution else Palette.TEXT_NORMAL)
+	label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
 	label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	label.text = RichTextMarkup.html_to_bbcode(tr(clue.id))
 	bubble.add_child(label)

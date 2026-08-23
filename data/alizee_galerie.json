@@ -10,7 +10,7 @@
 		  "timestamp": "2030-01-22T11:14:02",
 		  "nbLike": 7,
 		  "isCrypted": 0,
-		  "description": "Maria carré ! <color=important>Ma chanson favorite.</color>",
+		  "description": "Maria carré ! <color=important>Ma chanteuse favorite.</color>",
 		  "comments": [
 			{
 			  "commentId": 0,
@@ -173,7 +173,7 @@
 		  "nbLike": 7,
 		  "isCrypted": 0,
 		  "indice": "",
-		  "description": "Spot on! <color=important>My favorite song.</color>",
+		  "description": "Spot on! <color=important>My favorite singer.</color>",
 		  "comments": [
 			{
 			  "commentId": 0,
