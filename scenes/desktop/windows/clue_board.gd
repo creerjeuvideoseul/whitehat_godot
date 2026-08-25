@@ -91,6 +91,16 @@ func _rebuild_board_now() -> void:
 ## garde-fou "même mission déjà construite" (voir ci-dessus) empêcherait de
 ## relire la nouvelle largeur disponible via _get_available_width().
 func refresh_layout() -> void:
+	# Même attente d'une frame que setup() ci-dessus (voir son commentaire) :
+	# appelée juste après la fin de l'animation de largeur du panneau (voir
+	# desktop_clue_panel.gd::_apply_state, tween.chain().tween_callback(...)),
+	# donc dans la même frame que la toute dernière valeur appliquée par le
+	# tween — le ScrollContainer parent n'a pas encore fini de se
+	# redimensionner en retour à ce moment précis. Sans cette attente,
+	# _get_available_width() relit l'ancienne taille de BoardScroll et centre
+	# les 3 colonnes (COLS_PER_ROW) sur une largeur fausse, tronquant la
+	# dernière à droite en plein écran natif (voir échange avec l'utilisateur).
+	await get_tree().process_frame
 	_rebuild_board_now()
 
 

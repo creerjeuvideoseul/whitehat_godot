@@ -49,6 +49,18 @@ const EXPANDED_WIDTH := 538.23
 const COLLAPSED_VISIBLE_WIDTH := 30.0
 const SLIDE_OFFSET := EXPANDED_WIDTH - COLLAPSED_VISIBLE_WIDTH
 const SLIDE_SECONDS := 0.4
+## Largeur minimale forcée de ContentList (voir _ready) — celle du contenu en
+## NARROW (EXPANDED_WIDTH moins les marges gauche/droite de ContentMargin
+## dans la scène, 24px chacune). Un ScrollContainer à l'axe horizontal
+## désactivé (Body.horizontal_scroll_mode, voir la scène) adopte de toute
+## façon la largeur minimale de son contenu plutôt que de la réduire — voir
+## échange avec l'utilisateur, un bug (largeur du panneau parfois mal
+## recalculée par le moteur au niveau COLLAPSED) faisait retomber les bulles
+## sur cette largeur réduite, écrasant leur texte au lieu de rester
+## simplement hors champ comme prévu par le design (voir
+## COLLAPSED_VISIBLE_WIDTH). Fixer cette largeur au niveau de ContentList
+## rend les bulles immunes à ce bug, quelle que soit sa cause exacte.
+const CONTENT_LIST_MIN_WIDTH := EXPANDED_WIDTH - 48.0
 ## Largeur du panneau FULL — recouvre la majorité de l'écran (fenêtres
 ## SMS/Mail/Galerie/Coffre comprises) sans le masquer entièrement. Augmenté
 ## de 0.9 à 0.97 (le tableau d'enquête à 3 colonnes, voir ClueBoard.COLS_PER_ROW,
@@ -102,14 +114,6 @@ signal thought_requested(text: String, translation_key: String)
 var _state: PanelState = PanelState.NARROW
 var _box_tween: Tween
 var _content_fade_tween: Tween
-## position.x réel du panneau NARROW, capturé au démarrage — voir
-## _apply_state. Ce n'est PAS 0 : le panneau est ancré au bord droit
-## (anchor_left = anchor_right = 1.0), donc Godot calcule
-## position.x = anchor_left * largeur_parent + offset_left, une valeur bien
-## plus grande que 0. Animer vers 0.0 en dur (comme dans une première version
-## de ce script) faisait sauter le panneau vers la gauche de l'écran au lieu
-## de le glisser légèrement vers la droite.
-var _narrow_position_x: float
 
 ## Garde-fou pour ne déclencher qu'une fois la pensée THOUGHT_ALL_CLUES_FOUND
 ## (voir _on_clue_unlocked) : sans lui, une fois tous les indices de cette
@@ -123,7 +127,7 @@ var _report_button_blink_tween: Tween
 
 
 func _ready() -> void:
-	_narrow_position_x = position.x
+	_content_list.custom_minimum_size.x = CONTENT_LIST_MIN_WIDTH
 	_expand_button.pressed.connect(_on_expand_button_pressed)
 	_retract_button.pressed.connect(_on_retract_button_pressed)
 	_background.gui_input.connect(_on_background_gui_input)
@@ -317,6 +321,24 @@ func _on_background_gui_input(event: InputEvent) -> void:
 		_apply_state(PanelState.NARROW)
 
 
+## position.x qu'aurait le panneau au repos (NARROW), recalculée à chaque
+## appel plutôt que mise en cache — voir échange avec l'utilisateur : une
+## version précédente la capturait une seule fois dans _ready() via
+## `position.x`, mais ce Control est ancré au bord droit (anchor_left =
+## anchor_right = 1.0, largeur pilotée par les offsets, voir
+## desktop_clue_panel.tscn) et son tout premier `position.x` peut être lu
+## avant que la mise en page du bureau parent ne soit stabilisée (même souci
+## que ClueBoard.setup(), voir son commentaire) — une valeur fausse capturée
+## une fois là contaminait ensuite indéfiniment tous les glissements
+## COLLAPSED/NARROW/FULL de la session. Recalculée à partir de l'ancre plutôt
+## que lue : anchor_left = anchor_right = 1.0 donne
+## position.x = largeur_viewport * 1.0 + offset_left, et offset_left vaut
+## toujours -EXPANDED_WIDTH au repos (voir la scène) — aucune valeur à mettre
+## en cache, juste une formule fixe.
+func _compute_narrow_position_x() -> float:
+	return get_viewport_rect().size.x - EXPANDED_WIDTH
+
+
 ## Point d'entrée unique des 3 états : bascule la visibilité des éléments de
 ## titre propres à chaque état, échange le contenu (liste <-> graph) si on
 ## franchit la frontière NARROW<->FULL, puis anime position/largeur du cadre
@@ -343,20 +365,48 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 	_retract_button.visible = new_state != PanelState.COLLAPSED
 	_background.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if new_state == PanelState.COLLAPSED else Control.CURSOR_ARROW
 
+	if instant:
+		## Ce chemin ne s'exécute qu'une fois, tout au tout début de la partie
+		## (bureau vierge, voir setup()) — donc potentiellement sur une des
+		## toutes premières frames après le chargement de la scène Desktop,
+		## avant que get_viewport_rect() ne reflète forcément sa taille finale
+		## stabilisée (même souci que ClueBoard.setup(), voir son commentaire).
+		## Une largeur/position calculée sur une lecture encore transitoire ici
+		## restait ensuite fausse pour le reste de la session tant qu'aucun
+		## _apply_state ultérieur (ex. NARROW -> FULL -> NARROW) ne la
+		## recalculait sur une frame stabilisée — voir échange avec
+		## l'utilisateur (bulles/tableau tronqués uniquement avant la première
+		## transition manuelle du joueur, jamais après).
+		await get_tree().process_frame
+		await get_tree().process_frame
+
+	var narrow_position_x := _compute_narrow_position_x()
 	var target_width := EXPANDED_WIDTH
-	var target_x := _narrow_position_x
+	var target_x := narrow_position_x
 	if new_state == PanelState.COLLAPSED:
-		target_x = _narrow_position_x + SLIDE_OFFSET
+		target_x = narrow_position_x + SLIDE_OFFSET
 	elif new_state == PanelState.FULL:
 		target_width = get_viewport_rect().size.x * FULL_WIDTH_RATIO
 		## - FULL_RIGHT_MARGIN : décale tout le panneau (donc son bord droit
 		## aussi) légèrement vers la gauche, pour ne jamais toucher pile le
 		## bord de l'écran (voir FULL_RIGHT_MARGIN).
-		target_x = _narrow_position_x + EXPANDED_WIDTH - target_width - FULL_RIGHT_MARGIN
+		target_x = narrow_position_x + EXPANDED_WIDTH - target_width - FULL_RIGHT_MARGIN
 
 	if instant:
-		position.x = target_x
-		size.x = target_width
+		## set_deferred sur la PROPRIÉTÉ ENTIÈRE ("position"/"size"), pas sur
+		## un sous-chemin "position:x"/"size:x" : set_deferred() ne supporte
+		## PAS la syntaxe deux-points de Tween.tween_property()/Object.set()
+		## — un appel set_deferred("position:x", ...) échoue silencieusement
+		## (aucune erreur, juste aucun effet), vérifié en isolation. Une
+		## version précédente utilisait cette syntaxe invalide croyant
+		## contourner l'avertissement moteur ("Nodes with non-equal opposite
+		## anchors will have their size overridden after _ready()...") : au
+		## lieu de le contourner, elle empêchait purement et simplement
+		## position/size d'être appliqués du tout, laissant le panneau à
+		## largeur nulle — pire que l'avertissement d'origine (voir échange
+		## avec l'utilisateur, panel.size=(0.0, ...) constaté en jeu).
+		set_deferred("position", Vector2(target_x, position.y))
+		set_deferred("size", Vector2(target_width, size.y))
 		_narrow_body.visible = new_state != PanelState.FULL
 		_full_body.visible = new_state == PanelState.FULL
 		return
