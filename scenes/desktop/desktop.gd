@@ -110,6 +110,15 @@ const DESKTOP_MUSIC := preload("res://assets/audio/chill_background-bathroom-chi
 const DESKTOP_MUSIC_FADE_IN_SECONDS := 5.0
 const DESKTOP_MUSIC_FADE_OUT_SECONDS := 2.0
 
+## Ambiance du téléphone d'Alizée : démarrée dans _reveal_alizee_phone(), dès
+## que le téléphone apparaît (animé ou non, voir son commentaire) — même
+## piste "de fond" que DESKTOP_MUSIC ci-dessus, qu'elle a de toute façon déjà
+## remplacée à ce stade (coupée avant le terminal de dump, voir
+## _build_chat_window). Un autre morceau viendra s'enchaîner plus tard.
+const ALIZEE_PHONE_MUSIC := preload("res://assets/audio/Suno - Alizee phone - Quiet Neon Loop.ogg")
+const ALIZEE_PHONE_MUSIC_FADE_IN_SECONDS := 1.0
+const ALIZEE_PHONE_MUSIC_FADE_OUT_SECONDS := 2.0
+
 ## Jean only shows up in the sidebar once RelayGhost's briefing is over, with
 ## a short pause first so the two don't blur together.
 const JEAN_REVEAL_DELAY_SECONDS := 1.0
@@ -215,6 +224,12 @@ func _ready() -> void:
 	## s'exécute juste après pour ce même id (voir sa doc).
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked_for_link)
 	ClueManager.clue_clicked.connect(_on_clue_clicked)
+	## Un indice trouvé ne doit jamais se reperdre si le joueur quitte juste
+	## après (voir échange avec l'utilisateur) — connexion séparée de
+	## _on_clue_unlocked_for_link ci-dessus plutôt qu'ajoutée dedans : deux
+	## raisons distinctes de réagir au même signal ne doivent pas partager un
+	## seul handler.
+	ClueManager.clue_unlocked.connect(_on_clue_unlocked_save_checkpoint)
 
 	# Positionné en mémoire par report_generation_screen.gd::_on_validate_pressed
 	# juste avant la fenêtre système d'envoi du rapport — vrai ici seulement si
@@ -592,6 +607,13 @@ func _on_clue_unlocked_for_link(clue_id: String) -> void:
 		_pending_fusion_clue_id = clue_id
 
 
+## Sauvegarde à chaque indice débloqué (voir échange avec l'utilisateur) —
+## _clue_id inutilisé : save_checkpoint() sauvegarde tout l'état courant
+## (ClueManager.get_unlocked_ids() y compris), pas un indice précis.
+func _on_clue_unlocked_save_checkpoint(_clue_id: String) -> void:
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+
+
 ## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
 ## OSINT, document piraté...) affiche son texte complet au centre de l'écran
 ## puis, une fois cet encart envolé vers la droite, déploie le panneau
@@ -854,6 +876,7 @@ func _reveal_alizee_phone(animate: bool) -> void:
 	_alizee_phone = ALIZEE_PHONE.instantiate()
 	_alizee_phone.icon_pressed.connect(_on_phone_icon_pressed)
 	_window_layer.add_child(_alizee_phone)
+	MusicPlayer.play_background(ALIZEE_PHONE_MUSIC, ALIZEE_PHONE_MUSIC_FADE_IN_SECONDS)
 	# Le bouton "Aide" n'a de sens qu'une fois l'enquête vraiment commencée :
 	# caché jusqu'à ce que le téléphone d'Alizée apparaisse (après Jean, après
 	# le terminal de dump) — pas dès la fin de RelayGhost, voir
