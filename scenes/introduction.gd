@@ -189,7 +189,10 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 
 	await _play_boot_terminal()
 
-	await SceneTransition.fade_out()
+	# Effet "extinction CRT" pour la fermeture de l'ecran systeme (voir
+	# SceneTransition.crt_off()), puis fade_in() classique pour l'arrivee du
+	# login.
+	await SceneTransition.crt_off()
 	get_tree().change_scene_to_file("res://scenes/login.tscn")
 	SceneTransition.fade_in()
 
