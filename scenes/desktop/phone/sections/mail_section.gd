@@ -75,22 +75,24 @@ const MAIL_MUSIC_FADE_SECONDS := 1.0
 var _database: MailDatabase
 var _selected_mail_id: int = -1
 var _mail_rows: Dictionary = {}
-## Clignotement du bouton "MÉTADONNÉES" tant qu'on n'a pas cliqué dessus —
-## voir _build_metadata_section. Tué avant de libérer le bouton (voir
+## Clignotement du bouton PIRATER LE PC une fois révélé (voir
+## _start_hack_button_blink) — tué avant de libérer le bouton (voir
 ## _clear_detail_root) : sinon un Tween continuerait de cibler un Control déjà
 ## libéré au mail suivant.
-var _metadata_blink_tween: Tween
-## Même rôle que _metadata_blink_tween, pour le bouton PIRATER LE PC une fois
-## révélé (voir _start_hack_button_blink) — un Tween séparé, les deux boutons
-## clignotent indépendamment l'un de l'autre.
 var _hack_button_blink_tween: Tween
-## Une seule pensée du joueur par mail ouvert, à la première fois où ses
-## métadonnées sont dépliées — remis à faux à chaque nouveau mail (voir
-## _clear_detail_root). Variable d'instance plutôt que capturée par la lambda
-## de _build_metadata_section : une lambda GDScript capture par valeur, pas
-## par référence, la réassigner en son sein ne modifierait pas une variable
-## locale extérieure.
+## Une seule pensée du joueur par mail ouvert, à l'affichage de ses
+## métadonnées (dépliées par défaut désormais, voir _build_metadata_section) —
+## remis à faux à chaque nouveau mail (voir _clear_detail_root). Variable
+## d'instance plutôt que capturée par la lambda de _build_metadata_section :
+## une lambda GDScript capture par valeur, pas par référence, la réassigner en
+## son sein ne modifierait pas une variable locale extérieure.
 var _metadata_think_shown: bool = false
+## Vrai une fois le bouton PIRATER LE PC révélé pour de bon (après le délai,
+## voir _reveal_hack_button_after_delay) — permet de le remontrer directement
+## (sans redélai ni re-clignotement) si le joueur replie puis redéplie
+## MÉTADONNÉES, plutôt que de le redéclencher à chaque repli/dépli. Remis à
+## faux à chaque nouveau mail (voir _clear_detail_root).
+var _hack_button_revealed: bool = false
 
 
 func _ready() -> void:
@@ -240,13 +242,11 @@ func _set_row_selected(mail_id: int, is_selected: bool) -> void:
 
 
 func _clear_detail_root() -> void:
-	if is_instance_valid(_metadata_blink_tween):
-		_metadata_blink_tween.kill()
-		_metadata_blink_tween = null
 	if is_instance_valid(_hack_button_blink_tween):
 		_hack_button_blink_tween.kill()
 		_hack_button_blink_tween = null
 	_metadata_think_shown = false
+	_hack_button_revealed = false
 	## Coupe la musique du mail qu'on quitte (voir MailEntry.play_music) — sans
 	## effet si aucune n'était en cours (MusicPlayer.stop() se charge déjà de
 	## ce cas). _show_mail() la relance juste après si le mail suivant en a une.
@@ -497,24 +497,27 @@ func _open_attachment_viewer(mail: MailEntry) -> void:
 	viewer.show_image(mail.attach_image, tr("MAIL_ATTACHMENT_VIEWER_TITLE"))
 
 
-## Repliée par défaut, dépliée au clic sur le bouton "MÉTADONNÉES" (qui
-## clignote tant qu'on n'a pas cliqué dessus, pour inciter à le faire — voir
-## BLINK_MIN_ALPHA/BLINK_SECONDS) — libellé traduit via MAIL_METADATA_BUTTON
+## Dépliée par défaut désormais (retour joueur) — le bouton "MÉTADONNÉES" ne
+## clignote plus (rien à découvrir par un clic, déjà visible) mais reste
+## cliquable pour replier/redéplier — libellé traduit via MAIL_METADATA_BUTTON
 ## (ui.csv), cohérent avec le même mot utilisé par RelayGhost dans
 ## relayghost_help.dialogue.
 ##
 ## META_PLAYER_THINK_KEY/META_HACK_PC_MOTHER_KEY sont exclues de la liste de
-## champs générique : la première déclenche une pensée du joueur à la
-## première ouverture des métadonnées, la seconde ajoute un bouton
-## "important" séparé plutôt que de s'afficher comme un champ de plus.
+## champs générique : la première déclenche une pensée du joueur, la seconde
+## ajoute un bouton "important" séparé plutôt que de s'afficher comme un champ
+## de plus — toutes deux révélées après un court délai (voir
+## METADATA_REVEAL_DELAY_SECONDS) dès la construction de cette section, plus
+## au clic sur MÉTADONNÉES (qui n'a plus besoin d'être dépliée à la main pour
+## ça).
 func _build_metadata_section(mail: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", ROW_GAP)
 
 	## Ligne d'en-tête horizontale : MÉTADONNÉES + (si présent) le bouton
 	## PIRATER LE PC juste à côté, séparés de 50px. Le bouton hack reste
-	## masqué tant que les métadonnées ne sont pas dépliées (voir le connect
-	## de toggle_button plus bas).
+	## masqué jusqu'à sa révélation différée (voir plus bas), qu'il faille ou
+	## non replier/redéplier MÉTADONNÉES entre-temps.
 	var header_row := HBoxContainer.new()
 	header_row.add_theme_constant_override("separation", 50)
 	box.add_child(header_row)
@@ -543,7 +546,7 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 		header_row.add_child(hack_button)
 
 	var fields_box := VBoxContainer.new()
-	fields_box.visible = false
+	fields_box.visible = true
 	fields_box.add_theme_constant_override("separation", 4)
 	for key in mail.meta_info.keys():
 		if key == META_PLAYER_THINK_KEY or key == META_HACK_PC_MOTHER_KEY:
@@ -564,42 +567,32 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 
 	box.add_child(fields_box)
 
-	if is_instance_valid(_metadata_blink_tween):
-		_metadata_blink_tween.kill()
-	_metadata_blink_tween = create_tween()
-	_metadata_blink_tween.set_loops()
-	_metadata_blink_tween.set_trans(Tween.TRANS_SINE)
-	_metadata_blink_tween.tween_property(toggle_button, "modulate:a", BLINK_MIN_ALPHA, BLINK_SECONDS)
-	_metadata_blink_tween.tween_property(toggle_button, "modulate:a", 1.0, BLINK_SECONDS)
-
+	## Replier/redéplier reste possible : le bouton hack suit (recaché à la
+	## fermeture, remontré directement si déjà révélé — voir
+	## _hack_button_revealed) sans redéclencher son délai à chaque repli.
 	toggle_button.pressed.connect(func() -> void:
 		fields_box.visible = not fields_box.visible
-		if is_instance_valid(_metadata_blink_tween):
-			_metadata_blink_tween.kill()
-			_metadata_blink_tween = null
-		toggle_button.modulate.a = 1.0
-
-		if not fields_box.visible:
-			# Fermeture : le bouton hack se recache tout de suite (pas de délai
-			# à l'envers), et une révélation en attente ne doit pas surgir
-			# après coup — voir la double vérification fields_box.visible dans
-			# _reveal_hack_button_after_delay.
-			if is_instance_valid(hack_button):
-				hack_button.visible = false
-				if is_instance_valid(_hack_button_blink_tween):
-					_hack_button_blink_tween.kill()
-					_hack_button_blink_tween = null
+		if not is_instance_valid(hack_button):
 			return
-
-		if is_instance_valid(hack_button):
-			_reveal_hack_button_after_delay(hack_button, fields_box)
-
-		if not _metadata_think_shown:
-			_metadata_think_shown = true
-			var think_text: String = str(mail.meta_info.get(META_PLAYER_THINK_KEY, ""))
-			if not think_text.is_empty():
-				_reveal_metadata_thought_after_delay(fields_box, think_text)
+		if fields_box.visible:
+			if _hack_button_revealed:
+				hack_button.visible = true
+		else:
+			hack_button.visible = false
+			if is_instance_valid(_hack_button_blink_tween):
+				_hack_button_blink_tween.kill()
+				_hack_button_blink_tween = null
 	)
+
+	if is_instance_valid(hack_button):
+		_reveal_hack_button_after_delay(hack_button, fields_box)
+
+	if not _metadata_think_shown:
+		_metadata_think_shown = true
+		var think_text: String = str(mail.meta_info.get(META_PLAYER_THINK_KEY, ""))
+		if not think_text.is_empty():
+			_reveal_metadata_thought_after_delay(fields_box, think_text)
+
 	return box
 
 
@@ -613,12 +606,12 @@ func _reveal_hack_button_after_delay(hack_button: Button, fields_box: Control) -
 	if not is_instance_valid(hack_button) or not is_instance_valid(fields_box) or not fields_box.visible:
 		return
 	hack_button.visible = true
+	_hack_button_revealed = true
 	_start_hack_button_blink(hack_button)
 
 
-## Clignote tant que le joueur n'a pas cliqué le bouton — même recette que
-## _metadata_blink_tween pour MÉTADONNÉES, tué au clic (voir le connect de
-## hack_button plus haut) ou à la fermeture des métadonnées.
+## Clignote tant que le joueur n'a pas cliqué le bouton — tué au clic (voir le
+## connect de hack_button plus haut) ou à la fermeture des métadonnées.
 func _start_hack_button_blink(hack_button: Button) -> void:
 	if is_instance_valid(_hack_button_blink_tween):
 		_hack_button_blink_tween.kill()
