@@ -100,3 +100,34 @@ theme_override_font_sizes/font_size = 30
 text = "INTRO_FLASH_INFO"
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="SkipButtonLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="SkipButton" type="Button" parent="SkipButtonLayer"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -224.0
+offset_top = -52.0
+offset_right = -24.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_type_variation = &"SecondaryButton"
+text = "INTRO_SKIP_BUTTON"
+
+[node name="SkipFill" type="ColorRect" parent="SkipButtonLayer/SkipButton"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 1.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.22, 0.87, 0.45, 0.35)

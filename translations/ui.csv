@@ -96,6 +96,7 @@ TERMINAL_BOOT_TITLE,Initialisation du système,System initialization
 TERMINAL_BOOT_STARTING_SESSION,Démarrage de la session...,Starting session...
 INTRO_LIVE_BADGE,EN DIRECT,LIVE
 INTRO_FLASH_INFO,"Flash info : Sentinelle, risque ou bénédiction ?","Breaking news: Sentinel, risk or blessing?"
+INTRO_SKIP_BUTTON,Passer l'intro,Skip intro
 PHONE_ALIZEE_TITLE,"Dump du téléphone de ""Alizée""
 HackPhoneOS 2.3","Alizée's phone dump
 HackPhoneOS 2.3"
