@@ -1,9 +1,10 @@
 extends Control
 class_name DesktopHeader
-## The desktop's top bar: OSINT search entry point (left) and system status
-## readouts (right) — TOR indicator, CPU/MEM gauges, current pseudo. Always
-## on screen in desktop.tscn; future windows (chat/phone/mail/...) render
-## below it, never over it.
+## The desktop's top bar: OSINT search entry point (left, plus a "Générer le
+## rapport" shortcut once available — see set_generate_report_button_visible)
+## and system status readouts (right) — TOR indicator, CPU/MEM gauges, current
+## pseudo. Always on screen in desktop.tscn; future windows (chat/phone/
+## mail/...) render below it, never over it.
 
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
@@ -23,11 +24,17 @@ const MIN_SEARCH_QUERY_LENGTH := 3
 ## Bubbled up with the raw (untrimmed) query text — desktop.gd owns what
 ## "searching" actually opens/updates, this header only knows about the field.
 signal osint_search_requested(query: String)
+## Bubbled up to desktop.gd, qui décide ce qu'ouvrir veut dire (même contrat
+## que osint_search_requested ci-dessus) — ce header ne connaît que son propre
+## bouton, pas la logique de déblocage (voir DesktopCluePanel.
+## report_availability_changed, qui pilote set_generate_report_button_visible).
+signal generate_report_button_pressed
 
 @onready var _tor_icon: TextureRect = %TorIcon
 @onready var _pseudo_label: Label = %PseudoLabel
 @onready var _search_field: LineEdit = %SearchField
 @onready var _search_button: Button = %SearchButton
+@onready var _generate_report_button: Button = %GenerateReportButton
 @onready var _cpu_gauge: UsageGauge = %CpuGauge
 
 
@@ -35,7 +42,16 @@ func _ready() -> void:
 	_pseudo_label.text = "%s@whos:~" % PlayerSession.pseudo
 	_search_button.pressed.connect(_on_search_requested)
 	_search_field.text_submitted.connect(func(_text: String) -> void: _on_search_requested())
+	_generate_report_button.pressed.connect(func() -> void: generate_report_button_pressed.emit())
 	_start_tor_blink()
+
+
+## Raccourci de "Générer le rapport" (voir DesktopCluePanel, qui reste seul
+## propriétaire de la logique de déblocage/confirmation) — visible dès que la
+## résolution de la mission est débloquée, sans attendre que le joueur ouvre
+## le panneau Collecte d'indices en FULL pour le trouver.
+func set_generate_report_button_visible(should_show: bool) -> void:
+	_generate_report_button.visible = should_show
 
 
 ## Pic de charge simulé pendant qu'une fenêtre système tourne (terminal après
@@ -50,14 +66,18 @@ func set_system_load_spike(active: bool) -> void:
 		_cpu_gauge.restore_normal_range()
 
 
-## Masque temporairement la recherche darkweb (champ + bouton) — pour l'écran
-## de génération du rapport (report_generation_screen.gd), qui réutilise ce
-## même header mais où cette action n'a plus de sens une fois la mission
-## conclue. `should_show` plutôt qu'un simple hide() : ce header est partagé
-## avec le bureau normal, où ce contrôle doit rester visible.
+## Masque temporairement la recherche darkweb (champ + bouton) et le raccourci
+## "Générer le rapport" — pour l'écran de génération du rapport
+## (report_generation_screen.gd), qui réutilise ce même header mais où ces
+## actions n'ont plus de sens une fois la mission conclue. `should_show`
+## plutôt qu'un simple hide() : ce header est partagé avec le bureau normal,
+## où ces contrôles doivent rester visibles (le bouton rapport selon sa propre
+## disponibilité, voir set_generate_report_button_visible).
 func set_investigation_controls_visible(should_show: bool) -> void:
 	_search_field.visible = should_show
 	_search_button.visible = should_show
+	if not should_show:
+		_generate_report_button.visible = false
 
 
 ## Rectangle global de la barre de recherche OSINT — pour desktop.gd, qui doit

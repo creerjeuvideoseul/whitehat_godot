@@ -91,6 +91,12 @@ const WARNING_DIALOG := preload("res://scenes/ui/warning_dialog.tscn")
 signal generate_report_requested
 ## Bubbled up à desktop.gd.
 signal thought_requested(text: String, translation_key: String)
+## Bubbled up à desktop.gd (voir _update_report_button) — reflète l'état du
+## bouton de CE panneau pour que desktop.gd puisse montrer/cacher le raccourci
+## équivalent du header (DesktopHeader.set_generate_report_button_visible),
+## sans dupliquer la logique de déblocage (ClueManager.has_unlocked_mission_solution)
+## ailleurs.
+signal report_availability_changed(available: bool)
 
 @export var mission_id: int = 1
 
@@ -153,7 +159,7 @@ func _ready() -> void:
 	## set_text() au premier clic sur "Générer le rapport".
 	get_tree().current_scene.add_child.call_deferred(_report_confirm_dialog)
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
-	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
+	_generate_report_button.pressed.connect(show_generate_report_confirmation)
 	_generate_report_button.gui_input.connect(_on_generate_report_button_gui_input)
 	_generate_report_button.mouse_entered.connect(_on_generate_report_button_mouse_entered)
 	_generate_report_button.mouse_exited.connect(_on_generate_report_button_mouse_exited)
@@ -489,6 +495,7 @@ func _update_report_button() -> void:
 	_generate_report_button.visible = mission_started
 	if not mission_started:
 		_stop_report_button_blink()
+		report_availability_changed.emit(false)
 		return
 
 	var unlocked := ClueManager.has_unlocked_mission_solution(mission_id)
@@ -498,11 +505,19 @@ func _update_report_button() -> void:
 		_start_report_button_blink()
 	else:
 		_stop_report_button_blink()
+	report_availability_changed.emit(unlocked)
 
 
-func _on_generate_report_button_pressed() -> void:
-	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+## Ouvre la confirmation "Générer le rapport" — connectée directement au
+## pressed de ce panneau ci-dessus, et appelable de la même façon par son
+## raccourci dans le header (voir desktop.gd, câblé sur report_availability_changed/
+## DesktopHeader.generate_report_button_pressed), les deux déclenchant la
+## même action. _stop_report_button_blink() ici plutôt que dans chaque
+## appelant : sans ça, déclencher la confirmation depuis le header laissait le
+## bouton de CE panneau continuer à clignoter derrière la boîte de dialogue.
+func show_generate_report_confirmation() -> void:
 	_stop_report_button_blink()
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	var white_hex := "#%s" % Palette.TEXT_NORMAL.to_html(false)
 	_report_confirm_dialog.set_text(
 		"[color=%s]%s[/color]\n\n%s\n\n[color=%s]%s[/color]" % [
