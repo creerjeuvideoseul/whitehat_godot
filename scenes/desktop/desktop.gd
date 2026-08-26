@@ -280,10 +280,17 @@ func _ready() -> void:
 ## vide si l'appelant n'a pas de clé ui.csv pour ce texte (ex. pensées
 ## déclenchées depuis le mail, déjà résolues par langue dans le JSON de
 ## données — voir mail_section.gd).
+##
+## Ajoutée directement sur la racine du bureau (pas _window_layer) : elle doit
+## rester visible au-dessus de tout, y compris le panneau Collecte d'indices
+## (DesktopCluePanel, ajouté après WindowLayer dans desktop.tscn, dessiné par-
+## dessus — retour joueur : la pensée disparaissait derrière une fois le
+## panneau déployé) — même recette que _clue_board_tooltip ci-dessus, devenir
+## le tout dernier enfant de Desktop suffit à passer devant.
 func _show_player_thought(text: String, translation_key: String = "") -> void:
 	var thought: PlayerThought = PLAYER_THOUGHT.instantiate()
 	thought.text = text
-	_window_layer.add_child(thought)
+	add_child(thought)
 	SaveManager.record_thought(text, translation_key)
 
 
