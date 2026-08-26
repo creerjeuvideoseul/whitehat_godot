@@ -45,10 +45,14 @@ const ATTACHMENT_THUMB_HEIGHT := 422.0
 ## Même recette que le clignotement TOR du header (voir desktop_header.gd).
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
-## Délai avant que le bouton PIRATER LE PC et la pensée du joueur n'apparaissent
-## après le dépli des métadonnées — laisse le temps de lire les champs plutôt
-## que de tout faire surgir d'un coup au clic sur MÉTADONNÉES.
+## Délai avant que la pensée du joueur n'apparaisse après le dépli des
+## métadonnées — laisse le temps de lire les champs plutôt que de tout faire
+## surgir d'un coup au clic sur MÉTADONNÉES.
 const METADATA_REVEAL_DELAY_SECONDS := 1.0
+## Même rôle que METADATA_REVEAL_DELAY_SECONDS ci-dessus, mais pour le bouton
+## PIRATER LE PC spécifiquement — +1s (retour joueur) : le bouton surgissait
+## trop vite par rapport au temps de lecture des métadonnées.
+const HACK_BUTTON_REVEAL_DELAY_SECONDS := 2.0
 ## Deux clés réservées dans meta_info, gérées à part plutôt qu'affichées comme
 ## un champ générique — même esprit que les tags [#indice=xxx]/<indice id="...">
 ## ailleurs dans le projet : un mot-clé reconnu par le code plutôt qu'un
@@ -291,8 +295,18 @@ func _show_mail(mail: MailEntry) -> void:
 		## Pensée déclenchée à l'ouverture du mail lui-même (voir MailEntry.player_think) —
 		## distincte de META_PLAYER_THINK_KEY dans meta_info, qui se déclenche au
 		## dépli de MÉTADONNÉES (voir _build_metadata_section).
+		##
+		## Garde-fou PERSISTANT (SaveManager.has_mail_thought_been_shown), pas
+		## un simple flag d'instance : _show_mail() se rejoue à l'identique
+		## chaque fois qu'on rouvre ce même mail (voir desktop.gd, qui
+		## réinstancie MailSection à chaque icône du téléphone cliquée) — sans
+		## ça, la même pensée s'ajoutait en double à chaque réouverture (retour
+		## joueur).
 		if not mail.player_think.is_empty():
-			thought_requested.emit(mail.player_think)
+			var thought_id := "mail_open:%d" % mail.mail_id
+			if not SaveManager.has_mail_thought_been_shown(thought_id):
+				SaveManager.mark_mail_thought_shown(thought_id)
+				thought_requested.emit(mail.player_think)
 		## MÉTADONNÉES n'a rien à montrer tant que le mail est crypté et pas
 		## encore déverrouillé (voir _is_mail_locked, même garde-fou) — sinon le
 		## bouton apparaissait déjà, avant même d'avoir accès au contenu réel du
@@ -507,9 +521,9 @@ func _open_attachment_viewer(mail: MailEntry) -> void:
 ## champs générique : la première déclenche une pensée du joueur, la seconde
 ## ajoute un bouton "important" séparé plutôt que de s'afficher comme un champ
 ## de plus — toutes deux révélées après un court délai (voir
-## METADATA_REVEAL_DELAY_SECONDS) dès la construction de cette section, plus
-## au clic sur MÉTADONNÉES (qui n'a plus besoin d'être dépliée à la main pour
-## ça).
+## METADATA_REVEAL_DELAY_SECONDS et HACK_BUTTON_REVEAL_DELAY_SECONDS) dès la
+## construction de cette section, plus au clic sur MÉTADONNÉES (qui n'a plus
+## besoin d'être dépliée à la main pour ça).
 func _build_metadata_section(mail: MailEntry) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", ROW_GAP)
@@ -591,18 +605,18 @@ func _build_metadata_section(mail: MailEntry) -> Control:
 		_metadata_think_shown = true
 		var think_text: String = str(mail.meta_info.get(META_PLAYER_THINK_KEY, ""))
 		if not think_text.is_empty():
-			_reveal_metadata_thought_after_delay(fields_box, think_text)
+			_reveal_metadata_thought_after_delay(fields_box, think_text, mail.mail_id)
 
 	return box
 
 
-## Laisse le joueur lire les métadonnées une seconde avant de faire surgir le
-## bouton "important" — voir METADATA_REVEAL_DELAY_SECONDS. Vérifie que les
+## Laisse le joueur lire les métadonnées avant de faire surgir le bouton
+## "important" — voir HACK_BUTTON_REVEAL_DELAY_SECONDS. Vérifie que les
 ## métadonnées sont toujours dépliées à la fin de l'attente : si le joueur a
 ## refermé MÉTADONNÉES entre-temps (ou changé de mail, qui libère hack_button),
 ## la révélation est simplement annulée.
 func _reveal_hack_button_after_delay(hack_button: Button, fields_box: Control) -> void:
-	await get_tree().create_timer(METADATA_REVEAL_DELAY_SECONDS).timeout
+	await get_tree().create_timer(HACK_BUTTON_REVEAL_DELAY_SECONDS).timeout
 	if not is_instance_valid(hack_button) or not is_instance_valid(fields_box) or not fields_box.visible:
 		return
 	hack_button.visible = true
@@ -623,9 +637,17 @@ func _start_hack_button_blink(hack_button: Button) -> void:
 
 
 ## Même délai que _reveal_hack_button_after_delay, pour la pensée du joueur —
-## voir METADATA_REVEAL_DELAY_SECONDS.
-func _reveal_metadata_thought_after_delay(fields_box: Control, think_text: String) -> void:
+## voir METADATA_REVEAL_DELAY_SECONDS. Le garde-fou persistant (voir
+## SaveManager.has_mail_thought_been_shown) est vérifié ici, à l'émission
+## réelle, plutôt qu'avant de programmer le délai : si le joueur change de
+## mail entre-temps (voir le is_instance_valid ci-dessous), la pensée n'est
+## jamais réellement montrée et ne doit donc pas être marquée comme telle.
+func _reveal_metadata_thought_after_delay(fields_box: Control, think_text: String, mail_id: int) -> void:
 	await get_tree().create_timer(METADATA_REVEAL_DELAY_SECONDS).timeout
 	if not is_instance_valid(fields_box) or not fields_box.visible:
 		return
+	var thought_id := "mail_meta:%d" % mail_id
+	if SaveManager.has_mail_thought_been_shown(thought_id):
+		return
+	SaveManager.mark_mail_thought_shown(thought_id)
 	thought_requested.emit(think_text)

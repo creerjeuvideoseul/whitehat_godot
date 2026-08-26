@@ -122,6 +122,28 @@ func get_thought_log() -> Array:
 	return _data.get("thought_log", [])
 
 
+## Garde-fou PERSISTANT pour les pensées déclenchées par un mail (voir
+## MailSection._show_mail/_reveal_metadata_thought_after_delay) — distinct de
+## record_thought ci-dessus, qui n'a volontairement aucun dédoublonnage
+## (une pensée de VaultSection peut légitimement revenir plusieurs fois).
+## Une section téléphone est reconstruite à zéro à chaque fois qu'on la rouvre
+## (voir desktop.gd::_on_phone_icon_pressed, qui libère puis réinstancie
+## MailSection) : un simple booléen d'instance ne survit pas à ça et
+## rejouerait la même pensée à chaque réouverture du mail. `thought_id` est
+## un identifiant stable propre à l'appelant (ex. "mail_meta:%d" % mail_id),
+## pas le texte lui-même (qui varie avec la langue).
+func has_mail_thought_been_shown(thought_id: String) -> bool:
+	var shown: Array = _data.get("shown_mail_thoughts", [])
+	return thought_id in shown
+
+
+func mark_mail_thought_shown(thought_id: String) -> void:
+	var shown: Array = _data.get("shown_mail_thoughts", [])
+	if thought_id not in shown:
+		shown.append(thought_id)
+	_data["shown_mail_thoughts"] = shown
+
+
 ## How long the player has been playing since their progress was last
 ## checkpointed — i.e. how much would be lost by quitting right now.
 func get_minutes_since_checkpoint() -> int:
