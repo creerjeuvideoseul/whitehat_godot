@@ -1,0 +1,8 @@
+~ start
+
+if StoryVars.m1_report_jean_transmit
+	Jean: PLACEHOLDER, texte à venir — Jean content, l'agent a transmis la localisation d'Alizée (voir report_generation_screen.gd::REPORT_M1_JEAN_QUESTION / StoryVars.m1_report_jean_transmit).
+else
+	Jean: PLACEHOLDER, texte à venir — Jean mécontent, l'agent a choisi de ne pas transmettre la localisation d'Alizée (voir report_generation_screen.gd::REPORT_M1_JEAN_QUESTION / StoryVars.m1_report_jean_transmit).
+
+=> END

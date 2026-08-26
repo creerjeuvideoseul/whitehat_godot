@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=15
+type="Resource"
+uid="uid://da6fuwi1uxq3j"
+path="res://.godot/imported/jean_report_m1.dialogue-a9a42e8c5cac8e9005d645ecd08c4523.tres"
+
+[deps]
+
+source_file="res://dialogue/jean_report_m1.dialogue"
+dest_files=["res://.godot/imported/jean_report_m1.dialogue-a9a42e8c5cac8e9005d645ecd08c4523.tres"]
+
+[params]
+
+defaults=true
