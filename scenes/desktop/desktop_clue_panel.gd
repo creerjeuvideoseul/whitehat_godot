@@ -143,7 +143,15 @@ func _ready() -> void:
 	## panneau est collé au bord droit et bien plus étroit que l'écran — un
 	## enfant direct s'y centrerait par rapport à SA largeur à lui, pas celle
 	## de l'écran.
-	get_tree().current_scene.add_child(_report_confirm_dialog)
+	##
+	## call_deferred : ce _ready() s'exécute pendant que Desktop (current_scene,
+	## un ancêtre de ce panneau) est encore en train d'instancier ses propres
+	## enfants — un add_child() synchrone sur lui échoue alors ("Parent node is
+	## busy setting up children", voir la Console). _report_confirm_dialog
+	## restait de ce fait hors de l'arbre, son _ready() ne s'exécutait jamais et
+	## ses @onready (ex. _message_label) restaient null, plantant plus tard sur
+	## set_text() au premier clic sur "Générer le rapport".
+	get_tree().current_scene.add_child.call_deferred(_report_confirm_dialog)
 	_report_confirm_dialog.confirmed.connect(_on_report_confirmed)
 	_generate_report_button.pressed.connect(_on_generate_report_button_pressed)
 	_generate_report_button.gui_input.connect(_on_generate_report_button_gui_input)
