@@ -67,7 +67,10 @@ func stop_background(fade_seconds: float = DEFAULT_FADE_SECONDS) -> void:
 ## deux pistes suivent exactement la même recette, seul le player/tween ciblé
 ## change.
 func _play_on(player: AudioStreamPlayer, fade_tween: Tween, stream: AudioStream, fade_seconds: float, loop: bool) -> Tween:
-	if stream is AudioStreamMP3:
+	# AudioStreamOggVorbis aussi : ce projet mixe .mp3 et .ogg pour la musique
+	# (voir desktop.gd::ALIZEE_PHONE_MUSIC), et seul .loop diffère d'un type à
+	# l'autre — les deux exposent la même propriété booléenne.
+	if stream is AudioStreamMP3 or stream is AudioStreamOggVorbis:
 		stream.loop = loop
 
 	if fade_tween and fade_tween.is_valid():
