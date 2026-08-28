@@ -1,7 +1,7 @@
 ~ start
 
 RelayGhost: {{PlayerSession.pseudo}}, c'est l'heure de ton premier rapport.
-RelayGhost: J'ai suivi ta progression.
+RelayGhost: J'ai suivi ta progression. {{M1NumberOfCluesFind}}%/{{M1NumberOfClues}} c'est intéressant.
 RelayGhost: Je veux maintenant connaître ta décision.
 RelayGhost: Vas-tu informer M. Ranoud de la localisation de sa fille, Alizée ?
 RelayGhost: Si oui, même si son comportement est parfois maladroit et possessif, son père pourrait avoir l'occasion de renouer le dialogue avec elle.
