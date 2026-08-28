@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://wf8k66gwt67q" path="res://assets/UI/whos.png" id="2_whos_logo"]
 [ext_resource type="Texture2D" uid="uid://dsys1j2mwekyf" path="res://assets/UI/button_green_0.png" id="3_tor_icon"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/usage_gauge.tscn" id="4_usage_gauge"]
+[ext_resource type="Texture2D" uid="uid://4pjbfuxgdn8a" path="res://assets/UI/Hamburger Menu.png" id="5_hamburger_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.01, 0.03, 0.02, 0.92)
@@ -237,3 +238,14 @@ size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
 theme_override_font_sizes/font_size = 22
 text = "pseudo@whos:~"
+
+[node name="HamburgerButton" type="TextureButton" parent="Margin/Row/RightGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+pivot_offset = Vector2(18, 18)
+texture_normal = ExtResource("5_hamburger_icon")
+ignore_texture_size = true
+stretch_mode = 5

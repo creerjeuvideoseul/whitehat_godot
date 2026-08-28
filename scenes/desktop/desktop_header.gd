@@ -4,11 +4,18 @@ class_name DesktopHeader
 ## rapport" shortcut once available — see set_generate_report_button_visible —
 ## and a DEBUG-only shortcut next to it, see _debug_skip_to_report_button)
 ## and system status readouts (right) — TOR indicator, CPU/MEM gauges, current
-## pseudo. Always on screen in desktop.tscn; future windows (chat/phone/
-## mail/...) render below it, never over it.
+## pseudo, and a hamburger menu icon that opens the same Options panel as
+## ÉCHAP (see OptionsMenu). Always on screen in desktop.tscn; future windows
+## (chat/phone/mail/...) render below it, never over it.
 
 const BLINK_MIN_ALPHA := 0.35
 const BLINK_SECONDS := 1.4
+
+## Léger grossissement au survol du bouton menu hamburger (voir
+## _on_hamburger_hover) — juste assez pour confirmer que c'est cliquable, pas
+## un vrai changement de mise en page.
+const HAMBURGER_HOVER_SCALE := 1.15
+const HAMBURGER_HOVER_SECONDS := 0.15
 
 ## Fourchette simulée pendant qu'une fenêtre système tourne (terminal, écran
 ## "chargement des données") — voir set_system_load_spike().
@@ -43,6 +50,9 @@ signal generate_report_button_pressed
 ## qui le cache dans set_investigation_controls_visible ci-dessous) :
 ## supprimer ces quatre endroits suffit à retirer entièrement ce bouton.
 @onready var _debug_skip_to_report_button: Button = %DebugSkipToReportButton
+@onready var _hamburger_button: TextureButton = %HamburgerButton
+
+var _hamburger_scale_tween: Tween
 
 
 func _ready() -> void:
@@ -52,11 +62,25 @@ func _ready() -> void:
 	_generate_report_button.pressed.connect(func() -> void: generate_report_button_pressed.emit())
 	_start_tor_blink()
 
+	# Même menu Options que la touche ÉCHAP (voir OptionsMenu, l'autoload qui
+	# gère l'un comme l'autre) — juste un second point d'entrée.
+	_hamburger_button.pressed.connect(func() -> void: OptionsMenu.open())
+	_hamburger_button.mouse_entered.connect(_on_hamburger_hover.bind(true))
+	_hamburger_button.mouse_exited.connect(_on_hamburger_hover.bind(false))
+
 	# DEBUG — voir la doc de _debug_skip_to_report_button ci-dessus.
 	if Settings.IS_PRODUCTION:
 		_debug_skip_to_report_button.queue_free()
 	else:
 		_debug_skip_to_report_button.pressed.connect(_on_debug_skip_to_report_pressed)
+
+
+func _on_hamburger_hover(is_hovering: bool) -> void:
+	if is_instance_valid(_hamburger_scale_tween):
+		_hamburger_scale_tween.kill()
+	_hamburger_scale_tween = create_tween()
+	var target_scale := Vector2.ONE * (HAMBURGER_HOVER_SCALE if is_hovering else 1.0)
+	_hamburger_scale_tween.tween_property(_hamburger_button, "scale", target_scale, HAMBURGER_HOVER_SECONDS)
 
 
 ## Raccourci de "Générer le rapport" (voir DesktopCluePanel, qui reste seul
