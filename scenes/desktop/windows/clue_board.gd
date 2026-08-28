@@ -72,6 +72,16 @@ func _clear_board() -> void:
 		child.queue_free()
 	_avatars_by_category.clear()
 	_panels_by_category.clear()
+	# Sans ça, _get_available_width() (appelée juste après par _build_board())
+	# relit la taille de BoardScroll — un ScrollContainer à défilement
+	# horizontal désactivé, dont la taille minimale inclut donc celle de SON
+	# CONTENU (ce Control) — et retrouve la custom_minimum_size fixée par la
+	# construction PRÉCÉDENTE au lieu de la vraie largeur allouée par le
+	# panneau. Cette largeur gonflée artificiellement se propage ensuite vers
+	# le haut (Layout est ancré plein cadre, grow_horizontal des deux côtés) et
+	# déborde du panneau des deux côtés — de pire en pire à chaque
+	# rétractation/dépliage du panneau (voir échange avec l'utilisateur).
+	custom_minimum_size = Vector2.ZERO
 
 
 ## Reconstruction immédiate (sans attendre de frame, contrairement à setup())
@@ -91,6 +101,12 @@ func _rebuild_board_now() -> void:
 ## garde-fou "même mission déjà construite" (voir ci-dessus) empêcherait de
 ## relire la nouvelle largeur disponible via _get_available_width().
 func refresh_layout() -> void:
+	# _clear_board() AVANT l'attente (pas _rebuild_board_now(), qui l'aurait
+	# appelée après) : sa remise à zéro de custom_minimum_size (voir sa doc)
+	# a besoin de cette même frame pour se répercuter sur BoardScroll, sans
+	# quoi _get_available_width() ci-dessous relirait encore l'ancienne
+	# demande de largeur de ClueBoard au lieu de la vraie taille du panneau.
+	_clear_board()
 	# Même attente d'une frame que setup() ci-dessus (voir son commentaire) :
 	# appelée juste après la fin de l'animation de largeur du panneau (voir
 	# desktop_clue_panel.gd::_apply_state, tween.chain().tween_callback(...)),
@@ -101,7 +117,7 @@ func refresh_layout() -> void:
 	# les 3 colonnes (COLS_PER_ROW) sur une largeur fausse, tronquant la
 	# dernière à droite en plein écran natif (voir échange avec l'utilisateur).
 	await get_tree().process_frame
-	_rebuild_board_now()
+	_build_board()
 
 
 func _build_board() -> void:
