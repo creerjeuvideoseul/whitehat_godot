@@ -121,6 +121,11 @@ func _ready() -> void:
 	# instancie son propre header séparé, n'est pas affecté.
 	_header.set_investigation_controls_visible(false)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
+	# Voir desktop_footer.gd::set_thought_log_button_visible — cet écran a sa
+	# propre instance de footer, donc son propre appel initial (l'enquête a
+	# forcément déjà généré des pensées à ce stade, mais on vérifie quand
+	# même plutôt que de le montrer en dur).
+	_footer.set_thought_log_button_visible(not SaveManager.get_thought_log().is_empty())
 
 	# RichTextLabel (pas Label) pour ces quatre-là : sélection/copie du texte
 	# demandée par le joueur, même recette que mail_section.gd::_build_body_label.

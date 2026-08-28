@@ -3,8 +3,9 @@ extends Control
 ## (chat/phone/mail/file explorer, ...) — see add_minimized_window(). Right
 ## side is connection/session status: an "Aide" button (see
 ## set_help_button_visible) and an "Historique des pensées" button (see
-## ThoughtLogWindow), VPN, TOR relay count, a decorative signal readout, and
-## the in-fiction clock (GameClock).
+## ThoughtLogWindow and set_thought_log_button_visible — hidden until the
+## first thought is ever recorded), VPN, TOR relay count, a decorative signal
+## readout, and the in-fiction clock (GameClock).
 
 signal thought_log_button_pressed
 signal help_button_pressed
@@ -80,6 +81,18 @@ func remove_minimized_window(window_title: String) -> void:
 ## l'enquête vraiment commencée.
 func set_help_button_visible(should_show: bool) -> void:
 	_help_button.visible = should_show
+
+
+## Caché par défaut dans la scène (voir desktop_footer.tscn) : n'a rien à
+## montrer tant qu'aucune pensée n'a jamais été enregistrée (voir
+## SaveManager.record_thought/get_thought_log). Appelé une fois à l'arrivée
+## sur chaque écran qui possède ce footer (voir desktop.gd/
+## report_generation_screen.gd, selon SaveManager.get_thought_log().is_empty())
+## puis à chaque nouvelle pensée affichée en cours de session (desktop.gd::
+## _show_player_thought) — jamais recaché une fois montré, une pensée déjà
+## enregistrée ne disparaît pas de l'historique.
+func set_thought_log_button_visible(should_show: bool) -> void:
+	_thought_log_button.visible = should_show
 
 
 ## Debug only (see Settings.IS_PRODUCTION) : bascule tous les indices de

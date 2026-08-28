@@ -216,6 +216,11 @@ func _ready() -> void:
 	_header.osint_search_requested.connect(_on_osint_search_requested)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
+	# Reprise d'une sauvegarde où au moins une pensée a déjà été enregistrée
+	# (voir desktop_footer.gd::set_thought_log_button_visible) — sinon ce
+	# bouton reste caché tel que posé par défaut dans la scène, jusqu'à la
+	# première pensée de la session (voir _show_player_thought).
+	_footer.set_thought_log_button_visible(not SaveManager.get_thought_log().is_empty())
 	## Ce panneau est un nœud permanent du bureau, pas instancié à la demande,
 	## donc câblé une bonne fois pour toutes ici plutôt qu'au premier clic. Câblé
 	## AVANT setup() ci-dessous : setup() appelle _update_report_button() tout
@@ -312,6 +317,7 @@ func _show_player_thought(text: String, translation_key: String = "") -> void:
 	thought.text = text
 	add_child(thought)
 	SaveManager.record_thought(text, translation_key)
+	_footer.set_thought_log_button_visible(true)
 
 
 func _build_chat_window() -> ChatWindow:
