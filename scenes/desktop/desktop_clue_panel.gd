@@ -25,6 +25,17 @@ class_name DesktopCluePanel
 ## corner_radius_*_right = 0) : le panneau est censé se fondre dans le bord de
 ## l'écran auquel il est collé plutôt que de paraître flotter devant.
 ##
+## clip_contents = true (scène) : seul panneau du jeu à animer sa propre
+## largeur/position via Tween (voir _animate_box, "size:x"/"position:x") — ce
+## qui expose TitleBar, masquée puis réaffichée à chaque glissement (voir
+## _show_title_bar), à un débordement visuel persistant de son fond/trait du
+## bas côté gauche à chaque transition (NARROW comme FULL), reproductible en
+## jeu comme dans l'éditeur (voir échange avec l'utilisateur). Cause exacte
+## non identifiée avec certitude malgré plusieurs pistes explorées (rayon
+## d'arrondi, resynchronisation manuelle de la largeur) ; clip_contents
+## garantit qu'aucun enfant ne peut plus dépasser visuellement de ce cadre,
+## quelle que soit la cause précise.
+##
 ## Contenu NARROW rempli au fil des indices débloqués (voir _rebuild_content) :
 ## un indice = une "bulle", même recette visuelle que ChatBubble (voir
 ## chat_bubble.gd) plutôt qu'une nouvelle instanciée de la scène (pas de
@@ -442,7 +453,7 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 	## le temps du glissement, réaffichée une fois celui-ci stabilisé.
 	_title_bar.hide()
 	var tween := _animate_box(target_width, target_x)
-	tween.chain().tween_callback(_title_bar.show)
+	tween.chain().tween_callback(_show_title_bar)
 	if new_state == PanelState.FULL:
 		## ClueBoard a été construit une seule fois (voir setup(), appelé au
 		## démarrage pendant que le panneau est encore NARROW) — sans ce
@@ -451,6 +462,18 @@ func _apply_state(new_state: PanelState, instant: bool = false) -> void:
 		## disponible. Chaîné après le glissement (pas en parallèle) pour lire
 		## une largeur de conteneur déjà stabilisée, pas encore en transition.
 		tween.chain().tween_callback(_clue_board.refresh_layout)
+
+
+## Réaffiche TitleBar une fois le glissement stabilisé (voir le commentaire
+## juste au-dessus) — sa largeur est ensuite forcée explicitement plutôt que
+## de compter sur le recalcul automatique de Layout (VBoxContainer) : un
+## enfant masqué est exclu des calculs de mise en page tant qu'il reste
+## caché (voir échange avec l'utilisateur — le fond de la barre et son trait
+## du bas débordaient à gauche, uniquement ce cadre-là, jamais le corps du
+## panneau qui n'a jamais été caché/réaffiché de cette façon).
+func _show_title_bar() -> void:
+	_title_bar.show()
+	_title_bar.size.x = size.x
 
 
 func _animate_box(target_width: float, target_x: float) -> Tween:
