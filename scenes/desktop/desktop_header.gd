@@ -1,7 +1,8 @@
 extends Control
 class_name DesktopHeader
 ## The desktop's top bar: OSINT search entry point (left, plus a "Générer le
-## rapport" shortcut once available — see set_generate_report_button_visible)
+## rapport" shortcut once available — see set_generate_report_button_visible —
+## and a DEBUG-only shortcut next to it, see _debug_skip_to_report_button)
 ## and system status readouts (right) — TOR indicator, CPU/MEM gauges, current
 ## pseudo. Always on screen in desktop.tscn; future windows (chat/phone/
 ## mail/...) render below it, never over it.
@@ -36,6 +37,12 @@ signal generate_report_button_pressed
 @onready var _search_button: Button = %SearchButton
 @onready var _generate_report_button: Button = %GenerateReportButton
 @onready var _cpu_gauge: UsageGauge = %CpuGauge
+## DEBUG uniquement, à retirer avant la sortie finale — voir _ready()/
+## _on_debug_skip_to_report_pressed() plus bas, seuls autres endroits qui en
+## parlent (avec le nœud DebugSkipToReportButton dans la scène et la ligne
+## qui le cache dans set_investigation_controls_visible ci-dessous) :
+## supprimer ces quatre endroits suffit à retirer entièrement ce bouton.
+@onready var _debug_skip_to_report_button: Button = %DebugSkipToReportButton
 
 
 func _ready() -> void:
@@ -44,6 +51,12 @@ func _ready() -> void:
 	_search_field.text_submitted.connect(func(_text: String) -> void: _on_search_requested())
 	_generate_report_button.pressed.connect(func() -> void: generate_report_button_pressed.emit())
 	_start_tor_blink()
+
+	# DEBUG — voir la doc de _debug_skip_to_report_button ci-dessus.
+	if Settings.IS_PRODUCTION:
+		_debug_skip_to_report_button.queue_free()
+	else:
+		_debug_skip_to_report_button.pressed.connect(_on_debug_skip_to_report_pressed)
 
 
 ## Raccourci de "Générer le rapport" (voir DesktopCluePanel, qui reste seul
@@ -78,6 +91,9 @@ func set_investigation_controls_visible(should_show: bool) -> void:
 	_search_button.visible = should_show
 	if not should_show:
 		_generate_report_button.visible = false
+		# DEBUG — voir la doc de _debug_skip_to_report_button plus haut.
+		if is_instance_valid(_debug_skip_to_report_button):
+			_debug_skip_to_report_button.visible = false
 
 
 ## Rectangle global de la barre de recherche OSINT — pour desktop.gd, qui doit
@@ -103,6 +119,19 @@ func _on_search_requested() -> void:
 		if token.length() < MIN_SEARCH_QUERY_LENGTH:
 			return
 	osint_search_requested.emit(query)
+
+
+## DEBUG uniquement (voir Settings.IS_PRODUCTION et la doc de
+## _debug_skip_to_report_button) — raccourci de test pour atteindre
+## directement l'état "fin d'enquête, prêt à générer le rapport" (mission 1)
+## sans dérouler toute l'enquête à la main. Débloque TOUS les indices plutôt
+## que juste ceux de la mission 1 : une seule mission existe pour l'instant,
+## et c'est déjà ce que fait le bouton "DEBUG INDICES" du footer (voir
+## desktop_footer.gd), actuellement désactivé — ce bouton-ci reste le seul
+## outil de ce genre en service tant qu'une seule mission existe.
+func _on_debug_skip_to_report_pressed() -> void:
+	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
+	ClueManager.unlock_all()
 
 
 func _start_tor_blink() -> void:
