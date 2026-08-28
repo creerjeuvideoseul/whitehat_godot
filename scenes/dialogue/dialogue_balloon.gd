@@ -46,7 +46,6 @@ var mutation_cooldown: Timer = Timer.new()
 @onready var character_label: RichTextLabel = %CharacterLabel
 @onready var dialogue_label: DialogueLabel = %DialogueLabel
 @onready var responses_menu: DialogueResponsesMenu = %ResponsesMenu
-@onready var progress_label: Label = %ProgressLabel
 
 
 func _ready() -> void:
@@ -108,7 +107,6 @@ func apply_dialogue_line() -> void:
 	if not clue_id.is_empty():
 		RichTextMarkup.wire_indice_interactions(dialogue_label, rebuild_dialogue_colors)
 
-	progress_label.hide()
 	is_waiting_for_input = false
 	balloon.focus_mode = Control.FOCUS_ALL
 	balloon.grab_focus()
@@ -140,7 +138,6 @@ func apply_dialogue_line() -> void:
 		next(dialogue_line.next_id)
 	else:
 		is_waiting_for_input = true
-		progress_label.show()
 		balloon.focus_mode = Control.FOCUS_ALL
 		balloon.grab_focus()
 
@@ -166,7 +163,6 @@ func show_history_line(character: String, text: String) -> void:
 	if is_waiting_for_input:
 		_live_was_waiting_for_input = true
 		is_waiting_for_input = false
-	progress_label.hide()
 
 	character_label.visible = not character.is_empty()
 	character_label.text = _colored_character_name(character)
@@ -190,7 +186,6 @@ func resume_live_line() -> void:
 	if _live_was_waiting_for_input:
 		_live_was_waiting_for_input = false
 		is_waiting_for_input = true
-		progress_label.show()
 
 
 ## Coupe toute frappe en cours puis affiche `line` entièrement et
