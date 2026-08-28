@@ -294,7 +294,15 @@ func _type_out(label: DialogueLabel) -> void:
 ## redimensionnement qu'au tri différé du frame suivant — avec une seule
 ## frame d'attente, max_value était encore lu avant que ce tri n'ait eu lieu,
 ## et le scroll s'arrêtait juste avant les boutons de réponse.
+## is_instance_valid après chaque frame d'attente : cette vue peut être libérée
+## entre-temps (fenêtre de chat fermée/remplacée pendant qu'un choix vient
+## d'apparaître, voir échange avec l'utilisateur — get_tree() plantait alors
+## sur un self déjà détruit, "Parameter data.tree is null").
 func _scroll_to_bottom() -> void:
 	await get_tree().process_frame
+	if not is_instance_valid(self):
+		return
 	await get_tree().process_frame
+	if not is_instance_valid(self):
+		return
 	_scroll_container.scroll_vertical = int(_scroll_container.get_v_scroll_bar().max_value)
