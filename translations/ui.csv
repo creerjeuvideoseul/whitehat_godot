@@ -26,6 +26,7 @@ OPTIONS_RESOLUTION_FULLSCREEN,Plein écran,Fullscreen
 OPTIONS_RESOLUTION_FULLSCREEN_BORDERLESS,Plein écran sans bordure,Borderless fullscreen
 OPTIONS_RESOLUTION_2560,2560×1440 (redimensionnable),2560×1440 (resizable)
 OPTIONS_RESOLUTION_1920,1920×1080 (redimensionnable),1920×1080 (resizable)
+OPTIONS_HIDE_INDICE_COLORS_LABEL,Retirer la couleur des indices (+ difficile),Remove clue coloring (+ harder)
 OPTIONS_CLOSE,Fermer,Close
 OPTIONS_QUIT_GAME,Quitter la partie,Quit Game
 OPTIONS_QUIT_WARNING,"Attention, toutes les données non sauvegardées <color=important>depuis %d minutes</color> ne seront pas enregistrées.","Warning, any unsaved progress <color=important>from the last %d minutes</color> will be lost."
@@ -106,7 +107,7 @@ PHONE_ICON_GALLERY,Galerie,Gallery
 PHONE_ICON_VAULT,Coffre-fort,Vault
 DESKTOP_SEARCH_BUTTON,Rechercher sur le darkweb,Search the dark web
 CLUEBOARD_TOOLTIP_DARKWEB_HINT,Essayez d'écrire <color=important>Jean Ranoud</color> dans le moteur de recherche du darkweb. Pensez à le faire pour chaque personnage.,Try typing "Jean Ranoud" into the dark web search engine.  Be sure to do this for each character.
-TOOLTIP_CLUE_HINT,"Les mots soulignés en ""orange"" sont des indices. Cliquez dessus pour les débloquer.","Words highlighted in orange are clues. Click them to unlock them."
+TOOLTIP_CLUE_HINT,"Les mots soulignés en <color=indice>""orange""</color> sont des indices. Cliquez dessus pour les débloquer. Retirez la couleur dans les <color=important>options</color> pour plus de difficulté.","Words highlighted in <color=indice>orange</color> are clues. Click them to unlock them.  Turn off color in the <color=important>options</color> to increase the difficulty."
 CLUEBOARD_PANEL_HINT,Retrouvez ici tous les indices de votre mission. Vous pouvez rétracter cette fenêtre avec ← et →,Find all your mission's clues here. You can collapse this window with ← and →.
 OSINT_WINDOW_TITLE,Résultat OSINT : Profilage en ligne & fuites de données,OSINT Results: Online Profiling & Data Leaks
 OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.

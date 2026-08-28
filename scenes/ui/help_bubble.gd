@@ -25,7 +25,7 @@ signal closed
 
 @onready var _box: Panel = %Box
 @onready var _margin: MarginContainer = %Margin
-@onready var _message_label: Label = %MessageLabel
+@onready var _message_label: RichTextLabel = %MessageLabel
 @onready var _close_button: Button = %CloseButton
 
 ## Voir point_at() — mémorisé pour que _resize_to_content()/_draw() (rejoués
@@ -43,8 +43,14 @@ func _ready() -> void:
 
 ## Clé ui.csv du message à afficher — à appeler avant point_at(), qui a
 ## besoin du texte déjà en place pour calculer la hauteur du contenu.
+##
+## html_to_bbcode : même pseudo-HTML que les données mail/SMS/OSINT (voir
+## rich_text_markup.gd) pour <color=indice>/<color=important> — un Label brut
+## affichait ces balises telles quelles au lieu de les interpréter (retour
+## utilisateur, voir TOOLTIP_CLUE_HINT dans ui.csv), même bug déjà corrigé
+## pour ClueBoardTooltip, même remède ici.
 func set_text(translation_key: String) -> void:
-	_message_label.text = tr(translation_key)
+	_message_label.text = RichTextMarkup.html_to_bbcode(tr(translation_key))
 
 
 ## Recalcule la hauteur puis positionne la bulle pour que la pointe de la
