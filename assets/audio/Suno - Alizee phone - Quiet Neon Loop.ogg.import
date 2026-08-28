@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b388o3ekf161p"
+path="res://.godot/imported/Suno - Alizee phone - Quiet Neon Loop.ogg-be650e55049140d5dd97c45480b73399.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/audio/Suno - Alizee phone - Quiet Neon Loop.ogg"
+dest_files=["res://.godot/imported/Suno - Alizee phone - Quiet Neon Loop.ogg-be650e55049140d5dd97c45480b73399.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scenes/desktop/desktop_header.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://wf8k66gwt67q" path="res://assets/UI/whos.png" id="2_whos_logo"]
 [ext_resource type="Texture2D" uid="uid://dsys1j2mwekyf" path="res://assets/UI/button_green_0.png" id="3_tor_icon"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/usage_gauge.tscn" id="4_usage_gauge"]
+[ext_resource type="Texture2D" uid="uid://4pjbfuxgdn8a" path="res://assets/UI/Hamburger Menu.png" id="5_hamburger_icon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.01, 0.03, 0.02, 0.92)
@@ -41,6 +42,38 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_button"]
+bg_color = Color(0.35, 0.08, 0.08, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.36, 0.36, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug_button_hover"]
+bg_color = Color(0.5, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.36, 0.36, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
 
 [node name="DesktopHeader" type="Control"]
 layout_mode = 3
@@ -109,6 +142,27 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_type_variation = &"PrimaryButton"
 text = "DESKTOP_SEARCH_BUTTON"
+
+[node name="GenerateReportButton" type="Button" parent="Margin/Row/LeftGroup"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ImportantButton"
+text = "CLUEBOARD_GENERATE_REPORT_BUTTON"
+
+[node name="DebugSkipToReportButton" type="Button" parent="Margin/Row/LeftGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_debug_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_debug_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_debug_button_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_debug_button")
+text = "DEBUG FIN M1"
 
 [node name="Spacer" type="Control" parent="Margin/Row"]
 layout_mode = 2
@@ -184,3 +238,14 @@ size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.92, 0.96, 0.94, 1)
 theme_override_font_sizes/font_size = 22
 text = "pseudo@whos:~"
+
+[node name="HamburgerButton" type="TextureButton" parent="Margin/Row/RightGroup"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+pivot_offset = Vector2(18, 18)
+texture_normal = ExtResource("5_hamburger_icon")
+ignore_texture_size = true
+stretch_mode = 5

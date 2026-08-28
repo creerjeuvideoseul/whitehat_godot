@@ -63,6 +63,16 @@ signal finished
 ## adouci — voir échange avec l'utilisateur. Un fond par carte fait déborder
 ## le flou de chacune dans l'espacement qui la sépare des autres, donc plus
 ## aucune zone plate entre deux cartes.
+##
+## Les 3 fonds sont groupés en tête de l'arbre (voir clue_fusion.tscn), avant
+## toutes les cartes : sans ça, AnswerBackdrop/SolutionBackdrop se
+## retrouvaient APRÈS QuestionCard, donc leur ombre (shadow_size 300, voir
+## StyleBoxFlat_backdrop) se dessinait par-dessus la carte précédente pendant
+## sa chute — illisible. Ce regroupement les place tous derrière toutes les
+## cartes SANS toucher à z_index — z_index compare globalement tout le canvas
+## (pas seulement les enfants de ClueFusion) et avait fait passer les fonds
+## derrière _window_layer, donc derrière le téléphone/SMS/galerie/coffre/mail
+## de desktop.gd (voir échange avec l'utilisateur).
 @onready var _question_backdrop: Panel = %QuestionBackdrop
 @onready var _question_card: PanelContainer = %QuestionCard
 @onready var _question_label: RichTextLabel = %QuestionLabel

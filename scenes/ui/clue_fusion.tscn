@@ -32,6 +32,18 @@ layout_mode = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
 
+[node name="AnswerBackdrop" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
+
+[node name="SolutionBackdrop" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
+
 [node name="QuestionCard" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(900, 0)
@@ -72,12 +84,6 @@ text = "+"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AnswerBackdrop" type="Panel" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
-
 [node name="AnswerCard" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(900, 0)
@@ -117,12 +123,6 @@ theme_override_font_sizes/font_size = 90
 text = "="
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="SolutionBackdrop" type="Panel" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_backdrop")
 
 [node name="SolutionCard" type="PanelContainer" parent="."]
 unique_name_in_owner = true

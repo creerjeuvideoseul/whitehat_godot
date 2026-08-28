@@ -27,6 +27,15 @@ const MONOLOGUE_TO_BOOT_FADE_SECONDS := 0.5
 ## Durée du fondu enchaîné (crossfade) entre deux images, façon Ren'Py.
 const DISSOLVE_SECONDS := 0.15
 
+## Durée de maintien du bouton "Passer" (SkipButton) requise pour sauter toute
+## la cutscène — voir _on_skip_button_down. Volontairement pas un simple clic :
+## protège contre un skip accidentel sur cette toute première scène du jeu.
+const SKIP_HOLD_SECONDS := 1.0
+## Durée du fondu du remplissage (SkipFill) quand on relâche avant la fin du
+## maintien — plus court que SKIP_HOLD_SECONDS : un simple "retour à zéro"
+## visuel, pas une action a attendre.
+const SKIP_RELEASE_RESET_SECONDS := 0.15
+
 ## Préchargées (pas construites depuis un chemin en runtime) pour que
 ## déplacer ces fichiers dans l'éditeur garde ces références à jour, comme
 ## c'est déjà le cas pour les scènes/ressources — un simple chemin en
@@ -34,13 +43,17 @@ const DISSOLVE_SECONDS := 0.15
 ## écran silencieusement la dernière fois que les images ont bougé.
 const BACKGROUNDS := {
 	"wh_intro_fille_tele2": preload("res://assets/images_intro/wh_intro_fille_tele2.webp"),
+	"wh_intro_fille_tele2_2": preload("res://assets/images_intro/wh_intro_fille_tele2_2.webp"),
 	"wh_show_television_triste3": preload("res://assets/images_intro/wh_show_television_triste3.webp"),
 	"wh_intro_femme_colere2": preload("res://assets/images_intro/wh_intro_femme_colere2.webp"),
+	"wh_intro_femme_colere2_2": preload("res://assets/images_intro/wh_intro_femme_colere2_2.webp"),
 	"wh_show_television_homme1": preload("res://assets/images_intro/wh_show_television_homme1.webp"),
 	"wh_avec_ordi_quantique": preload("res://assets/images_intro/wh_avec_ordi_quantique.webp"),
 	"wh_intro_femme_tourne_oeil": preload("res://assets/images_intro/wh_intro_femme_tourne_oeil.webp"),
+	"wh_intro_femme_tourne_oeil_2": preload("res://assets/images_intro/wh_intro_femme_tourne_oeil_2.webp"),
 	"wh_show_television_homme3": preload("res://assets/images_intro/wh_show_television_homme3.webp"),
 	"wh_show_television_enerve2": preload("res://assets/images_intro/wh_show_television_enerve2.webp"),
+	"wh_show_television_enerve2_2": preload("res://assets/images_intro/wh_show_television_enerve2_2.webp"),
 	"wh_show_television_homme2": preload("res://assets/images_intro/wh_show_television_homme2.webp"),
 	"wh_show_television_homme_enerve": preload("res://assets/images_intro/wh_show_television_homme_enerve.webp"),
 }
@@ -53,9 +66,15 @@ const BACKGROUNDS := {
 ## cette scène.
 @onready var _live_badge: Control = %LiveBadge
 @onready var _flash_info_banner: Control = %FlashInfoBanner
+@onready var _skip_button: Button = %SkipButton
+@onready var _skip_fill: ColorRect = %SkipFill
 
 var _balloon: DialogueBalloon
 var _dissolve_tween: Tween
+var _skip_tween: Tween
+## Vrai une fois le maintien du bouton "Passer" abouti — protège contre un
+## double déclenchement de _skip_intro() (voir _skip_intro).
+var _skip_requested: bool = false
 
 ## Un "cadre" par ligne de dialogue déjà affichée (image + personnage +
 ## texte), dans l'ordre. Alimente le retour en arrière à la molette —
@@ -73,6 +92,9 @@ func _ready() -> void:
 	_balloon = DialogueManager.show_dialogue_balloon_scene(DIALOGUE_BALLOON, INTRO_DIALOGUE)
 	_balloon.character_name_colors = { "Gilles de la Touret": Palette.TEXT_BLUE_ACCENT }
 	_balloon.dialogue_line_shown.connect(_on_dialogue_line_shown)
+
+	_skip_button.button_down.connect(_on_skip_button_down)
+	_skip_button.button_up.connect(_on_skip_button_up)
 
 	MusicPlayer.play(INTRO_MUSIC, MUSIC_FADE_SECONDS)
 
@@ -169,9 +191,56 @@ func _rewind(step: int) -> void:
 		_balloon.show_history_line(frame.character, frame.text)
 
 
+## Clic-maintenu sur SkipButton (voir SKIP_HOLD_SECONDS) : le remplissage vert
+## (SkipFill) progresse pendant le maintien, jusqu'à déclencher _skip_intro()
+## une fois plein. Relâcher avant la fin annule (voir _on_skip_button_up).
+func _on_skip_button_down() -> void:
+	if _skip_tween and _skip_tween.is_valid():
+		_skip_tween.kill()
+	_skip_tween = create_tween()
+	_skip_tween.tween_property(_skip_fill, "anchor_right", 1.0, SKIP_HOLD_SECONDS)
+	_skip_tween.tween_callback(_skip_intro)
+
+
+func _on_skip_button_up() -> void:
+	if _skip_requested:
+		return
+	if _skip_tween and _skip_tween.is_valid():
+		_skip_tween.kill()
+	_skip_tween = create_tween()
+	_skip_tween.tween_property(_skip_fill, "anchor_right", 0.0, SKIP_RELEASE_RESET_SECONDS)
+
+
+## Saute directement à l'écran de connexion depuis le dialogue de cette
+## cutscène — dialogue, monologue de rédemption et boot système compris.
+## Sûr : intro.dialogue ne fait que changer l'image de fond (aucun `do`
+## affectant une sauvegarde/un indice), et ni MonologueScreen ni
+## SystemBootScreen ne déclenchent de mutation de jeu — les trois étapes
+## sautées sont purement narratives.
+func _skip_intro() -> void:
+	if _skip_requested:
+		return
+	_skip_requested = true
+	_skip_button.hide()
+	MusicPlayer.stop(MUSIC_FADE_SECONDS)
+	await SceneTransition.fade_out()
+	get_tree().change_scene_to_file("res://scenes/login.tscn")
+	SceneTransition.fade_in()
+
+
 func _on_dialogue_ended(resource: DialogueResource) -> void:
 	if resource != INTRO_DIALOGUE:
 		return
+	if _skip_requested:
+		return
+
+	# Le dialogue vient de se terminer normalement : plus rien à sauter par ce
+	# bouton (la suite — monologue puis boot — s'enchaîne ci-dessous). On
+	# annule un maintien éventuellement en cours pour que son callback ne
+	# déclenche pas _skip_intro() après coup sur un bouton déjà caché.
+	if _skip_tween and _skip_tween.is_valid():
+		_skip_tween.kill()
+	_skip_button.hide()
 
 	MusicPlayer.stop(MUSIC_FADE_SECONDS)
 
@@ -189,7 +258,10 @@ func _on_dialogue_ended(resource: DialogueResource) -> void:
 
 	await _play_boot_terminal()
 
-	await SceneTransition.fade_out()
+	# Effet "extinction CRT" pour la fermeture de l'ecran systeme (voir
+	# SceneTransition.crt_off()), puis fade_in() classique pour l'arrivee du
+	# login.
+	await SceneTransition.crt_off()
 	get_tree().change_scene_to_file("res://scenes/login.tscn")
 	SceneTransition.fade_in()
 

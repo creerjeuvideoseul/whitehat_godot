@@ -119,5 +119,12 @@ func _on_continue_pressed() -> void:
 func _on_quit_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	MusicPlayer.stop()
+	## Assombrit l'écran tout de suite (pas d'await, comme SceneTransition.
+	## fade_in() ailleurs dans le projet) pendant que la musique finit de
+	## s'éteindre en arrière-plan pour les DEFAULT_FADE_SECONDS restantes —
+	## sans ça, cette attente ne montrait rien à l'écran, donnant l'impression
+	## qu'il ne se passait rien juste avant que le jeu ne se ferme (retour
+	## joueur).
+	SceneTransition.fade_out()
 	await get_tree().create_timer(MusicPlayer.DEFAULT_FADE_SECONDS).timeout
 	get_tree().quit()

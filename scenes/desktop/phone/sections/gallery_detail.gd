@@ -9,14 +9,15 @@ class_name GalleryDetail
 signal closed
 
 const AVATAR_SIZE := Vector2(44, 44)
-## Seule la hauteur du cadre image est fixe — la largeur suit celle de
-## DetailRoot (SIZE_EXPAND_FILL, pleine largeur, pas de bande vide sur les
-## côtés). AspectRatioContainer et EXPAND_FIT_WIDTH_PROPORTIONAL calculaient
-## eux la hauteur À PARTIR de la largeur, dans un conteneur où cette largeur
-## n'est pas encore stabilisée au premier passage de mise en page : d'où le
-## débordement de l'image sur le texte suivant vu en test. Une hauteur fixe
-## élimine ce problème sans sacrifier la largeur : STRETCH_KEEP_ASPECT_CENTERED
-## contient toujours la photo entière dedans, jamais tronquée.
+## Hauteur MAXIMALE du cadre image (voir _fit_image_height) — la largeur suit
+## toujours celle de DetailRoot (SIZE_EXPAND_FILL, pleine largeur, pas de
+## bande vide sur les côtés). Une ancienne version imposait cette hauteur en
+## dur pour toutes les photos : correct pour les photos portrait, mais un
+## grand vide au-dessus/en dessous des photos au format paysage (largeur du
+## cadre grande, hauteur réelle après mise à l'échelle bien inférieure à 900 —
+## voir échange avec l'utilisateur). _fit_image_height calcule maintenant la
+## vraie hauteur d'après le ratio de la photo, cette constante ne servant plus
+## que de plafond pour les formats portrait très hauts.
 const DETAIL_IMAGE_HEIGHT := 900
 ## DetailRoot n'a plus d'espacement uniforme (theme_override_constants/
 ## separation = 0 dans la scène) : ce gap est ajouté à la main entre les
@@ -85,14 +86,30 @@ func _build_locked_placeholder() -> Control:
 
 func _build_image(post: GalleryPost) -> Control:
 	var rect := TextureRect.new()
-	rect.custom_minimum_size = Vector2(0, DETAIL_IMAGE_HEIGHT)
 	rect.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	if not post.picture_path.is_empty() and ResourceLoader.exists(post.picture_path):
 		rect.texture = load(post.picture_path)
+		_fit_image_height(rect)
 	return rect
+
+
+## Fixe la hauteur du cadre d'après le ratio réel de la photo une fois que la
+## largeur de DetailRoot (donc de ce TextureRect) s'est stabilisée — deux
+## frames d'attente, même recette que _resize_to_content (ClueBoardTooltip/
+## ClueSpotlight/ClueFusion). Plafonnée à DETAIL_IMAGE_HEIGHT pour les formats
+## portrait très hauts ; les formats paysage obtiennent une hauteur bien plus
+## faible, sans grand vide au-dessus/en dessous.
+func _fit_image_height(rect: TextureRect) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_instance_valid(rect):
+		return
+	var texture_size := rect.texture.get_size()
+	var fitted_height := rect.size.x * (texture_size.y / texture_size.x)
+	rect.custom_minimum_size.y = minf(fitted_height, DETAIL_IMAGE_HEIGHT)
 
 
 func _build_description(post: GalleryPost) -> Control:
@@ -138,7 +155,13 @@ func _build_comment_row(comment: GalleryComment) -> Control:
 	message_label.scroll_active = false
 	message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	message_label.add_theme_color_override("default_color", Palette.TEXT_NORMAL)
-	message_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_SMALL)
+	# SIZE_BODY, pas SIZE_SMALL : même taille que la description au-dessus
+	# (_build_description) et que le texte des bulles de conversation ailleurs
+	# dans le projet (chat_bubble.tscn) — SIZE_SMALL est réservé aux éléments
+	# secondaires (username_label ci-dessus, lignes système), pas au contenu
+	# du message lui-même (retour joueur : les commentaires semblaient plus
+	# petits que la description).
+	message_label.add_theme_font_size_override("normal_font_size", Palette.SIZE_BODY)
 	var rebuild := func(hovered_id: String) -> void:
 		message_label.text = RichTextMarkup.html_to_bbcode(RichTextMarkup.resolve_indice_tags(comment.message, Palette.TEXT_HIGHLIGHT, Palette.TEXT_CLUE_CLICKED, hovered_id))
 	rebuild.call("")

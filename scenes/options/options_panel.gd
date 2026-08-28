@@ -35,6 +35,7 @@ const RESOLUTION_LABEL_KEYS := [
 @onready var _sfx_volume_slider: HSlider = %SfxVolumeSlider
 @onready var _sfx_volume_percent_label: Label = %SfxVolumePercentLabel
 @onready var _resolution_option: OptionButton = %ResolutionOption
+@onready var _hide_indice_colors_option: OptionButton = %HideIndiceColorsOption
 @onready var _quit_game_button: Button = %QuitGameButton
 @onready var _close_button: Button = %CloseButton
 
@@ -58,6 +59,9 @@ func _ready() -> void:
 
 	_populate_resolution_option()
 	_resolution_option.item_selected.connect(_on_resolution_selected)
+
+	_populate_hide_indice_colors_option()
+	_hide_indice_colors_option.item_selected.connect(_on_hide_indice_colors_selected)
 
 	_quit_game_button.visible = get_tree().current_scene.scene_file_path != MAIN_MENU_SCENE
 	_quit_game_button.pressed.connect(_on_quit_game_pressed)
@@ -86,7 +90,9 @@ func _on_language_selected(index: int) -> void:
 	# leur ajout (voir _populate_resolution_option) : contrairement à un
 	# Label.text assigné directement à une clé, ils ne se retraduisent pas
 	# tout seuls quand la langue change — il faut les reconstruire à la main.
+	# Même chose pour OUI/NON (voir _populate_hide_indice_colors_option).
 	_populate_resolution_option()
+	_populate_hide_indice_colors_option()
 
 
 func _on_music_volume_changed(value: float) -> void:
@@ -120,6 +126,20 @@ func _populate_resolution_option() -> void:
 ## de résolution/mode de fenêtre s'applique immédiatement au choix.
 func _on_resolution_selected(index: int) -> void:
 	Settings.set_display_mode(index as Settings.DisplayMode)
+
+
+## NON à l'index 0 (faux, jeu facile — défaut), OUI à l'index 1 (vrai, plus
+## difficile) — voir Settings.hide_indice_colors/DEFAULT_HIDE_INDICE_COLORS.
+func _populate_hide_indice_colors_option() -> void:
+	var previous_selected := _hide_indice_colors_option.selected
+	_hide_indice_colors_option.clear()
+	_hide_indice_colors_option.add_item(tr("COMMON_NO"))
+	_hide_indice_colors_option.add_item(tr("COMMON_YES"))
+	_hide_indice_colors_option.select(previous_selected if previous_selected >= 0 else int(Settings.hide_indice_colors))
+
+
+func _on_hide_indice_colors_selected(index: int) -> void:
+	Settings.set_hide_indice_colors(index == 1)
 
 
 func _on_close_pressed() -> void:

@@ -9,6 +9,10 @@ class_name AnalysisTransition
 ## que le bureau central, ni le header ni le footer), joue seule pendant
 ## TOTAL_SECONDS, puis émet `finished` et se libère — rien à gérer côté
 ## appelant à part attendre le signal.
+##
+## `color` (voir la scène) est un noir semi-transparent, pas opaque : le
+## bureau reste visible en filigrane derrière (retour joueur : un noir plein
+## "vidait" le bureau à l'écran plutôt que de simplement l'assombrir).
 
 signal finished
 

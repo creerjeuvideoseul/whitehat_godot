@@ -32,10 +32,19 @@ const DEFAULT_DISPLAY_MODE := DisplayMode.WINDOWED_1920X1080
 ## like the desktop's "DEBUG INDICES" button, which must never ship.
 const IS_PRODUCTION := false
 
+## Option "Retirer la couleur des indices (+ difficile)" — NON par défaut
+## (jeu facile, indices colorés). Lu par RichTextMarkup (resolve_indice_tags/
+## resolve_dialogue_colors/html_to_bbcode) : quand vrai, le texte d'un indice
+## PAS ENCORE cliqué/survolé n'est plus coloré (se fond dans le texte normal)
+## — le survol et le clic restent inchangés dans les deux cas, seule la
+## teinte "au repos" disparaît.
+const DEFAULT_HIDE_INDICE_COLORS := false
+
 var locale: String = DEFAULT_LOCALE
 var music_volume: float = DEFAULT_MUSIC_VOLUME
 var sfx_volume: float = DEFAULT_SFX_VOLUME
 var display_mode: DisplayMode = DEFAULT_DISPLAY_MODE
+var hide_indice_colors: bool = DEFAULT_HIDE_INDICE_COLORS
 ## Horodatage Unix réel du tout premier lancement du jeu par ce joueur — 0
 ## tant qu'il n'a jamais été enregistré. Survit à une nouvelle partie
 ## (SaveManager.delete_save() ne touche jamais ce fichier) : c'est une
@@ -111,6 +120,16 @@ func set_display_mode(new_mode: DisplayMode) -> void:
 	_save()
 
 
+## Change l'option "Retirer la couleur des indices" et la persiste
+## immédiatement — pas d'"_apply" séparé comme les autres réglages : lu
+## directement depuis Settings à chaque construction/reconstruction de texte
+## par RichTextMarkup, donc déjà à jour dès la prochaine ligne affichée/
+## fenêtre rouverte, sans rien à pousser activement ici.
+func set_hide_indice_colors(value: bool) -> void:
+	hide_indice_colors = value
+	_save()
+
+
 func _apply_display_mode() -> void:
 	match display_mode:
 		DisplayMode.FULLSCREEN:
@@ -145,6 +164,7 @@ func _load() -> void:
 		# a été modifié à la main ou vient d'une version antérieure du jeu.
 		display_mode = int(config.get_value("display", "display_mode", DEFAULT_DISPLAY_MODE)) as DisplayMode
 		first_launch_unix_time = int(config.get_value("general", "first_launch_unix_time", 0))
+		hide_indice_colors = config.get_value("gameplay", "hide_indice_colors", DEFAULT_HIDE_INDICE_COLORS)
 
 
 func _save() -> void:
@@ -154,4 +174,5 @@ func _save() -> void:
 	config.set_value("audio", "sfx_volume", sfx_volume)
 	config.set_value("display", "display_mode", display_mode)
 	config.set_value("general", "first_launch_unix_time", first_launch_unix_time)
+	config.set_value("gameplay", "hide_indice_colors", hide_indice_colors)
 	config.save(SETTINGS_PATH)

@@ -60,14 +60,24 @@ const RELAYGHOST_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost
 const RELAYGHOST_HELP_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_help.dialogue")
 const JEAN_AVATAR := preload("res://assets/avatar/portrait_jean.webp")
 const JEAN_DIALOGUE: DialogueResource = preload("res://dialogue/jean_intro.dialogue")
-## Conversation RelayGhost de fin de mission 1 (voir
-## report_generation_screen.gd, qui bascule vers ce bureau une fois cette
-## fenêtre système d'envoi de rapport fermée) — contact_id distinct de
-## "relayghost" (déjà marqué terminé par l'intro/l'aide, voir
+## Réaction de Jean une fois le rapport transmis (voir _build_post_report_desktop,
+## contenu conditionné à StoryVars.m1_report_jean_transmit) — contact_id
+## distinct de "jean_ranoud" (déjà marqué terminé, voir
 ## SaveManager.is_conversation_complete) pour que ce nouveau chapitre compte
-## comme une conversation à part. Voir _build_post_report_desktop.
-const RELAYGHOST_REPORT_M1_CONTACT_ID := "relayghost_report_m1"
-const RELAYGHOST_REPORT_M1_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_report_m1.dialogue")
+## comme une conversation à part, même principe que RELAYGHOST_REPORT_M1_CONTACT_ID
+## le faisait pour RelayGhost avant que ce dialogue ne soit déplacé sur
+## report_generation_screen.gd.
+const JEAN_REPORT_M1_CONTACT_ID := "jean_report_m1"
+const JEAN_REPORT_M1_DIALOGUE: DialogueResource = preload("res://dialogue/jean_report_m1.dialogue")
+## RelayGhost qui lance la mission 2 une fois Jean parti (voir
+## _build_post_report_desktop) — contact_id encore distinct de "relayghost"
+## pour la même raison que ci-dessus.
+const RELAYGHOST_MISSION2_CONTACT_ID := "relayghost_mission2_intro"
+const RELAYGHOST_MISSION2_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_mission2_intro.dialogue")
+## Même délai que JEAN_REVEAL_DELAY_SECONDS ci-dessous, pour ne pas faire
+## surgir RelayGhost pile quand la conversation avec Jean vient de se
+## terminer.
+const RELAYGHOST_MISSION2_REVEAL_DELAY_SECONDS := 1.0
 ## Contact "Archive RelayGhost" (voir _archive_relayghost_history_if_needed) :
 ## reprend tout l'historique RelayGhost d'avant le reset de fin de mission
 ## (intro + demandes d'aide, contact_id "relayghost") — une conversation déjà
@@ -109,6 +119,15 @@ const DESKTOP_ENTRY_DELAY_SECONDS := 3.0
 const DESKTOP_MUSIC := preload("res://assets/audio/chill_background-bathroom-chill-background-music-14977.mp3")
 const DESKTOP_MUSIC_FADE_IN_SECONDS := 5.0
 const DESKTOP_MUSIC_FADE_OUT_SECONDS := 2.0
+
+## Ambiance du téléphone d'Alizée : démarrée dans _reveal_alizee_phone(), dès
+## que le téléphone apparaît (animé ou non, voir son commentaire) — même
+## piste "de fond" que DESKTOP_MUSIC ci-dessus, qu'elle a de toute façon déjà
+## remplacée à ce stade (coupée avant le terminal de dump, voir
+## _build_chat_window). Un autre morceau viendra s'enchaîner plus tard.
+const ALIZEE_PHONE_MUSIC := preload("res://assets/audio/Suno - Alizee phone - Quiet Neon Loop.ogg")
+const ALIZEE_PHONE_MUSIC_FADE_IN_SECONDS := 1.0
+const ALIZEE_PHONE_MUSIC_FADE_OUT_SECONDS := 2.0
 
 ## Jean only shows up in the sidebar once RelayGhost's briefing is over, with
 ## a short pause first so the two don't blur together.
@@ -197,11 +216,26 @@ func _ready() -> void:
 	_header.osint_search_requested.connect(_on_osint_search_requested)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
 	_footer.help_button_pressed.connect(_on_help_button_pressed)
-	_clue_panel.setup(CURRENT_MISSION_ID)
+	# Reprise d'une sauvegarde où au moins une pensée a déjà été enregistrée
+	# (voir desktop_footer.gd::set_thought_log_button_visible) — sinon ce
+	# bouton reste caché tel que posé par défaut dans la scène, jusqu'à la
+	# première pensée de la session (voir _show_player_thought).
+	_footer.set_thought_log_button_visible(not SaveManager.get_thought_log().is_empty())
 	## Ce panneau est un nœud permanent du bureau, pas instancié à la demande,
-	## donc câblé une bonne fois pour toutes ici plutôt qu'au premier clic.
+	## donc câblé une bonne fois pour toutes ici plutôt qu'au premier clic. Câblé
+	## AVANT setup() ci-dessous : setup() appelle _update_report_button() tout
+	## de suite, qui émet report_availability_changed dès son tout premier
+	## appel (cas d'une sauvegarde reprise où le rapport est déjà débloqué) —
+	## connecter après l'aurait raté.
 	_clue_panel.generate_report_requested.connect(_on_generate_report_requested)
 	_clue_panel.thought_requested.connect(_show_player_thought)
+	## Raccourci "Générer le rapport" du header (voir desktop_header.gd) : ce
+	## panneau reste seul propriétaire de la logique de déblocage/confirmation,
+	## le header se contente de refléter sa disponibilité et de déclencher la
+	## même confirmation.
+	_clue_panel.report_availability_changed.connect(_header.set_generate_report_button_visible)
+	_header.generate_report_button_pressed.connect(_clue_panel.show_generate_report_confirmation)
+	_clue_panel.setup(CURRENT_MISSION_ID)
 
 	## Ajoutée comme le tout dernier enfant de Desktop pour passer devant
 	## toutes les fenêtres, header et footer compris.
@@ -215,6 +249,12 @@ func _ready() -> void:
 	## s'exécute juste après pour ce même id (voir sa doc).
 	ClueManager.clue_unlocked.connect(_on_clue_unlocked_for_link)
 	ClueManager.clue_clicked.connect(_on_clue_clicked)
+	## Un indice trouvé ne doit jamais se reperdre si le joueur quitte juste
+	## après (voir échange avec l'utilisateur) — connexion séparée de
+	## _on_clue_unlocked_for_link ci-dessus plutôt qu'ajoutée dedans : deux
+	## raisons distinctes de réagir au même signal ne doivent pas partager un
+	## seul handler.
+	ClueManager.clue_unlocked.connect(_on_clue_unlocked_save_checkpoint)
 
 	# Positionné en mémoire par report_generation_screen.gd::_on_validate_pressed
 	# juste avant la fenêtre système d'envoi du rapport — vrai ici seulement si
@@ -265,11 +305,19 @@ func _ready() -> void:
 ## vide si l'appelant n'a pas de clé ui.csv pour ce texte (ex. pensées
 ## déclenchées depuis le mail, déjà résolues par langue dans le JSON de
 ## données — voir mail_section.gd).
+##
+## Ajoutée directement sur la racine du bureau (pas _window_layer) : elle doit
+## rester visible au-dessus de tout, y compris le panneau Collecte d'indices
+## (DesktopCluePanel, ajouté après WindowLayer dans desktop.tscn, dessiné par-
+## dessus — retour joueur : la pensée disparaissait derrière une fois le
+## panneau déployé) — même recette que _clue_board_tooltip ci-dessus, devenir
+## le tout dernier enfant de Desktop suffit à passer devant.
 func _show_player_thought(text: String, translation_key: String = "") -> void:
 	var thought: PlayerThought = PLAYER_THOUGHT.instantiate()
 	thought.text = text
-	_window_layer.add_child(thought)
+	add_child(thought)
 	SaveManager.record_thought(text, translation_key)
+	_footer.set_thought_log_button_visible(true)
 
 
 func _build_chat_window() -> ChatWindow:
@@ -386,14 +434,31 @@ func _build_jean_contact() -> ChatContact:
 ## Bureau "vide" atteint une fois le rapport de mission 1 validé et sa
 ## fenêtre système d'envoi fermée (voir report_generation_screen.gd) — ni
 ## téléphone d'Alizée, ni fenêtre minimisée résiduelle, ni conversation Jean
-## Ranoud : le même écran nu que juste après la connexion (voir _ready
-## ci-dessus), seule une fenêtre de chat s'y ouvre, avec une nouvelle
-## discussion RelayGhost plus son historique archivé.
+## Ranoud d'origine : le même écran nu que juste après la connexion (voir
+## _ready ci-dessus), seule une fenêtre de chat s'y ouvre. Jean réagit au
+## rapport en premier (content ou non, voir JEAN_REPORT_M1_DIALOGUE), puis
+## RelayGhost lance la mission 2 une fois cette conversation terminée — même
+## principe de révélation différée que RelayGhost -> Jean dans
+## _build_chat_window (contact_conversation_finished + add_contact). Son
+## historique de mission 1 (intro + aide) reste consultable via "RelayGhost
+## archive", toujours présent dès l'ouverture.
 func _build_post_report_desktop() -> void:
 	_archive_relayghost_history_if_needed()
 
 	_chat_window = CHAT_WINDOW.instantiate()
-	_chat_window.contacts = [_build_relayghost_report_contact(), _build_relayghost_archive_contact()]
+	_chat_window.contacts = [_build_jean_report_reaction_contact(), _build_relayghost_archive_contact()]
+	# Reprise d'une sauvegarde postérieure à la fin de la conversation avec
+	# Jean (même piège que RelayGhost -> Jean dans _build_chat_window) :
+	# contact_conversation_finished ne se redéclenche jamais pour un journal
+	# déjà complet (_replay_saved_log() ne l'émet pas) — RelayGhost doit donc
+	# déjà être dans la liste initiale plutôt que d'attendre ce signal.
+	if SaveManager.is_conversation_complete(JEAN_REPORT_M1_CONTACT_ID):
+		_chat_window.contacts.append(_build_relayghost_mission2_contact())
+	_chat_window.contact_conversation_finished.connect(func(contact_id: String) -> void:
+		if contact_id == JEAN_REPORT_M1_CONTACT_ID:
+			await get_tree().create_timer(RELAYGHOST_MISSION2_REVEAL_DELAY_SECONDS).timeout
+			_chat_window.add_contact(_build_relayghost_mission2_contact())
+	)
 	_open_window(_chat_window)
 
 
@@ -410,9 +475,22 @@ func _archive_relayghost_history_if_needed() -> void:
 	SaveManager.record_conversation(RELAYGHOST_ARCHIVE_CONTACT_ID, SaveManager.get_conversation_log("relayghost"))
 
 
-func _build_relayghost_report_contact() -> ChatContact:
-	var contact := _build_relayghost_contact_base(RELAYGHOST_REPORT_M1_CONTACT_ID, "RelayGhost")
-	contact.dialogue_resource = RELAYGHOST_REPORT_M1_DIALOGUE
+## Même teinte de bulle que Jean pendant l'enquête (voir _build_jean_contact)
+## pour rester reconnaissable comme le même personnage, malgré le contact_id
+## distinct (voir JEAN_REPORT_M1_CONTACT_ID).
+func _build_jean_report_reaction_contact() -> ChatContact:
+	var contact := ChatContact.new()
+	contact.contact_id = JEAN_REPORT_M1_CONTACT_ID
+	contact.contact_name = "Jean Ranoud"
+	contact.avatar = JEAN_AVATAR
+	contact.dialogue_resource = JEAN_REPORT_M1_DIALOGUE
+	contact.bubble_color = Palette.BUBBLE_BLUE
+	return contact
+
+
+func _build_relayghost_mission2_contact() -> ChatContact:
+	var contact := _build_relayghost_contact_base(RELAYGHOST_MISSION2_CONTACT_ID, "RelayGhost")
+	contact.dialogue_resource = RELAYGHOST_MISSION2_DIALOGUE
 	return contact
 
 
@@ -536,10 +614,10 @@ func _build_jean_dump_lines() -> Array[TerminalLine]:
 	var lines: Array[TerminalLine] = []
 	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]ssh-agent sh -c 'ssh-add ~/.ssh/jean_rsa; ssh jean@203.0.113.45'[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][+][/color] Authenticating against remote host 203.0.113.45:22... Connection established.[/color]" % [muted, accent]))
-	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]scp ./backups/mobile_dump_2026.tar.gz user@192.168.1.12:~/workspace/[/color]" % [prompt, normal], true))
-	lines.append(TerminalLine.progress_line("mobile_dump_2026.tar.gz", 3420, "48.2MB/s", "01:11"))
+	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]scp ./backups/mobile_dump_2030.tar.gz user@192.168.1.12:~/workspace/[/color]" % [prompt, normal], true))
+	lines.append(TerminalLine.progress_line("mobile_dump_2030.tar.gz", 3420, "48.2MB/s", "01:11"))
 	lines.append(TerminalLine.text_line("[color=%s]jean@203.0.113.45:~$[/color] [color=%s]exit[/color]" % [prompt, normal], true))
-	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]tar -xzvf ~/workspace/mobile_dump_2026.tar.gz -C ~/workspace/raw_data/[/color]" % [prompt, normal], true))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]tar -xzvf ~/workspace/mobile_dump_2030.tar.gz -C ~/workspace/raw_data/[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s]unpacking raw_dump.bin... [color=%s]DONE[/color] (42,891 blocks processed)[/color]" % [muted, accent]))
 	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]./bin/parser --input ~/workspace/raw_data/ --filter-level deep[/color]" % [prompt, normal], true))
 	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Initializing OSINT heuristic analyzer v4.2...[/color]" % [muted, accent]))
@@ -590,6 +668,13 @@ func _on_window_minimize_requested(window: Control, window_title: String) -> voi
 func _on_clue_unlocked_for_link(clue_id: String) -> void:
 	if ClueManager.completes_link(clue_id):
 		_pending_fusion_clue_id = clue_id
+
+
+## Sauvegarde à chaque indice débloqué (voir échange avec l'utilisateur) —
+## _clue_id inutilisé : save_checkpoint() sauvegarde tout l'état courant
+## (ClueManager.get_unlocked_ids() y compris), pas un indice précis.
+func _on_clue_unlocked_save_checkpoint(_clue_id: String) -> void:
+	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
 
 
 ## Un indice cliqué n'importe où sur le bureau (dialogue, chat, mail, SMS,
@@ -663,8 +748,12 @@ func _on_help_button_pressed() -> void:
 ## introduction.gd). Contenu du rapport lui-même (report_generation_screen.gd)
 ## à venir dans une prochaine passe ; pour l'instant l'écran n'a que son
 ## propre header/footer.
+## Effet "extinction CRT" (voir SceneTransition.crt_off, déjà utilisé pour la
+## fermeture de l'écran système avant le login) plutôt qu'un simple fondu au
+## noir — même idée : une coupure nette qui marque la fin de l'enquête avant
+## le rapport, pas un enchaînement discret.
 func _on_generate_report_requested() -> void:
-	await SceneTransition.fade_out()
+	await SceneTransition.crt_off()
 	get_tree().change_scene_to_packed(REPORT_GENERATION_SCREEN)
 	SceneTransition.fade_in()
 
@@ -854,6 +943,7 @@ func _reveal_alizee_phone(animate: bool) -> void:
 	_alizee_phone = ALIZEE_PHONE.instantiate()
 	_alizee_phone.icon_pressed.connect(_on_phone_icon_pressed)
 	_window_layer.add_child(_alizee_phone)
+	MusicPlayer.play_background(ALIZEE_PHONE_MUSIC, ALIZEE_PHONE_MUSIC_FADE_IN_SECONDS)
 	# Le bouton "Aide" n'a de sens qu'une fois l'enquête vraiment commencée :
 	# caché jusqu'à ce que le téléphone d'Alizée apparaisse (après Jean, après
 	# le terminal de dump) — pas dès la fin de RelayGhost, voir

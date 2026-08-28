@@ -153,12 +153,14 @@ func _ready() -> void:
 ## Bascule du cadre modal (Backdrop assombri plein écran, bloque tout le
 ## reste) vers une vraie fenêtre réductible : ajoute une barre de titre avec
 ## un bouton "—" au-dessus du contenu existant, plutôt que de dupliquer toute
-## la scène. mouse_filter passe à IGNORE sur la racine (plein écran) pour
-## qu'un clic en dehors de la boîte (désormais sans Backdrop pour l'absorber)
-## traverse jusqu'à ce qu'il y a en dessous (ex. le téléphone d'Alizée) au
-## lieu d'être avalé par cette zone invisible.
+## la scène. mouse_filter passe à IGNORE sur la racine ET sur Backdrop (plein
+## écran tous les deux) pour qu'un clic en dehors de la boîte traverse
+## jusqu'à ce qu'il y a en dessous (ex. le téléphone d'Alizée) au lieu d'être
+## avalé par cette zone — Backdrop reste visible (retour joueur : le bureau
+## derrière doit rester assombri comme les autres fenêtres système, même sans
+## bloquer les clics ni empêcher la réduction via le bouton "—").
 func _setup_window_chrome() -> void:
-	_backdrop.hide()
+	_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	var bar := HBoxContainer.new()

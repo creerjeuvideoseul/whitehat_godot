@@ -41,8 +41,15 @@ static func resolve_indice_tags(
 		result += text.substr(last_end, m.get_start() - last_end)
 		var id := m.get_string(1)
 		var inner := m.get_string(2)
-		var color := clicked_color if (ClueManager.is_unlocked(id) or id == hovered_id) else highlight_color
-		inner = inner.replace("<color=indice>", "[color=#%s]" % color.to_html(false)).replace("</color>", "[/color]")
+		# Option "Retirer la couleur des indices" (Settings.hide_indice_colors) :
+		# ne touche que ce cas "au repos" (ni débloqué, ni survolé) — le survol
+		# et le déblocage gardent toujours clicked_color, inchangés.
+		if ClueManager.is_unlocked(id) or id == hovered_id:
+			inner = inner.replace("<color=indice>", "[color=#%s]" % clicked_color.to_html(false)).replace("</color>", "[/color]")
+		elif Settings.hide_indice_colors:
+			inner = inner.replace("<color=indice>", "").replace("</color>", "")
+		else:
+			inner = inner.replace("<color=indice>", "[color=#%s]" % highlight_color.to_html(false)).replace("</color>", "[/color]")
 		result += "[url=%s]%s[/url]" % [id, inner]
 		last_end = m.get_end()
 	result += text.substr(last_end)
@@ -141,15 +148,25 @@ static func _outline_important(text: String, pattern: String, outline_size: int 
 	return regex.sub(text, replacement, true)
 
 
+## Option "Retirer la couleur des indices" (Settings.hide_indice_colors) :
+## ne s'applique qu'au cas "au repos" (ni débloqué, ni survolé), dans les deux
+## branches ci-dessous — survol et déblocage gardent toujours TEXT_CLUE_CLICKED.
 static func resolve_dialogue_colors(text: String, clue_id: String = "", hovered_id: String = "") -> String:
 	var result := _outline_important(text, "\\[color=important\\](.*?)\\[/color\\]")
 	if clue_id.is_empty():
-		result = result.replace("[color=indice]", "[color=#%s]" % Palette.TEXT_HIGHLIGHT.to_html(false))
+		if Settings.hide_indice_colors:
+			result = result.replace("[color=indice]", "")
+		else:
+			result = result.replace("[color=indice]", "[color=#%s]" % Palette.TEXT_HIGHLIGHT.to_html(false))
 	else:
-		var color := Palette.TEXT_CLUE_CLICKED if (ClueManager.is_unlocked(clue_id) or clue_id == hovered_id) else Palette.TEXT_HIGHLIGHT
 		var regex := RegEx.new()
 		regex.compile("\\[color=indice\\](.*?)\\[/color\\]")
-		result = regex.sub(result, "[url=%s][color=#%s]$1[/color][/url]" % [clue_id, color.to_html(false)], true)
+		if ClueManager.is_unlocked(clue_id) or clue_id == hovered_id:
+			result = regex.sub(result, "[url=%s][color=#%s]$1[/color][/url]" % [clue_id, Palette.TEXT_CLUE_CLICKED.to_html(false)], true)
+		elif Settings.hide_indice_colors:
+			result = regex.sub(result, "[url=%s]$1[/url]" % clue_id, true)
+		else:
+			result = regex.sub(result, "[url=%s][color=#%s]$1[/color][/url]" % [clue_id, Palette.TEXT_HIGHLIGHT.to_html(false)], true)
 	return result
 
 
@@ -175,7 +192,17 @@ static func html_to_bbcode(text: String, highlight_color: Color = Palette.TEXT_H
 	var result := text.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
 	result = result.replace("<b>", "[b]").replace("</b>", "[/b]")
 	result = result.replace("<i>", "[i]").replace("</i>", "[/i]")
-	result = result.replace("<color=indice>", "[color=#%s]" % highlight_color.to_html(false))
+	# Paire ouverture+fermeture extraite ensemble (regex), pas un simple
+	# replace de la balise ouvrante seule : sous Settings.hide_indice_colors
+	# (option "Retirer la couleur des indices"), il ne faut PAS laisser un
+	# </color> orphelin derrière — même risque que _outline_important
+	# ci-dessous pour "important", même remède.
+	var indice_regex := RegEx.new()
+	indice_regex.compile("<color=indice>(.*?)</color>")
+	if Settings.hide_indice_colors:
+		result = indice_regex.sub(result, "$1", true)
+	else:
+		result = indice_regex.sub(result, "[color=#%s]$1[/color]" % highlight_color.to_html(false), true)
 	result = _outline_important(result, "<color=important>(.*?)</color>", important_outline_size, important_text_color, important_outline_color)
 	var color_regex := RegEx.new()
 	color_regex.compile("<color=([^>]+)>")

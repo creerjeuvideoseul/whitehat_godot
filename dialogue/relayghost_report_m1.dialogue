@@ -1,12 +1,16 @@
 ~ start
 
-RelayGhost: {{PlayerSession.pseudo}}, rapport reçu et transmis.
-RelayGhost: PLACEHOLDER, texte à venir (voir report_generation_screen.gd::RELAYGHOST_REPORT_DIALOGUE).
+RelayGhost: {{PlayerSession.pseudo}}, c'est l'heure de ton premier rapport.
+RelayGhost: J'ai suivi ta progression.
+RelayGhost: Je veux maintenant connaître ta décision.
+RelayGhost: Vas-tu informer M. Ranoud de la localisation de sa fille, Alizée ?
+RelayGhost: Si oui, même si son comportement est parfois maladroit et possessif, son père pourrait avoir l'occasion de renouer le dialogue avec elle.
+RelayGhost: Si non, tu considères probablement que Marek est mieux placé pour prendre soin d'elle et que le lien avec son père doit rester interrompu.
 
-- Demander comment il peut être au courant pour Marek ou les outils.
+- Comment peux-tu être au courant de tout cela ?
     set StoryVars.player_ask_source = 1
-    Player: Comment tu sais qui est Marek ou quels outils j'utilise ? Tu as piraté mon système ?
-    RelayGhost: « Piraté » est un terme un peu imprécis.
+    Player: Comment sais-tu qui est Marek ou quels outils j'utilise ? As-tu piraté mon système ?
+    RelayGhost: « Piraté » est un terme imprécis.
 	RelayGhost: J'ai accès aux informations nécessaires au suivi de ton travail. 
 	Player: Donc tu m'observes ? 
 	RelayGhost: [color=indice]J'observe les résultats. [/color] [#indice=intro_relay_observe]
@@ -18,6 +22,12 @@ RelayGhost: PLACEHOLDER, texte à venir (voir report_generation_screen.gd::RELAY
 	RelayGhost: J'ai une estimation de tes capacités. 
 	RelayGhost: Elle évolue à chaque mission. 
 	RelayGhost: Pour l'instant, concentre-toi sur Jean Ranoud.
-
-
+	
+- Ce choix ne te regarde pas.
+	set StoryVars.player_ask_source = 1
+	Player: Ce choix ne te regarde pas.
+    RelayGhost: Tu n'as pas tort.
+	
+ RelayGhost: C'est l'heure de ton choix !
+System: Lancement de l'interface de génération de rapport...
 => END

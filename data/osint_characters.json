@@ -189,7 +189,7 @@
 		},
 		{
 		  "characterId": 10,
-		  "Photo": "res://assets/avatar/portrait_maria.webp",
+		  "Photo": "res://assets/avatar/portrait_maria.png",
 		  "Nom": "Carré",
 		  "Prénom": "Maria",
 		  "Pseudonymes connus": "MariahC, AllIWant4U",
@@ -398,7 +398,7 @@
 		},
 		{
 		  "characterId": 10,
-		  "Photo": "res://assets/avatar/portrait_maria.webp",
+		  "Photo": "res://assets/avatar/portrait_maria.png",
 		  "Name": "Carré",
 		  "First name": "Maria",
 		  "Known alias(es)": "MariahC, Mimi2000, AllIWant4U",

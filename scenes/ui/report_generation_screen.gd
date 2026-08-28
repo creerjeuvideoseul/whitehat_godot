@@ -2,8 +2,15 @@ extends Control
 ## Écran "rapport de mission" : même chrome tête/pied (header/footer, voir
 ## desktop.tscn) que le bureau — atteint en remplaçant la scène desktop une
 ## fois la confirmation validée (voir desktop_clue_panel.gd::_report_confirm_dialog
-## et desktop.gd::_on_generate_report_requested), sans retour en arrière
+## et desktop.gd::_on_generate_report_requested, qui utilise l'effet
+## "extinction CRT" plutôt qu'un simple fondu), sans retour en arrière
 ## possible.
+##
+## RelayGhost parle en premier (voir _ready/_on_relayghost_report_chat_finished) —
+## dans une ChatWindow comme partout ailleurs dans le jeu (pas le balloon plein
+## écran de l'introduction), par-dessus le fond de cet écran (grille + photos
+## de la mission, laissé tel quel). La fenêtre de choix (ReportWindow, cachée
+## jusque-là) n'apparaît qu'une fois cette conversation terminée.
 ##
 ## Contenu du rapport de la mission 1 (fenêtre bleue centrale, voir
 ## ReportWindow dans la scène) : récit + deux questions Oui/Non (transmettre à
@@ -16,20 +23,33 @@ extends Control
 ## voir plus bas), puis enchaîne sur une fenêtre système simulant l'envoi du
 ## rapport (voir _play_report_terminal). Une fois cette fenêtre fermée, la
 ## scène change pour un bureau neuf et vide (voir _on_report_terminal_closed
-## et desktop.gd::_build_post_report_desktop) qui prend le relais pour la
-## conversation RelayGhost de fin de mission — cette scène-ci ne rouvre
-## jamais derrière, elle est entièrement remplacée. Tout l'état du joueur
-## (indices, StoryVars) reste accessible pour de futures conséquences ; le
-## score éthique/popularité agrégé (voir la bible de design) reste une couche
-## à construire plus tard par-dessus ces StoryVars bruts. La sauvegarde réelle
-## sur disque n'a lieu qu'une fois cette conversation RelayGhost terminée
-## (voir conversation_view.gd::_on_conversation_finished) : si le joueur
-## quitte avant, "Continuer" le ramène avant "Valider le rapport", pas au
-## milieu de cette séquence.
+## et desktop.gd::_build_post_report_desktop, qui enchaîne Jean puis RelayGhost
+## pour la mission 2) — cette scène-ci ne rouvre jamais derrière, elle est
+## entièrement remplacée. Tout l'état du joueur (indices, StoryVars) reste
+## accessible pour de futures conséquences ; le score éthique/popularité
+## agrégé (voir la bible de design) reste une couche à construire plus tard
+## par-dessus ces StoryVars bruts.
+##
+## La sauvegarde réelle sur disque n'a lieu qu'une fois la conversation
+## RelayGhost du nouveau bureau terminée (voir
+## conversation_view.gd::_on_conversation_finished) : si le joueur quitte
+## avant, "Continuer" le ramène avant "Valider le rapport", pas au milieu de
+## cette séquence.
 
 const THOUGHT_LOG_WINDOW := preload("res://scenes/desktop/windows/thought_log_window.tscn")
 const TERMINAL_CONSOLE := preload("res://scenes/ui/terminal_console.tscn")
 const DESKTOP_SCENE_PATH := "res://scenes/desktop/desktop.tscn"
+## Conversation affichée avant la fenêtre de choix (voir _ready/
+## _on_relayghost_report_chat_finished) — même ChatWindow que partout ailleurs
+## dans le jeu : RelayGhost s'adresse ici au joueur pour amener sa décision,
+## par-dessus le fond de cet écran (grille + photos de la mission).
+const CHAT_WINDOW := preload("res://scenes/desktop/windows/chat_window.tscn")
+const RELAYGHOST_AVATAR := preload("res://assets/avatar/relayghost_avatar.png")
+## contact_id distinct de "relayghost" (déjà marqué terminé par l'intro/l'aide,
+## voir SaveManager.is_conversation_complete) pour que ce chapitre compte
+## comme une conversation à part.
+const RELAYGHOST_REPORT_M1_CONTACT_ID := "relayghost_report_m1"
+const RELAYGHOST_REPORT_M1_DIALOGUE: DialogueResource = preload("res://dialogue/relayghost_report_m1.dialogue")
 ## Joué une fois à l'ouverture de cet écran (voir _ready) — appui dramatique
 ## sur l'arrivée du rapport final, seul appelant donc pas centralisé dans
 ## SfxPlayer (même logique que BOOT_SYSTEM_SFX dans introduction.gd).
@@ -77,6 +97,7 @@ const BLINK_SECONDS := 1.4
 @onready var _alizee_yes_button: Button = %AlizeeYesButton
 @onready var _alizee_no_button: Button = %AlizeeNoButton
 @onready var _validate_button: Button = %ValidateButton
+@onready var _report_window: Control = %ReportWindow
 
 ## true/false une fois répondu, null tant que le joueur n'a pas encore choisi —
 ## voir _update_validate_button.
@@ -85,17 +106,26 @@ var _alizee_answer = null
 
 var _thought_log_window: ThoughtLogWindow
 var _validate_blink_tween: Tween
+var _relayghost_chat_window: ChatWindow
 
 
 func _ready() -> void:
-	SfxPlayer.play(REPORT_OPEN_SFX)
-	MusicPlayer.play(REPORT_CHOICE_MUSIC, REPORT_CHOICE_MUSIC_FADE_SECONDS)
+	# Cachée jusqu'à la fin de la conversation RelayGhost (voir
+	# _on_relayghost_report_chat_finished) — le fond (grille + photos, voir la
+	# scène) reste seul visible pendant ce temps.
+	_report_window.hide()
+	_play_relayghost_report_chat()
 
 	# Ces deux actions du header n'ont plus de sens une fois la mission conclue
 	# (voir set_investigation_controls_visible) — le bureau normal, qui
 	# instancie son propre header séparé, n'est pas affecté.
 	_header.set_investigation_controls_visible(false)
 	_footer.thought_log_button_pressed.connect(_on_thought_log_button_pressed)
+	# Voir desktop_footer.gd::set_thought_log_button_visible — cet écran a sa
+	# propre instance de footer, donc son propre appel initial (l'enquête a
+	# forcément déjà généré des pensées à ce stade, mais on vérifie quand
+	# même plutôt que de le montrer en dur).
+	_footer.set_thought_log_button_visible(not SaveManager.get_thought_log().is_empty())
 
 	# RichTextLabel (pas Label) pour ces quatre-là : sélection/copie du texte
 	# demandée par le joueur, même recette que mail_section.gd::_build_body_label.
@@ -132,6 +162,72 @@ func _ready() -> void:
 	_alizee_yes_button.pressed.connect(_on_alizee_answer.bind(true))
 	_alizee_no_button.pressed.connect(_on_alizee_answer.bind(false))
 	_validate_button.pressed.connect(_on_validate_pressed)
+
+
+## ChatWindow, comme partout ailleurs dans le jeu — pas de sidebar à
+## proprement parler puisqu'un seul contact y figure jamais ici, mais même
+## chrome/comportement (minimisable via "—", jamais fermable) que Jean/RelayGhost
+## pendant l'enquête.
+##
+## is_conversation_complete : si cette conversation est déjà terminée (reprise
+## d'une sauvegarde postérieure, ou test direct de cette scène dans l'éditeur
+## avec une sauvegarde existante), ConversationView.setup() se contente de
+## rejouer le journal déjà enregistré (_replay_saved_log()) et ne réémet
+## jamais contact_conversation_finished — même piège déjà documenté dans
+## desktop.gd::_build_chat_window pour Jean. Sans ce garde-fou, la fenêtre de
+## choix ne se révélait donc jamais (retour joueur).
+func _play_relayghost_report_chat() -> void:
+	_relayghost_chat_window = CHAT_WINDOW.instantiate()
+	_relayghost_chat_window.contacts = [_build_relayghost_report_contact()]
+	_relayghost_chat_window.contact_conversation_finished.connect(_on_relayghost_report_chat_finished)
+	_relayghost_chat_window.minimize_requested.connect(_on_relayghost_chat_minimize_requested)
+	add_child(_relayghost_chat_window)
+
+	if SaveManager.is_conversation_complete(RELAYGHOST_REPORT_M1_CONTACT_ID):
+		_on_relayghost_report_chat_finished(RELAYGHOST_REPORT_M1_CONTACT_ID)
+
+
+func _build_relayghost_report_contact() -> ChatContact:
+	var contact := ChatContact.new()
+	contact.contact_id = RELAYGHOST_REPORT_M1_CONTACT_ID
+	contact.contact_name = "RelayGhost"
+	contact.avatar = RELAYGHOST_AVATAR
+	contact.dialogue_resource = RELAYGHOST_REPORT_M1_DIALOGUE
+	return contact
+
+
+## Même principe que desktop.gd::_on_window_minimize_requested, en plus simple :
+## cet écran n'a jamais qu'une seule fenêtre à la fois, pas besoin de suivre
+## un empilement (_bring_window_to_front).
+func _on_relayghost_chat_minimize_requested(window: Control, window_title: String) -> void:
+	_footer.add_minimized_window(window_title, func() -> void:
+		window.show()
+	)
+
+
+## Révèle la fenêtre de choix (jusque-là cachée, voir _ready) une fois
+## RelayGhost fini de parler — le SFX/la musique d'ouverture du rapport, joués
+## avant sur ce même écran, arrivent maintenant à ce moment précis plutôt qu'à
+## l'apparition de la scène, pour accompagner l'arrivée du rapport lui-même.
+## La conversation RelayGhost se réduit dans la barre des tâches au même
+## moment (voir _minimize_relayghost_chat) : ReportWindow doit rester au
+## premier plan, pas la fenêtre de chat qui vient de finir son rôle.
+func _on_relayghost_report_chat_finished(_contact_id: String) -> void:
+	SfxPlayer.play(REPORT_OPEN_SFX)
+	MusicPlayer.play(REPORT_CHOICE_MUSIC, REPORT_CHOICE_MUSIC_FADE_SECONDS)
+	_report_window.show()
+	_minimize_relayghost_chat()
+
+
+## Même effet que si le joueur avait lui-même cliqué "—" (voir
+## chat_window.gd::_on_minimize_pressed, qui n'est pas exposé publiquement) —
+## masque la fenêtre et lui donne une icône dans le footer, sans dupliquer la
+## logique de _on_relayghost_chat_minimize_requested ci-dessus.
+func _minimize_relayghost_chat() -> void:
+	if not is_instance_valid(_relayghost_chat_window):
+		return
+	_relayghost_chat_window.hide()
+	_on_relayghost_chat_minimize_requested(_relayghost_chat_window, tr("CHAT_WINDOW_TITLE"))
 
 
 func _on_jean_answer(is_yes: bool) -> void:
