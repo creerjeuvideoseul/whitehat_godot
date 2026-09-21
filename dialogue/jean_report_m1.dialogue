@@ -4,5 +4,35 @@ if StoryVars.m1_report_jean_transmit
 	Jean: PLACEHOLDER, texte à venir — Jean content, l'agent a transmis la localisation d'Alizée (voir report_generation_screen.gd::REPORT_M1_JEAN_QUESTION / StoryVars.m1_report_jean_transmit).
 else
 	Jean: PLACEHOLDER, texte à venir — Jean mécontent, l'agent a choisi de ne pas transmettre la localisation d'Alizée (voir report_generation_screen.gd::REPORT_M1_JEAN_QUESTION / StoryVars.m1_report_jean_transmit).
+J'ai reçu votre rapport c'est n'importe quoi ! Comptez pas sur moi pour payer !
 
+- Vous me semblez toxique, je préfère la protégé de vous.
+Vous foutez de ma gueule ! Vous savez ou il est !
+Insulte en boucle pendant 100 insultes ? 
+Avec un bouton quitter la conversation.
+
+- Je n'ai pas réussi à la localiser.
+Vous êtes aussi nul que les autres, je vais bien finir par retrouver le mot de passe ar moi même.
+
+- Je n'ai pas d'escuse.
+Vous êtes aussi nul que les autres, je vais bien finir par retrouver le mot de passe ar moi même.
+
+- L'argent reste du.
+	C'est ça, c'est un coup de fusil qui est du oui ! Je vais te retrouver sale merde.
+
+- Je comprends, désolé.
+	Il manquerait plus que ca ! Je suis en rogne... On se reparlera croyez moi. 
+	Coupe la conversation.
+
+
+Merci pour le rapport, je sais maintenant ou retrouver Alizée. 
+Vous êtes moins pire que je ne le pensais.
+Voici la sommes dues. 
+Je ne pense pas qu'on se reparlera, mais merci. Elle va prendre chere!
+
+
+
+
+
+Une image avec quand pour avoir le lieu ET la date, pas aussi facile qu'une simple discussion sms
 => END

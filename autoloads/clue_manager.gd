@@ -232,6 +232,30 @@ func has_unlocked_all_clues(mission_id: int) -> bool:
 	return true
 
 
+## Nombre total d'indices propres à cette mission (mission_id exact, même
+## périmètre que has_unlocked_all_clues ci-dessus — pas les indices "hors
+## mission" mission_id == 0 de RelayGhost, ni ceux d'une autre mission) —
+## pour un compteur "X / Y" dans un dialogue, ex. relayghost_report_m1.dialogue
+## via {{ClueManager.get_total_clue_count(1)}}.
+func get_total_clue_count(mission_id: int) -> int:
+	var count := 0
+	for clue in _clues:
+		if clue.mission_id == mission_id:
+			count += 1
+	return count
+
+
+## Symétrique de get_total_clue_count ci-dessus, ne compte que les indices
+## déjà débloqués — vaut get_total_clue_count(mission_id) une fois
+## has_unlocked_all_clues(mission_id) vrai.
+func get_unlocked_clue_count(mission_id: int) -> int:
+	var count := 0
+	for clue in _clues:
+		if clue.mission_id == mission_id and is_unlocked(clue.id):
+			count += 1
+	return count
+
+
 func get_clues_for_category(mission_id: int, category_id: String) -> Array[ClueDefinition]:
 	var result: Array[ClueDefinition] = []
 	for clue in _clues:
