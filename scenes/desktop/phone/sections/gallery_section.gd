@@ -56,6 +56,15 @@ func _ready() -> void:
 		close_requested.emit()
 	)
 	_rebuild_grid()
+	# Le grain d'écran (voir ScreenEffects) rend les vraies photos "rayées" —
+	# coupé tant que la galerie est affichée (grille et détail d'une
+	# publication, superposé par-dessus par _open_detail), rétabli à la
+	# fermeture (_exit_tree, queue_free côté desktop.gd).
+	ScreenEffects.set_grain_enabled(false)
+
+
+func _exit_tree() -> void:
+	ScreenEffects.set_grain_enabled(true)
 
 
 func _rebuild_grid() -> void:

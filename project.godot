@@ -36,6 +36,7 @@ OptionsMenu="*res://autoloads/options_menu.gd"
 GameClock="*res://autoloads/game_clock.gd"
 StoryVars="*res://autoloads/story_vars.gd"
 ClueManager="*res://autoloads/clue_manager.gd"
+ScreenEffects="*res://autoloads/screen_effects.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [display]

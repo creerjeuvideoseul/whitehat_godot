@@ -111,6 +111,7 @@ TOOLTIP_CLUE_HINT,"Les mots soulignés en <color=indice>""orange""</color> sont 
 CLUEBOARD_PANEL_HINT,Retrouvez ici tous les indices de votre mission. Vous pouvez rétracter cette fenêtre avec ← et →,Find all your mission's clues here. You can collapse this window with ← and →.
 OSINT_WINDOW_TITLE,Résultat OSINT : Profilage en ligne & fuites de données,OSINT Results: Online Profiling & Data Leaks
 OSINT_NO_RESULT,Aucun résultat trouvé pour cette recherche.,No results found for this search.
+OSINT_SEARCHING,Recherche dans les bases de données...,Searching databases...
 MAIL_SECTION_TITLE,Mail du téléphone d'Alizée,Alizée's phone mail
 MAIL_INBOX_LABEL,Boîte de réception :,Inbox:
 MAIL_NO_SELECTION,Sélectionnez un mail pour l'afficher.,Select a mail to view it.

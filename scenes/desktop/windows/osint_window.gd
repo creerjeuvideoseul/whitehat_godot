@@ -19,6 +19,12 @@ const SECTION_GAP := 24
 ## Largeur fixe de la colonne "clé" d'une ligne champ/valeur, pour que toutes
 ## les valeurs démarrent alignées quelle que soit la longueur du libellé.
 const LABEL_COLUMN_WIDTH := 280.0
+## Duree factice avant d'afficher le vrai resultat (voir _build_loading) :
+## simule une requete reseau plutot qu'un resultat instantane, dans l'esprit
+## "diegetiser l'interface" — la fausse barre de progression dure exactement
+## ce temps-la, jamais un chiffre fixe qui trahirait l'artifice.
+const SEARCH_DELAY_MIN_SECONDS := 0.5
+const SEARCH_DELAY_MAX_SECONDS := 1.1
 
 @onready var _title_bar: PanelContainer = %TitleBar
 @onready var _close_button: Button = %CloseButton
@@ -26,6 +32,10 @@ const LABEL_COLUMN_WIDTH := 280.0
 
 var _dragging: bool = false
 var _database: OsintDatabase = OsintDatabase.new()
+## Incrémenté à chaque search() : si une nouvelle recherche démarre pendant
+## le faux délai d'une précédente, celle-ci s'annule silencieusement au
+## réveil au lieu d'écraser le résultat le plus récent.
+var _search_generation: int = 0
 
 
 func _ready() -> void:
@@ -34,8 +44,22 @@ func _ready() -> void:
 
 
 ## Lance (ou relance) une recherche : vide entièrement le contenu précédent,
-## puis affiche la fiche trouvée ou un message "aucun résultat".
+## affiche un faux temps de chargement (voir _build_loading), puis la fiche
+## trouvée ou un message "aucun résultat".
 func search(query: String) -> void:
+	_search_generation += 1
+	var my_generation := _search_generation
+
+	for child in _content_root.get_children():
+		child.queue_free()
+
+	var delay := randf_range(SEARCH_DELAY_MIN_SECONDS, SEARCH_DELAY_MAX_SECONDS)
+	_build_loading(delay)
+
+	await get_tree().create_timer(delay).timeout
+	if my_generation != _search_generation:
+		return  # une recherche plus récente a déjà pris le relais
+
 	for child in _content_root.get_children():
 		child.queue_free()
 
@@ -70,6 +94,39 @@ func _on_title_bar_gui_input(event: InputEvent) -> void:
 func _on_close_pressed() -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	hide()
+
+
+## Etat "recherche en cours" affiche pendant `delay` secondes avant le vrai
+## résultat (voir search()) — la barre se remplit exactement sur cette durée,
+## purement décoratif (pas de progression réelle à suivre).
+func _build_loading(delay: float) -> void:
+	var label := Label.new()
+	label.text = tr("OSINT_SEARCHING")
+	label.add_theme_color_override("font_color", Palette.TEXT_LOCKED)
+	label.add_theme_font_size_override("font_size", Palette.SIZE_BODY)
+	_content_root.add_child(label)
+
+	var track := Control.new()
+	track.custom_minimum_size = Vector2(0, 6)
+	track.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var track_bg := ColorRect.new()
+	track_bg.color = Color(0, 0, 0, 0.3)
+	track_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	track.add_child(track_bg)
+
+	var fill := ColorRect.new()
+	fill.color = Palette.BORDER_ACCENT
+	fill.anchor_left = 0.0
+	fill.anchor_top = 0.0
+	fill.anchor_bottom = 1.0
+	fill.anchor_right = 0.0
+	track.add_child(fill)
+
+	_content_root.add_child(_wrap_with_top_margin(track))
+
+	var tween := create_tween()
+	tween.tween_property(fill, "anchor_right", 1.0, delay)
 
 
 func _build_no_result() -> void:
