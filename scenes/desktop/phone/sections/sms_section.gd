@@ -35,6 +35,13 @@ const SPACER_STRETCH_RATIO := 1.0
 ## séparation propre au timestamp — MessagesList n'a lui-même aucune
 ## séparation, cette marge est la seule source d'espacement entre messages.
 const MESSAGE_TOP_MARGIN := 20
+## Secousse jouée sur un contenu encore verrouillé par le coffre-fort (voir
+## _show_conversation) — même recette que ChatWindow._shake() (notification
+## d'un nouveau message), reprise ici plutôt que partagée : petit effet
+## d'interface propre à chaque écran, voir feedback_architecture_principles.
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
 
 ## Fichier JSON de la boîte SMS affichée — voir SmsDatabase. Le seul champ à
 ## changer pour réutiliser cette scène sur un autre personnage/mission.
@@ -234,6 +241,7 @@ func _show_conversation(conv: SmsConversation) -> void:
 
 	if conv.is_crypted and not PhoneVault.is_unlocked():
 		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+		_shake()
 		var label := Label.new()
 		label.text = tr("VAULT_ENCRYPTED_PLACEHOLDER")
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -254,6 +262,17 @@ func _show_conversation(conv: SmsConversation) -> void:
 	## jamais _on_messages_scroll_changed (aucun événement de scroll à
 	## attendre puisqu'il n'y a rien à scroller).
 	_maybe_save_read_checkpoint()
+
+
+## Même recette que ChatWindow._shake() : quelques allers-retours aléatoires
+## autour de la position de repos, puis retour exact à cette position.
+func _shake() -> void:
+	var origin := position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(self, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
 
 
 ## Fine barre horizontale + la date du message SUIVANT en dessous (pas celui

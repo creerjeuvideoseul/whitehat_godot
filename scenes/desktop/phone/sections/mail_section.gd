@@ -38,6 +38,11 @@ const FIELD_GAP := 10
 ## _build_quoted_previous_mail) — ROW_GAP seul (8px) collait trop les deux
 ## mails, retour joueur.
 const QUOTED_MAIL_BLANK_LINE_HEIGHT := Palette.SIZE_BODY
+## Secousse jouée sur un mail encore verrouillé par le coffre-fort (voir
+## _build_content_frame) — même recette que ChatWindow._shake().
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
 ## Ratio 16/9 plutôt que le ratio quasi carré des vignettes de la galerie —
 ## voir _build_attachment_thumbnail.
 const ATTACHMENT_THUMB_WIDTH := 750.0
@@ -319,6 +324,17 @@ func _is_mail_locked(mail: MailEntry) -> bool:
 	return mail.is_crypted and not PhoneVault.is_unlocked()
 
 
+## Même recette que ChatWindow._shake() : quelques allers-retours aléatoires
+## autour de la position de repos, puis retour exact à cette position.
+func _shake() -> void:
+	var origin := position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(self, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
+
+
 func _build_detail_header(mail: MailEntry) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", FIELD_GAP)
@@ -373,6 +389,7 @@ func _build_content_frame(mail: MailEntry) -> Control:
 
 	if _is_mail_locked(mail):
 		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+		_shake()
 		var locked_label := _build_body_label(tr("VAULT_ENCRYPTED_PLACEHOLDER"))
 		locked_label.add_theme_color_override("default_color", Palette.TEXT_LOCKED)
 		scroll.add_child(locked_label)

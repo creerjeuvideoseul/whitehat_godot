@@ -25,6 +25,14 @@ const DETAIL_IMAGE_HEIGHT := 900
 ## (premier élément de DetailRoot depuis que la date est passée dans la barre
 ## de titre) pour qu'elle colle directement sous celle-ci.
 const GAP_SIZE := 16
+## Secousse jouée sur une publication encore verrouillée par le coffre-fort
+## (voir show_post) — même recette que ChatWindow._shake(). Contrairement à
+## SmsSection/MailSection, cette publication n'avait jusqu'ici aucun retour
+## "accès refusé" (ni son ni secousse) : ajouté ici pour rester cohérent avec
+## les deux autres écrans verrouillables du téléphone.
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _date_label: Label = %DateLabel
@@ -56,6 +64,8 @@ func show_post(post: GalleryPost) -> void:
 		child.queue_free()
 
 	if locked:
+		SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+		_shake()
 		_detail_root.add_child(_build_locked_placeholder())
 		return
 
@@ -73,6 +83,17 @@ func _add_gap() -> void:
 	spacer.custom_minimum_size = Vector2(0, GAP_SIZE)
 	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_detail_root.add_child(spacer)
+
+
+## Même recette que ChatWindow._shake() : quelques allers-retours aléatoires
+## autour de la position de repos, puis retour exact à cette position.
+func _shake() -> void:
+	var origin := position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(self, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
 
 
 func _build_locked_placeholder() -> Control:
