@@ -1,6 +1,7 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scenes/ui/report_generation_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ethics_gauge.tscn" id="10_ethics_gauge"]
 [ext_resource type="Shader" path="res://assets/shaders/grid_background.gdshader" id="2_shader"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_header.tscn" id="3_header"]
 [ext_resource type="PackedScene" path="res://scenes/desktop/desktop_footer.tscn" id="4_footer"]
@@ -309,12 +310,18 @@ custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "REPORT_M1_NO_BUTTON"
 
+[node name="JeanEthicsGauge" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody" instance=ExtResource("10_ethics_gauge")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+
 [node name="JeanExplanationText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/default_color = Color(0.92, 0.96, 0.94, 1)
+theme_override_colors/default_color = Color(0.4, 0.7, 1, 1)
 theme_override_font_sizes/normal_font_size = 23
 bbcode_enabled = true
 selection_enabled = true
@@ -388,6 +395,25 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 text = "REPORT_M1_NO_BUTTON"
+
+[node name="AlizeeEthicsGauge" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock" instance=ExtResource("10_ethics_gauge")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="AlizeeExplanationText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody/MereBlock"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.4, 0.7, 1, 1)
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+selection_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
 
 [node name="MereElseText" type="RichTextLabel" parent="ContentLayer/ReportWindow/Layout/BodyMargin/Scroll/ReportBody"]
 unique_name_in_owner = true

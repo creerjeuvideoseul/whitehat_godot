@@ -89,6 +89,7 @@ const BLINK_SECONDS := 1.4
 @onready var _jean_yes_button: Button = %JeanYesButton
 @onready var _jean_no_button: Button = %JeanNoButton
 @onready var _jean_explanation_label: RichTextLabel = %JeanExplanationText
+@onready var _jean_gauge: EthicsGauge = %JeanEthicsGauge
 @onready var _mere_intro_text: RichTextLabel = %MereIntroText
 @onready var _mere_block: VBoxContainer = %MereBlock
 @onready var _mere_text: RichTextLabel = %MereText
@@ -96,6 +97,8 @@ const BLINK_SECONDS := 1.4
 @onready var _alizee_question_label: RichTextLabel = %AlizeeQuestionLabel
 @onready var _alizee_yes_button: Button = %AlizeeYesButton
 @onready var _alizee_no_button: Button = %AlizeeNoButton
+@onready var _alizee_explanation_label: RichTextLabel = %AlizeeExplanationText
+@onready var _alizee_gauge: EthicsGauge = %AlizeeEthicsGauge
 @onready var _validate_button: Button = %ValidateButton
 @onready var _report_window: Control = %ReportWindow
 
@@ -152,10 +155,16 @@ func _ready() -> void:
 
 	_apply_blue_scrollbar()
 
-	_style_choice_button(_jean_yes_button, Palette.TEXT_NORMAL)
-	_style_choice_button(_jean_no_button, Palette.TEXT_NORMAL)
-	_style_choice_button(_alizee_yes_button, Palette.TEXT_NORMAL)
-	_style_choice_button(_alizee_no_button, Palette.TEXT_NORMAL)
+	_style_choice_button(_jean_yes_button, false)
+	_style_choice_button(_jean_no_button, false)
+	_style_choice_button(_alizee_yes_button, false)
+	_style_choice_button(_alizee_no_button, false)
+
+	# Pôles des jauges diégétiques (voir EthicsGauge) — le pôle "Transmettre"
+	# reste toujours à gauche, "Ne pas transmettre" à droite, dans le même
+	# ordre que les boutons juste au-dessus.
+	_jean_gauge.set_poles(tr("REPORT_M1_JEAN_AXIS_TRANSMIT"), tr("REPORT_M1_JEAN_AXIS_PROTECT"))
+	_alizee_gauge.set_poles(tr("REPORT_M1_ALIZEE_AXIS_TRUTH"), tr("REPORT_M1_ALIZEE_AXIS_SILENCE"))
 
 	_jean_yes_button.pressed.connect(_on_jean_answer.bind(true))
 	_jean_no_button.pressed.connect(_on_jean_answer.bind(false))
@@ -230,11 +239,16 @@ func _minimize_relayghost_chat() -> void:
 	_on_relayghost_chat_minimize_requested(_relayghost_chat_window, tr("CHAT_WINDOW_TITLE"))
 
 
+## `is_yes` pousse la jauge vers son pôle gauche ("Transmettre", voir
+## _ready) — le pôle droit correspond à `false`, cohérent avec l'ordre des
+## boutons Transmettre/Ne pas transmettre juste au-dessus.
 func _on_jean_answer(is_yes: bool) -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_jean_answer = is_yes
-	_style_choice_button(_jean_yes_button, Palette.TEXT_ACCENT if is_yes else Palette.TEXT_DANGER)
-	_style_choice_button(_jean_no_button, Palette.TEXT_DANGER if is_yes else Palette.TEXT_ACCENT)
+	_style_choice_button(_jean_yes_button, is_yes)
+	_style_choice_button(_jean_no_button, not is_yes)
+	_jean_gauge.visible = true
+	_jean_gauge.set_value(-1.0 if is_yes else 1.0)
 	# N'apparaît qu'une fois choisi (voir doc de classe) : caché par défaut dans
 	# la scène, seul le texte correspondant au choix effectivement fait a un
 	# sens à montrer.
@@ -246,8 +260,12 @@ func _on_jean_answer(is_yes: bool) -> void:
 func _on_alizee_answer(is_yes: bool) -> void:
 	SfxPlayer.play(SfxPlayer.UI_CLICK_SFX)
 	_alizee_answer = is_yes
-	_style_choice_button(_alizee_yes_button, Palette.TEXT_ACCENT if is_yes else Palette.TEXT_DANGER)
-	_style_choice_button(_alizee_no_button, Palette.TEXT_DANGER if is_yes else Palette.TEXT_ACCENT)
+	_style_choice_button(_alizee_yes_button, is_yes)
+	_style_choice_button(_alizee_no_button, not is_yes)
+	_alizee_gauge.visible = true
+	_alizee_gauge.set_value(-1.0 if is_yes else 1.0)
+	_alizee_explanation_label.text = RichTextMarkup.html_to_bbcode(tr("REPORT_M1_ALIZEE_EXPLANATION_YES" if is_yes else "REPORT_M1_ALIZEE_EXPLANATION_NO"))
+	_alizee_explanation_label.visible = true
 	_update_validate_button()
 
 
@@ -436,10 +454,15 @@ func _apply_blue_scrollbar() -> void:
 	scrollbar.add_theme_stylebox_override("scroll_focus", track_style)
 
 
-## Blanc par défaut, vert pour la réponse choisie, rouge pour l'autre (voir
-## _on_jean_answer/_on_alizee_answer) — recolore la bordure/fond ET le texte
-## du bouton, même recette de duplication que chat_window.gd::_set_row_selected.
-func _style_choice_button(button: Button, color: Color) -> void:
+## Blanc par défaut, même accent bleu que le chrome de cette fenêtre pour le
+## bouton choisi — une seule et même couleur "sélectionné" quel que soit le
+## choix, plus de vert/rouge "bonne/mauvaise réponse" (voir _on_jean_answer/
+## _on_alizee_answer, qui portent désormais la nuance sur EthicsGauge/la
+## réaction de RelayGhost, pas sur le bouton lui-même). Recolore la bordure/
+## fond ET le texte du bouton, même recette de duplication que
+## chat_window.gd::_set_row_selected.
+func _style_choice_button(button: Button, is_selected: bool) -> void:
+	var color := Palette.CLUE_SOLUTION_BORDER if is_selected else Palette.TEXT_NORMAL
 	for state in [&"font_color", &"font_hover_color", &"font_pressed_color", &"font_focus_color"]:
 		button.add_theme_color_override(state, color)
 
