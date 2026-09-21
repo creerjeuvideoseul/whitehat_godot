@@ -629,6 +629,35 @@ func _build_jean_dump_lines() -> Array[TerminalLine]:
 	return lines
 
 
+## Coffre-fort déverrouillé (voir VaultSection.unlock_terminal_requested) :
+## même recette de terminal EXCLUSIF que _play_jean_dump_terminal — ajouté
+## directement sur la racine Desktop (pas WindowLayer), pour que le fond
+## assombri bloque tout le reste au lieu d'être "une fenêtre parmi d'autres".
+## L'écran du coffre-fort est déjà à jour en dessous (VaultSection a basculé
+## son propre affichage avant d'émettre ce signal) : ce terminal n'est qu'un
+## habillage qui se referme sur cet état déjà réglé, rien à enchaîner après.
+func _on_vault_unlock_terminal_requested() -> void:
+	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.lines = _build_vault_unlock_lines()
+	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
+	console.fade_out_on_close = true
+	add_child(console)
+
+
+func _build_vault_unlock_lines() -> Array[TerminalLine]:
+	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
+	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+	var muted := _terminal_color_hex(Palette.CONSOLE_TEXT)
+	var accent := _terminal_color_hex(Palette.TEXT_ACCENT)
+
+	var lines: Array[TerminalLine] = []
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]./bin/vault_unlock --target alizee_vault.db --key \"LastHorizon11\"[/color]" % [prompt, normal], true))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][+][/color] Key accepted. Decrypting container...[/color]" % [muted, accent]))
+	lines.append(TerminalLine.progress_line("alizee_vault.db", 96, "8.1MB/s", "00:12"))
+	lines.append(TerminalLine.text_line("[color=%s][SUCCESS] %s[/color]" % [accent, tr("TERMINAL_VAULT_UNLOCK_SUCCESS")]))
+	return lines
+
+
 ## Untyped on purpose: ChatWindow and the other reusable windows below all
 ## expose the same minimize_requested(window, window_title) signal by
 ## convention, but don't share a base class — a Control-typed parameter would
@@ -810,14 +839,56 @@ func _play_hack_pc_mother_login_terminal() -> void:
 	_open_window(console)
 
 
-## Le mot de passe correct ferme le terminal (voir closed ci-dessus) puis
-## enchaîne sur la même transition "analyse en cours" que celle utilisée
-## entre la fin de l'appel de Jean et l'apparition du téléphone d'Alizée
-## (voir _play_analysis_transition_and_reveal_phone) — même bascule, pas de
-## raison d'en inventer une autre pour ce second "dump de données".
+## Le mot de passe correct ferme le terminal de connexion (voir closed
+## ci-dessus, réductible) puis enchaîne sur un terminal EXCLUSIF d'extraction
+## (voir _play_hack_pc_mother_extraction_terminal ci-dessous) — contrairement
+## à la connexion, ce second terminal est le vrai jalon narratif du piratage :
+## le joueur ne doit plus pouvoir aller consulter autre chose pendant qu'il
+## tourne, d'où le passage au même mode "exclusif" que le dump de Jean.
 func _on_hack_pc_mother_login_succeeded() -> void:
 	_hack_pc_mother_login_console = null
+	_play_hack_pc_mother_extraction_terminal()
+
+
+## Simule l'extraction des documents de Christine dans un terminal EXCLUSIF
+## (même recette que _play_jean_dump_terminal — ajouté directement sur la
+## racine Desktop, pas WindowLayer). Enchaîne sur la même transition "analyse
+## en cours" qu'avant (_play_analysis_transition_and_reveal_hack_pc_mother_window),
+## seule la connexion RDP elle-même reste une fenêtre réductible (voir
+## _play_hack_pc_mother_login_terminal) : le joueur doit pouvoir aller
+## consulter le mail contenant le mot de passe pendant CETTE étape-là, mais
+## plus une fois la connexion établie et l'extraction lancée.
+func _play_hack_pc_mother_extraction_terminal() -> void:
+	var console: TerminalConsole = TERMINAL_CONSOLE.instantiate()
+	console.lines = _build_hack_pc_mother_extraction_lines()
+	console.typing_sound = SfxPlayer.TERMINAL_TYPING_SFX
+	console.fade_out_on_close = true
+	console.closed.connect(_on_hack_pc_mother_extraction_terminal_closed)
+	add_child(console)
+
+
+func _on_hack_pc_mother_extraction_terminal_closed() -> void:
 	await _play_analysis_transition_and_reveal_hack_pc_mother_window()
+
+
+func _build_hack_pc_mother_extraction_lines() -> Array[TerminalLine]:
+	var prompt := _terminal_color_hex(Palette.BORDER_ACCENT)
+	var normal := _terminal_color_hex(Palette.TEXT_NORMAL)
+	var muted := _terminal_color_hex(Palette.CONSOLE_TEXT)
+	var accent := _terminal_color_hex(Palette.TEXT_ACCENT)
+	var ip := HACK_PC_MOTHER_IP
+
+	var lines: Array[TerminalLine] = []
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]mount -t cifs //%s/Users ~/mnt/christine -o guest[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][+][/color] Mount successful.[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]scp -r christine@%s:~/Documents/*.pdf ~/workspace/christine/[/color]" % [prompt, normal, ip], true))
+	lines.append(TerminalLine.progress_line("christine_documents.tar", 812, "12.4MB/s", "00:34"))
+	lines.append(TerminalLine.text_line("[color=%s]user@whitehat:~$[/color] [color=%s]exit[/color]" % [prompt, normal], true))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Extracting documents & attachments...[/color]" % [muted, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][color=%s][SYS][/color] Indexing readable content... [color=%s]DONE[/color][/color]" % [muted, accent, accent]))
+	lines.append(TerminalLine.text_line("[color=%s][SUCCESS] %s[/color]" % [accent, tr("TERMINAL_MOTHER_EXTRACTION_SUCCESS")]))
+	lines.append(TerminalLine.text_line("[color=%s]%s[/color]" % [muted, tr("TERMINAL_MOTHER_EXTRACTION_LOADING")]))
+	return lines
 
 
 ## Même recette que _play_analysis_transition_and_reveal_phone (transition,
@@ -1000,6 +1071,10 @@ func _on_phone_icon_pressed(section_id: String) -> void:
 	# ci-dessus.
 	if section.has_signal("hack_pc_mother_requested"):
 		section.hack_pc_mother_requested.connect(_on_hack_pc_mother_requested)
+	# Seul VaultSection émet ceci pour l'instant (déverrouillage réel du
+	# coffre) — même raison de passer par has_signal() que ci-dessus.
+	if section.has_signal("unlock_terminal_requested"):
+		section.unlock_terminal_requested.connect(_on_vault_unlock_terminal_requested)
 	_phone_section_host.add_child(section)
 	_phone_section_host.visible = true
 

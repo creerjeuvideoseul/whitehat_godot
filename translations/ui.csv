@@ -90,6 +90,9 @@ CLUEBOARD_LOCKED_PLACEHOLDER,??? indice non découvert,??? clue not found yet
 CLUEBOARD_TITLE_M1,"Alizée Ranoud, la fille de Jean Ranoud, a disparu le jour de ses 18 ans. Où est-elle ? Avec qui ?","Alizée Ranoud, Jean Ranoud's daughter, disappeared on her 18th birthday. Where is she? With whom?"
 TERMINAL_JEAN_DUMP_SUCCESS,"Plusieurs modules téléchargés, analysés et simplifiés.","Several modules downloaded, analyzed and simplified."
 TERMINAL_JEAN_DUMP_LOADING,Chargement des données...,Loading data...
+TERMINAL_MOTHER_EXTRACTION_SUCCESS,Documents récupérés et indexés.,Documents retrieved and indexed.
+TERMINAL_MOTHER_EXTRACTION_LOADING,Chargement des documents...,Loading documents...
+TERMINAL_VAULT_UNLOCK_SUCCESS,Coffre-fort déverrouillé.,Vault unlocked.
 TERMINAL_WRONG_PASSWORD,Mot de passe incorrect.,Incorrect password.
 TERMINAL_WINDOW_TITLE,Commande système :,System command:
 TERMINAL_LOGIN_ACCESS_GRANTED,"Accès au système réussi, insérez le mot de passe pour accéder aux données.","System access granted, enter the password to access the data."

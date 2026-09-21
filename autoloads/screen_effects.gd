@@ -18,7 +18,17 @@ extends CanvasLayer
 const LAYER := 90
 const GRAIN_SHADER := preload("res://assets/shaders/screen_grain.gdshader")
 
+## Durée et intensité du sursaut de glitch déclenché par pulse_glitch() ci-
+## dessous — nettement au-dessus des valeurs par défaut du shader (glitch rare
+## et discret en temps normal), pour marquer un instant narratif précis sans
+## pour autant être un effet nouveau à concevoir (mêmes uniformes que le
+## grain permanent, juste poussés temporairement).
+const GLITCH_PULSE_SECONDS := 0.35
+const GLITCH_PULSE_CHANCE := 0.6
+const GLITCH_PULSE_INTENSITY := 0.35
+
 var _grain_rect := ColorRect.new()
+var _grain_material := ShaderMaterial.new()
 
 
 func _ready() -> void:
@@ -26,9 +36,8 @@ func _ready() -> void:
 
 	_grain_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_grain_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var material := ShaderMaterial.new()
-	material.shader = GRAIN_SHADER
-	_grain_rect.material = material
+	_grain_material.shader = GRAIN_SHADER
+	_grain_rect.material = _grain_material
 	add_child(_grain_rect)
 
 	add_child(CursorTrailOverlay.new())
@@ -41,3 +50,16 @@ func _ready() -> void:
 ## (grille ou détail d'une publication, superposé par-dessus) est affichée.
 func set_grain_enabled(enabled: bool) -> void:
 	_grain_rect.visible = enabled
+
+
+## Sursaut ponctuel du micro-glitch du shader — pour souligner un instant
+## narratif précis (ex. RelayGhost qui "en dit trop", voir le tag [#glitch]
+## dans dialogue_balloon.gd/conversation_view.gd) sans construire un nouvel
+## effet dédié. `null` réinitialise un paramètre de shader à sa valeur par
+## défaut déclarée dans le .gdshader (voir ShaderMaterial.set_shader_parameter).
+func pulse_glitch() -> void:
+	_grain_material.set_shader_parameter("glitch_chance", GLITCH_PULSE_CHANCE)
+	_grain_material.set_shader_parameter("glitch_intensity", GLITCH_PULSE_INTENSITY)
+	await get_tree().create_timer(GLITCH_PULSE_SECONDS).timeout
+	_grain_material.set_shader_parameter("glitch_chance", null)
+	_grain_material.set_shader_parameter("glitch_intensity", null)

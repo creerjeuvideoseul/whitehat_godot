@@ -24,7 +24,6 @@ const NOTE_KEY := {"fr": "Note personnelle", "en": "Personal note"}
 ## dans l'enquête (ex. "Lily11"), pas seulement son état civil.
 const ALIAS_KEY := {"fr": "Pseudo(s) connu(s)", "en": "Known alias(es)"}
 const PHOTO_KEY := "Photo"
-const PLAYER_CHARACTER_ID := 0
 
 ## Casse + accents ignorés caractère par caractère (pas de regex) : une table
 ## de correspondance n'affecte que les lettres accentuées latines qu'elle
@@ -62,8 +61,10 @@ func _init() -> void:
 ## (Settings.locale). Insensible à la casse/aux accents, tolère nom et
 ## prénom inversés, matche aussi un pseudo connu, et corrige quelques fautes
 ## d'orthographe connues (voir _QUERY_TYPO_ALIASES). Cas particulier : si
-## `query` correspond au pseudo du joueur, renvoie toujours sa propre fiche
-## (characterId 0). Renvoie un dictionnaire vide si rien ne correspond.
+## `query` correspond au pseudo du joueur, ne renvoie jamais de résultat —
+## amorce narrative volontaire, le joueur ne figure dans aucune base de
+## données (voir memoire design_review_2026-09-21 / indices "Sentinel").
+## Renvoie un dictionnaire vide si rien ne correspond.
 func search(query: String) -> Dictionary:
 	var locale := _resolve_locale()
 	var characters: Array = _characters_by_locale.get(locale, [])
@@ -72,7 +73,7 @@ func search(query: String) -> Dictionary:
 		return {}
 
 	if not PlayerSession.pseudo.is_empty() and normalized_query == _normalize(PlayerSession.pseudo):
-		return _find_by_id(characters, PLAYER_CHARACTER_ID)
+		return {}
 
 	var query_tokens: PackedStringArray = normalized_query.split(" ", false)
 	if query_tokens.is_empty():
@@ -108,13 +109,6 @@ func header_keys() -> Dictionary:
 		"note": NOTE_KEY[locale],
 		"photo": PHOTO_KEY,
 	}
-
-
-func _find_by_id(characters: Array, character_id: int) -> Dictionary:
-	for character: Dictionary in characters:
-		if int(character.get("characterId", -1)) == character_id:
-			return character
-	return {}
 
 
 func _resolve_locale() -> String:

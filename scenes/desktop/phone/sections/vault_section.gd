@@ -16,6 +16,12 @@ signal close_requested
 ## pour journaliser la pensée dans SaveManager.record_thought() sans dépendre
 ## du texte brut, robuste à un changement de langue en cours de partie.
 signal thought_requested(text: String, translation_key: String)
+## Émis une seule fois, juste après un déverrouillage réel (jamais à la
+## réouverture d'un coffre déjà déverrouillé) — desktop.gd s'en sert pour
+## jouer un terminal exclusif façon "dump de Jean" par-dessus tout le bureau,
+## cette section n'ayant elle-même accès ni à WindowLayer ni à la racine
+## Desktop (voir _show_success).
+signal unlock_terminal_requested
 
 const PADLOCK_CLOSED := preload("res://assets/UI/padlock.png")
 const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
@@ -127,6 +133,7 @@ func _show_success(announce: bool) -> void:
 		# déverrouillage de coffre est un vrai jalon narratif, à ne pas perdre
 		# si le joueur quitte juste après.
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+		unlock_terminal_requested.emit()
 
 
 ## Pistes spécifiques à CE que le joueur vient de taper (une saisie proche

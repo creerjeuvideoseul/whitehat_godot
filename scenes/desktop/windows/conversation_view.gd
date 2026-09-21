@@ -171,6 +171,13 @@ func _display_line(line: DialogueLine) -> void:
 	var raw_text := line.text
 	line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id)
 
+	## Tag [#glitch] : sursaut du grain d'écran (voir ScreenEffects.pulse_glitch)
+	## pile au moment où cette ligne s'affiche — pour une réplique qui "en dit
+	## trop" avant de se corriger (voir relayghost_intro.dialogue). Purement
+	## visuel, ne modifie pas le texte ni le flux du dialogue.
+	if line.has_tag("glitch"):
+		ScreenEffects.pulse_glitch()
+
 	var label: DialogueLabel
 	if line.character == SYSTEM_CHARACTER:
 		label = _add_console_line(line)

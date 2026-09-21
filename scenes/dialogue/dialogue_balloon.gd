@@ -93,6 +93,12 @@ func apply_dialogue_line() -> void:
 	## cliquable, et wire_indice_interactions plus bas).
 	var clue_id := dialogue_line.get_tag_value("indice") if dialogue_line.has_tag("indice") else ""
 	var raw_text := dialogue_line.text
+
+	## Tag [#glitch] : même sursaut du grain d'écran que conversation_view.gd,
+	## voir ScreenEffects.pulse_glitch() — purement visuel.
+	if dialogue_line.has_tag("glitch"):
+		ScreenEffects.pulse_glitch()
+
 	var rebuild_dialogue_colors := func(hovered_id: String) -> void:
 		dialogue_line.text = RichTextMarkup.resolve_dialogue_colors(raw_text, clue_id, hovered_id)
 		# `dialogue_label.dialogue_line = dialogue_line` ne suffit pas après le
