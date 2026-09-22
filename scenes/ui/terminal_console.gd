@@ -46,6 +46,13 @@ const TYPING_SOUND_FADE_SECONDS := 0.1
 ## Durée par défaut du fondu de fermeture, si fade_out_on_close est activé —
 ## voir close_fade_seconds ci-dessous pour l'override par appelant.
 const CLOSE_FADE_SECONDS := 0.3
+## Secousse jouée sur `_box` à un mot de passe incorrect (voir
+## _play_login_gate) — même recette que ChatWindow._shake()/MailSection._shake(),
+## appliquée à `_box` (positionné par offsets, pas par un Container) plutôt
+## qu'à la racine (Backdrop plein écran).
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
 
 ## Le script à dérouler — à définir avant que la scène entre dans l'arbre
 ## (comme ClueBoardWindow.mission_id) : _ready() s'en sert directement, pas
@@ -258,18 +265,22 @@ func _play_text_line(line: TerminalLine) -> void:
 
 
 ## Réécrit la même ligne à intervalles réguliers en interpolant pourcentage,
-## Mo transférés et temps écoulé jusqu'aux valeurs finales de `line`.
+## Mo transférés et temps écoulé jusqu'aux valeurs finales de `line` — un vrai
+## faux transfert réseau (voir TerminalLine.progress_*), curseur "occupé" du
+## système pendant qu'il tourne (voir Input.set_default_cursor_shape ci-dessous).
 func _play_progress_line(line: TerminalLine) -> void:
 	var label := _add_label()
 	var final_seconds := _parse_mmss(line.progress_total_time)
 	var elapsed := 0.0
 
+	Input.set_default_cursor_shape(Input.CURSOR_BUSY)
 	while elapsed < line.progress_seconds:
 		elapsed = minf(elapsed + PROGRESS_STEP_SECONDS, line.progress_seconds)
 		var t: float = elapsed / line.progress_seconds
 		label.text = _format_progress_line(line, t, final_seconds)
 		_scroll_to_bottom()
 		await get_tree().create_timer(PROGRESS_STEP_SECONDS).timeout
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 
 
 func _format_progress_line(line: TerminalLine, t: float, final_seconds: float) -> String:
@@ -313,11 +324,24 @@ func _play_login_gate() -> void:
 			if _normalize_login_password(entered) == expected:
 				return
 			SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+			_shake()
 			line_edit.editable = false
 			await _play_text_line(TerminalLine.text_line(login_wrong_message))
 			break
 
 		await get_tree().create_timer(LINE_GAP_SECONDS).timeout
+
+
+## Même recette que ChatWindow._shake() : quelques allers-retours aléatoires
+## autour de la position de repos, puis retour exact à cette position —
+## appliquée à `_box` (voir SHAKE_AMPLITUDE ci-dessus pour pourquoi pas la racine).
+func _shake() -> void:
+	var origin := _box.position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(_box, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(_box, "position", origin, SHAKE_STEP_SECONDS)
 
 
 ## Champ de saisie "en ligne" dans le terminal : fond transparent (se fond

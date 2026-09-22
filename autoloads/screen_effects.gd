@@ -27,8 +27,14 @@ const GLITCH_PULSE_SECONDS := 0.35
 const GLITCH_PULSE_CHANCE := 0.6
 const GLITCH_PULSE_INTENSITY := 0.35
 
+## Fondu d'entrée/sortie du grain (voir set_grain_enabled) — coupure nette
+## auparavant (retour joueur : tranchait avec le reste du jeu, entièrement
+## animé en douceur).
+const GRAIN_FADE_SECONDS := 0.6
+
 var _grain_rect := ColorRect.new()
 var _grain_material := ShaderMaterial.new()
+var _grain_fade_tween: Tween
 
 
 func _ready() -> void:
@@ -48,8 +54,22 @@ func _ready() -> void:
 ## scanlines rendaient les vraies photos "rayées", pas seulement l'interface
 ## (voir gallery_section.gd), donc l'effet se désactive tant qu'une galerie
 ## (grille ou détail d'une publication, superposé par-dessus) est affichée.
+## Fondu plutôt qu'une coupure nette (voir GRAIN_FADE_SECONDS) : `visible`
+## n'est basculé qu'aux extrémités (true avant de monter, false une fois
+## descendu à zéro) pour ne pas laisser un ColorRect invisible mais toujours
+## dessiné une fois le fondu de sortie terminé.
 func set_grain_enabled(enabled: bool) -> void:
-	_grain_rect.visible = enabled
+	if is_instance_valid(_grain_fade_tween):
+		_grain_fade_tween.kill()
+
+	if enabled:
+		_grain_rect.visible = true
+		_grain_fade_tween = create_tween()
+		_grain_fade_tween.tween_property(_grain_rect, "modulate:a", 1.0, GRAIN_FADE_SECONDS)
+	else:
+		_grain_fade_tween = create_tween()
+		_grain_fade_tween.tween_property(_grain_rect, "modulate:a", 0.0, GRAIN_FADE_SECONDS)
+		_grain_fade_tween.tween_callback(func() -> void: _grain_rect.visible = false)
 
 
 ## Sursaut ponctuel du micro-glitch du shader — pour souligner un instant

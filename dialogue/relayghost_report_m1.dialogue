@@ -2,9 +2,9 @@
 
 RelayGhost: {{PlayerSession.pseudo}}, c'est l'heure de ton premier rapport.
 RelayGhost: J'ai suivi ta progression : {{ClueManager.get_unlocked_clue_count(1)}} / {{ClueManager.get_total_clue_count(1)}}.
-if ClueManager.get_unlocked_clue_count(1) * 100 / ClueManager.get_total_clue_count(1) > 90
+if ClueManager.get_unlocked_clue_count(1) * 100 / ClueManager.get_total_clue_count(1) > 75
 	RelayGhost: Tes résultats m'ont surpris.
-elif ClueManager.get_unlocked_clue_count(1) * 100 / ClueManager.get_total_clue_count(1) > 70
+elif ClueManager.get_unlocked_clue_count(1) * 100 / ClueManager.get_total_clue_count(1) > 50
 	RelayGhost: Tes résultats sont normaux.
 else
 	RelayGhost: Tes résultats sont décevants.

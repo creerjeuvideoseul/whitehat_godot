@@ -41,6 +41,12 @@ const BLINK_SECONDS := 1.4
 ## qu'une boîte de dialogue centrale.
 const BLINK_HALO_SIZE := 10
 const BLINK_HALO_ALPHA := 0.35
+## Bordure de survol d'une ligne de contact — même recette que
+## GallerySection._style_hover_border (calque séparé plutôt qu'un style posé
+## sur `row` lui-même, qui porte déjà le fond de sélection et le halo de
+## clignotement via _set_row_selected/_start_row_blink).
+const ROW_HOVER_BORDER_WIDTH := 3
+const ROW_HOVER_CORNER_RADIUS := 6
 
 @export var contacts: Array[ChatContact] = []
 
@@ -176,8 +182,30 @@ func _add_contact_row(contact: ChatContact) -> void:
 	margin.add_child(hbox)
 	row.add_child(margin)
 
+	# Calque posé APRÈS margin pour se dessiner par-dessus — voir
+	# GallerySection._build_thumbnail pour la même contrainte de calque.
+	var border := Panel.new()
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_row_hover_border(border, false)
+	row.add_child(border)
+	row.mouse_entered.connect(func() -> void: _style_row_hover_border(border, true))
+	row.mouse_exited.connect(func() -> void: _style_row_hover_border(border, false))
+
 	_contacts_list.add_child(row)
 	_contact_rows[contact.contact_id] = row
+
+
+## Même mécanisme que GallerySection._style_hover_border, dupliqué ici plutôt
+## que partagé — petit effet d'interface propre à cet écran (voir
+## feedback_architecture_principles).
+func _style_row_hover_border(border: Panel, is_hovered: bool) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	style.set_border_width_all(ROW_HOVER_BORDER_WIDTH if is_hovered else 0)
+	style.border_color = Palette.TEXT_ACCENT
+	style.set_corner_radius_all(ROW_HOVER_CORNER_RADIUS)
+	style.set_content_margin_all(0)
+	border.add_theme_stylebox_override("panel", style)
 
 
 func _build_avatar_frame(avatar: Texture2D) -> Control:

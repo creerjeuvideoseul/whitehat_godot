@@ -49,6 +49,12 @@ const CHAT_MINIMIZE_SLIDE_SECONDS := 0.65
 ## s'effacer (retour joueur, voir _minimize_window_with_slide).
 const CHAT_MINIMIZE_FADE_SECONDS := 0.9
 const CHAT_MINIMIZE_SLIDE_OFFSET := 80.0
+## Fondu d'entrée d'une section du téléphone (SMS/Mail/Galerie/Coffre) à
+## chaque icône pressée (voir _on_phone_icon_pressed) — cet écran change très
+## souvent, contrairement au téléphone/PC de la mère (PHONE_REVEAL_SECONDS) :
+## un simple fondu discret suffit à éviter le cut instantané, sans ralentir
+## une action qui se répète à chaque clic sur une icône.
+const PHONE_SECTION_FADE_SECONDS := 0.2
 ## The mission the "Indice" button currently opens. No mission-selection UI
 ## exists yet, so this is hardcoded for now — same simplification the chat
 ## contacts already make (see JEAN_REVEAL_DELAY_SECONDS below).
@@ -80,10 +86,13 @@ const RELAYGHOST_MISSION2_DIALOGUE: DialogueResource = preload("res://dialogue/r
 const RELAYGHOST_MISSION2_REVEAL_DELAY_SECONDS := 1.0
 ## Contact "Archive RelayGhost" (voir _archive_relayghost_history_if_needed) :
 ## reprend tout l'historique RelayGhost d'avant le reset de fin de mission
-## (intro + demandes d'aide, contact_id "relayghost") — une conversation déjà
-## complète dès sa création, donc ConversationView se contente de rejouer le
-## journal déjà enregistré (voir conversation_view.gd::_replay_saved_log),
-## jamais de nouveau dialogue à dérouler pour ce contact.
+## (intro + demandes d'aide, contact_id "relayghost", PUIS la conversation
+## jouée juste avant le choix du rapport, contact_id "relayghost_report_m1" —
+## voir report_generation_screen.gd::RELAYGHOST_REPORT_M1_CONTACT_ID) — une
+## conversation déjà complète dès sa création, donc ConversationView se
+## contente de rejouer le journal déjà enregistré (voir
+## conversation_view.gd::_replay_saved_log), jamais de nouveau dialogue à
+## dérouler pour ce contact.
 const RELAYGHOST_ARCHIVE_CONTACT_ID := "relayghost_archive"
 ## Adresse IP simulée du PC de la mère (voir _build_hack_pc_mother_login_lines) —
 ## cohérente avec le mail crypté qui déclenche ce piratage (voir mail_section.gd).
@@ -440,8 +449,8 @@ func _build_jean_contact() -> ChatContact:
 ## RelayGhost lance la mission 2 une fois cette conversation terminée — même
 ## principe de révélation différée que RelayGhost -> Jean dans
 ## _build_chat_window (contact_conversation_finished + add_contact). Son
-## historique de mission 1 (intro + aide) reste consultable via "RelayGhost
-## archive", toujours présent dès l'ouverture.
+## historique de mission 1 (intro + aide + conversation du rapport) reste
+## consultable via "RelayGhost archive", toujours présent dès l'ouverture.
 func _build_post_report_desktop() -> void:
 	_archive_relayghost_history_if_needed()
 
@@ -463,8 +472,12 @@ func _build_post_report_desktop() -> void:
 
 
 ## Recopie une bonne fois pour toutes le journal de "relayghost" (intro +
-## demandes d'aide de la mission 1) dans le contact "relayghost_archive" —
-## c'est ce qui alimente "Archive RelayGhost" (voir _build_relayghost_archive_contact).
+## demandes d'aide de la mission 1) PUIS celui de "relayghost_report_m1" (la
+## conversation jouée juste avant le choix Oui/Non du rapport, voir
+## report_generation_screen.gd) à la suite, dans le contact "relayghost_archive"
+## — c'est ce qui alimente "Archive RelayGhost" (voir _build_relayghost_archive_contact).
+## Sans ce second journal, la partie de la conversation menant au choix du
+## rapport disparaissait purement et simplement de l'archive (retour joueur).
 ## Gardé par is_conversation_complete : sans cette garde, revenir sur ce
 ## bureau (reprise de sauvegarde, ou simplement rouvrir la fenêtre) dupliquerait
 ## l'historique à chaque fois plutôt que de le figer une seule fois au moment
@@ -472,7 +485,8 @@ func _build_post_report_desktop() -> void:
 func _archive_relayghost_history_if_needed() -> void:
 	if SaveManager.is_conversation_complete(RELAYGHOST_ARCHIVE_CONTACT_ID):
 		return
-	SaveManager.record_conversation(RELAYGHOST_ARCHIVE_CONTACT_ID, SaveManager.get_conversation_log("relayghost"))
+	var full_log := SaveManager.get_conversation_log("relayghost") + SaveManager.get_conversation_log("relayghost_report_m1")
+	SaveManager.record_conversation(RELAYGHOST_ARCHIVE_CONTACT_ID, full_log)
 
 
 ## Même teinte de bulle que Jean pendant l'enquête (voir _build_jean_contact)
@@ -1077,6 +1091,11 @@ func _on_phone_icon_pressed(section_id: String) -> void:
 		section.unlock_terminal_requested.connect(_on_vault_unlock_terminal_requested)
 	_phone_section_host.add_child(section)
 	_phone_section_host.visible = true
+
+	var section_control := section as Control
+	section_control.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(section_control, "modulate:a", 1.0, PHONE_SECTION_FADE_SECONDS)
 
 
 ## Le X d'une section (voir MailSection) ramène le téléphone à son écran

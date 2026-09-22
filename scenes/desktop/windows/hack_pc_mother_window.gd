@@ -14,6 +14,28 @@ const ICON_SIZE := Vector2(40, 40)
 ## Vignette du certificat scanné (voir _build_content_frame) — proche du ratio
 ## réel de certificat_justice.png (705×712, quasi carré).
 const ATTACHED_IMAGE_SIZE := Vector2(360, 364)
+## Bordure de survol d'une ligne de document — même recette que
+## GallerySection._style_hover_border (calque séparé plutôt qu'un style posé
+## sur `row` lui-même, qui porte déjà le fond de sélection via _set_row_selected).
+const ROW_HOVER_BORDER_WIDTH := 3
+const ROW_HOVER_CORNER_RADIUS := 6
+
+## "Révélation par redaction" à la première ouverture d'un document : le corps
+## est d'abord couvert de bandes noires façon dossier classifié, qui se
+## retirent l'une après l'autre du haut vers le bas — ces documents viennent
+## d'être piratés, l'effet vend l'idée qu'on "déclassifie" ce qu'on vient de
+## trouver plutôt que d'afficher un texte déjà connu. Une seule fois par
+## document (voir _redacted_document_ids) : le rouvrir ensuite l'affiche
+## directement, comme un document qu'on a déjà lu.
+const REDACTION_BAND_COUNT := 8
+const REDACTION_BAND_DELAY_SECONDS := 0.12
+const REDACTION_BAND_FADE_SECONDS := 0.25
+## Petite pause avant que la première bande ne se retire, pour laisser
+## l'œil se poser sur le document encore entièrement couvert.
+const REDACTION_START_DELAY_SECONDS := 0.3
+## Fondu d'entrée à chaque changement de document sélectionné — voir
+## _show_document.
+const DETAIL_FADE_SECONDS := 0.2
 
 @onready var _title_label: Label = %TitleLabel
 @onready var _minimize_button: Button = %MinimizeButton
@@ -25,6 +47,11 @@ var _database: ChristineDocumentDatabase
 ## sans reconstruire toute la liste — même principe que MailSection._mail_rows.
 var _document_rows: Dictionary = {}
 var _selected_document_id: int = -1
+## document_id déjà "déclassifiés" une première fois (voir REDACTION_BAND_COUNT) —
+## une instance par ouverture de la fenêtre (pas de persistance entre deux
+## piratages, il n'y en a qu'un dans cette mission), pour ne jouer l'effet
+## qu'à la toute première lecture de chaque document.
+var _redacted_document_ids: Dictionary = {}
 
 
 func _ready() -> void:
@@ -92,7 +119,30 @@ func _build_document_row(document: ChristineDocumentEntry) -> Control:
 
 	margin.add_child(hbox)
 	row.add_child(margin)
+
+	# Calque posé APRÈS margin pour se dessiner par-dessus — voir
+	# GallerySection._build_thumbnail pour la même contrainte de calque.
+	var border := Panel.new()
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_row_hover_border(border, false)
+	row.add_child(border)
+	row.mouse_entered.connect(func() -> void: _style_row_hover_border(border, true))
+	row.mouse_exited.connect(func() -> void: _style_row_hover_border(border, false))
+
 	return row
+
+
+## Même mécanisme que GallerySection._style_hover_border, dupliqué ici plutôt
+## que partagé — petit effet d'interface propre à cet écran (voir
+## feedback_architecture_principles).
+func _style_row_hover_border(border: Panel, is_hovered: bool) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	style.set_border_width_all(ROW_HOVER_BORDER_WIDTH if is_hovered else 0)
+	style.border_color = Palette.TEXT_ACCENT
+	style.set_corner_radius_all(ROW_HOVER_CORNER_RADIUS)
+	style.set_content_margin_all(0)
+	border.add_theme_stylebox_override("panel", style)
 
 
 func _on_document_row_gui_input(event: InputEvent, document: ChristineDocumentEntry) -> void:
@@ -132,12 +182,59 @@ func _show_document(document: ChristineDocumentEntry) -> void:
 	title_label.add_theme_font_size_override("font_size", Palette.SIZE_SUBTITLE)
 	_detail_root.add_child(title_label)
 
-	_detail_root.add_child(_build_content_frame(document))
+	var frame := _build_content_frame(document)
+	_detail_root.add_child(frame)
+	if not _redacted_document_ids.has(document.document_id):
+		_redacted_document_ids[document.document_id] = true
+		_reveal_with_redaction(frame)
+
 	## ClueManager.unlock() n'écrit rien sur disque tout seul (déclenché par un
 	## clic sur le texte, voir _build_body_label) — un checkpoint explicite à
 	## l'ouverture du document reste nécessaire pour ne pas perdre la
 	## progression si le joueur quitte juste après.
 	SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+
+	## Fondu d'entrée à chaque changement de document — sinon le detail se
+	## reconstruit d'un coup (queue_free puis rebuild synchrone), même esprit
+	## que desktop.gd::PHONE_SECTION_FADE_SECONDS pour les sections du téléphone.
+	_detail_root.modulate.a = 0.0
+	var reveal_tween := create_tween()
+	reveal_tween.tween_property(_detail_root, "modulate:a", 1.0, DETAIL_FADE_SECONDS)
+
+
+## Couvre le cadre de bandes noires façon dossier classifié, qui se retirent
+## une à une du haut vers le bas — uniquement à la première ouverture de CE
+## document (voir _redacted_document_ids dans _show_document), pour vendre
+## l'idée qu'on "déclassifie" ce qui vient d'être piraté plutôt que d'afficher
+## un texte déjà connu d'un coup.
+##
+## `frame` est un PanelContainer (voir _build_content_frame) : lui ajouter cet
+## overlay en second enfant suffit à le faire occuper exactement le même
+## rectangle que `scroll`, sans code de positionnement manuel — même
+## mécanisme que GallerySection._build_thumbnail pour sa bordure de survol.
+func _reveal_with_redaction(frame: Control) -> void:
+	var overlay := VBoxContainer.new()
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_theme_constant_override("separation", 0)
+	for i in REDACTION_BAND_COUNT:
+		var band := ColorRect.new()
+		band.color = Color.BLACK
+		band.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		band.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		overlay.add_child(band)
+	frame.add_child(overlay)
+
+	await get_tree().create_timer(REDACTION_START_DELAY_SECONDS).timeout
+	if not is_instance_valid(overlay):
+		return
+	for band in overlay.get_children():
+		if is_instance_valid(band):
+			var tween := create_tween()
+			tween.tween_property(band, "modulate:a", 0.0, REDACTION_BAND_FADE_SECONDS)
+		await get_tree().create_timer(REDACTION_BAND_DELAY_SECONDS).timeout
+		if not is_instance_valid(overlay):
+			return
+	overlay.queue_free()
 
 
 ## Cadre bordé + scrollbar verticale si le contenu dépasse — même recette que

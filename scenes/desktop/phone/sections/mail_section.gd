@@ -43,6 +43,11 @@ const QUOTED_MAIL_BLANK_LINE_HEIGHT := Palette.SIZE_BODY
 const SHAKE_AMPLITUDE := 6.0
 const SHAKE_STEP_SECONDS := 0.05
 const SHAKE_STEPS := 6
+## Bordure de survol d'une ligne de la liste — même recette que
+## GallerySection._style_hover_border (calque séparé plutôt qu'un style posé
+## sur `row` lui-même, qui porte déjà le fond de sélection via _set_row_selected).
+const ROW_HOVER_BORDER_WIDTH := 3
+const ROW_HOVER_CORNER_RADIUS := 6
 ## Ratio 16/9 plutôt que le ratio quasi carré des vignettes de la galerie —
 ## voir _build_attachment_thumbnail.
 const ATTACHMENT_THUMB_WIDTH := 750.0
@@ -179,7 +184,30 @@ func _build_mail_row(mail: MailEntry) -> Control:
 	hbox.add_child(info_box)
 	margin.add_child(hbox)
 	row.add_child(margin)
+
+	# Calque posé APRÈS margin pour se dessiner par-dessus — voir
+	# GallerySection._build_thumbnail pour la même contrainte de calque.
+	var border := Panel.new()
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_style_row_hover_border(border, false)
+	row.add_child(border)
+	row.mouse_entered.connect(func() -> void: _style_row_hover_border(border, true))
+	row.mouse_exited.connect(func() -> void: _style_row_hover_border(border, false))
+
 	return row
+
+
+## Même mécanisme que GallerySection._style_hover_border, dupliqué ici plutôt
+## que partagé — petit effet d'interface propre à cet écran (voir
+## feedback_architecture_principles).
+func _style_row_hover_border(border: Panel, is_hovered: bool) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	style.set_border_width_all(ROW_HOVER_BORDER_WIDTH if is_hovered else 0)
+	style.border_color = Palette.TEXT_ACCENT
+	style.set_corner_radius_all(ROW_HOVER_CORNER_RADIUS)
+	style.set_content_margin_all(0)
+	border.add_theme_stylebox_override("panel", style)
 
 
 ## Avatar normal, sauf mail crypté : le cadenas prend sa place (fermé tant que

@@ -28,6 +28,13 @@ const PADLOCK_OPEN := preload("res://assets/UI/open-padlock.png")
 
 const CORRECT_PASSWORD := "lasthorizon11"
 
+## Secousse jouée sur un mot de passe incorrect — même recette que
+## ChatWindow._shake()/MailSection._shake(), reprise ici plutôt que partagée
+## (petit effet d'interface propre à cet écran, voir feedback_architecture_principles).
+const SHAKE_AMPLITUDE := 6.0
+const SHAKE_STEP_SECONDS := 0.05
+const SHAKE_STEPS := 6
+
 ## Pensées affichées dans l'ordre à chaque mot de passe incorrect — de plus en
 ## plus précises pour aider un joueur qui bloque, puis en boucle une fois la
 ## liste épuisée plutôt que de se taire après la dernière (voir
@@ -110,10 +117,22 @@ func _on_validate_pressed() -> void:
 		return
 
 	SfxPlayer.play(SfxPlayer.ACCESS_DENIED_SFX)
+	_shake()
 	_status_label.add_theme_color_override("font_color", Palette.TEXT_DANGER)
 	_status_label.text = tr("VAULT_WRONG_PASSWORD")
 	var hint_key := _resolve_wrong_password_hint_key(normalized)
 	thought_requested.emit(tr(hint_key), hint_key)
+
+
+## Même recette que ChatWindow._shake() : quelques allers-retours aléatoires
+## autour de la position de repos, puis retour exact à cette position.
+func _shake() -> void:
+	var origin := position
+	var tween := create_tween()
+	for i in SHAKE_STEPS:
+		var offset := Vector2(randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE), randf_range(-SHAKE_AMPLITUDE, SHAKE_AMPLITUDE))
+		tween.tween_property(self, "position", origin + offset, SHAKE_STEP_SECONDS)
+	tween.tween_property(self, "position", origin, SHAKE_STEP_SECONDS)
 
 
 ## `announce`: vrai juste après une validation réussie (déclenche la

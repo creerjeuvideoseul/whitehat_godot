@@ -25,6 +25,17 @@ const LABEL_COLUMN_WIDTH := 280.0
 ## ce temps-la, jamais un chiffre fixe qui trahirait l'artifice.
 const SEARCH_DELAY_MIN_SECONDS := 0.5
 const SEARCH_DELAY_MAX_SECONDS := 1.1
+## Bande lumineuse qui balaie la barre de progression pendant le faux délai
+## réseau (voir _build_loading) — renforce l'idée d'une "interrogation de base
+## de données" façon terminal d'espionnage plutôt qu'une simple barre qui se
+## remplit. Largeur en fraction de la barre (anchors, pas des pixels : la
+## largeur réelle de `track` n'est pas connue au moment de la construction).
+const SCAN_WIDTH_RATIO := 0.18
+const SCAN_SWEEP_SECONDS := 0.5
+const SCAN_COLOR := Color(1, 1, 1, 0.35)
+## Fondu d'entrée du résultat final (fiche ou "aucun résultat") une fois le
+## faux délai écoulé — voir search().
+const RESULT_FADE_SECONDS := 0.2
 
 @onready var _title_bar: PanelContainer = %TitleBar
 @onready var _close_button: Button = %CloseButton
@@ -36,6 +47,11 @@ var _database: OsintDatabase = OsintDatabase.new()
 ## le faux délai d'une précédente, celle-ci s'annule silencieusement au
 ## réveil au lieu d'écraser le résultat le plus récent.
 var _search_generation: int = 0
+## Boucle du balayage lumineux (voir _build_loading) — tuée explicitement,
+## jamais laissée courir après la fin du faux délai réseau (voir search()) :
+## contrairement au remplissage de `fill`, dont la durée totale correspond
+## exactement à `delay`, celle-ci boucle indéfiniment (set_loops()).
+var _scan_tween: Tween
 
 
 func _ready() -> void:
@@ -50,16 +66,25 @@ func search(query: String) -> void:
 	_search_generation += 1
 	var my_generation := _search_generation
 
+	if is_instance_valid(_scan_tween):
+		_scan_tween.kill()
+
 	for child in _content_root.get_children():
 		child.queue_free()
 
 	var delay := randf_range(SEARCH_DELAY_MIN_SECONDS, SEARCH_DELAY_MAX_SECONDS)
 	_build_loading(delay)
 
+	Input.set_default_cursor_shape(Input.CURSOR_BUSY)
 	await get_tree().create_timer(delay).timeout
+	if is_instance_valid(_scan_tween):
+		_scan_tween.kill()
 	if my_generation != _search_generation:
-		return  # une recherche plus récente a déjà pris le relais
+		return  # une recherche plus récente a déjà pris le relais — curseur
+		# remis à ARROW par CETTE recherche plus récente, pas ici (sinon on
+		# couperait sa propre file d'attente encore en cours, voir plus bas).
 
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	for child in _content_root.get_children():
 		child.queue_free()
 
@@ -73,6 +98,14 @@ func search(query: String) -> void:
 		## simple ainsi et une fiche vaut la peine d'être retenue même sans
 		## indice caché dedans (recherche du bon pseudo, par exemple).
 		SaveManager.save_checkpoint(SaveManager.get_checkpoint_scene())
+
+	## Fondu d'entrée du résultat — la barre de progression disparaît sinon
+	## d'un coup au profit de la fiche (ou du message "aucun résultat"), même
+	## esprit que desktop.gd::PHONE_SECTION_FADE_SECONDS pour les sections du
+	## téléphone.
+	_content_root.modulate.a = 0.0
+	var reveal_tween := create_tween()
+	reveal_tween.tween_property(_content_root, "modulate:a", 1.0, RESULT_FADE_SECONDS)
 
 
 ## Comme ChatWindow.nudge_position : décale la fenêtre sans jamais la sortir
@@ -123,10 +156,27 @@ func _build_loading(delay: float) -> void:
 	fill.anchor_right = 0.0
 	track.add_child(fill)
 
+	track.clip_contents = true
+	var scan := ColorRect.new()
+	scan.color = SCAN_COLOR
+	scan.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	scan.anchor_top = 0.0
+	scan.anchor_bottom = 1.0
+	scan.anchor_left = -SCAN_WIDTH_RATIO
+	scan.anchor_right = 0.0
+	track.add_child(scan)
+
 	_content_root.add_child(_wrap_with_top_margin(track))
 
 	var tween := create_tween()
 	tween.tween_property(fill, "anchor_right", 1.0, delay)
+
+	_scan_tween = create_tween()
+	_scan_tween.set_loops()
+	_scan_tween.tween_method(func(t: float) -> void:
+		scan.anchor_left = t - SCAN_WIDTH_RATIO
+		scan.anchor_right = t
+	, 0.0, 1.0 + SCAN_WIDTH_RATIO, SCAN_SWEEP_SECONDS)
 
 
 func _build_no_result() -> void:
